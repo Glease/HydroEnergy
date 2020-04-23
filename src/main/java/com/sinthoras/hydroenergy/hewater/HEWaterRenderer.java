@@ -1,7 +1,5 @@
 package com.sinthoras.hydroenergy.hewater;
 
-import com.sinthoras.hydroenergy.controller.Controller;
-
 import cpw.mods.fml.client.registry.RenderingRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;
@@ -25,7 +23,8 @@ public class HEWaterRenderer extends RenderBlockFluid {
 	@Override
 	public float getFluidHeightForRender(IBlockAccess world, int x, int y, int z, BlockFluidBase block)
     {
-		float val = Controller.waterlevel - y;
+		HEWater water = (HEWater) block;
+		float val = water.getWaterLevel(world, x, y, z) - y;
 		if (val <= 0.0f)
 			return 0.0f;
 		if (val >= 1.0f)
@@ -47,7 +46,8 @@ public class HEWaterRenderer extends RenderBlockFluid {
             return false;
         }
         
-        if (Controller.waterlevel <= y)
+        HEWater water = (HEWater) block;
+        if (water.getWaterLevel(world, x, y, z) <= y)
         {
         	return false;
         }
@@ -63,7 +63,7 @@ public class HEWaterRenderer extends RenderBlockFluid {
         int densityDir = -1;
         int bMeta = world.getBlockMetadata(x, y, z);
 
-        boolean renderTop = Controller.waterlevel >= y && Controller.waterlevel < y + 1;
+        boolean renderTop = water.getWaterLevel(world, x, y, z) > y && water.getWaterLevel(world, x, y, z) <= y + 1;
 
         boolean renderBottom = block.shouldSideBeRendered(world, x, y + densityDir, z, 0) && world.getBlock(x, y + densityDir, z) != theFluid;
 
