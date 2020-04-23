@@ -1,20 +1,12 @@
 package com.sinthoras.hydroenergy;
 
-import net.minecraft.client.util.JsonException;
-import net.minecraft.init.Blocks;
-import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.common.MinecraftForge;
-
-import java.io.IOException;
 
 import com.sinthoras.hydroenergy.controller.Controller;
 import com.sinthoras.hydroenergy.hewater.HEWater;
-import com.sinthoras.hydroenergy.hewater.HEWaterFakeRenderer;
 import com.sinthoras.hydroenergy.hewater.HEWaterRenderer;
-import com.sinthoras.hydroenergy.hewater.HEWaterRenderer.ShaderType;
 
 import cpw.mods.fml.client.registry.RenderingRegistry;
-import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
@@ -36,7 +28,7 @@ public class Main
     {
     	MinecraftForge.EVENT_BUS.register(new Controller());
     	GameRegistry.registerBlock(water, water.getUnlocalizedName());
-    	RenderingRegistry.registerBlockHandler(HEWaterFakeRenderer.instance);
+    	RenderingRegistry.registerBlockHandler(HEWaterRenderer.instance);
     }
     
     @EventHandler

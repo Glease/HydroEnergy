@@ -1,6 +1,5 @@
 package com.sinthoras.hydroenergy.hewater;
 
-import com.sinthoras.hydroenergy.Main;
 import com.sinthoras.hydroenergy.controller.Controller;
 
 import net.minecraft.block.Block;
@@ -9,7 +8,6 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.BlockFluidBase;
-import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 
@@ -53,7 +51,7 @@ public class HEWater extends BlockFluidBase {
 	@Override
     public int getRenderType()
     {
-        return HEWaterFakeRenderer.instance.getRenderId();
+        return HEWaterRenderer.instance.getRenderId();
     }
 	
 	@Override

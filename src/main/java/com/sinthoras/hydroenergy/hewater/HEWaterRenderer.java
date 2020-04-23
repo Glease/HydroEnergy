@@ -1,360 +1,246 @@
 package com.sinthoras.hydroenergy.hewater;
 
-import java.io.BufferedInputStream;
-import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.nio.FloatBuffer;
-import java.nio.IntBuffer;
+import com.sinthoras.hydroenergy.controller.Controller;
 
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.lwjgl.BufferUtils;
-import org.lwjgl.opengl.ARBFragmentShader;
-import org.lwjgl.opengl.ARBGeometryShader4;
-import org.lwjgl.opengl.ARBShaderObjects;
-import org.lwjgl.opengl.ARBVertexShader;
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL20;
+import cpw.mods.fml.client.registry.RenderingRegistry;
+import net.minecraft.block.Block;
+import net.minecraft.client.renderer.RenderBlocks;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.util.IIcon;
+import net.minecraft.world.IBlockAccess;
+import net.minecraftforge.fluids.BlockFluidBase;
+import net.minecraftforge.fluids.RenderBlockFluid;
 
-import com.sinthoras.hydroenergy.Main;
-
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.OpenGlHelper;
-import net.minecraft.client.resources.IResourceManager;
-import net.minecraft.client.shader.ShaderLoader;
-import net.minecraft.client.util.JsonException;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.client.event.RenderWorldEvent;
-import net.minecraftforge.client.event.RenderWorldLastEvent;
-
-public class HEWaterRenderer {
+public class HEWaterRenderer extends RenderBlockFluid {
 	
-	private static int vertexID;
-	private static int geometryID;
-	private static int fragmentID;
+	public static HEWaterRenderer instance = new HEWaterRenderer();
+	private int renderID = -1;
 	
-	public static enum ShaderType
+	public HEWaterRenderer()
 	{
-		VERTEX_SHADER(".vsh", GL20.GL_VERTEX_SHADER),
-		GEOMETRY_SHADER(".gsh", ARBGeometryShader4.GL_GEOMETRY_SHADER_ARB),
-		GRAGMENT_SHADER(".fsh", GL20.GL_FRAGMENT_SHADER);
-		
-		public final String ext;
-		public final int type;
-		
-		private ShaderType(String ext, int type)
-		{
-			this.ext = ext;
-			this.type = type;
-		}
+		if(renderID == -1)
+			renderID = RenderingRegistry.getNextAvailableRenderId();
 	}
 	
-	private static boolean ARB_ENABLED;
-	
-	@SubscribeEvent
-    public void onRenderLast(RenderWorldLastEvent event) {
-    	//System.out.println("render last call");
-		GL11.glPushAttrib(GL11.GL_ENABLE_BIT);
-		
-		
-		
-		GL11.glPopAttrib();
+	@Override
+	public float getFluidHeightForRender(IBlockAccess world, int x, int y, int z, BlockFluidBase block)
+    {
+		float val = Controller.waterlevel - y;
+		if (val <= 0.0f)
+			return 0.0f;
+		if (val >= 1.0f)
+			return 1.0f;
+		return val;
     }
 	
-	public static int loadShader(String name, ShaderType type) throws JsonException, IOException
+	@Override
+    public int getRenderId()
     {
-        ResourceLocation resourcelocation = new ResourceLocation(Main.MODID, "shaders/program/" + name + type.ext);
-        BufferedInputStream bufferedinputstream = new BufferedInputStream(Minecraft.getMinecraft().getResourceManager().getResource(resourcelocation).getInputStream());
-        byte[] abyte = IOUtils.toByteArray(bufferedinputstream);
-        ByteBuffer bytebuffer = BufferUtils.createByteBuffer(abyte.length);
-        bytebuffer.put(abyte);
-        bytebuffer.position(0);
-        final int id = createShaderObject(type.type);
-        setShaderSource(id, bytebuffer);
-        compileShader(id);
-
-        if (getShaderCompileStatus(id) == 0)
+        return renderID;
+    }
+	
+	@Override
+    public boolean renderWorldBlock(IBlockAccess world, int x, int y, int z, Block block, int modelId, RenderBlocks renderer)
+    {
+        if (!(block instanceof BlockFluidBase))
         {
-            String s1 = StringUtils.trim(getShaderInfoLog(id, 32768));  //Const good?
-            JsonException jsonexception = new JsonException("Couldn\'t compile " + type.ext + " program: " + s1);
-            jsonexception.func_151381_b(resourcelocation.getResourcePath());
-            throw jsonexception;
+            return false;
+        }
+        
+        if (Controller.waterlevel <= y)
+        {
+        	return false;
         }
 
-        return id;
-    }
-	
-//	public static int func_153175_a(int p_153175_0_, int p_153175_1_)
-//    {
-//        return field_153214_y ? ARBShaderObjects.glGetObjectParameteriARB(p_153175_0_, p_153175_1_) : GL20.glGetProgrami(p_153175_0_, p_153175_1_);
-//    }
-//
-//    public static void func_153178_b(int p_153178_0_, int p_153178_1_)
-//    {
-//        if (field_153214_y)
-//        {
-//            ARBShaderObjects.glAttachObjectARB(p_153178_0_, p_153178_1_);
-//        }
-//        else
-//        {
-//            GL20.glAttachShader(p_153178_0_, p_153178_1_);
-//        }
-//    }
-//
-//    public static void func_153180_a(int p_153180_0_)
-//    {
-//        if (field_153214_y)
-//        {
-//            ARBShaderObjects.glDeleteObjectARB(p_153180_0_);
-//        }
-//        else
-//        {
-//            GL20.glDeleteShader(p_153180_0_);
-//        }
-//    }
+        Tessellator tessellator = Tessellator.instance;
+        int color = block.colorMultiplier(world, x, y, z);
+        float red = (color >> 16 & 255) / 255.0F;
+        float green = (color >> 8 & 255) / 255.0F;
+        float blue = (color & 255) / 255.0F;
+        
+        Block waterBlock = Block.getBlockFromName("water");
+        BlockFluidBase theFluid = (BlockFluidBase) block;
+        int densityDir = -1;
+        int bMeta = world.getBlockMetadata(x, y, z);
 
-    private static int createShaderObject(int type)
-    {
-        return ARB_ENABLED ? ARBShaderObjects.glCreateShaderObjectARB(type) : GL20.glCreateShader(type);
-    }
+        boolean renderTop = Controller.waterlevel >= y && Controller.waterlevel < y + 1;
 
-    private static void setShaderSource(int shaderID, ByteBuffer buffer)
-    {
-        if (ARB_ENABLED)
+        boolean renderBottom = block.shouldSideBeRendered(world, x, y + densityDir, z, 0) && world.getBlock(x, y + densityDir, z) != theFluid;
+
+        boolean[] renderSides = new boolean[]
         {
-            ARBShaderObjects.glShaderSourceARB(shaderID, buffer);
+            block.shouldSideBeRendered(world, x, y, z - 1, 2), 
+            block.shouldSideBeRendered(world, x, y, z + 1, 3),
+            block.shouldSideBeRendered(world, x - 1, y, z, 4), 
+            block.shouldSideBeRendered(world, x + 1, y, z, 5)
+        };
+
+        if (!renderTop && !renderBottom && !renderSides[0] && !renderSides[1] && !renderSides[2] && !renderSides[3])
+        {
+            return false;
         }
         else
         {
-            GL20.glShaderSource(shaderID, buffer);
+            boolean rendered = false;
+            double heightNW, heightSW, heightSE, heightNE;
+            float flow = getFluidHeightForRender(world, x, y, z, theFluid);
+
+            if (flow > 0)
+            {	
+                heightNW = flow;
+                heightSW = flow;
+                heightSE = flow;
+                heightNE = flow;
+            }
+            else
+            {
+                return false;
+            }
+            
+            final float LIGHT_Y_NEG = 0.5F;
+            final float LIGHT_Y_POS = 1.0F;
+            final float LIGHT_XZ_NEG = 0.8F;
+            final float LIGHT_XZ_POS = 0.6F;
+            final double RENDER_OFFSET = 0.0010000000474974513D;
+            
+            if (renderer.renderAllFaces || renderTop)
+            {
+                rendered = true;
+                IIcon iconStill = waterBlock.getIcon(1, bMeta);
+
+                heightNW -= RENDER_OFFSET;
+                heightSW -= RENDER_OFFSET;
+                heightSE -= RENDER_OFFSET;
+                heightNE -= RENDER_OFFSET;
+
+                double u1, u2, u3, u4, v1, v2, v3, v4;
+
+                u2 = iconStill.getInterpolatedU(0.0D);
+                v2 = iconStill.getInterpolatedV(0.0D);
+                u1 = u2;
+                v1 = iconStill.getInterpolatedV(16.0D);
+                u4 = iconStill.getInterpolatedU(16.0D);
+                v4 = v1;
+                u3 = u4;
+                v3 = v2;
+
+                tessellator.setBrightness(block.getMixedBrightnessForBlock(world, x, y, z));
+                tessellator.setColorOpaque_F(LIGHT_Y_POS * red, LIGHT_Y_POS * green, LIGHT_Y_POS * blue);
+
+                tessellator.addVertexWithUV(x + 0, y + heightNW, z + 0, u2, v2);
+                tessellator.addVertexWithUV(x + 0, y + heightSW, z + 1, u1, v1);
+                tessellator.addVertexWithUV(x + 1, y + heightSE, z + 1, u4, v4);
+                tessellator.addVertexWithUV(x + 1, y + heightNE, z + 0, u3, v3);
+                
+                tessellator.addVertexWithUV(x + 0, y + heightNW, z + 0, u2, v2);
+                tessellator.addVertexWithUV(x + 1, y + heightNE, z + 0, u3, v3);
+                tessellator.addVertexWithUV(x + 1, y + heightSE, z + 1, u4, v4);
+                tessellator.addVertexWithUV(x + 0, y + heightSW, z + 1, u1, v1);
+            }
+
+            if (renderer.renderAllFaces || renderBottom)
+            {
+                rendered = true;
+                tessellator.setBrightness(block.getMixedBrightnessForBlock(world, x, y - 1, z));
+                tessellator.setColorOpaque_F(LIGHT_Y_NEG * red, LIGHT_Y_NEG * green, LIGHT_Y_NEG * blue);
+                renderer.renderFaceYNeg(block, x, y + RENDER_OFFSET, z, waterBlock.getIcon(0, bMeta));
+            }
+
+            for (int side = 0; side < 4; ++side)
+            {
+                int x2 = x;
+                int z2 = z;
+
+                switch (side)
+                {
+                    case 0: --z2; break;
+                    case 1: ++z2; break;
+                    case 2: --x2; break;
+                    case 3: ++x2; break;
+                }
+
+                IIcon iconFlow = waterBlock.getIcon(side + 2, bMeta);
+                if (renderer.renderAllFaces || renderSides[side])
+                {
+                    rendered = true;
+
+                    double ty1;
+                    double tx1;
+                    double ty2;
+                    double tx2;
+                    double tz1;
+                    double tz2;
+
+                    if (side == 0)
+                    {
+                        ty1 = heightNW;
+                        ty2 = heightNE;
+                        tx1 = x;
+                        tx2 = x + 1;
+                        tz1 = z + RENDER_OFFSET;
+                        tz2 = z + RENDER_OFFSET;
+                    }
+                    else if (side == 1)
+                    {
+                        ty1 = heightSE;
+                        ty2 = heightSW;
+                        tx1 = x + 1;
+                        tx2 = x;
+                        tz1 = z + 1 - RENDER_OFFSET;
+                        tz2 = z + 1 - RENDER_OFFSET;
+                    }
+                    else if (side == 2)
+                    {
+                        ty1 = heightSW;
+                        ty2 = heightNW;
+                        tx1 = x + RENDER_OFFSET;
+                        tx2 = x + RENDER_OFFSET;
+                        tz1 = z + 1;
+                        tz2 = z;
+                    }
+                    else
+                    {
+                        ty1 = heightNE;
+                        ty2 = heightSE;
+                        tx1 = x + 1 - RENDER_OFFSET;
+                        tx2 = x + 1 - RENDER_OFFSET;
+                        tz1 = z;
+                        tz2 = z + 1;
+                    }
+
+                    float u1Flow = iconFlow.getInterpolatedU(0.0D);
+                    float u2Flow = iconFlow.getInterpolatedU(8.0D);
+                    float v1Flow = iconFlow.getInterpolatedV((1.0D - ty1) * 16.0D * 0.5D);
+                    float v2Flow = iconFlow.getInterpolatedV((1.0D - ty2) * 16.0D * 0.5D);
+                    float v3Flow = iconFlow.getInterpolatedV(8.0D);
+                    tessellator.setBrightness(block.getMixedBrightnessForBlock(world, x2, y, z2));
+                    float sideLighting = 1.0F;
+
+                    if (side < 2)
+                    {
+                        sideLighting = LIGHT_XZ_NEG;
+                    }
+                    else
+                    {
+                        sideLighting = LIGHT_XZ_POS;
+                    }
+
+                    tessellator.setColorOpaque_F(LIGHT_Y_POS * sideLighting * red, LIGHT_Y_POS * sideLighting * green, LIGHT_Y_POS * sideLighting * blue);
+
+                    tessellator.addVertexWithUV(tx1, y + ty1, tz1, u1Flow, v1Flow);
+                    tessellator.addVertexWithUV(tx2, y + ty2, tz2, u2Flow, v2Flow);
+                    tessellator.addVertexWithUV(tx2, y + 0, tz2, u2Flow, v3Flow);
+                    tessellator.addVertexWithUV(tx1, y + 0, tz1, u1Flow, v3Flow);
+
+                    tessellator.addVertexWithUV(tx1, y + ty1, tz1, u1Flow, v1Flow);
+                    tessellator.addVertexWithUV(tx1, y + 0, tz1, u1Flow, v3Flow);
+                    tessellator.addVertexWithUV(tx2, y + 0, tz2, u2Flow, v3Flow);
+                    tessellator.addVertexWithUV(tx2, y + ty2, tz2, u2Flow, v2Flow);
+                }
+            }
+            renderer.renderMinY = 0;
+            renderer.renderMaxY = 1;
+            return rendered;
         }
     }
-
-    private static void compileShader(int shaderID)
-    {
-        if (ARB_ENABLED)
-        {
-            ARBShaderObjects.glCompileShaderARB(shaderID);
-        }
-        else
-        {
-            GL20.glCompileShader(shaderID);
-        }
-    }
-    
-    private static int getShaderCompileStatus(int shaderID)
-    {
-    	return ARB_ENABLED ? getShaderStatus(shaderID, ARBShaderObjects.GL_OBJECT_COMPILE_STATUS_ARB) : getShaderStatus(shaderID, GL20.GL_COMPILE_STATUS);
-    }
-
-    private static int getShaderStatus(int shaderID, int statusID)
-    {
-        return ARB_ENABLED ? ARBShaderObjects.glGetObjectParameteriARB(shaderID, statusID) : GL20.glGetShaderi(shaderID, statusID);
-    }
-
-    private static String getShaderInfoLog(int shaderID, int logID)
-    {
-        return ARB_ENABLED ? ARBShaderObjects.glGetInfoLogARB(shaderID, logID) : GL20.glGetShaderInfoLog(shaderID, logID);
-    }
-
-//    public static String func_153166_e(int p_153166_0_, int p_153166_1_)
-//    {
-//        return field_153214_y ? ARBShaderObjects.glGetInfoLogARB(p_153166_0_, p_153166_1_) : GL20.glGetProgramInfoLog(p_153166_0_, p_153166_1_);
-//    }
-//
-//    public static void func_153161_d(int p_153161_0_)
-//    {
-//        if (field_153214_y)
-//        {
-//            ARBShaderObjects.glUseProgramObjectARB(p_153161_0_);
-//        }
-//        else
-//        {
-//            GL20.glUseProgram(p_153161_0_);
-//        }
-//    }
-//
-//    public static int func_153183_d()
-//    {
-//        return field_153214_y ? ARBShaderObjects.glCreateProgramObjectARB() : GL20.glCreateProgram();
-//    }
-//
-//    public static void func_153187_e(int p_153187_0_)
-//    {
-//        if (field_153214_y)
-//        {
-//            ARBShaderObjects.glDeleteObjectARB(p_153187_0_);
-//        }
-//        else
-//        {
-//            GL20.glDeleteProgram(p_153187_0_);
-//        }
-//    }
-//
-//    public static void func_153179_f(int p_153179_0_)
-//    {
-//        if (field_153214_y)
-//        {
-//            ARBShaderObjects.glLinkProgramARB(p_153179_0_);
-//        }
-//        else
-//        {
-//            GL20.glLinkProgram(p_153179_0_);
-//        }
-//    }
-//
-//    public static int func_153194_a(int p_153194_0_, CharSequence p_153194_1_)
-//    {
-//        return field_153214_y ? ARBShaderObjects.glGetUniformLocationARB(p_153194_0_, p_153194_1_) : GL20.glGetUniformLocation(p_153194_0_, p_153194_1_);
-//    }
-//
-//    public static void func_153181_a(int p_153181_0_, IntBuffer p_153181_1_)
-//    {
-//        if (field_153214_y)
-//        {
-//            ARBShaderObjects.glUniform1ARB(p_153181_0_, p_153181_1_);
-//        }
-//        else
-//        {
-//            GL20.glUniform1(p_153181_0_, p_153181_1_);
-//        }
-//    }
-//
-//    public static void func_153163_f(int p_153163_0_, int p_153163_1_)
-//    {
-//        if (field_153214_y)
-//        {
-//            ARBShaderObjects.glUniform1iARB(p_153163_0_, p_153163_1_);
-//        }
-//        else
-//        {
-//            GL20.glUniform1i(p_153163_0_, p_153163_1_);
-//        }
-//    }
-//
-//    public static void func_153168_a(int p_153168_0_, FloatBuffer p_153168_1_)
-//    {
-//        if (field_153214_y)
-//        {
-//            ARBShaderObjects.glUniform1ARB(p_153168_0_, p_153168_1_);
-//        }
-//        else
-//        {
-//            GL20.glUniform1(p_153168_0_, p_153168_1_);
-//        }
-//    }
-//
-//    public static void func_153182_b(int p_153182_0_, IntBuffer p_153182_1_)
-//    {
-//        if (field_153214_y)
-//        {
-//            ARBShaderObjects.glUniform2ARB(p_153182_0_, p_153182_1_);
-//        }
-//        else
-//        {
-//            GL20.glUniform2(p_153182_0_, p_153182_1_);
-//        }
-//    }
-//
-//    public static void func_153177_b(int p_153177_0_, FloatBuffer p_153177_1_)
-//    {
-//        if (field_153214_y)
-//        {
-//            ARBShaderObjects.glUniform2ARB(p_153177_0_, p_153177_1_);
-//        }
-//        else
-//        {
-//            GL20.glUniform2(p_153177_0_, p_153177_1_);
-//        }
-//    }
-//
-//    public static void func_153192_c(int p_153192_0_, IntBuffer p_153192_1_)
-//    {
-//        if (field_153214_y)
-//        {
-//            ARBShaderObjects.glUniform3ARB(p_153192_0_, p_153192_1_);
-//        }
-//        else
-//        {
-//            GL20.glUniform3(p_153192_0_, p_153192_1_);
-//        }
-//    }
-//
-//    public static void func_153191_c(int p_153191_0_, FloatBuffer p_153191_1_)
-//    {
-//        if (field_153214_y)
-//        {
-//            ARBShaderObjects.glUniform3ARB(p_153191_0_, p_153191_1_);
-//        }
-//        else
-//        {
-//            GL20.glUniform3(p_153191_0_, p_153191_1_);
-//        }
-//    }
-//
-//    public static void func_153162_d(int p_153162_0_, IntBuffer p_153162_1_)
-//    {
-//        if (field_153214_y)
-//        {
-//            ARBShaderObjects.glUniform4ARB(p_153162_0_, p_153162_1_);
-//        }
-//        else
-//        {
-//            GL20.glUniform4(p_153162_0_, p_153162_1_);
-//        }
-//    }
-//
-//    public static void func_153159_d(int p_153159_0_, FloatBuffer p_153159_1_)
-//    {
-//        if (field_153214_y)
-//        {
-//            ARBShaderObjects.glUniform4ARB(p_153159_0_, p_153159_1_);
-//        }
-//        else
-//        {
-//            GL20.glUniform4(p_153159_0_, p_153159_1_);
-//        }
-//    }
-//
-//    public static void func_153173_a(int p_153173_0_, boolean p_153173_1_, FloatBuffer p_153173_2_)
-//    {
-//        if (field_153214_y)
-//        {
-//            ARBShaderObjects.glUniformMatrix2ARB(p_153173_0_, p_153173_1_, p_153173_2_);
-//        }
-//        else
-//        {
-//            GL20.glUniformMatrix2(p_153173_0_, p_153173_1_, p_153173_2_);
-//        }
-//    }
-//
-//    public static void func_153189_b(int p_153189_0_, boolean p_153189_1_, FloatBuffer p_153189_2_)
-//    {
-//        if (field_153214_y)
-//        {
-//            ARBShaderObjects.glUniformMatrix3ARB(p_153189_0_, p_153189_1_, p_153189_2_);
-//        }
-//        else
-//        {
-//            GL20.glUniformMatrix3(p_153189_0_, p_153189_1_, p_153189_2_);
-//        }
-//    }
-//
-//    public static void func_153160_c(int p_153160_0_, boolean p_153160_1_, FloatBuffer p_153160_2_)
-//    {
-//        if (field_153214_y)
-//        {
-//            ARBShaderObjects.glUniformMatrix4ARB(p_153160_0_, p_153160_1_, p_153160_2_);
-//        }
-//        else
-//        {
-//            GL20.glUniformMatrix4(p_153160_0_, p_153160_1_, p_153160_2_);
-//        }
-//    }
-//
-//    public static int func_153164_b(int p_153164_0_, CharSequence p_153164_1_)
-//    {
-//        return field_153214_y ? ARBVertexShader.glGetAttribLocationARB(p_153164_0_, p_153164_1_) : GL20.glGetAttribLocation(p_153164_0_, p_153164_1_);
-//    }
 }
