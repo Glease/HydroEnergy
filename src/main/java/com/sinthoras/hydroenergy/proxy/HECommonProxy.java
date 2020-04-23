@@ -3,12 +3,11 @@ package com.sinthoras.hydroenergy.proxy;
 import com.sinthoras.hydroenergy.HE;
 import com.sinthoras.hydroenergy.HECommand;
 import com.sinthoras.hydroenergy.HEEventHandlerFML;
+import com.sinthoras.hydroenergy.controller.HEController;
 import com.sinthoras.hydroenergy.controller.HEControllerBlock;
 import com.sinthoras.hydroenergy.hewater.HEWater;
-import com.sinthoras.hydroenergy.hewater.HEWaterRenderer;
 import com.sinthoras.hydroenergy.network.HEWaterUpdate;
 
-import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
@@ -29,15 +28,11 @@ public class HECommonProxy {
 	
 	// load "Do your mod setup. Build whatever data structures you care about. Register recipes."
 	public void fmlLifeCycleEvent(FMLPreInitializationEvent event) {
-		HE.LOG = event.getModLog();
-
     	HE.network = NetworkRegistry.INSTANCE.newSimpleChannel("hydroenergy");
     	HE.network.registerMessage(HEWaterUpdate.Handler.class, HEWaterUpdate.class, 0, Side.CLIENT);
 
     	GameRegistry.registerBlock(water, water.getUnlocalizedName());
 		GameRegistry.registerBlock(controller, controller.getUnlocalizedName());
-
-    	RenderingRegistry.registerBlockHandler(HEWaterRenderer.instance);
 	}
 	
 	// load "Do your mod setup. Build whatever data structures you care about. Register recipes."
@@ -54,8 +49,10 @@ public class HECommonProxy {
 		
 	}
 
+	// register server commands in this event handler
 	public void fmlLifeCycleEvent(FMLServerStartingEvent event) {
 		event.registerServerCommand(new HECommand());
+		HEController.onStartup();
 	}
 	
 	public void fmlLifeCycleEvent(FMLServerStartedEvent event) {
@@ -63,7 +60,7 @@ public class HECommonProxy {
 	}
 	
 	public void fmlLifeCycleEvent(FMLServerStoppingEvent event) {
-		
+		HEController.onShutdown();
 	}
 	
 	public void fmlLifeCycleEvent(FMLServerStoppedEvent event) {

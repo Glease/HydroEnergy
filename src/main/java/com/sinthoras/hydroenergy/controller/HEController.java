@@ -46,12 +46,12 @@ public class HEController {
 		}
 	}
 	
-	public static void save()
+	public static void onShutdown()
 	{
 		
 	}
 	
-	public static void load()
+	public static void onStartup()
 	{
 		
 	}

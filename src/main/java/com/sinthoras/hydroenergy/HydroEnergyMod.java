@@ -24,7 +24,8 @@ public class HydroEnergyMod
 	// preInit "Run before anything else. Read your config, create blocks, items, 
 	// etc, and register them with the GameRegistry."
 	public void fmlLifeCycleEvent(FMLPreInitializationEvent event) 
-	{    
+	{
+    	HE.LOG = event.getModLog();
 		HE.LOG.info("preInit()"+event.getModMetadata().name);
     	proxy.fmlLifeCycleEvent(event);
 	}
