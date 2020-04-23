@@ -34,20 +34,9 @@ public class Main
     @EventHandler
     public void pre(FMLPreInitializationEvent event)
     {
-    	MinecraftForge.EVENT_BUS.register(new HEWaterRenderer());
     	MinecraftForge.EVENT_BUS.register(new Controller());
     	GameRegistry.registerBlock(water, water.getUnlocalizedName());
     	RenderingRegistry.registerBlockHandler(HEWaterFakeRenderer.instance);
-    	
-    	try {
-			HEWaterRenderer.loadShader("hewater", ShaderType.VERTEX_SHADER);
-		} catch (JsonException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
     }
     
     @EventHandler

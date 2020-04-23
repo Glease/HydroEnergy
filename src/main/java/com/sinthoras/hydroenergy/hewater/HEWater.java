@@ -1,5 +1,8 @@
 package com.sinthoras.hydroenergy.hewater;
 
+import com.sinthoras.hydroenergy.Main;
+import com.sinthoras.hydroenergy.controller.Controller;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.creativetab.CreativeTabs;
@@ -17,6 +20,7 @@ public class HEWater extends BlockFluidBase {
 		setHardness(100.0F);
 		setLightOpacity(3);
 		setBlockName("water");
+		setBlockTextureName("minecraft:water_still");
 		setTickRandomly(false);
 		setCreativeTab(CreativeTabs.tabBlock);
 	}
@@ -55,25 +59,21 @@ public class HEWater extends BlockFluidBase {
 	@Override
     public boolean shouldSideBeRendered(IBlockAccess world, int x, int y, int z, int side)
     {
-		Block block;
-		switch(side)
-		{
-		case 1:
-			block = world.getBlock(x, y, z);
-			if(block == this)
-				return false;
-			return true;
-		case 6:
-			return false;
-		default:
-			return false; //TODO handle flowing water and glass sides
-		}
-//		block = world.getBlock(x, y, z);
-//        if (block != this)
-//        {
-//            return !block.isOpaqueCube();
-//        }
-//        return block.getMaterial() == this.getMaterial() ? false : super.shouldSideBeRendered(world, x, y, z, side);
+		Block block = world.getBlock(x, y, z);
+        if (block != this)
+        {
+            return !block.isOpaqueCube();
+        }
+        return false;
     }
-
+	
+	@Override
+	public int getLightOpacity(IBlockAccess world, int x, int y, int z)
+    {
+		if (Controller.waterlevel <= y)
+        {
+        	return 0;
+        }
+        return getLightOpacity();
+    }
 }
