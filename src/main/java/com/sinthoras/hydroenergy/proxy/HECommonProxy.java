@@ -5,6 +5,7 @@ import com.sinthoras.hydroenergy.HECommand;
 import com.sinthoras.hydroenergy.HEEventHandlerFML;
 import com.sinthoras.hydroenergy.controller.HEController;
 import com.sinthoras.hydroenergy.controller.HEControllerBlock;
+import com.sinthoras.hydroenergy.controller.HEControllerTileEntity;
 import com.sinthoras.hydroenergy.hewater.HEWater;
 import com.sinthoras.hydroenergy.network.HEWaterUpdate;
 
@@ -26,13 +27,16 @@ public class HECommonProxy {
 	public static HEWater water = new HEWater();
 	public static HEControllerBlock controller = new HEControllerBlock();
 	
-	// load "Do your mod setup. Build whatever data structures you care about. Register recipes."
+	// preInit "Run before anything else. Read your config, create blocks, items, 
+	// etc, and register them with the GameRegistry."
 	public void fmlLifeCycleEvent(FMLPreInitializationEvent event) {
     	HE.network = NetworkRegistry.INSTANCE.newSimpleChannel("hydroenergy");
     	HE.network.registerMessage(HEWaterUpdate.Handler.class, HEWaterUpdate.class, 0, Side.CLIENT);
 
     	GameRegistry.registerBlock(water, water.getUnlocalizedName());
 		GameRegistry.registerBlock(controller, controller.getUnlocalizedName());
+		
+		GameRegistry.registerTileEntity(HEControllerTileEntity.class, "he_controller_tile_entity");
 	}
 	
 	// load "Do your mod setup. Build whatever data structures you care about. Register recipes."

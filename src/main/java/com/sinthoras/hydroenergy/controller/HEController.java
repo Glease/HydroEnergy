@@ -8,9 +8,11 @@ import cpw.mods.fml.common.gameevent.TickEvent.ServerTickEvent;
 public class HEController {
 
 	private static float[] waterLevels = new float[16];
-	private static int[][] coordinates = new int[16][3];
+	//private static int[][] coordinates = new int[16][3];
 	private static boolean[] placed = new boolean[16];
 	private static boolean changed = false;
+	
+	public static int max_controller = 16;
 	
 	public static void updateWaterLevel(int id, float level)
 	{
@@ -54,5 +56,29 @@ public class HEController {
 	public static void onStartup()
 	{
 		
+	}
+	
+	public static int placeControllerAndGetId()
+	{
+		for(int i=0;i<16;i++)
+			if(!placed[i])
+			{
+				placed[i] = true;
+				return i;
+			}
+		return -1;
+	}
+	
+	public static boolean canControllerBePlaced()
+	{
+		for(int i=0;i<16;i++)
+			if(!placed[i])
+				return true;
+		return false;
+	}
+	
+	public static void breakController(int id)
+	{
+		placed[id] = false;
 	}
 }
