@@ -2,6 +2,7 @@ package com.sinthoras.hydroenergy.proxy;
 
 import com.sinthoras.hydroenergy.HE;
 import com.sinthoras.hydroenergy.HECommand;
+import com.sinthoras.hydroenergy.HEEventHandlerEVENT_BUS;
 import com.sinthoras.hydroenergy.HEEventHandlerFML;
 import com.sinthoras.hydroenergy.controller.HEController;
 import com.sinthoras.hydroenergy.controller.HEControllerBlock;
@@ -21,6 +22,7 @@ import cpw.mods.fml.common.event.FMLServerStoppingEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
+import net.minecraftforge.common.MinecraftForge;
 
 public class HECommonProxy {
 	
@@ -42,6 +44,7 @@ public class HECommonProxy {
 	// load "Do your mod setup. Build whatever data structures you care about. Register recipes."
 	public void fmlLifeCycleEvent(FMLInitializationEvent event) {
 		FMLCommonHandler.instance().bus().register(new HEEventHandlerFML());
+		MinecraftForge.EVENT_BUS.register(new HEEventHandlerEVENT_BUS());
 	}
 	
 	// postInit "Handle interaction with other mods, complete your setup based on this."
@@ -56,7 +59,6 @@ public class HECommonProxy {
 	// register server commands in this event handler
 	public void fmlLifeCycleEvent(FMLServerStartingEvent event) {
 		event.registerServerCommand(new HECommand());
-		HEController.onStartup();
 	}
 	
 	public void fmlLifeCycleEvent(FMLServerStartedEvent event) {
@@ -64,7 +66,7 @@ public class HECommonProxy {
 	}
 	
 	public void fmlLifeCycleEvent(FMLServerStoppingEvent event) {
-		HEController.onShutdown();
+		
 	}
 	
 	public void fmlLifeCycleEvent(FMLServerStoppedEvent event) {

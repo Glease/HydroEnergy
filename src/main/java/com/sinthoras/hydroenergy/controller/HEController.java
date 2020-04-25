@@ -1,84 +1,101 @@
 package com.sinthoras.hydroenergy.controller;
 
-import com.sinthoras.hydroenergy.HE;
-import com.sinthoras.hydroenergy.network.HEWaterUpdate;
-
-import cpw.mods.fml.common.gameevent.TickEvent.ServerTickEvent;
+import net.minecraft.nbt.NBTTagCompound;
 
 public class HEController {
+	
+	public class tags
+	{
+		public static final String waterLevel = "wlev";
+		public static final String xCoord = "x";
+		public static final String yCoord = "y";
+		public static final String zCoord = "z";
+		public static final String placed = "plac";
+	}
 
-	private static float[] waterLevels = new float[16];
-	//private static int[][] coordinates = new int[16][3];
-	private static boolean[] placed = new boolean[16];
-	private static boolean changed = false;
+	// NBT variables
+	private float waterLevel;
+	private int xCoord;
+	private int yCoord;
+	private int zCoord;
+	private boolean placed = false;
+	
+	// Flag object to be synchronized to clients
+	private boolean requiresUpdate = false;
+
 	
 	public static int max_controller = 16;
 	
-	public static void updateWaterLevel(int id, float level)
+	public void readFromNBTFull(NBTTagCompound compound)
 	{
-		if(Math.abs(waterLevels[id] - level) >= 0.1)
-			changed = true;
-		waterLevels[id] = level;
+		waterLevel = compound.getFloat(tags.waterLevel);
+		xCoord = compound.getInteger(tags.xCoord);
+		yCoord = compound.getInteger(tags.yCoord);
+		zCoord = compound.getInteger(tags.zCoord);
+		placed = compound.getBoolean(tags.placed);
 	}
 	
-	public static void setWaterLevel(int id, float level)
+	public void writeToNBTFull(NBTTagCompound compound)
 	{
-		changed = true;
-		waterLevels[id] = level;
+		compound.setFloat(tags.waterLevel, waterLevel);
+		compound.setInteger(tags.xCoord, xCoord);
+		compound.setInteger(tags.yCoord, yCoord);
+		compound.setInteger(tags.zCoord, zCoord);
+		compound.setBoolean(tags.placed, placed);
 	}
 	
-	public static float getWaterLevel(int id)
+	// Trimmed version for what the client requires for rendering
+	public void readFromNBTNetwork(NBTTagCompound compound)
 	{
-		return waterLevels[id];
+		waterLevel = compound.getFloat(tags.waterLevel);
+		placed = compound.getBoolean(tags.placed);
 	}
 	
-	public static void onUpdateWaterLevels(float[] levels)
+	// Trimmed version for what the client requires for rendering
+	public void writeToNBTNetwork(NBTTagCompound compound)
 	{
-		waterLevels = levels;
+		compound.setFloat(tags.waterLevel, waterLevel);
+		compound.setBoolean(tags.placed, placed);
 	}
 	
-	// Every 10 seconds to check if update is necessary
-	public static void on10sTick(ServerTickEvent event)
+	public boolean transmitUpdate()
 	{
-		if (changed) {
-			HEWaterUpdate message = new HEWaterUpdate();
-			message.waterLevel = waterLevels;
-			HE.network.sendToAll(message);
-			changed = false;
+		return requiresUpdate;
+	}
+	
+	public void updateWaterLevel(float level)
+	{
+		if(Math.abs(waterLevel - level) >= 1.0f/32.0f)  // TODO: Send constant to config
+		{
+			requiresUpdate = true;
 		}
+		waterLevel = level;
 	}
 	
-	public static void onShutdown()
+	public float getWaterLevel()
 	{
-		
+		return waterLevel;
 	}
 	
-	public static void onStartup()
+	public boolean isPlaced()
 	{
-		
+		return placed;
 	}
 	
-	public static int placeControllerAndGetId()
+	public void onBreakController()
 	{
-		for(int i=0;i<16;i++)
-			if(!placed[i])
-			{
-				placed[i] = true;
-				return i;
-			}
-		return -1;
+		placed = false;
+		requiresUpdate = true;
 	}
 	
-	public static boolean canControllerBePlaced()
+	public void updateSent()
 	{
-		for(int i=0;i<16;i++)
-			if(!placed[i])
-				return true;
-		return false;
+		requiresUpdate = false;
 	}
 	
-	public static void breakController(int id)
+	public void placeController()
 	{
-		placed[id] = false;
+		placed = true;
+		requiresUpdate = true;
 	}
 }

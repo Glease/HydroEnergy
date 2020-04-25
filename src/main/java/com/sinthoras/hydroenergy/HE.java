@@ -10,8 +10,4 @@ public class HE {
     public static final String NAME = "HydroEnergy";
     public static SimpleNetworkWrapper network;
     public static Logger LOG;
-    
-    public class saveTags {
-    	public static final String max_controller = "max_controller";
-    }
 }

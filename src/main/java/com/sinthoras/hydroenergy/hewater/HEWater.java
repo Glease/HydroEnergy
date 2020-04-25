@@ -1,6 +1,7 @@
 package com.sinthoras.hydroenergy.hewater;
 
 import com.sinthoras.hydroenergy.controller.HEController;
+import com.sinthoras.hydroenergy.controller.HEDams;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -86,6 +87,6 @@ public class HEWater extends BlockFluidBase {
 		//dev only!
 		int meta = world.getBlockMetadata(x, y, z);
 		meta = 0;
-		return HEController.getWaterLevel(meta);
+		return HEDams.instance.getWaterLevel(meta);
 	}
 }
