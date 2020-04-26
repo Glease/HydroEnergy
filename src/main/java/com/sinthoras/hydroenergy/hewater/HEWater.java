@@ -1,6 +1,5 @@
 package com.sinthoras.hydroenergy.hewater;
 
-import com.sinthoras.hydroenergy.controller.HEController;
 import com.sinthoras.hydroenergy.controller.HEDams;
 
 import net.minecraft.block.Block;
@@ -13,6 +12,8 @@ import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 
 public class HEWater extends BlockFluidBase {
+	
+	public static int controllerId;
 
 	public HEWater() {
 		super(FluidRegistry.WATER, Material.water);

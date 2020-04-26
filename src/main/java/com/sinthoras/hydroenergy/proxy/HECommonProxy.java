@@ -4,7 +4,6 @@ import com.sinthoras.hydroenergy.HE;
 import com.sinthoras.hydroenergy.HECommand;
 import com.sinthoras.hydroenergy.HEEventHandlerEVENT_BUS;
 import com.sinthoras.hydroenergy.HEEventHandlerFML;
-import com.sinthoras.hydroenergy.controller.HEController;
 import com.sinthoras.hydroenergy.controller.HEControllerBlock;
 import com.sinthoras.hydroenergy.controller.HEControllerTileEntity;
 import com.sinthoras.hydroenergy.hewater.HEWater;
@@ -22,20 +21,44 @@ import cpw.mods.fml.common.event.FMLServerStoppingEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
+import net.bytebuddy.ByteBuddy;
+import net.bytebuddy.implementation.FixedValue;
+import net.bytebuddy.matcher.ElementMatchers;
+import net.minecraft.block.Block;
 import net.minecraftforge.common.MinecraftForge;
 
 public class HECommonProxy {
 	
-	public static HEWater water = new HEWater();
+	public static HEWater[] water_instances;
 	public static HEControllerBlock controller = new HEControllerBlock();
 	
 	// preInit "Run before anything else. Read your config, create blocks, items, 
 	// etc, and register them with the GameRegistry."
+	@java.lang.SuppressWarnings("static-access")
 	public void fmlLifeCycleEvent(FMLPreInitializationEvent event) {
     	HE.network = NetworkRegistry.INSTANCE.newSimpleChannel("hydroenergy");
     	HE.network.registerMessage(HEWaterUpdate.Handler.class, HEWaterUpdate.class, 0, Side.CLIENT);
 
-    	GameRegistry.registerBlock(water, water.getUnlocalizedName());
+    	water_instances = new HEWater[16];  // TODO: move to config
+    	for(int i=0;i<16;i++)  // TODO: move to config
+    	{
+    		try
+    		{
+				Class<?> dynamic = new ByteBuddy()
+						.subclass(HEWater.class)
+						.field(ElementMatchers.named("controllerId"))
+						.value(i)
+						.make()
+						.load(getClass().getClassLoader())
+						.getLoaded();
+				
+	    		GameRegistry.registerBlock((Block) dynamic.newInstance(), "fake_water" + i);
+			} catch (InstantiationException e) {
+				e.printStackTrace();
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+			}
+    	}
 		GameRegistry.registerBlock(controller, controller.getUnlocalizedName());
 		
 		GameRegistry.registerTileEntity(HEControllerTileEntity.class, "he_controller_tile_entity");
