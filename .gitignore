@@ -1,43 +1,9 @@
-# eclipse
-bin
-*.launch
+.gradle
 .settings
-.metadata
+build
+eclipse
+gradle
 .classpath
 .project
-# idea
-out
-*.ipr
-*.iws
-*.iml
-.idea
-# gradle
-build
-.gradle
-# other
-eclipse
-run
-saves/
-config/
-options.txt
-usercache.json
-usernamecache.json
-logs/
-crash-reports/
-*.launch
-# Minecraft
-minecraft
-options.txt
-crash-reports/
-logs/
-saves/
-screenshots/
 gradlew
 gradlew.bat
-CREDITS-fml.txt
-LICENSE-fml.txt
-MinecraftForge-Credits.txt
-MinecraftForge-License.txt
-forge-1.7.10-10.13.4.1614-1.7.10-changelog.txt
-gradle/
-README.txt
