@@ -22,9 +22,7 @@ import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import net.bytebuddy.ByteBuddy;
-import net.bytebuddy.implementation.FixedValue;
 import net.bytebuddy.matcher.ElementMatchers;
-import net.minecraft.block.Block;
 import net.minecraftforge.common.MinecraftForge;
 
 public class HECommonProxy {
@@ -44,15 +42,15 @@ public class HECommonProxy {
     	{
     		try
     		{
-				Class<?> dynamic = new ByteBuddy()
+				water_instances[i] = new ByteBuddy()
 						.subclass(HEWater.class)
 						.field(ElementMatchers.named("controllerId"))
 						.value(i)
 						.make()
 						.load(getClass().getClassLoader())
-						.getLoaded();
-				
-	    		GameRegistry.registerBlock((Block) dynamic.newInstance(), "fake_water" + i);
+						.getLoaded()
+						.newInstance();
+	    		GameRegistry.registerBlock(water_instances[i], water_instances[i].getUnlocalizedName() + i);
 			} catch (InstantiationException e) {
 				e.printStackTrace();
 			} catch (IllegalAccessException e) {
