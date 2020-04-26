@@ -1,7 +1,5 @@
 package com.sinthoras.hydroenergy.proxy;
 
-import org.objectweb.asm.Opcodes;
-
 import com.sinthoras.hydroenergy.HE;
 import com.sinthoras.hydroenergy.HECommand;
 import com.sinthoras.hydroenergy.HEEventHandlerEVENT_BUS;
@@ -26,7 +24,6 @@ import cpw.mods.fml.relauncher.Side;
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.implementation.FixedValue;
 import net.bytebuddy.matcher.ElementMatchers;
-import net.minecraft.block.Block;
 import net.minecraftforge.common.MinecraftForge;
 
 public class HECommonProxy {
@@ -36,7 +33,6 @@ public class HECommonProxy {
 	
 	// preInit "Run before anything else. Read your config, create blocks, items, 
 	// etc, and register them with the GameRegistry."
-	@java.lang.SuppressWarnings("static-access")
 	public void fmlLifeCycleEvent(FMLPreInitializationEvent event) {
     	HE.network = NetworkRegistry.INSTANCE.newSimpleChannel("hydroenergy");
     	HE.network.registerMessage(HEWaterUpdate.Handler.class, HEWaterUpdate.class, 0, Side.CLIENT);
@@ -47,21 +43,23 @@ public class HECommonProxy {
     	{
     		try
     		{
-				Class<?> dynamic = new ByteBuddy()
+    			water_instances[i] = new ByteBuddy()
 						.subclass(HEWater.class)
 						.name("HEWater" + i)
 						.method(ElementMatchers.named("getId"))
 						.intercept(FixedValue.value(i))
 						.make()
 						.load(getClass().getClassLoader())
-						.getLoaded();
-				GameRegistry.registerBlock((Block) dynamic.newInstance(), /*water_instances[i].getUnlocalizedName()*/"hewater" + i);
+						.getLoaded()
+						.newInstance();
+				GameRegistry.registerBlock(water_instances[i], water_instances[i].getUnlocalizedName() + i);
 			} catch (InstantiationException e) {
 				e.printStackTrace();
 			} catch (IllegalAccessException e) {
 				e.printStackTrace();
 			}
     	}
+    	
 		GameRegistry.registerBlock(controller, controller.getUnlocalizedName());
 		
 		GameRegistry.registerTileEntity(HEControllerTileEntity.class, "he_controller_tile_entity");

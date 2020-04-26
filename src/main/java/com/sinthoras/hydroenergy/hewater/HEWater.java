@@ -13,6 +13,8 @@ import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 
 public class HEWater extends BlockFluidBase {
+	
+	public int id;
 
 	public HEWater() {
 		super(FluidRegistry.WATER, Material.water);
@@ -23,6 +25,7 @@ public class HEWater extends BlockFluidBase {
 		setTickRandomly(false);
 		setCreativeTab(CreativeTabs.tabBlock);
 		HE.LOG.info("Water created " + getId());
+		id = getId();
 	}
 
 	@Override

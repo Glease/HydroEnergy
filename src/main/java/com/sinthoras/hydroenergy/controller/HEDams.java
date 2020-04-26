@@ -4,7 +4,6 @@ import com.sinthoras.hydroenergy.HE;
 import com.sinthoras.hydroenergy.network.HEWaterUpdate;
 
 import cpw.mods.fml.common.gameevent.TickEvent.ServerTickEvent;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldSavedData;
