@@ -1,5 +1,7 @@
 package com.sinthoras.hydroenergy.proxy;
 
+import org.objectweb.asm.Opcodes;
+
 import com.sinthoras.hydroenergy.HE;
 import com.sinthoras.hydroenergy.HECommand;
 import com.sinthoras.hydroenergy.HEEventHandlerEVENT_BUS;
@@ -22,7 +24,9 @@ import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import net.bytebuddy.ByteBuddy;
+import net.bytebuddy.implementation.FixedValue;
 import net.bytebuddy.matcher.ElementMatchers;
+import net.minecraft.block.Block;
 import net.minecraftforge.common.MinecraftForge;
 
 public class HECommonProxy {
@@ -37,20 +41,21 @@ public class HECommonProxy {
     	HE.network = NetworkRegistry.INSTANCE.newSimpleChannel("hydroenergy");
     	HE.network.registerMessage(HEWaterUpdate.Handler.class, HEWaterUpdate.class, 0, Side.CLIENT);
 
+    	HE.LOG.info("The subsequent " + 16 + " liquid errors are intendend. Please ignore...");  // TODO: move to config
     	water_instances = new HEWater[16];  // TODO: move to config
     	for(int i=0;i<16;i++)  // TODO: move to config
     	{
     		try
     		{
-				water_instances[i] = new ByteBuddy()
+				Class<?> dynamic = new ByteBuddy()
 						.subclass(HEWater.class)
-						.field(ElementMatchers.named("controllerId"))
-						.value(i)
+						.name("HEWater" + i)
+						.method(ElementMatchers.named("getId"))
+						.intercept(FixedValue.value(i))
 						.make()
 						.load(getClass().getClassLoader())
-						.getLoaded()
-						.newInstance();
-	    		GameRegistry.registerBlock(water_instances[i], water_instances[i].getUnlocalizedName() + i);
+						.getLoaded();
+				GameRegistry.registerBlock((Block) dynamic.newInstance(), /*water_instances[i].getUnlocalizedName()*/"hewater" + i);
 			} catch (InstantiationException e) {
 				e.printStackTrace();
 			} catch (IllegalAccessException e) {

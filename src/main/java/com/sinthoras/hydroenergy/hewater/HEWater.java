@@ -1,5 +1,6 @@
 package com.sinthoras.hydroenergy.hewater;
 
+import com.sinthoras.hydroenergy.HE;
 import com.sinthoras.hydroenergy.controller.HEDams;
 
 import net.minecraft.block.Block;
@@ -12,8 +13,6 @@ import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 
 public class HEWater extends BlockFluidBase {
-	
-	public static int controllerId;
 
 	public HEWater() {
 		super(FluidRegistry.WATER, Material.water);
@@ -23,11 +22,18 @@ public class HEWater extends BlockFluidBase {
 		setBlockTextureName("minecraft:water_still");
 		setTickRandomly(false);
 		setCreativeTab(CreativeTabs.tabBlock);
+		HE.LOG.info("Water created " + getId());
 	}
 
 	@Override
 	public FluidStack drain(World world, int x, int y, int z, boolean doDrain) {
 		return null;
+	}
+	
+	// Will be overwritten by ByteBuddy!
+	public int getId()
+	{
+		return -1;
 	}
 
 	@Override
@@ -84,10 +90,6 @@ public class HEWater extends BlockFluidBase {
 	
 	public float getWaterLevel(IBlockAccess world, int x, int y, int z)
 	{
-		// return HEController.getWaterLevel(world.getBlockMetadata(x, y, z));
-		//dev only!
-		int meta = world.getBlockMetadata(x, y, z);
-		meta = 0;
-		return HEDams.instance.getWaterLevel(meta);
+		return HEDams.instance.getWaterLevel(getId());
 	}
 }
