@@ -1,5 +1,7 @@
 package com.sinthoras.hydroenergy.hewater;
 
+import com.sinthoras.hydroenergy.HE;
+
 import cpw.mods.fml.client.registry.RenderingRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;
@@ -47,7 +49,8 @@ public class HEWaterRenderer extends RenderBlockFluid {
         }
         
         HEWater water = (HEWater) block;
-        if (water.getWaterLevel(world, x, y, z) <= y)
+        HERenderManager.instance.addBlock(x, y, z, water.getId());
+        if (water.getRenderedWaterLevel(world, x, y, z) < y)
         {
         	return false;
         }

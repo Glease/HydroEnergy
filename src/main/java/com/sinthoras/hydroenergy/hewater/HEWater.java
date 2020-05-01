@@ -24,7 +24,7 @@ public class HEWater extends BlockFluidBase {
 		setBlockTextureName("minecraft:water_still");
 		setTickRandomly(false);
 		setCreativeTab(CreativeTabs.tabBlock);
-		HE.LOG.info("Water created " + getId());
+		//HE.LOG.info("Water created " + getId());
 		id = getId();
 	}
 
@@ -36,7 +36,7 @@ public class HEWater extends BlockFluidBase {
 	// Will be overwritten by ByteBuddy!
 	public int getId()
 	{
-		return -1;
+		return 0;
 	}
 
 	@Override
@@ -94,5 +94,10 @@ public class HEWater extends BlockFluidBase {
 	public float getWaterLevel(IBlockAccess world, int x, int y, int z)
 	{
 		return HEDams.instance.getWaterLevel(getId());
+	}
+	
+	public float getRenderedWaterLevel(IBlockAccess world, int x, int y, int z)
+	{
+		return HEDams.instance.getRenderedWaterLevel(getId());
 	}
 }

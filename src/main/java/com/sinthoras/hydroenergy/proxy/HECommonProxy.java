@@ -21,14 +21,15 @@ import cpw.mods.fml.common.event.FMLServerStoppingEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
-import net.bytebuddy.ByteBuddy;
-import net.bytebuddy.implementation.FixedValue;
-import net.bytebuddy.matcher.ElementMatchers;
+//import net.bytebuddy.ByteBuddy;
+//import net.bytebuddy.implementation.FixedValue;
+//import net.bytebuddy.matcher.ElementMatchers;
 import net.minecraftforge.common.MinecraftForge;
 
 public class HECommonProxy {
 	
-	public static HEWater[] water_instances;
+	//public static HEWater[] water_instances;
+	public static HEWater water = new HEWater();
 	public static HEControllerBlock controller = new HEControllerBlock();
 	
 	// preInit "Run before anything else. Read your config, create blocks, items, 
@@ -37,7 +38,7 @@ public class HECommonProxy {
     	HE.network = NetworkRegistry.INSTANCE.newSimpleChannel("hydroenergy");
     	HE.network.registerMessage(HEWaterUpdate.Handler.class, HEWaterUpdate.class, 0, Side.CLIENT);
 
-    	HE.LOG.info("The subsequent " + 16 + " liquid errors are intendend. Please ignore...");  // TODO: move to config
+    	/*HE.LOG.info("The subsequent " + 16 + " liquid errors are intendend. Please ignore...");  // TODO: move to config
     	water_instances = new HEWater[16];  // TODO: move to config
     	for(int i=0;i<16;i++)  // TODO: move to config
     	{
@@ -58,7 +59,8 @@ public class HECommonProxy {
 			} catch (IllegalAccessException e) {
 				e.printStackTrace();
 			}
-    	}
+    	}*/
+    	GameRegistry.registerBlock(water, water.getUnlocalizedName() + 0);
     	
 		GameRegistry.registerBlock(controller, controller.getUnlocalizedName());
 		

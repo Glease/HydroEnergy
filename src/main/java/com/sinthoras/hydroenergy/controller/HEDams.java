@@ -1,6 +1,10 @@
 package com.sinthoras.hydroenergy.controller;
 
+import java.math.BigInteger;
+import java.util.ArrayList;
+
 import com.sinthoras.hydroenergy.HE;
+import com.sinthoras.hydroenergy.hewater.HERenderManager;
 import com.sinthoras.hydroenergy.network.HEWaterUpdate;
 
 import cpw.mods.fml.common.gameevent.TickEvent.ServerTickEvent;
@@ -114,10 +118,18 @@ public class HEDams extends WorldSavedData {
 	
 	public void onClientUpdate(NBTTagCompound compound)
 	{
+		long flags = 0L;
 		for(int i=0;i<controllers.length;i++)
 		{
 			controllers[i].readFromNBTNetwork(compound.getCompoundTag(tags.instance + i));
+			if(controllers[i].renderUpdate())
+			{
+				flags |= 1L << i;
+				controllers[i].updateRendered();
+			}
 		}
+		if(flags > 0)
+			HERenderManager.instance.triggerRenderUpdate(flags);
 	}
 	
 	private NBTTagCompound getClientUpdate() {
@@ -146,6 +158,11 @@ public class HEDams extends WorldSavedData {
 	public float getWaterLevel(int id)
 	{
 		return controllers[id].getWaterLevel();
+	}
+	
+	public float getRenderedWaterLevel(int id)
+	{
+		return controllers[id].getRenderedWaterLevel();
 	}
 	
 	public void updateWaterLevel(int id, float waterLevel)

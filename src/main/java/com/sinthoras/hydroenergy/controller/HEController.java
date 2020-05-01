@@ -15,13 +15,15 @@ public class HEController {
 
 	// NBT variables
 	private float waterLevel;
+	private float renderedWaterLevel;
 	private int xCoord;
 	private int yCoord;
 	private int zCoord;
 	private boolean placed = false;
 	
 	// Flag object to be synchronized to clients
-	private boolean requiresUpdate = false;
+	private boolean requiresNetworkUpdate = false;
+	private boolean requiresRenderUpdate = false;
 
 	
 	public static int max_controller = 16;
@@ -47,7 +49,12 @@ public class HEController {
 	// Trimmed version for what the client requires for rendering
 	public void readFromNBTNetwork(NBTTagCompound compound)
 	{
-		waterLevel = compound.getFloat(tags.waterLevel);
+		updateWaterLevel(compound.getFloat(tags.waterLevel));
+		if(!placed && compound.getBoolean(tags.placed))
+		{
+			requiresNetworkUpdate = true;
+			requiresRenderUpdate = true;
+		}
 		placed = compound.getBoolean(tags.placed);
 	}
 	
@@ -58,23 +65,39 @@ public class HEController {
 		compound.setBoolean(tags.placed, placed);
 	}
 	
+	// server: Send update to client
 	public boolean transmitUpdate()
 	{
-		return requiresUpdate;
+		return requiresNetworkUpdate;
+	}
+	
+	// client: Update display
+	public boolean renderUpdate()
+	{
+		return requiresRenderUpdate;
 	}
 	
 	public void updateWaterLevel(float level)
 	{
-		if(Math.abs(waterLevel - level) >= 1.0f/32.0f)  // TODO: Send constant to config
+		final float stepResolution = 16.0f;  // Config?
+		float waterLevelToRender = Math.round(level * stepResolution) / stepResolution;
+		if(Math.abs(waterLevelToRender - renderedWaterLevel) >= 1.0f / waterLevelToRender / 1000.0f)
 		{
-			requiresUpdate = true;
+			requiresNetworkUpdate = true;
+			requiresRenderUpdate = true;
 		}
 		waterLevel = level;
+		renderedWaterLevel = waterLevelToRender;
 	}
 	
 	public float getWaterLevel()
 	{
 		return waterLevel;
+	}
+	
+	public float getRenderedWaterLevel()
+	{
+		return renderedWaterLevel;
 	}
 	
 	public boolean isPlaced()
@@ -85,17 +108,24 @@ public class HEController {
 	public void onBreakController()
 	{
 		placed = false;
-		requiresUpdate = true;
+		requiresNetworkUpdate = true;
+		requiresRenderUpdate = true;
 	}
 	
 	public void updateSent()
 	{
-		requiresUpdate = false;
+		requiresNetworkUpdate = false;
+	}
+	
+	public void updateRendered()
+	{
+		requiresRenderUpdate = false;
 	}
 	
 	public void placeController()
 	{
 		placed = true;
-		requiresUpdate = true;
+		requiresNetworkUpdate = true;
+		requiresRenderUpdate = true;
 	}
 }

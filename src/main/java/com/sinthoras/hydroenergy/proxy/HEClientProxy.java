@@ -1,8 +1,8 @@
 package com.sinthoras.hydroenergy.proxy;
 
 import com.sinthoras.hydroenergy.HECommand;
-import com.sinthoras.hydroenergy.HEEventHandlerFML;
 import com.sinthoras.hydroenergy.controller.HEDams;
+import com.sinthoras.hydroenergy.hewater.HERenderManager;
 import com.sinthoras.hydroenergy.hewater.HEWaterRenderer;
 
 import cpw.mods.fml.client.registry.RenderingRegistry;
@@ -29,7 +29,9 @@ public class HEClientProxy extends HECommonProxy {
 	@Override
 	// load "Do your mod setup. Build whatever data structures you care about. Register recipes."
 	public void fmlLifeCycleEvent(FMLInitializationEvent event) {
+		super.fmlLifeCycleEvent(event);
 		HEDams.init();
+		HERenderManager.instance = new HERenderManager();
 	}
 	
 	@Override

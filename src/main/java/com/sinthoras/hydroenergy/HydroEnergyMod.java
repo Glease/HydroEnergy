@@ -1,5 +1,6 @@
 package com.sinthoras.hydroenergy;
 
+import com.sinthoras.hydroenergy.proxy.HEClientProxy;
 import com.sinthoras.hydroenergy.proxy.HECommonProxy;
 
 import cpw.mods.fml.common.Mod;
@@ -26,6 +27,7 @@ public class HydroEnergyMod
 	public void fmlLifeCycleEvent(FMLPreInitializationEvent event) 
 	{
     	HE.LOG = event.getModLog();
+    	HE.LOG.info("Registered sided proxy for: " + (proxy instanceof HEClientProxy ? "Client" : "Dedicated server"));
 		HE.LOG.info("preInit()"+event.getModMetadata().name);
     	proxy.fmlLifeCycleEvent(event);
 	}
