@@ -1,93 +1,105 @@
 package com.sinthoras.hydroenergy.controller;
 
+import com.sinthoras.hydroenergy.HE;
+import com.sinthoras.hydroenergy.network.HEPacketUpdate;
+
 import net.minecraft.nbt.NBTTagCompound;
 
 public class HEController {
 	
-	public class tags
+	public class Tags
 	{
-		public static final String waterLevel = "wlev";
-		public static final String xCoord = "x";
-		public static final String yCoord = "y";
-		public static final String zCoord = "z";
+		public static final String id = "id";
+		public static final String waterLevel = "walv";
+		public static final String renderedWaterLevel = "rwlv";
 		public static final String placed = "plac";
+		public static final String yLimitUp = "yliu";
+		public static final String yLimitDown = "ylid";
+		public static final String keepWater = "keep";
+		public static final String energyStored = "engy";
+		public static final String stopSpreading = "stps";
 	}
 
 	// NBT variables
+	private int id;
 	private float waterLevel;
 	private float renderedWaterLevel;
-	private int xCoord;
-	private int yCoord;
-	private int zCoord;
-	private boolean placed = false;
-	
-	// Flag object to be synchronized to clients
-	private boolean requiresNetworkUpdate = false;
-	private boolean requiresRenderUpdate = false;
+	private boolean placed;
+	private int yLimitUp;
+	private int yLimitDown;
+	private boolean keepWater;
+	private boolean stopSpreading;
 
-	
-	public static int max_controller = 16;
 	
 	public void readFromNBTFull(NBTTagCompound compound)
 	{
-		waterLevel = compound.getFloat(tags.waterLevel);
-		xCoord = compound.getInteger(tags.xCoord);
-		yCoord = compound.getInteger(tags.yCoord);
-		zCoord = compound.getInteger(tags.zCoord);
-		placed = compound.getBoolean(tags.placed);
+		id = compound.getInteger(Tags.id);
+		waterLevel = compound.getFloat(Tags.waterLevel);
+		renderedWaterLevel = compound.getFloat(Tags.renderedWaterLevel);
+		placed = compound.getBoolean(Tags.placed);
+		yLimitUp = compound.getInteger(Tags.yLimitUp);
+		yLimitDown = compound.getInteger(Tags.yLimitDown);
+		keepWater = compound.getBoolean(Tags.keepWater);
+		stopSpreading = compound.getBoolean(Tags.stopSpreading);
 	}
 	
 	public void writeToNBTFull(NBTTagCompound compound)
 	{
-		compound.setFloat(tags.waterLevel, waterLevel);
-		compound.setInteger(tags.xCoord, xCoord);
-		compound.setInteger(tags.yCoord, yCoord);
-		compound.setInteger(tags.zCoord, zCoord);
-		compound.setBoolean(tags.placed, placed);
-	}
-	
-	// Trimmed version for what the client requires for rendering
-	public void readFromNBTNetwork(NBTTagCompound compound)
-	{
-		updateWaterLevel(compound.getFloat(tags.waterLevel));
-		if(!placed && compound.getBoolean(tags.placed))
-		{
-			requiresNetworkUpdate = true;
-			requiresRenderUpdate = true;
-		}
-		placed = compound.getBoolean(tags.placed);
-	}
-	
-	// Trimmed version for what the client requires for rendering
-	public void writeToNBTNetwork(NBTTagCompound compound)
-	{
-		compound.setFloat(tags.waterLevel, waterLevel);
-		compound.setBoolean(tags.placed, placed);
-	}
-	
-	// server: Send update to client
-	public boolean transmitUpdate()
-	{
-		return requiresNetworkUpdate;
-	}
-	
-	// client: Update display
-	public boolean renderUpdate()
-	{
-		return requiresRenderUpdate;
+		compound.setInteger(Tags.id, id);
+		compound.setFloat(Tags.waterLevel, waterLevel);
+		compound.setFloat(Tags.renderedWaterLevel, renderedWaterLevel);
+		compound.setBoolean(Tags.placed, placed);
+		compound.setInteger(Tags.yLimitUp, yLimitUp);
+		compound.setInteger(Tags.yLimitDown, yLimitDown);
+		compound.setBoolean(Tags.keepWater, keepWater);
+		compound.setBoolean(Tags.stopSpreading, stopSpreading);
 	}
 	
 	public void updateWaterLevel(float level)
 	{
-		final float stepResolution = 16.0f;  // Config?
-		float waterLevelToRender = Math.round(level * stepResolution) / stepResolution;
+		float waterLevelToRender = Math.round(level * HE.waterRenderResolution) / HE.waterRenderResolution;
 		if(Math.abs(waterLevelToRender - renderedWaterLevel) >= 1.0f / waterLevelToRender / 1000.0f)
 		{
-			requiresNetworkUpdate = true;
-			requiresRenderUpdate = true;
+			renderedWaterLevel = waterLevelToRender;
+			sendUpdate();
 		}
 		waterLevel = level;
-		renderedWaterLevel = waterLevelToRender;
+	}
+	
+	public void sendUpdate()
+	{
+		HEPacketUpdate message = new HEPacketUpdate(id, renderedWaterLevel);
+		HE.network.sendToAll(message);
+	}
+	
+	public void breakController()
+	{
+		placed = false;
+		waterLevel = 0.0f;
+		renderedWaterLevel = 0.0f;
+		sendUpdate();
+	}
+	
+	public void placeController(int y)
+	{
+		placed = true;
+		yLimitDown = y;
+		yLimitUp = y;
+		
+		// y or y-1?
+		waterLevel = y;
+		renderedWaterLevel = y;
+		sendUpdate();
+	}
+
+	public int getWaterLimitUp()
+	{
+		return yLimitUp;
+	}
+	
+	public int getWaterLimitDown()
+	{
+		return yLimitDown;
 	}
 	
 	public float getWaterLevel()
@@ -103,29 +115,5 @@ public class HEController {
 	public boolean isPlaced()
 	{
 		return placed;
-	}
-	
-	public void onBreakController()
-	{
-		placed = false;
-		requiresNetworkUpdate = true;
-		requiresRenderUpdate = true;
-	}
-	
-	public void updateSent()
-	{
-		requiresNetworkUpdate = false;
-	}
-	
-	public void updateRendered()
-	{
-		requiresRenderUpdate = false;
-	}
-	
-	public void placeController()
-	{
-		placed = true;
-		requiresNetworkUpdate = true;
-		requiresRenderUpdate = true;
 	}
 }

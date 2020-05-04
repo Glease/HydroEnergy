@@ -1,5 +1,7 @@
 package com.sinthoras.hydroenergy.controller;
 
+import com.sinthoras.hydroenergy.proxy.HECommonProxy;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
@@ -37,4 +39,10 @@ public class HEControllerBlock extends BlockContainer{
 		((HEControllerTileEntity)(p_149749_1_.getTileEntity(p_149749_2_, p_149749_3_, p_149749_4_))).onRemoveTileEntity();
 		super.breakBlock(p_149749_1_, p_149749_2_, p_149749_3_, p_149749_4_, p_149749_5_, p_149749_6_);
     }
+	
+	@Override
+	public void onBlockAdded(World world, int x, int y, int z)
+	{
+		world.setBlock(x + 1, y, z, HECommonProxy.blockWaterStill);
+	}
 }

@@ -1,42 +1,39 @@
-package com.sinthoras.hydroenergy;
+package com.sinthoras.hydroenergy.commands;
 
+import com.sinthoras.hydroenergy.HE;
 import com.sinthoras.hydroenergy.controller.HEDams;
 
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.util.ChatComponentText;
 
-public class HECommand extends CommandBase {
+public class HECommandSetWater extends CommandBase {
 
 	@Override
 	public String getCommandName() {
-		return "setwater";
+		return "hesetwater";
 	}
 
 	@Override
 	public String getCommandUsage(ICommandSender sender) {
-		return "/setwater <controllerId> <waterLevel>";
+		return "/" + getCommandName() + " <controllerId> <waterLevel>";
 	}
 
 	@Override
 	public void processCommand(ICommandSender sender, String[] params) {
-		HE.LOG.info("Hello World");
 		boolean flag = true;
-		
 		if(params.length != 2) flag = false;
 		else
 		{
 			try
 			{
-				int controllerId = Integer.parseInt(params[0]);
-				if (controllerId < 0 || controllerId > 15) flag = false;
-				
 				float waterLevel = Float.parseFloat(params[1]);
-				
-				if(flag)
+				int controllerId = Integer.parseInt(params[0]);
+				if (controllerId >= 0 || controllerId < HE.maxController)
 				{
 					HEDams.instance.updateWaterLevel(controllerId, waterLevel);
 			        sender.addChatMessage(new ChatComponentText("Set water level of controller " + controllerId + " to " + waterLevel));
+			        HE.LOG.info(sender.getCommandSenderName() + " set water level of controller " + controllerId + " to " + waterLevel);
 				}
 			}
 			catch(Exception ex)
@@ -45,7 +42,7 @@ public class HECommand extends CommandBase {
 			}
 		}
 		if(!flag)
-			sender.addChatMessage(new ChatComponentText("Could not parse /setwater!\n" + getCommandUsage(null)));
+			sender.addChatMessage(new ChatComponentText("Could not parse command!\n" + getCommandUsage(null)));
 	}
 
 }

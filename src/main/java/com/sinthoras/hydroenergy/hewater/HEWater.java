@@ -1,42 +1,25 @@
 package com.sinthoras.hydroenergy.hewater;
 
-import com.sinthoras.hydroenergy.HE;
 import com.sinthoras.hydroenergy.controller.HEDams;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.BlockFluidBase;
+import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 
-public class HEWater extends BlockFluidBase {
-	
-	public int id;
+public abstract class HEWater extends BlockFluidBase {
 
 	public HEWater() {
 		super(FluidRegistry.WATER, Material.water);
-		setHardness(100.0F);
-		setLightOpacity(3);
-		setBlockName("water");
-		setBlockTextureName("minecraft:water_still");
-		setTickRandomly(false);
-		setCreativeTab(CreativeTabs.tabBlock);
-		//HE.LOG.info("Water created " + getId());
-		id = getId();
 	}
 
 	@Override
 	public FluidStack drain(World world, int x, int y, int z, boolean doDrain) {
 		return null;
-	}
-	
-	// Will be overwritten by ByteBuddy!
-	public int getId()
-	{
-		return 0;
 	}
 
 	@Override
@@ -63,23 +46,11 @@ public class HEWater extends BlockFluidBase {
 	public int getMaxRenderHeightMeta() {
 		return 0;
 	}
-	
-	@Override
-    public int getRenderType()
-    {
-        return HEWaterRenderer.instance.getRenderId();
-    }
-	
-	@Override
-    public boolean shouldSideBeRendered(IBlockAccess world, int x, int y, int z, int side)
-    {
-		Block block = world.getBlock(x, y, z);
-        if (block != this)
-        {
-            return !block.isOpaqueCube();
-        }
-        return false;
-    }
+
+	public float getWaterLevel(IBlockAccess world, int x, int y, int z)
+	{
+		return HEDams.instance.getWaterLevel(getId());
+	}
 	
 	@Override
 	public int getLightOpacity(IBlockAccess world, int x, int y, int z)
@@ -91,13 +62,18 @@ public class HEWater extends BlockFluidBase {
         return getLightOpacity();
     }
 	
-	public float getWaterLevel(IBlockAccess world, int x, int y, int z)
-	{
-		return HEDams.instance.getWaterLevel(getId());
-	}
-	
 	public float getRenderedWaterLevel(IBlockAccess world, int x, int y, int z)
 	{
 		return HEDams.instance.getRenderedWaterLevel(getId());
 	}
+	
+	public boolean canFlowInto(IBlockAccess world, int x, int y, int z)
+	{
+		Block block = world.getBlock(x, y, z);
+		return block.getMaterial() == Material.air
+				|| (block.getMaterial() == Material.water
+				&& !(block instanceof HEWater));
+	}
+	
+	public abstract int getId();
 }

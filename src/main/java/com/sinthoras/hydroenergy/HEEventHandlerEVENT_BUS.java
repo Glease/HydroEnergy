@@ -3,13 +3,14 @@ package com.sinthoras.hydroenergy;
 import com.sinthoras.hydroenergy.controller.HEDams;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import cpw.mods.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
 import net.minecraftforge.event.world.WorldEvent;
 
 public class HEEventHandlerEVENT_BUS {
 
-	@SubscribeEvent
+	/*@SubscribeEvent
 	public void onEvent(WorldEvent.Load event)
 	{
-		HEDams.get(event.world);
-	}
+		HEDams.load(event.world);
+	}*/
 }

@@ -1,9 +1,10 @@
 package com.sinthoras.hydroenergy.proxy;
 
-import com.sinthoras.hydroenergy.HECommand;
+import com.sinthoras.hydroenergy.commands.HECommandSetWater;
 import com.sinthoras.hydroenergy.controller.HEDams;
-import com.sinthoras.hydroenergy.hewater.HERenderManager;
-import com.sinthoras.hydroenergy.hewater.HEWaterRenderer;
+import com.sinthoras.hydroenergy.controller.HEDamsClient;
+import com.sinthoras.hydroenergy.hewater.render.HERenderManager;
+import com.sinthoras.hydroenergy.hewater.render.HEWaterRenderer;
 
 import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.FMLCommonHandler;
@@ -30,38 +31,38 @@ public class HEClientProxy extends HECommonProxy {
 	// load "Do your mod setup. Build whatever data structures you care about. Register recipes."
 	public void fmlLifeCycleEvent(FMLInitializationEvent event) {
 		super.fmlLifeCycleEvent(event);
-		HEDams.init();
 		HERenderManager.instance = new HERenderManager();
 	}
 	
 	@Override
 	// postInit "Handle interaction with other mods, complete your setup based on this."
 	public void fmlLifeCycleEvent(FMLPostInitializationEvent event) {
-		
+		super.fmlLifeCycleEvent(event);
 	}
 	
 	@Override
 	public void fmlLifeCycleEvent(FMLServerAboutToStartEvent event) {
-		
+		super.fmlLifeCycleEvent(event);
 	}
 	
 	@Override
 	public void fmlLifeCycleEvent(FMLServerStartingEvent event) {
-		event.registerServerCommand(new HECommand());
+		super.fmlLifeCycleEvent(event);
+		HEDamsClient.instance = new HEDamsClient();
 	}
 	
 	@Override
 	public void fmlLifeCycleEvent(FMLServerStartedEvent event) {
-		
+		super.fmlLifeCycleEvent(event);
 	}
 	
 	@Override
 	public void fmlLifeCycleEvent(FMLServerStoppingEvent event) {
-		
+		super.fmlLifeCycleEvent(event);
 	}
 	
 	@Override
 	public void fmlLifeCycleEvent(FMLServerStoppedEvent event) {
-		
+		super.fmlLifeCycleEvent(event);
 	}
 }
