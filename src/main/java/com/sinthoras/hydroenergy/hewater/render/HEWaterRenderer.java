@@ -27,7 +27,7 @@ public class HEWaterRenderer extends RenderBlockFluid {
 	public float getFluidHeightForRender(IBlockAccess world, int x, int y, int z, BlockFluidBase block)
     {
 		HEWaterStatic water = (HEWaterStatic) block;
-		float val = water.getWaterLevel(world, x, y, z) - y;
+		float val = water.getRenderedWaterLevel(world, x, y, z) - y;
 		if (val <= 0.0f)
 			return 0.0f;
 		if (val >= 1.0f)
@@ -67,7 +67,7 @@ public class HEWaterRenderer extends RenderBlockFluid {
         int densityDir = -1;
         int bMeta = world.getBlockMetadata(x, y, z);
 
-        boolean renderTop = water.getWaterLevel(world, x, y, z) > y && water.getWaterLevel(world, x, y, z) <= y + 1;
+        boolean renderTop = water.getRenderedWaterLevel(world, x, y, z) > y && water.getRenderedWaterLevel(world, x, y, z) <= y + 1;
 
         boolean renderBottom = block.shouldSideBeRendered(world, x, y + densityDir, z, 0) && world.getBlock(x, y + densityDir, z) != theFluid;
 

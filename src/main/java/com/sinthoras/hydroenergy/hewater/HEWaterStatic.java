@@ -1,20 +1,11 @@
 package com.sinthoras.hydroenergy.hewater;
 
-import java.util.Random;
-
-import com.sinthoras.hydroenergy.HE;
-import com.sinthoras.hydroenergy.controller.HEDams;
 import com.sinthoras.hydroenergy.hewater.render.HEWaterRenderer;
-import com.sinthoras.hydroenergy.proxy.HECommonProxy;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.material.Material;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.fluids.BlockFluidBase;
-import net.minecraftforge.fluids.FluidRegistry;
-import net.minecraftforge.fluids.FluidStack;
 
 public class HEWaterStatic extends HEWater {
 
@@ -68,7 +59,7 @@ public class HEWaterStatic extends HEWater {
 	
 	private void spread(World world, int x, int y, int z)
 	{
-		if(y < HEDams.instance.getWaterLimitUp(getId()))
+		/*if(y < HEDams.instance.getWaterLimitUp(getId()))
 		{
 			if(canFlowInto(world, x, y+1, z))
 			{
@@ -79,6 +70,6 @@ public class HEWaterStatic extends HEWater {
 		if(canFlowInto(world, x, y-1, z))
 		{
 			//HEBlockQueue.instance.addBlock(x, y-1, z, getId());
-		}
+		}*/
 	}
 }

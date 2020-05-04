@@ -10,6 +10,7 @@ public class HE {
     public static final String NAME = "HydroEnergy";
     public static SimpleNetworkWrapper network;
     public static Logger LOG;
+    public static boolean logicalClientLoaded = false;
     
     // TODO: Move to config
 	public static final int worldHeight = 256;

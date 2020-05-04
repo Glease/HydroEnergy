@@ -1,5 +1,6 @@
 package com.sinthoras.hydroenergy.proxy;
 
+import com.sinthoras.hydroenergy.HE;
 import com.sinthoras.hydroenergy.commands.HECommandSetWater;
 import com.sinthoras.hydroenergy.controller.HEDams;
 import com.sinthoras.hydroenergy.controller.HEDamsClient;
@@ -32,6 +33,8 @@ public class HEClientProxy extends HECommonProxy {
 	public void fmlLifeCycleEvent(FMLInitializationEvent event) {
 		super.fmlLifeCycleEvent(event);
 		HERenderManager.instance = new HERenderManager();
+		HEDamsClient.instance = new HEDamsClient();
+		HE.logicalClientLoaded = true;
 	}
 	
 	@Override
@@ -48,7 +51,6 @@ public class HEClientProxy extends HECommonProxy {
 	@Override
 	public void fmlLifeCycleEvent(FMLServerStartingEvent event) {
 		super.fmlLifeCycleEvent(event);
-		HEDamsClient.instance = new HEDamsClient();
 	}
 	
 	@Override

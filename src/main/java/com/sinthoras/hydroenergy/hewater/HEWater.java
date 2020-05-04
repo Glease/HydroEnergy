@@ -1,13 +1,14 @@
 package com.sinthoras.hydroenergy.hewater;
 
+import com.sinthoras.hydroenergy.HE;
 import com.sinthoras.hydroenergy.controller.HEDams;
+import com.sinthoras.hydroenergy.controller.HEDamsClient;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.BlockFluidBase;
-import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 
@@ -29,7 +30,7 @@ public abstract class HEWater extends BlockFluidBase {
 
 	@Override
 	public int getQuantaValue(IBlockAccess world, int x, int y, int z) {
-		float val = getWaterLevel(world, x, y, z) - y;
+		float val = getRenderedWaterLevel(world, x, y, z) - y;
 		if (val < 0.0f)
 			return 0;
 		if (val >= 1.0f)
@@ -46,16 +47,11 @@ public abstract class HEWater extends BlockFluidBase {
 	public int getMaxRenderHeightMeta() {
 		return 0;
 	}
-
-	public float getWaterLevel(IBlockAccess world, int x, int y, int z)
-	{
-		return HEDams.instance.getWaterLevel(getId());
-	}
 	
 	@Override
 	public int getLightOpacity(IBlockAccess world, int x, int y, int z)
     {
-		if (getWaterLevel(world, x, y, z) <= y)
+		if (getRenderedWaterLevel(world, x, y, z) <= y)
         {
         	return 0;
         }
@@ -64,7 +60,14 @@ public abstract class HEWater extends BlockFluidBase {
 	
 	public float getRenderedWaterLevel(IBlockAccess world, int x, int y, int z)
 	{
-		return HEDams.instance.getRenderedWaterLevel(getId());
+		if(HE.logicalClientLoaded)
+		{
+			return HEDamsClient.instance.getRenderedWaterLevel(getId());
+		}
+		else
+		{
+			return HEDams.instance.getRenderedWaterLevel(getId());
+		}
 	}
 	
 	public boolean canFlowInto(IBlockAccess world, int x, int y, int z)
