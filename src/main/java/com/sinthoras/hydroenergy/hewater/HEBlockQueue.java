@@ -42,9 +42,7 @@ public class HEBlockQueue {
 			{
 				final QueueEntry element = queue.poll();
 				final Block block = world.getBlock(element.x, element.y, element.z);
-				if(block.getMaterial() == Material.air
-						|| (block.getMaterial() == Material.water
-							&& !(block instanceof HEWater)))
+				if(!(block instanceof HEWater))
 				{
 					world.setBlock(element.x, element.y, element.z, HECommonProxy.getWaterBlock(element.id));
 					countPlaced++;

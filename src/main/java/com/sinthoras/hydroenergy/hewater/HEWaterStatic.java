@@ -1,5 +1,6 @@
 package com.sinthoras.hydroenergy.hewater;
 
+import com.sinthoras.hydroenergy.controller.HEDams;
 import com.sinthoras.hydroenergy.hewater.render.HEWaterRenderer;
 
 import net.minecraft.block.Block;
@@ -59,17 +60,37 @@ public class HEWaterStatic extends HEWater {
 	
 	private void spread(World world, int x, int y, int z)
 	{
-		/*if(y < HEDams.instance.getWaterLimitUp(getId()))
+		if(y < HEDams.instance.getWaterLimitUp(getId()))
 		{
 			if(canFlowInto(world, x, y+1, z))
 			{
-				//HEBlockQueue.instance.addBlock(x, y+1, z, getId());
+				HEBlockQueue.instance.addBlock(x, y+1, z, getId());
 			}
 		}
 		
 		if(canFlowInto(world, x, y-1, z))
 		{
-			//HEBlockQueue.instance.addBlock(x, y-1, z, getId());
-		}*/
+			HEBlockQueue.instance.addBlock(x, y-1, z, getId());
+		}
+		
+		if(canFlowInto(world, x+1, y, z))
+		{
+			HEBlockQueue.instance.addBlock(x+1, y, z, getId());
+		}
+		
+		if(canFlowInto(world, x-1, y, z))
+		{
+			HEBlockQueue.instance.addBlock(x-1, y, z, getId());
+		}
+		
+		if(canFlowInto(world, x, y, z+1))
+		{
+			HEBlockQueue.instance.addBlock(x, y, z+1, getId());
+		}
+		
+		if(canFlowInto(world, x, y, z-1))
+		{
+			HEBlockQueue.instance.addBlock(x, y, z-1, getId());
+		}
 	}
 }

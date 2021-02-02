@@ -70,12 +70,22 @@ public abstract class HEWater extends BlockFluidBase {
 		}
 	}
 	
+	private boolean canReplaceBlock(Block block)
+	{
+		if (displacements.containsKey(block))
+        {
+            return displacements.get(block);
+        }
+		return false;
+	}
+	
 	public boolean canFlowInto(IBlockAccess world, int x, int y, int z)
 	{
 		Block block = world.getBlock(x, y, z);
 		return block.getMaterial() == Material.air
+				|| canDisplace(world, x, y, z)
 				|| (block.getMaterial() == Material.water
-				&& !(block instanceof HEWater));
+					&& !(block instanceof HEWater));
 	}
 	
 	public abstract int getId();
