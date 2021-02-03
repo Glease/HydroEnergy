@@ -2,6 +2,7 @@ package com.sinthoras.hydroenergy.hewater.render;
 
 
 import com.sinthoras.hydroenergy.HE;
+import com.sinthoras.hydroenergy.controller.HEDamsClient;
 
 import net.minecraftforge.event.world.ChunkEvent;
 
@@ -36,14 +37,14 @@ public class HERenderManager
 	
 	public void triggerRenderUpdate(int controllerId)
 	{
-		dams[controllerId].triggerRenderUpdate();
+		dams[controllerId].triggerRenderUpdate(HEDamsClient.instance.getRenderedWaterLevel(controllerId));
 	}
 	
 	public void triggerRenderUpdate()
 	{
-		for(HERenderManagerDam dam : dams)
+		for(int i=0;i<dams.length;i++)
 		{
-			dam.triggerRenderUpdate();
+			triggerRenderUpdate(i);
 		}
 	}
 }
