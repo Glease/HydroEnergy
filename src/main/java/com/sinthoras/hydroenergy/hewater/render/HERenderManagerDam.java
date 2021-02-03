@@ -3,8 +3,12 @@ package com.sinthoras.hydroenergy.hewater.render;
 import java.util.HashMap;
 
 import com.sinthoras.hydroenergy.HE;
+import com.sinthoras.hydroenergy.proxy.HECommonProxy;
 
+import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
+import net.minecraft.world.EnumSkyBlock;
+import net.minecraft.world.chunk.Chunk;
 
 public class HERenderManagerDam {
 	
@@ -27,12 +31,39 @@ public class HERenderManagerDam {
 		}
 		
 		// x, z in block coords
-		public void triggerRenderUpdate()
+		public void triggerRenderUpdate(float waterHeight)
 		{
 			for(int i=0;i<renderChunks.length;i++)
 			{
 				if(renderChunks[i])
+				{
+					//Minecraft.getMinecraft().theWorld.func_147451_t(x, i*16, z);
+					Chunk chunk = Minecraft.getMinecraft().theWorld.getChunkFromChunkCoords(x >> 4, z >> 4);
+					for(int _x = 0;_x<16;_x++)
+						for(int _y=0;_y<16;_y++)
+							for(int _z=0;_z<16;_z++)
+								// works, but f-ing slow and must be split into parts
+								Minecraft.getMinecraft().theWorld.func_147451_t(x+_x, i*16+_y, z+_z);
+								
+								/*float delta = i*16+_y - waterHeight;
+								int lightVal = 15 + (int)(delta * 3);
+								lightVal = Math.min(lightVal, 15);
+								lightVal = Math.max(lightVal, 0);
+								
+								//Block block = chunk.getBlock(x+_x, i*16+_y, z+_z);
+								//if(block == HECommonProxy.blockWaterStill)
+								//{
+									chunk.setLightValue(EnumSkyBlock.Block, lightVal, x+_x, i*16+_y, z+_z);
+								//}*/
+					
 					Minecraft.getMinecraft().renderGlobal.markBlockForRenderUpdate(x, i * 16, z);
+					
+					
+					
+					//Minecraft.getMinecraft().theWorld.theProfiler.startSection("checkLight");
+					//Minecraft.getMinecraft().theWorld.func_147451_t(x, i*16, z);
+					//Minecraft.getMinecraft().theWorld.theProfiler.endSection();
+				}
 			}
 		}
 	}
@@ -65,11 +96,11 @@ public class HERenderManagerDam {
 		chunks.remove(getKey(x, z));
 	}
 	
-	public void triggerRenderUpdate()
+	public void triggerRenderUpdate(float waterHeight)
 	{
 		for(HERenderChunk chunk : chunks.values())
 		{
-			chunk.triggerRenderUpdate();
+			chunk.triggerRenderUpdate(waterHeight);
 		}
 	}
 }
