@@ -90,19 +90,19 @@ public class HEDams extends WorldSavedData {
 		markDirty();
 	}
 	
-	public int reserveControllerId()
+	public int reserveControllerId(int yCoord)
 	{
 		for(int i=0;i<controllers.length;i++)
 			if(!controllers[i].isPlaced())
 			{
-				controllers[i].placeController(i);
+				controllers[i].placeController(yCoord);
 				markDirty();
 				return i;
 			}
 		return -1;
 	}
 	
-	public float getWaterLevel(int id)
+	public double getWaterLevel(int id)
 	{
 		return controllers[id].getWaterLevel();
 	}
@@ -112,7 +112,7 @@ public class HEDams extends WorldSavedData {
 		return controllers[id].getRenderedWaterLevel();
 	}
 	
-	public void updateWaterLevel(int id, float waterLevel)
+	public void updateWaterLevel(int id, double waterLevel)
 	{
 		controllers[id].updateWaterLevel(waterLevel);
 		markDirty();

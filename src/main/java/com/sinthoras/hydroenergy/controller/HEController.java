@@ -22,7 +22,7 @@ public class HEController {
 
 	// NBT variables
 	private int id;
-	private float waterLevel;
+	private double waterLevel;
 	private float renderedWaterLevel;
 	private boolean placed;
 	private int yLimitUp;
@@ -34,10 +34,10 @@ public class HEController {
 	public void readFromNBTFull(NBTTagCompound compound)
 	{
 		id = compound.getInteger(Tags.id);
-		waterLevel = compound.getFloat(Tags.waterLevel);
+		waterLevel = compound.getDouble(Tags.waterLevel);
 		renderedWaterLevel = compound.getFloat(Tags.renderedWaterLevel);
 		placed = compound.getBoolean(Tags.placed);
-		yLimitUp = compound.getInteger(Tags.yLimitUp);
+		yLimitUp = 72;//compound.getInteger(Tags.yLimitUp);
 		yLimitDown = compound.getInteger(Tags.yLimitDown);
 		keepWater = compound.getBoolean(Tags.keepWater);
 		stopSpreading = compound.getBoolean(Tags.stopSpreading);
@@ -46,7 +46,7 @@ public class HEController {
 	public void writeToNBTFull(NBTTagCompound compound)
 	{
 		compound.setInteger(Tags.id, id);
-		compound.setFloat(Tags.waterLevel, waterLevel);
+		compound.setDouble(Tags.waterLevel, waterLevel);
 		compound.setFloat(Tags.renderedWaterLevel, renderedWaterLevel);
 		compound.setBoolean(Tags.placed, placed);
 		compound.setInteger(Tags.yLimitUp, yLimitUp);
@@ -55,7 +55,7 @@ public class HEController {
 		compound.setBoolean(Tags.stopSpreading, stopSpreading);
 	}
 	
-	public void updateWaterLevel(float level)
+	public void updateWaterLevel(double level)
 	{
 		float waterLevelToRender = Math.round(level * HE.waterRenderResolution) / HE.waterRenderResolution;
 		if(Math.abs(waterLevelToRender - renderedWaterLevel) >= 1.0f / waterLevelToRender / 1000.0f)
@@ -75,8 +75,8 @@ public class HEController {
 	public void breakController()
 	{
 		placed = false;
-		waterLevel = 0.0f;
-		renderedWaterLevel = 0.0f;
+		waterLevel = 0.0;
+		renderedWaterLevel = -1.0f;
 		sendUpdate();
 	}
 	
@@ -84,11 +84,10 @@ public class HEController {
 	{
 		placed = true;
 		yLimitDown = y;
-		yLimitUp = y;
+		yLimitUp = y+4;
 		
-		// y or y-1?
-		waterLevel = y;
-		renderedWaterLevel = y;
+		waterLevel = y + 0.5;
+		renderedWaterLevel = y + 0.5f;
 		sendUpdate();
 	}
 
@@ -102,7 +101,7 @@ public class HEController {
 		return yLimitDown;
 	}
 	
-	public float getWaterLevel()
+	public double getWaterLevel()
 	{
 		return waterLevel;
 	}

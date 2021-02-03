@@ -22,6 +22,7 @@ public class HEWaterStatic extends HEWater {
 	}
 	
 	// Will be overwritten by ByteBuddy!
+	// Or metadata, or, or...
 	@Override
 	public int getId()
 	{
@@ -48,13 +49,19 @@ public class HEWaterStatic extends HEWater {
 	@Override
 	public void onNeighborBlockChange(World world, int x, int y, int z, Block block)
     {
-		spread(world, x, y, z);
+		if(HEDams.instance.getRenderedWaterLevel(getId()) >= 0.0f)
+		{
+			spread(world, x, y, z);
+		}
+		else
+		{
+			// cleanup of spread water here
+		}
     }
 
 	@Override
 	public void onBlockAdded(World world, int x, int y, int z)
 	{
-		//world.setBlock(x, y, z, HECommonProxy.blockWaterStill);
 		spread(world, x, y, z);
 	}
 	

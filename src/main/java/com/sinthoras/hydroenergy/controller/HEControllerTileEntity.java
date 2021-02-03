@@ -23,7 +23,7 @@ public class HEControllerTileEntity extends TileEntity {
     {
 		if(id == -1 && !this.worldObj.isRemote)
 		{
-			id = HEDams.instance.reserveControllerId();
+			id = HEDams.instance.reserveControllerId(yCoord);
 			HE.LOG.info("New controller " + id);
 			this.markDirtyHack = true;
 			markDirty(); //triggers validate() again
@@ -48,13 +48,13 @@ public class HEControllerTileEntity extends TileEntity {
 		if (id != -1 && !this.worldObj.isRemote)
 		{
 			// TODO water stuff
-			float level = HEDams.instance.getWaterLevel(id);
+			/*float level = HEDams.instance.getWaterLevel(id);
 			if (level <= min)
 				dir = 1;
 			else if (level >= max)
 				dir = -1;
 			level += 0.01f * dir;
-			HEDams.instance.updateWaterLevel(id, level);
+			HEDams.instance.updateWaterLevel(id, level);*/
 		}
 	}
 	
