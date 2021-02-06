@@ -13,5 +13,6 @@ public class HEEventHandlerEVENT_BUS {
 	@SubscribeEvent
 	public void onEvent(ChunkEvent.Unload event)
 	{
-		HERenderManager.instance.onChunkUnload(event);}
+		HERenderManager.instance.onChunkUnload(event);
+	}
 }

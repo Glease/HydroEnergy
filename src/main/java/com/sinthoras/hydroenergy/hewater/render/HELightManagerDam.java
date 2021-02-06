@@ -16,6 +16,8 @@ public class HELightManagerDam {
 	
 	private HashMap<Long, HERelightChunk> relightChunks = new HashMap<Long, HERelightChunk>();
 	
+	public float waterLevel = 0.0f;
+	
 	// x, y, z in block coords
 	public void addBlock(int x, int y, int z) {
 		int chunkX = HEUtil.bucketInt16(x);
@@ -46,12 +48,11 @@ public class HELightManagerDam {
 		*/
 	}
 	
-	public void triggerLightPatch(float waterLevel) {
-		for(long key : relightChunks.keySet()) {
+	public void triggerLightPatch(long key) {
+		if(relightChunks.containsKey(key)) {
 			int chunkX = (int)(key >> 32);
 			int chunkZ = (int)key;
 			relightChunks.get(key).applyLightPatch(chunkX, chunkZ, waterLevel);
 		}
-		HE.LOG.info("Applied light patch to all chunks");
 	}
 }
