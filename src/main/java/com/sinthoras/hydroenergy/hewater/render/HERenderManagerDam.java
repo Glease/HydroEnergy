@@ -30,10 +30,8 @@ public class HERenderManagerDam {
 	}
 	
 	// x, y, z in Chunk coords (/16)
-	public void onChunkUnload(int x, int z)
+	public void onChunkUnload(int chunkX, int chunkZ)
 	{
-		int chunkX = HEUtil.bucketInt16(x);
-		int chunkZ = HEUtil.bucketInt16(z);
 		long key = HEUtil.chunkXZ2Int(chunkX, chunkZ);
 		if(chunks.containsKey(key))
 			chunks.remove(key);
@@ -53,22 +51,21 @@ public class HERenderManagerDam {
 			for(int y=0;y<16;y++)
 				if(((verticalField >> y) & 1) == 1) {
 					for(int i=0;i<5;i++)
-					Minecraft.getMinecraft().renderGlobal.markBlocksForUpdate(x, y << 4, z, x, y << 4, z);//x + 15, (y << 4) + 15, z + 15);
+					Minecraft.getMinecraft().renderGlobal.markBlocksForUpdate(x, y << 4, z, x, y << 4, z);
+					
+					// temporary light calculation
+					Chunk chunk = Minecraft.getMinecraft().theWorld.getChunkFromChunkCoords(x >> 4, z >> 4);
+					
+					for(int _x = 0;_x<16;_x++)
+						for(int _y=0;_y<16;_y++)
+							for(int _z=0;_z<16;_z++)
+								// works, but f-ing slow and must be split into parts
+								Minecraft.getMinecraft().theWorld.func_147451_t(x+_x, (y<<4)+_y, z+_z);
 					counter++;
 				}
 		}
 		HE.LOG.info("Updated " + counter + " subchunks");
 	}
-	
-	/*
-	// works as light update, but very costly/laggy and server sided
-	Chunk chunk = Minecraft.getMinecraft().theWorld.getChunkFromChunkCoords(x >> 4, z >> 4);
-	for(int _x = 0;_x<16;_x++)
-		for(int _y=0;_y<16;_y++)
-			for(int _z=0;_z<16;_z++)
-				// works, but f-ing slow and must be split into parts
-				Minecraft.getMinecraft().theWorld.func_147451_t(x+_x, i*16+_y, z+_z);
-	*/
 }
 
 
