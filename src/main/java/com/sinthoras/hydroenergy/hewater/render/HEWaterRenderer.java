@@ -50,7 +50,12 @@ public class HEWaterRenderer extends RenderBlockFluid {
         }
         
         HEWaterStatic water = (HEWaterStatic) block;
-        HERenderManager.instance.addBlock(x, y, z, water.getId());
+        boolean lightNeedsPatching =   world.getBlock(x-1, y, z) != water
+        							|| world.getBlock(x+1, y, z) != water
+        							|| world.getBlock(x, y, z-1) != water
+                					|| world.getBlock(x, y, z+1) != water
+                					|| world.getBlock(x, y-1, z) != water;
+        HERenderManager.instance.addBlock(x, y, z, water.getId(), lightNeedsPatching);
         if (water.getRenderedWaterLevel(world, x, y, z) < y)
         {
         	return false;
