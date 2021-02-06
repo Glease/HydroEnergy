@@ -36,6 +36,5 @@ public class HEDamsClient {
 
 	public void onClientSynchronize(float[] renderedWaterLevel) {
 		this.renderedWaterLevel = renderedWaterLevel;
-		HERenderManager.instance.triggerRenderUpdate();
 	}
 }

@@ -20,12 +20,6 @@ public class HEEventHandlerFML  {
 	}
 	
 	@SubscribeEvent
-	public void onEvent(ChunkEvent.Unload event)
-	{
-		HERenderManager.instance.onChunkUnload(event);
-	}
-	
-	@SubscribeEvent
 	public void onEvent(PlayerLoggedInEvent event)
 	{
 		HEDams.instance.synchronizeClient(event);
