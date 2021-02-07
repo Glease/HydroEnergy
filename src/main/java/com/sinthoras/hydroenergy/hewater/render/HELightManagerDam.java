@@ -9,6 +9,7 @@ import com.sinthoras.hydroenergy.HEUtil;
 import com.sinthoras.hydroenergy.proxy.HECommonProxy;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.storage.ExtendedBlockStorage;
 
@@ -48,11 +49,14 @@ public class HELightManagerDam {
 		*/
 	}
 	
-	public void triggerLightPatch(long key) {
+	public void triggerLightPatch(long key, WorldClient world) {
+		//long t = System.nanoTime();
 		if(relightChunks.containsKey(key)) {
 			int chunkX = (int)(key >> 32);
 			int chunkZ = (int)key;
-			relightChunks.get(key).applyLightPatch(chunkX, chunkZ, waterLevel);
+			relightChunks.get(key).applyLightPatch(chunkX, chunkZ, waterLevel, world);
 		}
+		//t = System.nanoTime() - t;
+		//HE.LOG.info("deltaT: " + t + "ns");
 	}
 }

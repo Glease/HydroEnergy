@@ -12,11 +12,30 @@ import cpw.mods.fml.common.gameevent.TickEvent.ServerTickEvent;
 import net.minecraftforge.event.world.ChunkEvent;
 
 public class HEEventHandlerFML  {
+	
+	private int counter = 0;
+	private float waterLevel = 63.0f;
+	private int sign = 1;
 
 	@SubscribeEvent
 	public void onEvent(ServerTickEvent event) {
-		if(event.phase == ServerTickEvent.Phase.END)
+		if(event.phase == ServerTickEvent.Phase.END) {
 			HEBlockQueue.instance.onTick(event);
+			if(counter > 20) {
+				counter = 0;
+				if(HE.DEBUGslowFill ) {
+					waterLevel += sign * 0.02f;
+					HEDams.instance.updateWaterLevel(0, waterLevel);
+				}
+			}
+			if(waterLevel >= 73.0f)
+				sign = -1;
+			if(waterLevel <= 63.0f)
+				sign = 1;
+			counter++;
+			
+			
+		}
 	}
 	
 	@SubscribeEvent

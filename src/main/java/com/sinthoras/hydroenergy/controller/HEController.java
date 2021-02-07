@@ -84,7 +84,7 @@ public class HEController {
 	{
 		placed = true;
 		yLimitDown = y;
-		yLimitUp = y+4;
+		yLimitUp = y+1;
 		
 		waterLevel = y + 0.5;
 		renderedWaterLevel = y + 0.5f;

@@ -17,5 +17,7 @@ public class HE {
 	public static final int maxController = 16;
 	public static final float waterRenderResolution = 16.0f;
 	
-	public static final int maxRerenderChunksPerRenderTick = 10;
+	public static final int maxRerenderChunksPerRenderTick = 8;
+	
+	public static boolean DEBUGslowFill = false;
 }

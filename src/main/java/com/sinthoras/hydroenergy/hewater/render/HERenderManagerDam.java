@@ -11,6 +11,7 @@ import com.sinthoras.hydroenergy.proxy.HECommonProxy;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.ChunkCoordIntPair;
@@ -34,7 +35,7 @@ public class HERenderManagerDam {
 			int chunkZ_B = (int)key_B;
 			float dist_B = Minecraft.getMinecraft().thePlayer.getPlayerCoordinates().getDistanceSquaredToChunkCoordinates(new ChunkCoordinates(chunkX_B, 0, chunkZ_B));
 			
-			return Float.compare(dist_A, dist_B);
+			return -Float.compare(dist_A, dist_B);
 		}
 	});
 	private HELightManagerDam lightDam = new HELightManagerDam();
@@ -68,11 +69,12 @@ public class HERenderManagerDam {
 	}
 	
 	public void onRenderTick() {
+		WorldClient world = Minecraft.getMinecraft().theWorld;
 		for(int i=0;i<HE.maxRerenderChunksPerRenderTick;i++ ) {
 			if(rerenderQueue.isEmpty())
 				return;
 			long key = rerenderQueue.pollFirst();
-			lightDam.triggerLightPatch(key);
+			lightDam.triggerLightPatch(key, world);
 			int chunkX = (int)(key >> 32);
 			int chunkZ = (int)key;
 			int x = HEUtil.debucketInt16(chunkX);

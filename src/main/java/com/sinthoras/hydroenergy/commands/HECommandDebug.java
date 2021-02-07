@@ -27,13 +27,15 @@ public class HECommandDebug extends CommandBase {
 		{
 			if(params[0].equalsIgnoreCase("on"))
 			{
-				HE.network.sendTo(new HEPacketDebug(true), MinecraftServer.getServer().getConfigurationManager().func_152612_a(sender.getCommandSenderName()));
+				//HE.network.sendTo(new HEPacketDebug(true), MinecraftServer.getServer().getConfigurationManager().func_152612_a(sender.getCommandSenderName()));
+				HE.DEBUGslowFill = true;
 				couldParse = true;
 			}
 			else if(params[0].equalsIgnoreCase("off"))
 			{
-				HE.network.sendTo(new HEPacketDebug(false), MinecraftServer.getServer().getConfigurationManager().func_152612_a(sender.getCommandSenderName()));
+				//HE.network.sendTo(new HEPacketDebug(false), MinecraftServer.getServer().getConfigurationManager().func_152612_a(sender.getCommandSenderName()));
 				couldParse = true;
+				HE.DEBUGslowFill = false; 
 			}
 		}
 		if(!couldParse)
