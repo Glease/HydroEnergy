@@ -7,7 +7,9 @@ import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 public class HE {
 	public static final String MODID = "hydroenergy";
     public static final String VERSION = "1.0";
+    public static final String MC_VERSION = "1.7.10";
     public static final String NAME = "HydroEnergy";
+    public static final String COM_SINTHORAS_HYDROENERGY = "com.sinthoras.hydroenergy";
     public static SimpleNetworkWrapper network;
     public static Logger LOG;
     public static boolean logicalClientLoaded = false;

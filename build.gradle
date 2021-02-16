@@ -26,6 +26,13 @@ minecraft {
     runDir = "eclipse"
 }
 
+jar {
+    manifest {
+        attributes 'FMLCorePlugin': 'com.sinthoras.hydroenergy.asm.HEASMPlugin'
+        attributes 'FMLCorePluginContainsMod': 'true'
+    }
+}
+
 dependencies {
     // you may put jars on which you depend on in ./libs
     // or you may define them like so..
