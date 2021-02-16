@@ -23,3 +23,7 @@ servers.dat
 usercache.json
 whitelist.json
 world/
+/out/
+*.iml
+*.ipr
+*.iws
