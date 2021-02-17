@@ -87,6 +87,19 @@ public abstract class HEWater extends BlockFluidBase {
 				|| (block.getMaterial() == Material.water
 					&& !(block instanceof HEWater));
 	}
+
+	public Material getMaterial(int y) {
+		float waterLevel = 0.0f;
+		if(HE.logicalClientLoaded)
+		{
+			waterLevel = HEDamsClient.instance.getRenderedWaterLevel(getId());
+		}
+		else
+		{
+			waterLevel = HEDams.instance.getRenderedWaterLevel(getId());
+		}
+		return waterLevel < y ? Material.air : Material.water;
+	}
 	
 	public abstract int getId();
 }
