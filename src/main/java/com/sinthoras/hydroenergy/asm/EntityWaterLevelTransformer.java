@@ -47,7 +47,7 @@ public class EntityWaterLevelTransformer implements IClassTransformer {
 		final String CALL_OWNER = isObfuscated ? "aji" : "net/minecraft/block/Block";
 		final String CALL_NAME = isObfuscated ? "o" : "getMaterial";
 		final String CALL_DESC = isObfuscated ? "()Lawt;" : "()Lnet/minecraft/block/material/Material;";
-		final String CALL_NEW_DESC = isObfuscated ? "(I)Lawt;" : "(I)Lnet/minecraft/block/material/Material;";
+		final String CALL_NEW_DESC = isObfuscated ? "(Lsa;)Lawt;" : "(Lnet/minecraft/entity/Entity;)Lnet/minecraft/block/material/Material;";
 
 		// Transform to human readable byte code
 		ClassNode worldClass = new ClassNode();
@@ -55,7 +55,7 @@ public class EntityWaterLevelTransformer implements IClassTransformer {
 		classReader.accept(worldClass, 0);
 
 		InsnList instructionToInsert = new InsnList();
-		instructionToInsert.add(new VarInsnNode(ILOAD, 13));
+		instructionToInsert.add(new VarInsnNode(ALOAD, 3));
 		instructionToInsert.add(new MethodInsnNode(INVOKEVIRTUAL,
 				CALL_OWNER,
 				CALL_NAME,
@@ -89,8 +89,8 @@ public class EntityWaterLevelTransformer implements IClassTransformer {
 		final String CALL_OWNER = isObfuscated ? "aji" : "net/minecraft/block/Block";
 		final String CALL_NAME = isObfuscated ? "o" : "getMaterial";
 		final String CALL_DESC = isObfuscated ? "()Lawt;" : "()Lnet/minecraft/block/material/Material;";
-		final String CALL_NEW_I_DESC = isObfuscated ? "(I)Lawt;" : "(I)Lnet/minecraft/block/material/Material;";
-		final String CALL_NEW_E_DESC = isObfuscated ? "(Lsv;)Lawt;" : "(Lnet/minecraft/entity/EntityLivingBase;)Lnet/minecraft/block/material/Material;";
+		final String CALL_NEW_E_DESC = isObfuscated ? "(Lsa;)Lawt;" : "(Lnet/minecraft/entity/Entity;)Lnet/minecraft/block/material/Material;";
+		final String CALL_NEW_ELB_DESC = isObfuscated ? "(Lsv;)Lawt;" : "(Lnet/minecraft/entity/EntityLivingBase;)Lnet/minecraft/block/material/Material;";
 
 		ClassNode blockClass = new ClassNode();
 		ClassReader classReader = new ClassReader(basicClass);
@@ -98,8 +98,8 @@ public class EntityWaterLevelTransformer implements IClassTransformer {
 		ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);
 		blockClass.accept(classWriter);
 
-		// public Material getMaterial(int y)
-		MethodVisitor mv = classWriter.visitMethod(ACC_PUBLIC, CALL_NAME, CALL_NEW_I_DESC, null, null);
+		// public Material getMaterial(Entity entity)
+		MethodVisitor mv = classWriter.visitMethod(ACC_PUBLIC, CALL_NAME, CALL_NEW_E_DESC, null, null);
 		mv.visitVarInsn(ALOAD, 0); // load this
 		mv.visitMethodInsn(INVOKEVIRTUAL, CALL_OWNER, CALL_NAME, CALL_DESC, false);
 		mv.visitInsn(ARETURN);
@@ -107,7 +107,7 @@ public class EntityWaterLevelTransformer implements IClassTransformer {
 		mv.visitEnd();
 
 		// public Material getMaterial(EntityLivingBase entitylivingbase)
-		mv = classWriter.visitMethod(ACC_PUBLIC, CALL_NAME, CALL_NEW_E_DESC, null, null);
+		mv = classWriter.visitMethod(ACC_PUBLIC, CALL_NAME, CALL_NEW_ELB_DESC, null, null);
 		mv.visitVarInsn(ALOAD, 0); // load this
 		mv.visitMethodInsn(INVOKEVIRTUAL, CALL_OWNER, CALL_NAME, CALL_DESC, false);
 		mv.visitInsn(ARETURN);

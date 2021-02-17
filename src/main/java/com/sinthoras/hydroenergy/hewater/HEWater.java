@@ -7,6 +7,7 @@ import com.sinthoras.hydroenergy.controller.HEDamsClient;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.ActiveRenderInfo;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.IBlockAccess;
@@ -92,20 +93,14 @@ public abstract class HEWater extends BlockFluidBase {
 	}
 
 	public Material getMaterial(EntityLivingBase entity) {
-		double y = ActiveRenderInfo.projectViewFromEntity(entity, 0).yCoord;
-		float waterLevel = 0.0f;
-		if(HE.logicalClientLoaded)
-		{
-			waterLevel = HEDamsClient.instance.getRenderedWaterLevel(getId());
-		}
-		else
-		{
-			waterLevel = HEDams.instance.getRenderedWaterLevel(getId());
-		}
-		return waterLevel < y ? Material.air : Material.water;
+		return getMaterial(ActiveRenderInfo.projectViewFromEntity(entity, 0).yCoord);
+	}
+	
+	public Material getMaterial(Entity entity) {
+		return getMaterial(entity.posY);
 	}
 
-	public Material getMaterial(int y) {
+	public Material getMaterial(double y) {
 		float waterLevel = 0.0f;
 		if(HE.logicalClientLoaded)
 		{
