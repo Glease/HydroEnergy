@@ -113,7 +113,7 @@ public abstract class HEWater extends BlockFluidBase {
 	}
 
 	public Material getMaterial(int y) {
-		return Math.ceil(getWaterLevel()) <= y ? Material.air : Material.water;
+		return Math.floor(getWaterLevel()) < y ? Material.air : Material.water;
 	}
 
 	public Material getMaterial(double y) {
