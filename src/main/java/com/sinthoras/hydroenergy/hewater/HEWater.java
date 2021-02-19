@@ -82,6 +82,17 @@ public abstract class HEWater extends BlockFluidBase {
         }
 		return false;
 	}
+
+	private float getWaterLevel() {
+		if(HE.logicalClientLoaded)
+		{
+			return HEDamsClient.instance.getRenderedWaterLevel(getId());
+		}
+		else
+		{
+			return HEDams.instance.getRenderedWaterLevel(getId());
+		}
+	}
 	
 	public boolean canFlowInto(IBlockAccess world, int x, int y, int z)
 	{
@@ -93,6 +104,7 @@ public abstract class HEWater extends BlockFluidBase {
 	}
 
 	public Material getMaterial(EntityLivingBase entity) {
+		// TODO: offset
 		return getMaterial(ActiveRenderInfo.projectViewFromEntity(entity, 0).yCoord);
 	}
 	
@@ -100,17 +112,12 @@ public abstract class HEWater extends BlockFluidBase {
 		return getMaterial(entity.posY);
 	}
 
+	public Material getMaterial(int y) {
+		return Math.ceil(getWaterLevel()) <= y ? Material.air : Material.water;
+	}
+
 	public Material getMaterial(double y) {
-		float waterLevel = 0.0f;
-		if(HE.logicalClientLoaded)
-		{
-			waterLevel = HEDamsClient.instance.getRenderedWaterLevel(getId());
-		}
-		else
-		{
-			waterLevel = HEDams.instance.getRenderedWaterLevel(getId());
-		}
-		return waterLevel < y ? Material.air : Material.water;
+		return getWaterLevel() < y ? Material.air : Material.water;
 	}
 	
 	public abstract int getId();
