@@ -1,5 +1,6 @@
 package com.sinthoras.hydroenergy;
 
+import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
@@ -12,6 +13,9 @@ public class HE {
     public static final String COM_SINTHORAS_HYDROENERGY = "com.sinthoras.hydroenergy";
     public static SimpleNetworkWrapper network;
     public static Logger LOG;
+    static{
+        LOG = LogManager.getLogger(MODID);
+    }
     public static boolean logicalClientLoaded = false;
     
     // TODO: Move to config

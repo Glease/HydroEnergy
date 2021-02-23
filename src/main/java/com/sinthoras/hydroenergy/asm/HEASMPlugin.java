@@ -48,7 +48,6 @@ public class HEASMPlugin implements IFMLLoadingPlugin {
     // etc, and register them with the GameRegistry."
     public void fmlLifeCycleEvent(FMLPreInitializationEvent event)
     {
-        HE.LOG = event.getModLog();
         HE.LOG.info("Registered sided proxy for: " + (proxy instanceof HEClientProxy ? "Client" : "Dedicated server"));
         HE.LOG.info("preInit()"+event.getModMetadata().name);
         proxy.fmlLifeCycleEvent(event);

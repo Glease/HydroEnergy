@@ -1,5 +1,6 @@
 package com.sinthoras.hydroenergy.asm;
 
+import com.sinthoras.hydroenergy.HE;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
@@ -73,7 +74,7 @@ public class EntityWaterLevelTransformer implements IClassTransformer {
 						AbstractInsnNode insertAfter = instruction.getPrevious();
 						method.instructions.remove(instruction);
 						method.instructions.insert(insertAfter, instructionToInsert);
-						System.out.println("Successfully injected net.minecraft.world.World.handleMaterialAcceleration");
+						HE.LOG.info("Successfully injected net.minecraft.world.World.handleMaterialAcceleration");
 						break;
 					}
 				}
@@ -124,7 +125,7 @@ public class EntityWaterLevelTransformer implements IClassTransformer {
 		mv.visitMaxs(1, 1);
 		mv.visitEnd();
 
-		System.out.println("Successfully injected net.minecraft.client.block.Block");
+		HE.LOG.info("Successfully injected net.minecraft.client.block.Block");
 
 		return classWriter.toByteArray();
 	}
@@ -165,7 +166,7 @@ public class EntityWaterLevelTransformer implements IClassTransformer {
 						AbstractInsnNode insertAfter = instruction.getPrevious();
 						method.instructions.remove(instruction);
 						method.instructions.insert(insertAfter, instructionToInsert);
-						System.out.println("Successfully injected net.minecraft.client.renderer.EntityRenderer.setupFog");
+						HE.LOG.info("Successfully injected net.minecraft.client.renderer.EntityRenderer.setupFog");
 						break;
 					}
 				}
@@ -185,7 +186,7 @@ public class EntityWaterLevelTransformer implements IClassTransformer {
 						AbstractInsnNode insertAfter = instruction.getPrevious();
 						method.instructions.remove(instruction);
 						method.instructions.insert(insertAfter, instructionToInsert);
-						System.out.println("Successfully injected net.minecraft.client.renderer.EntityRenderer.updateFogColor");
+						HE.LOG.info("Successfully injected net.minecraft.client.renderer.EntityRenderer.updateFogColor");
 						break;
 					}
 				}
@@ -205,7 +206,7 @@ public class EntityWaterLevelTransformer implements IClassTransformer {
 						AbstractInsnNode insertAfter = instruction.getPrevious();
 						method.instructions.remove(instruction);
 						method.instructions.insert(insertAfter, instructionToInsert);
-						System.out.println("Successfully injected net.minecraft.client.renderer.EntityRenderer.getFOVModifier");
+						HE.LOG.info("Successfully injected net.minecraft.client.renderer.EntityRenderer.getFOVModifier");
 						break;
 					}
 				}
@@ -249,7 +250,7 @@ public class EntityWaterLevelTransformer implements IClassTransformer {
 						AbstractInsnNode insertAfter = instruction.getPrevious();
 						method.instructions.remove(instruction);
 						method.instructions.insert(insertAfter, instructionToInsert);
-						System.out.println("Successfully injected net.minecraft.client.entity.Entity.isInsideOfMaterial");
+						HE.LOG.info("Successfully injected net.minecraft.client.entity.Entity.isInsideOfMaterial");
 						break;
 					}
 				}
