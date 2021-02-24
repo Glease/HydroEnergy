@@ -19,7 +19,8 @@ public class EntityWaterLevelTransformer implements IClassTransformer {
 			"net.minecraft.world.World",
 			"net.minecraft.block.Block",
 			"net.minecraft.client.renderer.EntityRenderer",
-			"net.minecraft.entity.Entity"});
+			"net.minecraft.entity.Entity",
+			"net.minecraft.client.renderer.RenderGlobal"});
 
 	@Override
 	public byte[] transform(String name, String transformedName, byte[] basicClass) {
@@ -38,6 +39,8 @@ public class EntityWaterLevelTransformer implements IClassTransformer {
 				return transformEntityRenderer(basicClass, isObfuscated);
 			case 3:
 				return transformEntity(basicClass, isObfuscated);
+			case 4:
+				return transformRenderGlobal(basicClass, isObfuscated);
 			default:
 				return basicClass;
 		}
@@ -251,6 +254,61 @@ public class EntityWaterLevelTransformer implements IClassTransformer {
 						method.instructions.remove(instruction);
 						method.instructions.insert(insertAfter, instructionToInsert);
 						HE.LOG.info("Successfully injected net.minecraft.client.entity.Entity.isInsideOfMaterial");
+						break;
+					}
+				}
+			}
+		}
+
+		// Transform back into pure machine code
+		ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);
+		worldClass.accept(classWriter);
+		return classWriter.toByteArray();
+	}
+
+	private static byte[] transformRenderGlobal(byte[] basicClass, boolean isObfuscated) {
+		final String METHOD_renderAllRenderLists = isObfuscated ? "a" : "renderAllRenderLists";
+		final String METHOD_renderAllRenderLists_DESC = "(ID)V";
+		final String CLASS_HETessalator = "com/sinthoras/hydroenergy/hewater/render/HETessalator";
+		final String FIELD_instance = "instance";
+		final String FIELD_instance_DESC = "L" + CLASS_HETessalator + ";";
+		final String CLASS_RenderList = isObfuscated ? "bmd" : "net/minecraft/client/renderer/RenderList";
+		final String METHOD_callLists = isObfuscated ? "a" : "callLists";
+		final String METHOD_callLists_DESC = "()V";
+		final String FIELD_allRenderLists = isObfuscated ? "ag" : "allRenderLists";
+		final String FIELD_allRenderLists_DESC = "[L" + CLASS_RenderList + ";";
+		final String METHOD_renderSubchunk = "renderSubchunk";
+		final String METHOD_renderSubchunk_DESC = "(L" + CLASS_RenderList + ";ID)V";
+		final String CLASS_RenderGlobal = isObfuscated ? "bma" : "net/minecraft/client/renderer/RenderGlobal";
+
+		// Transform to human readable byte code
+		ClassNode worldClass = new ClassNode();
+		ClassReader classReader = new ClassReader(basicClass);
+		classReader.accept(worldClass, 0);
+
+		InsnList instructionToInsert = new InsnList();
+		instructionToInsert.add(new FieldInsnNode(GETSTATIC, CLASS_HETessalator, FIELD_instance, FIELD_instance_DESC));
+		instructionToInsert.add(new VarInsnNode(ALOAD, 0));
+		instructionToInsert.add(new FieldInsnNode(GETFIELD, CLASS_RenderGlobal, FIELD_allRenderLists, FIELD_allRenderLists_DESC));
+		instructionToInsert.add(new VarInsnNode(ILOAD, 4));
+		instructionToInsert.add(new InsnNode(AALOAD));
+		instructionToInsert.add(new VarInsnNode(ILOAD, 1));
+		instructionToInsert.add(new VarInsnNode(DLOAD, 2));
+		instructionToInsert.add(new MethodInsnNode(INVOKEVIRTUAL,
+				CLASS_HETessalator,
+				METHOD_renderSubchunk,
+				METHOD_renderSubchunk_DESC,
+				false));
+
+		for(MethodNode method : worldClass.methods) {
+			if(method.name.equals(METHOD_renderAllRenderLists) && method.desc.equals(METHOD_renderAllRenderLists_DESC)) {
+				for(AbstractInsnNode instruction : method.instructions.toArray()) {
+					if(instruction.getOpcode() == INVOKEVIRTUAL
+							&& ((MethodInsnNode)instruction).owner.equals(CLASS_RenderList)
+							&& ((MethodInsnNode)instruction).name.equals(METHOD_callLists)
+							&& ((MethodInsnNode)instruction).desc.equals(METHOD_callLists_DESC)) {
+						method.instructions.insert(instruction, instructionToInsert);
+						HE.LOG.info("Successfully injected net.minecraft.client.renderer.RenderGlobal.renderAllRenderLists");
 						break;
 					}
 				}
