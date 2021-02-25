@@ -3,15 +3,19 @@ package com.sinthoras.hydroenergy.hewater.render;
 import com.sinthoras.hydroenergy.HE;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.util.ResourceLocation;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.lwjgl.BufferUtils;
+import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL32;
+import org.lwjgl.util.vector.Matrix4f;
 
 import java.io.*;
 import java.nio.ByteBuffer;
+import java.nio.FloatBuffer;
 
 public class HEProgram {
 
@@ -20,6 +24,11 @@ public class HEProgram {
     private static final ResourceLocation fragmentShaderLocation = new ResourceLocation(HE.MODID, "shader/hewater/shader.fsh");
 
     private static int programID;
+    private static int viewProjectionID;
+
+    private static final FloatBuffer projection = GLAllocation.createDirectFloatBuffer(16);
+    private static final FloatBuffer modelview = GLAllocation.createDirectFloatBuffer(16);
+    private static final FloatBuffer modelviewProjection = GLAllocation.createDirectFloatBuffer(16);
 
     public static void init() {
         final int vertexShader = loadShader(vertexShaderLocation, GL20.GL_VERTEX_SHADER);
@@ -35,10 +44,12 @@ public class HEProgram {
 
         if(GL20.glGetProgrami(programID, GL20.GL_LINK_STATUS) == 0) {
             String s = StringUtils.trim(GL20.glGetProgramInfoLog(programID, 32768));
-            HE.LOG.info("Shader program linking failed: " + s);
+            HE.LOG.error("Shader program linking failed: " + s);
             programID = -1;
+            return;
         }
         GL20.glUseProgram(0);
+        viewProjectionID = GL20.glGetUniformLocation(programID, "g_viewProjection");
     }
 
     public static int getProgramID() {
@@ -59,12 +70,32 @@ public class HEProgram {
             if (GL20.glGetShaderi(shaderID, GL20.GL_COMPILE_STATUS) == 0)
             {
                 String s = StringUtils.trim(GL20.glGetShaderInfoLog(shaderID, 32768));  //Const good?
-                throw new Exception("Couldn't compile shader: " + s);
+                HE.LOG.error("Couldn't compile shader: " + s);
+                return -1;
             }
+            GL20.glUseProgram(programID);
             return shaderID;
         } catch(Exception e) {
             e.printStackTrace();
             return -1;
         }
+    }
+
+    public static void setViewProjection() {
+        GL11.glGetFloat(GL11.GL_PROJECTION_MATRIX, projection);
+        GL11.glGetFloat(GL11.GL_MODELVIEW_MATRIX, modelview);
+        Matrix4f projectionMatrix = (Matrix4f) new Matrix4f().load(projection.asReadOnlyBuffer());
+        Matrix4f modelViewMatrix = (Matrix4f) new Matrix4f().load(modelview.asReadOnlyBuffer());
+        Matrix4f result = Matrix4f.mul(modelViewMatrix, projectionMatrix, null);
+        result.store(modelviewProjection);
+        GL20.glUniformMatrix4(viewProjectionID, false, modelviewProjection);
+    }
+
+    public static void bind() {
+        GL20.glUseProgram(programID);
+    }
+
+    public static void unbind() {
+        GL20.glUseProgram(0);
     }
 }
