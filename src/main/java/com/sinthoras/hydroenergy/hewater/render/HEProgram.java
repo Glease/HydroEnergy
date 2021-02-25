@@ -82,6 +82,9 @@ public class HEProgram {
     }
 
     public static void setViewProjection() {
+        projection.clear();
+        modelview.clear();
+        modelviewProjection.clear();
         GL11.glGetFloat(GL11.GL_PROJECTION_MATRIX, projection);
         GL11.glGetFloat(GL11.GL_MODELVIEW_MATRIX, modelview);
         Matrix4f projectionMatrix = (Matrix4f) new Matrix4f().load(projection.asReadOnlyBuffer());

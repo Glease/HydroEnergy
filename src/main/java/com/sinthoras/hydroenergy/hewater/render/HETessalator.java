@@ -6,7 +6,10 @@ import com.sinthoras.hydroenergy.proxy.HECommonProxy;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.renderer.RenderList;
+import net.minecraft.client.renderer.culling.ICamera;
+import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.World;
+import net.minecraftforge.client.MinecraftForgeClient;
 
 import java.util.HashMap;
 
@@ -41,7 +44,7 @@ public class HETessalator {
         int chunkY = HEUtil.bucketInt16(y);
         int chunkZ = HEUtil.bucketInt16(z);
         long key = HEUtil.chunkXZ2Int(chunkX, chunkZ);
-        (chunks.get(key)[chunkY]).onPreRender();
+        chunks.get(key)[chunkY].onPreRender();
     }
 
     public void onPostRender(World world, int x, int y, int z) {
@@ -49,7 +52,7 @@ public class HETessalator {
         int chunkY = HEUtil.bucketInt16(y);
         int chunkZ = HEUtil.bucketInt16(z);
         long key = HEUtil.chunkXZ2Int(chunkX, chunkZ);
-        (chunks.get(key)[chunkY]).onPostRender(world, chunkX, chunkY, chunkZ);
+        chunks.get(key)[chunkY].onPostRender(world, chunkX, chunkY, chunkZ);
     }
 
     public void addBlock(int x, int y, int z, int waterId, boolean[] shouldSideBeRendered) {
@@ -57,17 +60,23 @@ public class HETessalator {
         int chunkY = HEUtil.bucketInt16(y);
         int chunkZ = HEUtil.bucketInt16(z);
         long key = HEUtil.chunkXZ2Int(chunkX, chunkZ);
-        (chunks.get(key)[chunkY]).addBlock(x, y, z, waterId, shouldSideBeRendered);
+        chunks.get(key)[chunkY].addBlock(x, y, z, waterId, shouldSideBeRendered);
     }
 
-    public void renderSubchunk(RenderList list, int renderPass, double partialTick) {
-        if(renderPass == HECommonProxy.blockWaterStill.getRenderBlockPass()) {
-            int chunkX = list.renderChunkX;
-            int chunkY = list.renderChunkY;
-            int chunkZ = list.renderChunkZ;
-            long key = HEUtil.chunkXZ2Int(chunkX, chunkZ);
-            if(chunks.containsKey(key))
-                (chunks.get(key)[chunkY]).render(partialTick);
+    public void render(ICamera frustrum, float partialTickTime) {
+        if(MinecraftForgeClient.getRenderPass() == HECommonProxy.blockWaterStill.getRenderBlockPass()) {
+            for (long key : chunks.keySet()) {
+                int chunkX = (int) (key >> 32);
+                int chunkZ = (int) key;
+                for (int chunkY = 0; chunkY < 16; chunkY++) {
+                    int x = HEUtil.debucketInt16(chunkX);
+                    int y = HEUtil.debucketInt16(chunkY);
+                    int z = HEUtil.debucketInt16(chunkZ);
+                    if (frustrum.isBoundingBoxInFrustum(AxisAlignedBB.getBoundingBox(x, y, z, x + 16, y + 16, z + 16))) {
+                        chunks.get(key)[chunkY].render(partialTickTime);
+                    }
+                }
+            }
         }
     }
 }

@@ -267,19 +267,22 @@ public class EntityWaterLevelTransformer implements IClassTransformer {
 	}
 
 	private static byte[] transformRenderGlobal(byte[] basicClass, boolean isObfuscated) {
-		final String METHOD_renderAllRenderLists = isObfuscated ? "a" : "renderAllRenderLists";
-		final String METHOD_renderAllRenderLists_DESC = "(ID)V";
+		final String CLASS_ICamera = isObfuscated ? "bmv" : "net/minecraft/client/renderer/culling/ICamera";
+		final String CLASS_EntityLivingBase = isObfuscated ? "sv" : "net/minecraft/entity/EntityLivingBase";
+		final String CLASS_Profiler = isObfuscated ? "qi" : "net/minecraft/profiler/Profiler";
 		final String CLASS_HETessalator = "com/sinthoras/hydroenergy/hewater/render/HETessalator";
+
+		final String METHOD_renderEntities = isObfuscated ? "a" : "renderEntities";
+		final String METHOD_renderEntities_DESC = "(L" + CLASS_EntityLivingBase + ";L" + CLASS_ICamera + ";F)V";
+
+		final String METHOD_endSection = isObfuscated ? "b" : "endSection";
+		final String METHOD_endSection_DESC = "()V";
+
 		final String FIELD_instance = "instance";
 		final String FIELD_instance_DESC = "L" + CLASS_HETessalator + ";";
-		final String CLASS_RenderList = isObfuscated ? "bmd" : "net/minecraft/client/renderer/RenderList";
-		final String METHOD_callLists = isObfuscated ? "a" : "callLists";
-		final String METHOD_callLists_DESC = "()V";
-		final String FIELD_allRenderLists = isObfuscated ? "ag" : "allRenderLists";
-		final String FIELD_allRenderLists_DESC = "[L" + CLASS_RenderList + ";";
-		final String METHOD_renderSubchunk = "renderSubchunk";
-		final String METHOD_renderSubchunk_DESC = "(L" + CLASS_RenderList + ";ID)V";
-		final String CLASS_RenderGlobal = isObfuscated ? "bma" : "net/minecraft/client/renderer/RenderGlobal";
+
+		final String METHOD_render = "render";
+		final String METHOD_render_DESC = "(L" + CLASS_ICamera + ";F)V";
 
 		// Transform to human readable byte code
 		ClassNode worldClass = new ClassNode();
@@ -288,27 +291,24 @@ public class EntityWaterLevelTransformer implements IClassTransformer {
 
 		InsnList instructionToInsert = new InsnList();
 		instructionToInsert.add(new FieldInsnNode(GETSTATIC, CLASS_HETessalator, FIELD_instance, FIELD_instance_DESC));
-		instructionToInsert.add(new VarInsnNode(ALOAD, 0));
-		instructionToInsert.add(new FieldInsnNode(GETFIELD, CLASS_RenderGlobal, FIELD_allRenderLists, FIELD_allRenderLists_DESC));
-		instructionToInsert.add(new VarInsnNode(ILOAD, 4));
-		instructionToInsert.add(new InsnNode(AALOAD));
-		instructionToInsert.add(new VarInsnNode(ILOAD, 1));
-		instructionToInsert.add(new VarInsnNode(DLOAD, 2));
+
+		instructionToInsert.add(new VarInsnNode(ALOAD, 2));
+		instructionToInsert.add(new VarInsnNode(FLOAD, 3));
 		instructionToInsert.add(new MethodInsnNode(INVOKEVIRTUAL,
 				CLASS_HETessalator,
-				METHOD_renderSubchunk,
-				METHOD_renderSubchunk_DESC,
+				METHOD_render,
+				METHOD_render_DESC,
 				false));
 
 		for(MethodNode method : worldClass.methods) {
-			if(method.name.equals(METHOD_renderAllRenderLists) && method.desc.equals(METHOD_renderAllRenderLists_DESC)) {
+			if(method.name.equals(METHOD_renderEntities) && method.desc.equals(METHOD_renderEntities_DESC)) {
 				for(AbstractInsnNode instruction : method.instructions.toArray()) {
 					if(instruction.getOpcode() == INVOKEVIRTUAL
-							&& ((MethodInsnNode)instruction).owner.equals(CLASS_RenderList)
-							&& ((MethodInsnNode)instruction).name.equals(METHOD_callLists)
-							&& ((MethodInsnNode)instruction).desc.equals(METHOD_callLists_DESC)) {
+							&& ((MethodInsnNode)instruction).owner.equals(CLASS_Profiler)
+							&& ((MethodInsnNode)instruction).name.equals(METHOD_endSection)
+							&& ((MethodInsnNode)instruction).desc.equals(METHOD_endSection_DESC)) {
 						method.instructions.insert(instruction, instructionToInsert);
-						HE.LOG.info("Successfully injected net.minecraft.client.renderer.RenderGlobal.renderAllRenderLists");
+						HE.LOG.info("Successfully injected net.minecraft.client.renderer.RenderGlobal.renderEntities");
 						break;
 					}
 				}
