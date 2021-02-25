@@ -16,11 +16,12 @@ void main() {
     //gl_Position = gl_Position * g_viewProjection;
     EmitVertex();
 
-    gl_Position = position + vec4(0.5, -0.5, 0, 1);
+    gl_Position = position + vec4(1, 0, 0, 0);
     //gl_Position = gl_Position * g_viewProjection;
     EmitVertex();
 
-    gl_Position = position + vec4(-0.5, 0.5, 0, 1);
+    gl_Position = position + vec4(0, 1, 0, 0);
+    //gl_Position = gl_in[0].gl_Position * g_viewProjection;
     //gl_Position = gl_Position * g_viewProjection;
     EmitVertex();
 
