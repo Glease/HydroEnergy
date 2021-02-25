@@ -87,6 +87,6 @@ public class HEWaterRenderer extends RenderBlockFluid {
         final float LIGHT_XZ_NEG = 0.8F;
         final float LIGHT_XZ_POS = 0.6F;
         final double RENDER_OFFSET = 0.0010000000474974513D;*/
-        return true;
+        return false;
     }
 }

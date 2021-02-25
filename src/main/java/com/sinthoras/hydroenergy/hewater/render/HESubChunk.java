@@ -4,6 +4,7 @@ import com.sinthoras.hydroenergy.proxy.HECommonProxy;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.multiplayer.WorldClient;
+import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
@@ -19,8 +20,8 @@ public class HESubChunk {
     private int vaoId = -1;
     private int vboPositionId = -1;
     private int vboWaterIdId = -1;
-    private IntBuffer positionBuffer = IntBuffer.allocate(3 * (1 << 12));  // == 3 * 16 * 16 * 16  (12kInt = 48kB)
-    private IntBuffer waterIdBuffer = IntBuffer.allocate(1 << 12);  // == 1 * 16 * 16 * 16  (4kInt = 16kB)
+    private IntBuffer positionBuffer = GLAllocation.createDirectIntBuffer(3 * (1 << 12));  // == 3 * 16 * 16 * 16  (12kInt = 48kB)
+    private IntBuffer waterIdBuffer = GLAllocation.createDirectIntBuffer(1 << 12);  // == 1 * 16 * 16 * 16  (4kInt = 16kB)
     private int numWaterBlocks = 0;
 
 
@@ -44,8 +45,8 @@ public class HESubChunk {
             positionBuffer.flip();
             waterIdBuffer.flip();
 
-            GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
-            GL11.glPushClientAttrib(GL11.GL_ALL_CLIENT_ATTRIB_BITS);
+            //GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
+            //GL11.glPushClientAttrib(GL11.GL_ALL_CLIENT_ATTRIB_BITS);
 
             GL30.glBindVertexArray(vaoId);
 
@@ -60,8 +61,8 @@ public class HESubChunk {
             GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
             GL30.glBindVertexArray(0);
 
-            GL11.glPopClientAttrib();
-            GL11.glPopAttrib();
+            //GL11.glPopClientAttrib();
+            //GL11.glPopAttrib();
 
             // TODO: Light update (gotta link update flag and waterID to provide patch with correct waterLevel
             /*
@@ -95,8 +96,11 @@ public class HESubChunk {
     public void render(double partialTickTime) {
         if(numWaterBlocks != 0) {
 
-            GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
-            GL11.glPushClientAttrib(GL11.GL_ALL_CLIENT_ATTRIB_BITS);
+            // (float)((double)this.renderChunkX - this.cameraX), (float)((double)this.renderChunkY - this.cameraY), (float)((double)this.renderChunkZ - this.cameraZ)
+
+
+            //GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
+            //GL11.glPushClientAttrib(GL11.GL_ALL_CLIENT_ATTRIB_BITS);
 
             HEProgram.bind();
 
@@ -113,8 +117,8 @@ public class HESubChunk {
 
             HEProgram.unbind();
 
-            GL11.glPopClientAttrib();
-            GL11.glPopAttrib();
+            //GL11.glPopClientAttrib();
+            //GL11.glPopAttrib();
         }
     }
 
