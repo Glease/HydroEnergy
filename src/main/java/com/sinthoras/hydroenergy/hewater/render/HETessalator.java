@@ -24,12 +24,12 @@ public class HETessalator {
 
     public static final HETessalator instance = new HETessalator();
 
-    public void onChunkUnload(int chunkX, int chunkZ) {
+    public synchronized void onChunkUnload(int chunkX, int chunkZ) {
         long key = HEUtil.chunkXZ2Int(chunkX, chunkZ);
         chunks.remove(key);
     }
 
-    public void onChunkLoad(int chunkX, int chunkZ) {
+    public synchronized void onChunkLoad(int chunkX, int chunkZ) {
         long key = HEUtil.chunkXZ2Int(chunkX, chunkZ);
         chunks.put(key, new HESubChunk[] {
                 new HESubChunk(), new HESubChunk(), new HESubChunk(), new HESubChunk(),
@@ -39,7 +39,7 @@ public class HETessalator {
         });
     }
 
-    public void onPreRender(int x, int y, int z) {
+    public synchronized void onPreRender(int x, int y, int z) {
         int chunkX = HEUtil.bucketInt16(x);
         int chunkY = HEUtil.bucketInt16(y);
         int chunkZ = HEUtil.bucketInt16(z);
@@ -47,7 +47,7 @@ public class HETessalator {
         chunks.get(key)[chunkY].onPreRender();
     }
 
-    public void onPostRender(World world, int x, int y, int z) {
+    public synchronized void onPostRender(World world, int x, int y, int z) {
         int chunkX = HEUtil.bucketInt16(x);
         int chunkY = HEUtil.bucketInt16(y);
         int chunkZ = HEUtil.bucketInt16(z);
@@ -55,7 +55,7 @@ public class HETessalator {
         chunks.get(key)[chunkY].onPostRender(world, chunkX, chunkY, chunkZ);
     }
 
-    public void addBlock(int x, int y, int z, int waterId, boolean[] shouldSideBeRendered) {
+    public synchronized void addBlock(int x, int y, int z, int waterId, boolean[] shouldSideBeRendered) {
         int chunkX = HEUtil.bucketInt16(x);
         int chunkY = HEUtil.bucketInt16(y);
         int chunkZ = HEUtil.bucketInt16(z);
@@ -63,7 +63,7 @@ public class HETessalator {
         chunks.get(key)[chunkY].addBlock(x, y, z, waterId, shouldSideBeRendered);
     }
 
-    public void render(ICamera frustrum, float partialTickTime) {
+    public synchronized void render(ICamera frustrum, float partialTickTime) {
         if(MinecraftForgeClient.getRenderPass() == HECommonProxy.blockWaterStill.getRenderBlockPass()) {
             for (long key : chunks.keySet()) {
                 int chunkX = (int) (key >> 32);

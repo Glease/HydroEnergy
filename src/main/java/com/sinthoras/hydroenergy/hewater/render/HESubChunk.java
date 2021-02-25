@@ -95,13 +95,6 @@ public class HESubChunk {
 
     public void render(double partialTickTime) {
         if(numWaterBlocks != 0) {
-
-            // (float)((double)this.renderChunkX - this.cameraX), (float)((double)this.renderChunkY - this.cameraY), (float)((double)this.renderChunkZ - this.cameraZ)
-
-
-            //GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
-            //GL11.glPushClientAttrib(GL11.GL_ALL_CLIENT_ATTRIB_BITS);
-
             HEProgram.bind();
 
             GL30.glBindVertexArray(vaoId);
@@ -110,15 +103,12 @@ public class HESubChunk {
             // set uniforms
             HEProgram.setViewProjection();
 
-            GL11.glDrawArrays(GL11.GL_POINT, 0, numWaterBlocks);
+            GL11.glDrawArrays(GL11.GL_POINTS, 0, numWaterBlocks);
 
             GL20.glDisableVertexAttribArray(0);
             GL30.glBindVertexArray(0);
 
             HEProgram.unbind();
-
-            //GL11.glPopClientAttrib();
-            //GL11.glPopAttrib();
         }
     }
 
