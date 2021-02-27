@@ -6,6 +6,7 @@ import com.sinthoras.hydroenergy.proxy.HECommonProxy;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.renderer.RenderList;
+import net.minecraft.client.renderer.culling.Frustrum;
 import net.minecraft.client.renderer.culling.ICamera;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.World;
@@ -72,8 +73,9 @@ public class HETessalator {
                     int x = HEUtil.debucketInt16(chunkX);
                     int y = HEUtil.debucketInt16(chunkY);
                     int z = HEUtil.debucketInt16(chunkZ);
+                    // TODO: compare with WorldRenderer:112
                     if (frustrum.isBoundingBoxInFrustum(AxisAlignedBB.getBoundingBox(x, y, z, x + 16, y + 16, z + 16))) {
-                        chunks.get(key)[chunkY].render(partialTickTime);
+                        chunks.get(key)[chunkY].render((Frustrum)frustrum, partialTickTime);
                     }
                 }
             }

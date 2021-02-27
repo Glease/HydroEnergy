@@ -3,11 +3,15 @@
 layout (location = 0) in vec3 in_Position;
 layout (location = 1) in int in_waterId;
 
+uniform vec3 g_cameraPosition;
+
 out VS_OUT {
     int waterId;
-} gs_out;
+    vec3 color;
+} vs_out;
 
 void main(void) {
-    gl_Position = vec4(in_Position, 1.0);
-    gs_out.waterId = in_waterId;
+    gl_Position = vec4(in_Position - g_cameraPosition, 1.0);
+    vs_out.waterId = in_waterId;
+    vs_out.color = vec3(1, 0.5, 0.65);
 }
