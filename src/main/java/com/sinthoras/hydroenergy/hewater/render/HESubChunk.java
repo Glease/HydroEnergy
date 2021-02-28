@@ -101,6 +101,7 @@ public class HESubChunk {
 
             GL30.glBindVertexArray(vaoId);
             GL20.glEnableVertexAttribArray(0);
+            GL20.glEnableVertexAttribArray(1);
 
             // set uniforms
             HEProgram.setViewProjection();
