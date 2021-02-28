@@ -1,6 +1,5 @@
 package com.sinthoras.hydroenergy.hewater.render;
 
-import com.sinthoras.hydroenergy.HE;
 import com.sinthoras.hydroenergy.proxy.HECommonProxy;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -18,20 +17,6 @@ import java.util.BitSet;
 
 @SideOnly(Side.CLIENT)
 public class HESubChunk {
-
-    private static Field frustrumX;
-    private static Field frustrumY;
-    private static Field frustrumZ;
-    static {
-        try {
-            frustrumX = Frustrum.class.getDeclaredField("xPosition");
-            frustrumX.setAccessible(true);
-            frustrumY = Frustrum.class.getDeclaredField("yPosition");
-            frustrumY.setAccessible(true);
-            frustrumZ = Frustrum.class.getDeclaredField("zPosition");
-            frustrumZ.setAccessible(true);
-        } catch(Exception e) {}
-    }
 
     private BitSet lightUpdateFlags = new BitSet(16*16*16);  // 512B
     private int vaoId = -1;
@@ -72,7 +57,7 @@ public class HESubChunk {
             GL20.glVertexAttribPointer(0, 3, GL11.GL_INT, false, 0, 0);
 
             GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vboWaterIdId);
-            GL15.glBufferData(GL15.GL_ARRAY_BUFFER, positionBuffer, GL15.GL_STATIC_DRAW);
+            GL15.glBufferData(GL15.GL_ARRAY_BUFFER, waterIdBuffer, GL15.GL_STATIC_DRAW);
             GL20.glVertexAttribPointer(1, 1, GL11.GL_INT, false, 0, 0);
 
             GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
@@ -110,7 +95,7 @@ public class HESubChunk {
         lightUpdateFlags.set((x << 8) | (y << 4) | z);
     }
 
-    public void render(Frustrum frustrum, double partialTickTime) {
+    public void render(double partialTickTime) {
         if(numWaterBlocks != 0) {
             HEProgram.bind();
 
@@ -119,12 +104,6 @@ public class HESubChunk {
 
             // set uniforms
             HEProgram.setViewProjection();
-            try {
-                float x = (float)frustrumX.getDouble(frustrum);
-                float y = (float)frustrumY.getDouble(frustrum);
-                float z = (float)frustrumZ.getDouble(frustrum);
-                HEProgram.setCameraPosition(x, y, z);
-            } catch(Exception e) {}
 
             GL11.glDrawArrays(GL11.GL_POINTS, 0, numWaterBlocks);
 

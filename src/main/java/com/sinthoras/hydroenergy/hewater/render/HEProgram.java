@@ -12,6 +12,7 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL32;
 import org.lwjgl.util.vector.Matrix4f;
+import org.lwjgl.util.vector.Vector3f;
 
 import java.io.*;
 import java.nio.ByteBuffer;
@@ -25,7 +26,6 @@ public class HEProgram {
 
     private static int programID;
     private static int viewProjectionID;
-    private static int cameraPositionId;
 
     private static final FloatBuffer projection = GLAllocation.createDirectFloatBuffer(16);
     private static final FloatBuffer modelview = GLAllocation.createDirectFloatBuffer(16);
@@ -50,7 +50,6 @@ public class HEProgram {
         }
 
         viewProjectionID = GL20.glGetUniformLocation(programID, "g_viewProjection");
-        cameraPositionId = GL20.glGetUniformLocation(programID, "g_cameraPosition");
 
         GL20.glUseProgram(0);
     }
@@ -84,21 +83,23 @@ public class HEProgram {
         }
     }
 
-    public static void setViewProjection() {
+    public static void calculateViewProjection(float cameraX, float cameraY, float cameraZ) {
         projection.clear();
         modelview.clear();
         modelviewProjection.clear();
         GL11.glGetFloat(GL11.GL_PROJECTION_MATRIX, projection);
         GL11.glGetFloat(GL11.GL_MODELVIEW_MATRIX, modelview);
+        Matrix4f translation = new Matrix4f().translate(new Vector3f(-cameraX, -cameraY, -cameraZ));
         Matrix4f projectionMatrix = (Matrix4f) new Matrix4f().load(projection.asReadOnlyBuffer());
         Matrix4f modelViewMatrix = (Matrix4f) new Matrix4f().load(modelview.asReadOnlyBuffer());
-        Matrix4f result = Matrix4f.mul(projectionMatrix, modelViewMatrix, null);
+        Matrix4f result = Matrix4f.mul(modelViewMatrix, translation, null);
+        result = Matrix4f.mul(projectionMatrix, result, null);
         result.store(modelviewProjection);
-        GL20.glUniformMatrix4(viewProjectionID, false, modelviewProjection);
+        modelviewProjection.flip();
     }
 
-    public static void setCameraPosition(float x, float y, float z) {
-        GL20.glUniform3f(cameraPositionId, x, y, z);
+    public static void setViewProjection() {
+        GL20.glUniformMatrix4(viewProjectionID, false, modelviewProjection);
     }
 
     public static void bind() {

@@ -1,21 +1,34 @@
 package com.sinthoras.hydroenergy.hewater.render;
 
-import com.sinthoras.hydroenergy.HE;
 import com.sinthoras.hydroenergy.HEUtil;
 import com.sinthoras.hydroenergy.proxy.HECommonProxy;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraft.client.renderer.RenderList;
 import net.minecraft.client.renderer.culling.Frustrum;
 import net.minecraft.client.renderer.culling.ICamera;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.World;
 import net.minecraftforge.client.MinecraftForgeClient;
 
+import java.lang.reflect.Field;
 import java.util.HashMap;
 
 @SideOnly(Side.CLIENT)
 public class HETessalator {
+
+    private static Field frustrumX;
+    private static Field frustrumY;
+    private static Field frustrumZ;
+    static {
+        try {
+            frustrumX = Frustrum.class.getDeclaredField("xPosition");
+            frustrumX.setAccessible(true);
+            frustrumY = Frustrum.class.getDeclaredField("yPosition");
+            frustrumY.setAccessible(true);
+            frustrumZ = Frustrum.class.getDeclaredField("zPosition");
+            frustrumZ.setAccessible(true);
+        } catch(Exception e) {}
+    }
 
     private HashMap<Long, HESubChunk[]> chunks = new HashMap<Long, HESubChunk[]>();
 
@@ -66,6 +79,12 @@ public class HETessalator {
 
     public synchronized void render(ICamera frustrum, float partialTickTime) {
         if(MinecraftForgeClient.getRenderPass() == HECommonProxy.blockWaterStill.getRenderBlockPass()) {
+            try {
+                float x = (float)frustrumX.getDouble(frustrum);
+                float y = (float)frustrumY.getDouble(frustrum);
+                float z = (float)frustrumZ.getDouble(frustrum);
+                HEProgram.calculateViewProjection(x, y, z);
+            } catch(Exception e) {}
             for (long key : chunks.keySet()) {
                 int chunkX = (int) (key >> 32);
                 int chunkZ = (int) key;
@@ -75,7 +94,7 @@ public class HETessalator {
                     int z = HEUtil.debucketInt16(chunkZ);
                     // TODO: compare with WorldRenderer:112
                     if (frustrum.isBoundingBoxInFrustum(AxisAlignedBB.getBoundingBox(x, y, z, x + 16, y + 16, z + 16))) {
-                        chunks.get(key)[chunkY].render((Frustrum)frustrum, partialTickTime);
+                        chunks.get(key)[chunkY].render(partialTickTime);
                     }
                 }
             }
