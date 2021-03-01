@@ -1,6 +1,5 @@
 package com.sinthoras.hydroenergy.hewater.render;
 
-import com.sinthoras.hydroenergy.HE;
 import com.sinthoras.hydroenergy.HEUtil;
 import com.sinthoras.hydroenergy.proxy.HECommonProxy;
 import cpw.mods.fml.relauncher.Side;
@@ -18,7 +17,6 @@ import org.lwjgl.opengl.GL30;
 import org.lwjgl.util.vector.Vector3f;
 
 import java.lang.reflect.Field;
-import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.BitSet;
 import java.util.HashMap;
@@ -26,9 +24,7 @@ import java.util.HashMap;
 @SideOnly(Side.CLIENT)
 public class HETessalator {
 
-    private static IntBuffer positionBuffer = GLAllocation.createDirectIntBuffer(3 * (1 << 12));
-    private static IntBuffer waterIdBuffer = GLAllocation.createDirectIntBuffer(1 << 12);
-    private static FloatBuffer worldColorModifierBuffer = GLAllocation.createDirectFloatBuffer(3 * (1 << 12));
+    private static IntBuffer vboBuffer = GLAllocation.createDirectIntBuffer(7 * (1 << 12));
     private static BitSet lightUpdateFlags = new BitSet(16*16*16);
     private static int numWaterBlocks = 0;
 
@@ -58,9 +54,7 @@ public class HETessalator {
     public synchronized void onPreRender(World world, int x, int y, int z) {
         if(numWaterBlocks != 0) {
             lightUpdateFlags.clear();
-            positionBuffer.clear();
-            waterIdBuffer.clear();
-            worldColorModifierBuffer.clear();
+            vboBuffer.clear();
             numWaterBlocks = 0;
         }
 
@@ -83,30 +77,23 @@ public class HETessalator {
 
             if (subChunk.vaoId == -1) {
                 subChunk.vaoId = GL30.glGenVertexArrays();
-                subChunk.vboPositionId = GL15.glGenBuffers();
-                subChunk.vboWaterIdId = GL15.glGenBuffers();
-                subChunk.vboWorldColorModifierId = GL15.glGenBuffers();
+                subChunk.vboId = GL15.glGenBuffers();
             }
 
-            positionBuffer.flip();
-            waterIdBuffer.flip();
-            worldColorModifierBuffer.flip();
+            vboBuffer.flip();
 
             GL30.glBindVertexArray(subChunk.vaoId);
 
-            GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, subChunk.vboPositionId);
-            GL15.glBufferData(GL15.GL_ARRAY_BUFFER, positionBuffer, GL15.GL_STATIC_DRAW);
-            GL20.glVertexAttribPointer(0, 3, GL11.GL_INT, false, 0, 0);
+            GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, subChunk.vboId);
+            GL15.glBufferData(GL15.GL_ARRAY_BUFFER, vboBuffer, GL15.GL_STATIC_DRAW);
+
+            GL20.glVertexAttribPointer(0, 3, GL11.GL_INT, false, 7 * 4, 0);
             GL20.glEnableVertexAttribArray(0);
 
-            GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, subChunk.vboWaterIdId);
-            GL15.glBufferData(GL15.GL_ARRAY_BUFFER, waterIdBuffer, GL15.GL_STATIC_DRAW);
-            GL20.glVertexAttribPointer(1, 1, GL11.GL_INT, false, 0, 0);
+            GL20.glVertexAttribPointer(1, 1, GL11.GL_INT, false, 7 * 4, 3);
             GL20.glEnableVertexAttribArray(1);
 
-            GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, subChunk.vboWorldColorModifierId);
-            GL15.glBufferData(GL15.GL_ARRAY_BUFFER, worldColorModifierBuffer, GL15.GL_STATIC_DRAW);
-            GL20.glVertexAttribPointer(2, 3, GL11.GL_FLOAT, false, 0, 0);
+            GL20.glVertexAttribPointer(2, 3, GL11.GL_FLOAT, false, 7 * 4, 4);
             GL20.glEnableVertexAttribArray(2);
 
             GL30.glBindVertexArray(0);
@@ -123,13 +110,13 @@ public class HETessalator {
                 waterId |= 1 << i;
 
         // add to VBO
-        positionBuffer.put(x);
-        positionBuffer.put(y);
-        positionBuffer.put(z);
-        waterIdBuffer.put(waterId);
-        worldColorModifierBuffer.put(worldColorModifier.x);
-        worldColorModifierBuffer.put(worldColorModifier.y);
-        worldColorModifierBuffer.put(worldColorModifier.z);
+        vboBuffer.put(x);
+        vboBuffer.put(y);
+        vboBuffer.put(z);
+        vboBuffer.put(waterId);
+        vboBuffer.put(Float.floatToIntBits(worldColorModifier.x));
+        vboBuffer.put(Float.floatToIntBits(worldColorModifier.y));
+        vboBuffer.put(Float.floatToIntBits(worldColorModifier.z));
         numWaterBlocks++;
 
         // Light update stuff

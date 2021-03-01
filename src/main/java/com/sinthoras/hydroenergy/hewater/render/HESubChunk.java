@@ -13,9 +13,7 @@ public class HESubChunk {
 
 
     public int vaoId = -1;
-    public int vboPositionId = -1;
-    public int vboWaterIdId = -1;
-    public int vboWorldColorModifierId = -1;
+    public int vboId = -1;
     public int numWaterBlocks = 0;
 
     public void reset() {
@@ -25,9 +23,7 @@ public class HESubChunk {
             GL20.glDisableVertexAttribArray(2);
 
             GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
-            GL15.glDeleteBuffers(vboPositionId);
-            GL15.glDeleteBuffers(vboWaterIdId);
-            GL15.glDeleteBuffers(vboWorldColorModifierId);
+            GL15.glDeleteBuffers(vboId);
 
             GL30.glBindVertexArray(0);
             GL30.glDeleteVertexArrays(vaoId);
@@ -39,7 +35,7 @@ public class HESubChunk {
     public void render(double partialTickTime) {
         if(numWaterBlocks != 0) {
             HEProgram.bind();
-            
+
             GL30.glBindVertexArray(vaoId);
 
             // set uniforms
