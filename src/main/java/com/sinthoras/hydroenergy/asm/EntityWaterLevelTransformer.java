@@ -20,7 +20,8 @@ public class EntityWaterLevelTransformer implements IClassTransformer {
 			"net.minecraft.block.Block",
 			"net.minecraft.client.renderer.EntityRenderer",
 			"net.minecraft.entity.Entity",
-			"net.minecraft.client.renderer.RenderGlobal"});
+			"net.minecraft.client.renderer.RenderGlobal",
+			"net.minecraft.client.renderer.WorldRenderer"});
 
 	@Override
 	public byte[] transform(String name, String transformedName, byte[] basicClass) {
@@ -41,6 +42,8 @@ public class EntityWaterLevelTransformer implements IClassTransformer {
 				return transformEntity(basicClass, isObfuscated);
 			case 4:
 				return transformRenderGlobal(basicClass, isObfuscated);
+			case 5:
+				return transformWorldRenderer(basicClass, isObfuscated);
 			default:
 				return basicClass;
 		}
@@ -291,7 +294,6 @@ public class EntityWaterLevelTransformer implements IClassTransformer {
 
 		InsnList instructionToInsert = new InsnList();
 		instructionToInsert.add(new FieldInsnNode(GETSTATIC, CLASS_HETessalator, FIELD_instance, FIELD_instance_DESC));
-
 		instructionToInsert.add(new VarInsnNode(ALOAD, 2));
 		instructionToInsert.add(new VarInsnNode(FLOAD, 3));
 		instructionToInsert.add(new MethodInsnNode(INVOKEVIRTUAL,
@@ -309,6 +311,72 @@ public class EntityWaterLevelTransformer implements IClassTransformer {
 							&& ((MethodInsnNode)instruction).desc.equals(METHOD_endSection_DESC)) {
 						method.instructions.insert(instruction, instructionToInsert);
 						HE.LOG.info("Successfully injected net.minecraft.client.renderer.RenderGlobal.renderEntities");
+						break;
+					}
+				}
+			}
+		}
+
+		// Transform back into pure machine code
+		ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);
+		worldClass.accept(classWriter);
+		return classWriter.toByteArray();
+	}
+
+	private static byte[] transformWorldRenderer(byte[] basicClass, boolean isObfuscated) {
+		final String CLASS_WorldRenderer = isObfuscated ? "blo" : "net/minecraft/client/renderer/WorldRenderer";
+		final String CLASS_HETessalator = "com/sinthoras/hydroenergy/hewater/render/HETessalator";
+
+		final String METHOD_setPosition = isObfuscated ? "a" : "setPosition";
+		final String METHOD_setPosition_DESC = "(III)V";
+
+		final String METHOD_setDontDraw = isObfuscated ? "a" : "setDontDraw";
+		final String METHOD_setDontDraw_DESC = "()V";
+
+		final String FIELD_instance = "instance";
+		final String FIELD_instance_DESC = "L" + CLASS_HETessalator + ";";
+
+		final String METHOD_hook = "onRenderChunkUpdate";
+		final String METHOD_hook_DESC = "(IIIIII)V";
+
+		final String FIELD_posX = isObfuscated ? "c" : "posX";
+		final String FIELD_posX_DESC = "I";
+		final String FIELD_posY = isObfuscated ? "d" : "posY";
+		final String FIELD_posY_DESC = "I";
+		final String FIELD_posZ = isObfuscated ? "e" : "posZ";
+		final String FIELD_posZ_DESC = "I";
+
+		// Transform to human readable byte code
+		ClassNode worldClass = new ClassNode();
+		ClassReader classReader = new ClassReader(basicClass);
+		classReader.accept(worldClass, 0);
+
+		InsnList instructionToInsert = new InsnList();
+		instructionToInsert.add(new FieldInsnNode(GETSTATIC, CLASS_HETessalator, FIELD_instance, FIELD_instance_DESC));
+		instructionToInsert.add(new VarInsnNode(ALOAD, 0));
+		instructionToInsert.add(new FieldInsnNode(GETFIELD, CLASS_WorldRenderer, FIELD_posX, FIELD_posX_DESC));
+		instructionToInsert.add(new VarInsnNode(ALOAD, 0));
+		instructionToInsert.add(new FieldInsnNode(GETFIELD, CLASS_WorldRenderer, FIELD_posY, FIELD_posY_DESC));
+		instructionToInsert.add(new VarInsnNode(ALOAD, 0));
+		instructionToInsert.add(new FieldInsnNode(GETFIELD, CLASS_WorldRenderer, FIELD_posZ, FIELD_posZ_DESC));
+		instructionToInsert.add(new VarInsnNode(ILOAD, 1));
+		instructionToInsert.add(new VarInsnNode(ILOAD, 2));
+		instructionToInsert.add(new VarInsnNode(ILOAD, 3));
+		instructionToInsert.add(new MethodInsnNode(INVOKEVIRTUAL,
+				CLASS_HETessalator,
+				METHOD_hook,
+				METHOD_hook_DESC,
+				false));
+
+		for(MethodNode method : worldClass.methods) {
+			if(method.name.equals(METHOD_setPosition) && method.desc.equals(METHOD_setPosition_DESC)) {
+				for(AbstractInsnNode instruction : method.instructions.toArray()) {
+					if(instruction.getOpcode() == INVOKEVIRTUAL
+							&& ((MethodInsnNode)instruction).owner.equals(CLASS_WorldRenderer)
+							&& ((MethodInsnNode)instruction).name.equals(METHOD_setDontDraw)
+							&& ((MethodInsnNode)instruction).desc.equals(METHOD_setDontDraw_DESC)) {
+						method.instructions.insert(instruction, instructionToInsert);
+						HE.LOG.info("Successfully injected net.minecraft.client.renderer.WorldRenderer.setPosition");
 						break;
 					}
 				}

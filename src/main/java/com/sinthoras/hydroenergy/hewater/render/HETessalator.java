@@ -1,5 +1,6 @@
 package com.sinthoras.hydroenergy.hewater.render;
 
+import com.sinthoras.hydroenergy.HE;
 import com.sinthoras.hydroenergy.HEUtil;
 import com.sinthoras.hydroenergy.proxy.HECommonProxy;
 import cpw.mods.fml.relauncher.Side;
@@ -53,20 +54,6 @@ public class HETessalator {
 
     public static final HETessalator instance = new HETessalator();
 
-    public synchronized void onChunkUnload(int chunkX, int chunkZ) {
-        long key = HEUtil.chunkXZ2Int(chunkX, chunkZ);
-        chunks.remove(key);
-    }
-
-    public synchronized void onChunkLoad(int chunkX, int chunkZ) {
-        long key = HEUtil.chunkXZ2Int(chunkX, chunkZ);
-        chunks.put(key, new HESubChunk[] {
-                new HESubChunk(), new HESubChunk(), new HESubChunk(), new HESubChunk(),
-                new HESubChunk(), new HESubChunk(), new HESubChunk(), new HESubChunk(),
-                new HESubChunk(), new HESubChunk(), new HESubChunk(), new HESubChunk(),
-                new HESubChunk(), new HESubChunk(), new HESubChunk(), new HESubChunk()
-        });
-    }
 
     public synchronized void onPreRender(World world, int x, int y, int z) {
         if(numWaterBlocks != 0) {
@@ -174,6 +161,38 @@ public class HETessalator {
                         chunks.get(key)[chunkY].render(partialTickTime);
                     }
                 }
+            }
+        }
+    }
+
+    // One can argue to use ChunkEvent.Load and ChunkEvent.Unload for this stuff,
+    // but those are not in the GL thread and cause issues with cleanup etc
+    public void onRenderChunkUpdate(int oldX, int oldY, int oldZ, int x, int y, int z) {
+        // Just execute once per vertical SubChunk-stack
+        if(y == 0) {
+            int oldChunkX = HEUtil.bucketInt16(oldX);
+            int oldChunkZ = HEUtil.bucketInt16(oldZ);
+            long oldKey = HEUtil.chunkXZ2Int(oldChunkX, oldChunkZ);
+            int chunkX = HEUtil.bucketInt16(x);
+            int chunkZ = HEUtil.bucketInt16(z);
+            long newKey = HEUtil.chunkXZ2Int(chunkX, chunkZ);
+
+            HESubChunk[] subChunks = null;
+            if(chunks.containsKey(oldKey)) {
+                subChunks = chunks.get(oldKey);
+                for (int chunkY = 0; chunkY < 16; chunkY++)
+                    subChunks[chunkY].reset();
+                chunks.remove(oldKey);
+            }
+
+            if(!chunks.containsKey(newKey)) {
+                if(subChunks == null)
+                    subChunks = new HESubChunk[] {
+                            new HESubChunk(), new HESubChunk(), new HESubChunk(), new HESubChunk(),
+                            new HESubChunk(), new HESubChunk(), new HESubChunk(), new HESubChunk(),
+                            new HESubChunk(), new HESubChunk(), new HESubChunk(), new HESubChunk(),
+                            new HESubChunk(), new HESubChunk(), new HESubChunk(), new HESubChunk()};
+                chunks.put(newKey, subChunks);
             }
         }
     }

@@ -18,6 +18,23 @@ public class HESubChunk {
     public int vboWorldColorModifierId = -1;
     public int numWaterBlocks = 0;
 
+    public void reset() {
+        if(vaoId != -1) {
+            GL20.glDisableVertexAttribArray(0);
+            GL20.glDisableVertexAttribArray(1);
+            GL20.glDisableVertexAttribArray(2);
+
+            GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
+            GL15.glDeleteBuffers(vboPositionId);
+            GL15.glDeleteBuffers(vboWaterIdId);
+            GL15.glDeleteBuffers(vboWorldColorModifierId);
+
+            GL30.glBindVertexArray(0);
+            GL30.glDeleteVertexArrays(vaoId);
+        }
+
+        numWaterBlocks = 0;
+    }
 
     public void render(double partialTickTime) {
         if(numWaterBlocks != 0) {
@@ -39,17 +56,6 @@ public class HESubChunk {
 
             HEProgram.unbind();
         }
-    }
-
-    public void finalize() {
-        GL20.glDisableVertexAttribArray(0);
-
-        GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
-        GL15.glDeleteBuffers(vboPositionId);
-        GL15.glDeleteBuffers(vboWaterIdId);
-
-        GL30.glBindVertexArray(0);
-        GL30.glDeleteVertexArrays(vaoId);
     }
 
     private void patchBlockLight(int chunkX, int chunkY, int chunkZ, int x, int y, int z, float waterLevel, WorldClient world, Chunk chunk) {

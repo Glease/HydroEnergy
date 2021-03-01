@@ -11,22 +11,6 @@ import net.minecraftforge.client.event.RenderWorldEvent;
 import net.minecraftforge.event.world.ChunkEvent;
 
 public class HEEventHandlerEVENT_BUS {
-	
-	@SubscribeEvent
-	@SideOnly(Side.CLIENT)
-	public void onEvent(ChunkEvent.Unload event)
-	{
-		HERenderManager.instance.onChunkUnload(event);
-		final Chunk chunk = event.getChunk();
-		HETessalator.instance.onChunkUnload(chunk.xPosition, chunk.zPosition);
-	}
-
-	@SubscribeEvent
-	@SideOnly(Side.CLIENT)
-	public void onEvent(ChunkEvent.Load event) {
-		final Chunk chunk = event.getChunk();
-		HETessalator.instance.onChunkLoad(chunk.xPosition, chunk.zPosition);
-	}
 
 	@SubscribeEvent
 	@SideOnly(Side.CLIENT)
