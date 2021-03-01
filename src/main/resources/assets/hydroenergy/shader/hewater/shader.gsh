@@ -4,7 +4,7 @@ layout (triangle_strip, max_vertices = 30) out;
 
 in VS_OUT {
     int waterId;
-    vec3 color;
+    vec3 worldColorModifier;
 } gs_in[];
 
 uniform mat4 g_viewProjection;
@@ -16,7 +16,7 @@ const vec4 back = vec4(0, 0, 1, 0);
 out vec3 color;
 
 void main() {
-    color = vec3(0.5, 0.5, 1.0);
+    color = gs_in[0].worldColorModifier;
     vec4 position = gl_in[0].gl_Position;
 
     const float waterLevel = 3.5;
@@ -40,21 +40,27 @@ void main() {
     bool shouldRenderYMinus = (waterId & 1) > 0 ? true : false;
     waterId = waterId >> 1;
 
+    color = vec3(log2(gs_in[0].waterId) / 32, 0, 0);
+
+    if((gs_in[0].waterId & (1<<30)) != 0)
+        color = vec3(0, 0, 1);
+
 
     if(shouldRenderXMinus) {
         float height = position.y + 1 > waterLevel ? waterLevel - position.y : 1.0f;
+        vec4 _up = height * up;
         // TODO: do color stuff
         gl_Position = g_viewProjection * position;
         EmitVertex();
-        gl_Position = g_viewProjection * (height * (position + up));
+        gl_Position = g_viewProjection * (position + _up);
         EmitVertex();
         gl_Position = g_viewProjection * (position + back);
         EmitVertex();
         EndPrimitive();
 
-        gl_Position = g_viewProjection * (height * (position + up));
+        gl_Position = g_viewProjection * (position + _up);
         EmitVertex();
-        gl_Position = g_viewProjection * (height * (position + up + back));
+        gl_Position = g_viewProjection * (position + _up + back);
         EmitVertex();
         gl_Position = g_viewProjection * (position + back);
         EmitVertex();

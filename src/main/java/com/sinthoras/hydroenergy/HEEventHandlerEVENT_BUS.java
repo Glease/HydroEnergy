@@ -31,7 +31,7 @@ public class HEEventHandlerEVENT_BUS {
 	@SubscribeEvent
 	@SideOnly(Side.CLIENT)
 	public void onEvent(RenderWorldEvent.Pre event) {
-		HETessalator.instance.onPreRender(event.renderer.posX, event.renderer.posY, event.renderer.posZ);
+		HETessalator.instance.onPreRender(event.renderer.worldObj, event.renderer.posX, event.renderer.posY, event.renderer.posZ);
 	}
 
 	@SubscribeEvent

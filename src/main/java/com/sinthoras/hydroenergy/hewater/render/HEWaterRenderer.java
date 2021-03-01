@@ -12,6 +12,7 @@ import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.fluids.BlockFluidBase;
 import net.minecraftforge.fluids.RenderBlockFluid;
+import org.lwjgl.util.vector.Vector3f;
 
 public class HEWaterRenderer extends RenderBlockFluid {
 	
@@ -69,7 +70,8 @@ public class HEWaterRenderer extends RenderBlockFluid {
                 !neighbors[5].isOpaqueCube() && neighbors[5] != block
         };
 
-        HETessalator.instance.addBlock(x, y, z, ((HEWater)block).getId(), shouldSidesBeRendered);
+        Vector3f worldColorModifier = new Vector3f(1.0f, 1.0f, 1.0f);
+        HETessalator.instance.addBlock(x, y, z, ((HEWater)block).getId(), worldColorModifier, shouldSidesBeRendered);
         
         HEWaterStatic water = (HEWaterStatic) block;
 
