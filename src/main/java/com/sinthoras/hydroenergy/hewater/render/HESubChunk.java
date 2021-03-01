@@ -39,19 +39,14 @@ public class HESubChunk {
     public void render(double partialTickTime) {
         if(numWaterBlocks != 0) {
             HEProgram.bind();
-
+            
             GL30.glBindVertexArray(vaoId);
-
-            GL20.glEnableVertexAttribArray(0);
-            GL20.glEnableVertexAttribArray(1);
-            GL20.glEnableVertexAttribArray(2);
 
             // set uniforms
             HEProgram.setViewProjection();
 
             GL11.glDrawArrays(GL11.GL_POINTS, 0, numWaterBlocks);
 
-            GL20.glDisableVertexAttribArray(0);
             GL30.glBindVertexArray(0);
 
             HEProgram.unbind();
