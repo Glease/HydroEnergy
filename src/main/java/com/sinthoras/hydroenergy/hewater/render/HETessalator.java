@@ -135,6 +135,9 @@ public class HETessalator {
                 HEProgram.calculateViewProjection(x, y, z);
             } catch(Exception e) {}
 
+            GL11.glDisable(GL11.GL_CULL_FACE);
+            GL11.glEnable(GL11.GL_BLEND);
+
             // TODO: sort chunks?
             for (long key : chunks.keySet()) {
                 int chunkX = (int) (key >> 32);
@@ -149,6 +152,9 @@ public class HETessalator {
                     }
                 }
             }
+
+            GL11.glDisable(GL11.GL_BLEND);
+            GL11.glEnable(GL11.GL_CULL_FACE);
         }
     }
 
