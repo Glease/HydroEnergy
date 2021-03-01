@@ -1,11 +1,11 @@
 #version 330 core
 // in_Position was bound to attribute index 0 and in_waterID was bound to attribute index 1
 layout (location = 0) in vec3 in_Position;
-layout (location = 1) in int in_waterId;
+layout (location = 1) in float in_waterId;
 layout (location = 2) in vec3 in_worldColorModifier;
 
 out VS_OUT {
-    int waterId;
+    float waterId;
     vec3 worldColorModifier;
 } vs_out;
 

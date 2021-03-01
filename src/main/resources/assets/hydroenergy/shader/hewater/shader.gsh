@@ -3,7 +3,7 @@ layout (points) in;
 layout (triangle_strip, max_vertices = 30) out;
 
 in VS_OUT {
-    int waterId;
+    float waterId;
     vec3 worldColorModifier;
 } gs_in[];
 
@@ -19,14 +19,7 @@ void main() {
     color = gs_in[0].worldColorModifier;
     vec4 position = gl_in[0].gl_Position;
 
-    const float waterLevel = 3.5;
-    const float flooredWaterLevel = floor(waterLevel);
-    const float ceiledWaterLevel = ceil(waterLevel);
-
-    //if(position.y + 1 <= flooredWaterLevel)
-    //    return;
-
-    int waterId = gs_in[0].waterId;
+    int waterId = int(round(gs_in[0].waterId));
     bool shouldRenderXPlus = (waterId & 1) > 0 ? true : false;
     waterId = waterId >> 1;
     bool shouldRenderXMinus = (waterId & 1) > 0 ? true : false;
@@ -40,15 +33,11 @@ void main() {
     bool shouldRenderYMinus = (waterId & 1) > 0 ? true : false;
     waterId = waterId >> 1;
 
-    color = vec3(log2(gs_in[0].waterId) / 32, 0, 0);
-
-    if((gs_in[0].waterId & (1<<30)) != 0)
-        color = vec3(0, 0, 1);
-
-
     if(shouldRenderXMinus) {
-        float height = position.y + 1 > waterLevel ? waterLevel - position.y : 1.0f;
+        float height = 1;
+        //float height = position.y + 1 > waterLevel ? waterLevel - position.y : 1.0f;
         vec4 _up = height * up;
+        color = vec3(1.0, 0.0, 0.0);
         // TODO: do color stuff
         gl_Position = g_viewProjection * position;
         EmitVertex();
@@ -68,6 +57,7 @@ void main() {
     }
 
 
+    color = vec3(0,0,1);
     gl_Position = g_viewProjection * (position + up);
     EmitVertex();
     gl_Position = g_viewProjection * (position + up + right);
@@ -78,11 +68,9 @@ void main() {
 
     gl_Position = g_viewProjection * (position + up + back);
     EmitVertex();
-    gl_Position = g_viewProjection * (position + up + right + back);
-    EmitVertex();
     gl_Position = g_viewProjection * (position + up + right);
     EmitVertex();
+    gl_Position = g_viewProjection * (position + up + right + back);
+    EmitVertex();
     EndPrimitive();
-
-
 }

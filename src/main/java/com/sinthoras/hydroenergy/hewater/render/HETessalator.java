@@ -87,13 +87,13 @@ public class HETessalator {
             GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, subChunk.vboId);
             GL15.glBufferData(GL15.GL_ARRAY_BUFFER, vboBuffer, GL15.GL_STATIC_DRAW);
 
-            GL20.glVertexAttribPointer(0, 3, GL11.GL_INT, false, 7 * 4, 0);
+            GL20.glVertexAttribPointer(0, 3, GL11.GL_INT, false, 7 * 4, 0 * 4);
             GL20.glEnableVertexAttribArray(0);
 
-            GL20.glVertexAttribPointer(1, 1, GL11.GL_INT, false, 7 * 4, 3);
+            GL20.glVertexAttribPointer(1, 1, GL11.GL_FLOAT, false, 7 * 4, 3 * 4);
             GL20.glEnableVertexAttribArray(1);
 
-            GL20.glVertexAttribPointer(2, 3, GL11.GL_FLOAT, false, 7 * 4, 4);
+            GL20.glVertexAttribPointer(2, 3, GL11.GL_FLOAT, false, 7 * 4, 4 * 4);
             GL20.glEnableVertexAttribArray(2);
 
             GL30.glBindVertexArray(0);
@@ -113,7 +113,7 @@ public class HETessalator {
         vboBuffer.put(x);
         vboBuffer.put(y);
         vboBuffer.put(z);
-        vboBuffer.put(waterId);
+        vboBuffer.put(Float.floatToIntBits(waterId));
         vboBuffer.put(Float.floatToIntBits(worldColorModifier.x));
         vboBuffer.put(Float.floatToIntBits(worldColorModifier.y));
         vboBuffer.put(Float.floatToIntBits(worldColorModifier.z));
@@ -138,6 +138,11 @@ public class HETessalator {
             GL11.glDisable(GL11.GL_CULL_FACE);
             GL11.glEnable(GL11.GL_BLEND);
 
+            HEProgram.bind();
+
+            // set uniforms
+            HEProgram.setViewProjection();
+
             // TODO: sort chunks?
             for (long key : chunks.keySet()) {
                 int chunkX = (int) (key >> 32);
@@ -152,6 +157,8 @@ public class HETessalator {
                     }
                 }
             }
+
+            HEProgram.unbind();
 
             GL11.glDisable(GL11.GL_BLEND);
             GL11.glEnable(GL11.GL_CULL_FACE);
