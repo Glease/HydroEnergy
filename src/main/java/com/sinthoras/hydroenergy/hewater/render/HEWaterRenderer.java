@@ -52,12 +52,12 @@ public class HEWaterRenderer extends RenderBlockFluid {
         }
 
         Block[] neighbors = new Block[] {
+                world.getBlock(x - 1, y, z),
+                world.getBlock(x + 1, y, z),
                 world.getBlock(x, y - 1, z),
                 world.getBlock(x, y + 1, z),
                 world.getBlock(x, y, z - 1),
-                world.getBlock(x, y, z + 1),
-                world.getBlock(x - 1, y, z),
-                world.getBlock(x + 1, y, z)
+                world.getBlock(x, y, z + 1)
         };
 
         boolean[] shouldSidesBeRendered = new boolean[]

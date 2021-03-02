@@ -50,17 +50,17 @@ void drawQuad(vec4 position00, vec2 texCoord00, vec4 position01, vec2 texCoord01
 void main() {
 
     int waterId = int(round(gs_in[0].waterId));
-    bool shouldRenderXPlus = (waterId & 1) > 0 ? true : false;
-    waterId = waterId >> 1;
     bool shouldRenderXMinus = (waterId & 1) > 0 ? true : false;
     waterId = waterId >> 1;
-    bool shouldRenderZPlus = (waterId & 1) > 0 ? true : false;
+    bool shouldRenderXPlus = (waterId & 1) > 0 ? true : false;
     waterId = waterId >> 1;
-    bool shouldRenderZMinus = (waterId & 1) > 0 ? true : false;
+    bool shouldRenderYMinus = (waterId & 1) > 0 ? true : false;
     waterId = waterId >> 1;
     bool shouldRenderYPlus = (waterId & 1) > 0 ? true : false;
     waterId = waterId >> 1;
-    bool shouldRenderYMinus = (waterId & 1) > 0 ? true : false;
+    bool shouldRenderZMinus = (waterId & 1) > 0 ? true : false;
+    waterId = waterId >> 1;
+    bool shouldRenderZPlus = (waterId & 1) > 0 ? true : false;
     waterId = waterId >> 1;
 
     float waterLevel = g_waterLevels[waterId];
@@ -91,7 +91,7 @@ void main() {
 
         float height = position.y + 1 > waterLevel ? waterLevel - position.y : 1.0f;
         vec4 _up = vec4(0.0, height, 0.0, 0.0);
-        position.x += 1.0 - RENDER_OFFSET;
+        position.x -= RENDER_OFFSET;
         position = position + right;
 
         vec4 position00 = position;
@@ -167,7 +167,7 @@ void main() {
 
         float height = position.y + 1 > waterLevel ? waterLevel - position.y : 1.0f;
         vec4 _up = vec4(0.0, height, 0.0, 0.0);
-        position.z += 1.0 - RENDER_OFFSET;
+        position.z -= RENDER_OFFSET;
         position = position + back;
 
         vec4 position00 = position;
