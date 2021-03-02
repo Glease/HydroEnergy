@@ -17,14 +17,14 @@ import org.lwjgl.opengl.GL30;
 import org.lwjgl.util.vector.Vector3f;
 
 import java.lang.reflect.Field;
-import java.nio.IntBuffer;
+import java.nio.FloatBuffer;
 import java.util.BitSet;
 import java.util.HashMap;
 
 @SideOnly(Side.CLIENT)
 public class HETessalator {
 
-    private static IntBuffer vboBuffer = GLAllocation.createDirectIntBuffer(7 * (1 << 12));
+    private static FloatBuffer vboBuffer = GLAllocation.createDirectFloatBuffer(7 * (1 << 12));
     private static BitSet lightUpdateFlags = new BitSet(16*16*16);
     private static int numWaterBlocks = 0;
 
@@ -87,7 +87,7 @@ public class HETessalator {
             GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, subChunk.vboId);
             GL15.glBufferData(GL15.GL_ARRAY_BUFFER, vboBuffer, GL15.GL_STATIC_DRAW);
 
-            GL20.glVertexAttribPointer(0, 3, GL11.GL_INT, false, 7 * 4, 0 * 4);
+            GL20.glVertexAttribPointer(0, 3, GL11.GL_FLOAT, false, 7 * 4, 0 * 4);
             GL20.glEnableVertexAttribArray(0);
 
             GL20.glVertexAttribPointer(1, 1, GL11.GL_FLOAT, false, 7 * 4, 3 * 4);
@@ -109,14 +109,13 @@ public class HETessalator {
             if(shouldSideBeRendered[i])
                 waterId |= 1 << i;
 
-        // add to VBO
         vboBuffer.put(x);
         vboBuffer.put(y);
         vboBuffer.put(z);
-        vboBuffer.put(Float.floatToIntBits(waterId));
-        vboBuffer.put(Float.floatToIntBits(worldColorModifier.x));
-        vboBuffer.put(Float.floatToIntBits(worldColorModifier.y));
-        vboBuffer.put(Float.floatToIntBits(worldColorModifier.z));
+        vboBuffer.put(waterId);
+        vboBuffer.put(worldColorModifier.x);
+        vboBuffer.put(worldColorModifier.y);
+        vboBuffer.put(worldColorModifier.z);
         numWaterBlocks++;
 
         // Light update stuff
@@ -139,11 +138,10 @@ public class HETessalator {
             GL11.glEnable(GL11.GL_BLEND);
 
             HEProgram.bind();
-
-            // set uniforms
             HEProgram.setViewProjection();
+            HEProgram.setWaterLevels();
 
-            // TODO: sort chunks?
+            // TODO: sort chunks
             for (long key : chunks.keySet()) {
                 int chunkX = (int) (key >> 32);
                 int chunkZ = (int) key;
