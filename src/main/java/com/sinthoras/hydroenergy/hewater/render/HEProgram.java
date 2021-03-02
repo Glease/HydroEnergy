@@ -1,5 +1,6 @@
 package com.sinthoras.hydroenergy.hewater.render;
 
+import com.google.common.base.Charsets;
 import com.sinthoras.hydroenergy.HE;
 
 import net.minecraft.client.Minecraft;
@@ -16,6 +17,7 @@ import org.lwjgl.util.vector.Vector3f;
 
 import java.io.*;
 import java.nio.ByteBuffer;
+import java.nio.CharBuffer;
 import java.nio.FloatBuffer;
 
 public class HEProgram {
@@ -26,15 +28,17 @@ public class HEProgram {
 
     private static int programID;
     private static int viewProjectionID;
+    private static int waterLevelsID;
 
     private static final FloatBuffer projection = GLAllocation.createDirectFloatBuffer(16);
     private static final FloatBuffer modelview = GLAllocation.createDirectFloatBuffer(16);
     private static final FloatBuffer modelviewProjection = GLAllocation.createDirectFloatBuffer(16);
 
+
     public static void init() {
-        final int vertexShader = loadShader(vertexShaderLocation, GL20.GL_VERTEX_SHADER);
-        final int geometryShader = loadShader(geometryShaderLocation, GL32.GL_GEOMETRY_SHADER);
-        final int fragmentShader = loadShader(fragmentShaderLocation, GL20.GL_FRAGMENT_SHADER);
+        final int vertexShader = loadShader(vertexShaderLocation, GL20.GL_VERTEX_SHADER, "");
+        final int geometryShader = loadShader(geometryShaderLocation, GL32.GL_GEOMETRY_SHADER, "#define NUM_CONTROLLERS " + HE.maxController + "\n");
+        final int fragmentShader = loadShader(fragmentShaderLocation, GL20.GL_FRAGMENT_SHADER, "");
 
         programID = GL20.glCreateProgram();
         GL20.glAttachShader(programID, vertexShader);
@@ -50,22 +54,21 @@ public class HEProgram {
         }
 
         viewProjectionID = GL20.glGetUniformLocation(programID, "g_viewProjection");
+        waterLevelsID = GL20.glGetUniformLocation(programID, "g_waterLevels");
 
         GL20.glUseProgram(0);
     }
 
-    public static int getProgramID() {
-        return programID;
-    }
-
-    private static int loadShader(ResourceLocation shaderLocation, int type) {
+    private static int loadShader(ResourceLocation shaderLocation, int type, String defines) {
         try {
             InputStream shaderStream = Minecraft.getMinecraft().getResourceManager().getResource(shaderLocation).getInputStream();
             BufferedInputStream bufferedinputstream = new BufferedInputStream(shaderStream);
             byte[] shaderBytes = IOUtils.toByteArray(bufferedinputstream);
-            ByteBuffer bytebuffer = BufferUtils.createByteBuffer(shaderBytes.length);
+            byte[] definesBytes = defines.getBytes(Charsets.US_ASCII);
+            ByteBuffer bytebuffer = BufferUtils.createByteBuffer(shaderBytes.length + definesBytes.length);
+            bytebuffer.put(definesBytes);
             bytebuffer.put(shaderBytes);
-            bytebuffer.position(0);
+            bytebuffer.flip();
             final int shaderID = GL20.glCreateShader(type);
             GL20.glShaderSource(shaderID, bytebuffer);
             GL20.glCompileShader(shaderID);
@@ -100,6 +103,14 @@ public class HEProgram {
 
     public static void setViewProjection() {
         GL20.glUniformMatrix4(viewProjectionID, false, modelviewProjection);
+    }
+
+    public static void setWaterLevels() {
+        FloatBuffer waterLevels = GLAllocation.createDirectFloatBuffer(HE.maxController);
+        for(int i=0;i<HE.maxController;i++)
+            waterLevels.put(5.35f);
+        waterLevels.flip();
+        GL20.glUniform1(waterLevelsID, waterLevels);
     }
 
     public static void bind() {

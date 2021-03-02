@@ -8,6 +8,7 @@ in VS_OUT {
 } gs_in[];
 
 uniform mat4 g_viewProjection;
+uniform float g_waterLevels[NUM_CONTROLLERS];
 
 const vec4 up = vec4(0, 1, 0, 0);
 const vec4 right = vec4(1, 0, 0, 0);
@@ -33,9 +34,10 @@ void main() {
     bool shouldRenderYMinus = (waterId & 1) > 0 ? true : false;
     waterId = waterId >> 1;
 
-    if(shouldRenderXMinus) {
-        float height = 1;
-        //float height = position.y + 1 > waterLevel ? waterLevel - position.y : 1.0f;
+    float waterLevel = g_waterLevels[waterId];
+
+    if(shouldRenderXMinus && waterLevel >= position.y) {
+        float height = position.y + 1 > waterLevel ? waterLevel - position.y : 1.0f;
         vec4 _up = height * up;
         color = vec3(1.0, 0.0, 0.0);
         // TODO: do color stuff
