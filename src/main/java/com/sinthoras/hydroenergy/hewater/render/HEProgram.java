@@ -86,6 +86,7 @@ public class HEProgram {
         }
     }
 
+    // TODO: glGetFloat is quite slow. If possible just recalculate those matricies
     public static void calculateViewProjection(float cameraX, float cameraY, float cameraZ) {
         projection.clear();
         modelview.clear();
@@ -108,7 +109,7 @@ public class HEProgram {
     public static void setWaterLevels() {
         FloatBuffer waterLevels = GLAllocation.createDirectFloatBuffer(HE.maxController);
         for(int i=0;i<HE.maxController;i++)
-            waterLevels.put(5.35f);
+            waterLevels.put(6.35f);
         waterLevels.flip();
         GL20.glUniform1(waterLevelsID, waterLevels);
     }
