@@ -15,8 +15,10 @@ const vec4 right = vec4(1, 0, 0, 0);
 const vec4 back = vec4(0, 0, 1, 0);
 
 out vec3 color;
+out vec2 texCoord;
 
 void main() {
+    texCoord = vec2(0, 0);
     color = gs_in[0].worldColorModifier;
     vec4 position = gl_in[0].gl_Position;
 
@@ -42,23 +44,29 @@ void main() {
         color = vec3(1.0, 0.0, 0.0);
         // TODO: do color stuff
         gl_Position = g_viewProjection * position;
+        texCoord = vec2(0.0, 0.0);
         EmitVertex();
         gl_Position = g_viewProjection * (position + _up);
+        texCoord = vec2(0.0, 1.0);
         EmitVertex();
         gl_Position = g_viewProjection * (position + back);
+        texCoord = vec2(1.0, 0.0);
         EmitVertex();
         EndPrimitive();
 
         gl_Position = g_viewProjection * (position + _up);
+        texCoord = vec2(0.0, 1.0);
         EmitVertex();
         gl_Position = g_viewProjection * (position + _up + back);
+        texCoord = vec2(1.0, 1.0);
         EmitVertex();
         gl_Position = g_viewProjection * (position + back);
+        texCoord = vec2(1.0, 0.0);
         EmitVertex();
         EndPrimitive();
     }
 
-
+    texCoord = vec2(0.0, 0.0);
     color = vec3(0,0,1);
     gl_Position = g_viewProjection * (position + up);
     EmitVertex();
