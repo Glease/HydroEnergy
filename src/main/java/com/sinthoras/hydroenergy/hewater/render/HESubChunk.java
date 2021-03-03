@@ -18,17 +18,14 @@ public class HESubChunk {
 
     public void reset() {
         if(vaoId != -1) {
-            GL20.glDisableVertexAttribArray(0);
-            GL20.glDisableVertexAttribArray(1);
-            GL20.glDisableVertexAttribArray(2);
-
             GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
             GL15.glDeleteBuffers(vboId);
+            vboId = -1;
 
             GL30.glBindVertexArray(0);
             GL30.glDeleteVertexArrays(vaoId);
+            vaoId = -1;
         }
-
         numWaterBlocks = 0;
     }
 

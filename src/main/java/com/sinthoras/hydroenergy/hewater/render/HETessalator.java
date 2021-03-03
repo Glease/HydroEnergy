@@ -1,5 +1,6 @@
 package com.sinthoras.hydroenergy.hewater.render;
 
+import com.sinthoras.hydroenergy.HE;
 import com.sinthoras.hydroenergy.HEUtil;
 import com.sinthoras.hydroenergy.proxy.HECommonProxy;
 import cpw.mods.fml.relauncher.Side;
@@ -78,25 +79,27 @@ public class HETessalator {
             if (subChunk.vaoId == -1) {
                 subChunk.vaoId = GL30.glGenVertexArrays();
                 subChunk.vboId = GL15.glGenBuffers();
+
+                GL30.glBindVertexArray(subChunk.vaoId);
+
+                GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, subChunk.vboId);
+                GL15.glBufferData(GL15.GL_ARRAY_BUFFER, vboBuffer.capacity() * HE.FLOAT_SIZE, GL15.GL_STATIC_DRAW);
+
+                GL20.glVertexAttribPointer(0, 3, GL11.GL_FLOAT, false, 7 * HE.FLOAT_SIZE, 0 * HE.FLOAT_SIZE);
+                GL20.glEnableVertexAttribArray(0);
+
+                GL20.glVertexAttribPointer(1, 1, GL11.GL_FLOAT, false, 7 * HE.FLOAT_SIZE, 3 * HE.FLOAT_SIZE);
+                GL20.glEnableVertexAttribArray(1);
+
+                GL20.glVertexAttribPointer(2, 3, GL11.GL_FLOAT, false, 7 * HE.FLOAT_SIZE, 4 * HE.FLOAT_SIZE);
+                GL20.glEnableVertexAttribArray(2);
+
+                GL30.glBindVertexArray(0);
             }
 
             vboBuffer.flip();
-
-            GL30.glBindVertexArray(subChunk.vaoId);
-
             GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, subChunk.vboId);
-            GL15.glBufferData(GL15.GL_ARRAY_BUFFER, vboBuffer, GL15.GL_STATIC_DRAW);
-
-            GL20.glVertexAttribPointer(0, 3, GL11.GL_FLOAT, false, 7 * 4, 0 * 4);
-            GL20.glEnableVertexAttribArray(0);
-
-            GL20.glVertexAttribPointer(1, 1, GL11.GL_FLOAT, false, 7 * 4, 3 * 4);
-            GL20.glEnableVertexAttribArray(1);
-
-            GL20.glVertexAttribPointer(2, 3, GL11.GL_FLOAT, false, 7 * 4, 4 * 4);
-            GL20.glEnableVertexAttribArray(2);
-
-            GL30.glBindVertexArray(0);
+            GL15.glBufferSubData(GL15.GL_ARRAY_BUFFER, 0, vboBuffer);
             GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
 
             subChunk.numWaterBlocks = numWaterBlocks;
@@ -178,8 +181,8 @@ public class HETessalator {
             HESubChunk[] subChunks = null;
             if(chunks.containsKey(oldKey)) {
                 subChunks = chunks.get(oldKey);
-                for (int chunkY = 0; chunkY < 16; chunkY++)
-                    subChunks[chunkY].reset();
+                for (HESubChunk subChunk : subChunks)
+                    subChunk.reset();
                 chunks.remove(oldKey);
             }
 
