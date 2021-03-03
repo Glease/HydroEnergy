@@ -22,6 +22,8 @@ const float RENDER_OFFSET = 0.0010000000474974513;
 
 out vec3 color;
 out vec2 texCoord;
+out float blockLight;
+out float skyLight;
 
 void drawQuad(vec4 position00, vec2 texCoord00, vec4 position01, vec2 texCoord01, vec4 position10, vec2 texCoord10, vec4 position11, vec2 texCoord11) {
     gl_Position = g_viewProjection * position00;
@@ -48,6 +50,8 @@ void drawQuad(vec4 position00, vec2 texCoord00, vec4 position01, vec2 texCoord01
 }
 
 void main() {
+    skyLight = 13;
+    blockLight = 0;
 
     int waterId = int(round(gs_in[0].waterId));
     bool shouldRenderXMinus = (waterId & 1) > 0 ? true : false;

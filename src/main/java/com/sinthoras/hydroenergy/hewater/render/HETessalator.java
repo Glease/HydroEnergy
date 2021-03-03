@@ -143,6 +143,7 @@ public class HETessalator {
             HEProgram.bind();
             HEProgram.setViewProjection();
             HEProgram.setWaterLevels();
+            HEProgram.bindLightLUT();
 
             // TODO: sort chunks
             for (long key : chunks.keySet()) {

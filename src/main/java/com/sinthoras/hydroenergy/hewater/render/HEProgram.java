@@ -3,21 +3,24 @@ package com.sinthoras.hydroenergy.hewater.render;
 import com.google.common.base.Charsets;
 import com.sinthoras.hydroenergy.HE;
 
+import com.sinthoras.hydroenergy.controller.HEDamsClient;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.util.ResourceLocation;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL32;
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
 
 import java.io.*;
+import java.lang.reflect.Field;
 import java.nio.ByteBuffer;
-import java.nio.CharBuffer;
 import java.nio.FloatBuffer;
 
 public class HEProgram {
@@ -29,10 +32,19 @@ public class HEProgram {
     private static int programID;
     private static int viewProjectionID;
     private static int waterLevelsID;
+    private static int lightLUTID;
 
     private static final FloatBuffer projection = GLAllocation.createDirectFloatBuffer(16);
     private static final FloatBuffer modelview = GLAllocation.createDirectFloatBuffer(16);
     private static final FloatBuffer modelviewProjection = GLAllocation.createDirectFloatBuffer(16);
+
+    private static Field locationLightMap;
+    static {
+        try {
+            locationLightMap = EntityRenderer.class.getDeclaredField("locationLightMap");
+            locationLightMap.setAccessible(true);
+        } catch(Exception e) {}
+    }
 
 
     public static void init() {
@@ -55,6 +67,7 @@ public class HEProgram {
 
         viewProjectionID = GL20.glGetUniformLocation(programID, "g_viewProjection");
         waterLevelsID = GL20.glGetUniformLocation(programID, "g_waterLevels");
+        lightLUTID = GL20.glGetUniformLocation(programID, "g_lightLUT");
 
         GL20.glUseProgram(0);
     }
@@ -111,6 +124,21 @@ public class HEProgram {
         waterLevels.put(HEDamsClient.instance.getAllWaterLevels());
         waterLevels.flip();
         GL20.glUniform1(waterLevelsID, waterLevels);
+    }
+
+    public static void bindLightLUT() {
+        try {
+            GL13.glActiveTexture(GL13.GL_TEXTURE0);
+            ResourceLocation lightMapLocation = (ResourceLocation) locationLightMap.get(Minecraft.getMinecraft().entityRenderer);
+            Minecraft.getMinecraft().getTextureManager().bindTexture(lightMapLocation);
+            GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR);
+            GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);
+            GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR);
+            GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);
+            GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_S, GL11.GL_CLAMP);
+            GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_T, GL11.GL_CLAMP);
+            GL20.glUniform1i(lightLUTID, 0);
+        } catch(Exception e) {}
     }
 
     public static void bind() {
