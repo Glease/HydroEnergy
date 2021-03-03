@@ -34,6 +34,10 @@ public class HEDamsClient {
 		return renderedWaterLevel[id];
 	}
 
+	public float[] getAllWaterLevels() {
+		return renderedWaterLevel;
+	}
+
 	public void onClientSynchronize(float[] renderedWaterLevel) {
 		this.renderedWaterLevel = renderedWaterLevel;
 	}

@@ -108,8 +108,7 @@ public class HEProgram {
 
     public static void setWaterLevels() {
         FloatBuffer waterLevels = GLAllocation.createDirectFloatBuffer(HE.maxController);
-        for(int i=0;i<HE.maxController;i++)
-            waterLevels.put(6.35f);
+        waterLevels.put(HEDamsClient.instance.getAllWaterLevels());
         waterLevels.flip();
         GL20.glUniform1(waterLevelsID, waterLevels);
     }
