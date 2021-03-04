@@ -144,6 +144,7 @@ public class HETessalator {
             HEProgram.setViewProjection();
             HEProgram.setWaterLevels();
             HEProgram.bindLightLUT();
+            HEProgram.bindAtlasTexture();
 
             // TODO: sort chunks
             for (long key : chunks.keySet()) {

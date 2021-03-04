@@ -7,6 +7,7 @@ import com.sinthoras.hydroenergy.controller.HEDamsClient;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.client.renderer.GLAllocation;
+import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.util.ResourceLocation;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -33,6 +34,7 @@ public class HEProgram {
     private static int viewProjectionID;
     private static int waterLevelsID;
     private static int lightLUTID;
+    private static int atlasTextureID;
 
     private static final FloatBuffer projection = GLAllocation.createDirectFloatBuffer(16);
     private static final FloatBuffer modelview = GLAllocation.createDirectFloatBuffer(16);
@@ -68,6 +70,7 @@ public class HEProgram {
         viewProjectionID = GL20.glGetUniformLocation(programID, "g_viewProjection");
         waterLevelsID = GL20.glGetUniformLocation(programID, "g_waterLevels");
         lightLUTID = GL20.glGetUniformLocation(programID, "g_lightLUT");
+        atlasTextureID = GL20.glGetUniformLocation(programID, "g_atlasTexture");
 
         GL20.glUseProgram(0);
     }
@@ -139,6 +142,12 @@ public class HEProgram {
             GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_T, GL11.GL_CLAMP);
             GL20.glUniform1i(lightLUTID, 0);
         } catch(Exception e) {}
+    }
+
+    public static void bindAtlasTexture() {
+        GL13.glActiveTexture(GL13.GL_TEXTURE1);
+        Minecraft.getMinecraft().getTextureManager().bindTexture(TextureMap.locationBlocksTexture);
+        GL20.glUniform1i(atlasTextureID, 1);
     }
 
     public static void bind() {
