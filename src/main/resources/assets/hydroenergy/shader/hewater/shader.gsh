@@ -3,7 +3,7 @@ layout (points) in;
 layout (triangle_strip, max_vertices = 30) out;
 
 in VS_OUT {
-    float waterId;
+    int waterId;
     vec3 worldColorModifier;
 } gs_in[];
 
@@ -81,7 +81,7 @@ void main() {
     skyLight = 13;
     blockLight = 0;
 
-    int waterId = int(round(gs_in[0].waterId));
+    int waterId = gs_in[0].waterId;
     bool shouldRenderXMinus = (waterId & 1) > 0 ? true : false;
     waterId = waterId >> 1;
     bool shouldRenderXPlus = (waterId & 1) > 0 ? true : false;
