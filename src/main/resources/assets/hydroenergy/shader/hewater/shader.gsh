@@ -106,14 +106,15 @@ void main() {
         vec4 _up = vec4(0.0, height, 0.0, 0.0);
         position.x += RENDER_OFFSET;
 
+        height = height * 0.5;
         vec4 position00 = position;
-        vec2 texCoord00 = vec2(0.5, height);
+        vec2 texCoord00 = vec2(0.5, 1.0);
         vec4 position01 = position + _up;
-        vec2 texCoord01 = vec2(0.5, 0.5);
+        vec2 texCoord01 = vec2(0.5, 1.0 - height);
         vec4 position10 = position + back;
-        vec2 texCoord10 = vec2(0.0, height);
+        vec2 texCoord10 = vec2(0.0, 1.0);
         vec4 position11 = position + _up + back;
-        vec2 texCoord11 = vec2(0.0, 0.5);
+        vec2 texCoord11 = vec2(0.0, 1.0 - height);
         drawQuadVertical(position00, texCoord00, position01, texCoord01, position10, texCoord10, position11, texCoord11);
     }
 
@@ -126,14 +127,15 @@ void main() {
         position.x -= RENDER_OFFSET;
         position = position + right;
 
+        height = height * 0.5;
         vec4 position00 = position;
-        vec2 texCoord00 = vec2(0.0, height);
+        vec2 texCoord00 = vec2(0.0, 1.0);
         vec4 position01 = position + back;
-        vec2 texCoord01 = vec2(0.5, height);
+        vec2 texCoord01 = vec2(0.5, 1.0);
         vec4 position10 = position + _up;
-        vec2 texCoord10 = vec2(0.0, 0.5);
+        vec2 texCoord10 = vec2(0.0, 1.0 - height);
         vec4 position11 = position + _up + back;
-        vec2 texCoord11 = vec2(0.5, 0.5);
+        vec2 texCoord11 = vec2(0.5, 1.0 - height);
         drawQuadVertical(position00, texCoord00, position01, texCoord01, position10, texCoord10, position11, texCoord11);
     }
 
@@ -182,14 +184,15 @@ void main() {
         vec4 _up = vec4(0.0, height, 0.0, 0.0);
         position.z += RENDER_OFFSET;
 
+        height = height * 0.5;
         vec4 position00 = position;
-        vec2 texCoord00 = vec2(0.5, height);
+        vec2 texCoord00 = vec2(0.5, 1.0);
         vec4 position01 = position + right;
-        vec2 texCoord01 = vec2(0.0, height);
+        vec2 texCoord01 = vec2(0.0, 1.0);
         vec4 position10 = position + _up;
-        vec2 texCoord10 = vec2(0.5, 0.5);
+        vec2 texCoord10 = vec2(0.5, 1.0 - height);
         vec4 position11 = position + _up + right;
-        vec2 texCoord11 = vec2(0.0, 0.5);
+        vec2 texCoord11 = vec2(0.0, 1.0 - height);
         drawQuadVertical(position00, texCoord00, position01, texCoord01, position10, texCoord10, position11, texCoord11);
     }
 
@@ -202,14 +205,15 @@ void main() {
         position.z -= RENDER_OFFSET;
         position = position + back;
 
+        height = height * 0.5;
         vec4 position00 = position;
-        vec2 texCoord00 = vec2(0.0, height);
+        vec2 texCoord00 = vec2(0.0, 1.0);
         vec4 position01 = position + _up;
-        vec2 texCoord01 = vec2(0.0, 0.5);
+        vec2 texCoord01 = vec2(0.0, 1.0 - height);
         vec4 position10 = position + right;
-        vec2 texCoord10 = vec2(0.5, height);
+        vec2 texCoord10 = vec2(0.5, 1.0);
         vec4 position11 = position + _up + right;
-        vec2 texCoord11 = vec2(0.5, 0.5);
+        vec2 texCoord11 = vec2(0.5, 1.0 - height);
         drawQuadVertical(position00, texCoord00, position01, texCoord01, position10, texCoord10, position11, texCoord11);
     }
 }
