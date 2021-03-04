@@ -31,7 +31,10 @@ public class HESubChunk {
 
     public void render(double partialTickTime) {
         if(numWaterBlocks != 0) {
+            GL11.glCullFace(GL11.GL_FRONT);
             GL30.glBindVertexArray(vaoId);
+            GL11.glDrawArrays(GL11.GL_POINTS, 0, numWaterBlocks);
+            GL11.glCullFace(GL11.GL_BACK);
             GL11.glDrawArrays(GL11.GL_POINTS, 0, numWaterBlocks);
             GL30.glBindVertexArray(0);
         }

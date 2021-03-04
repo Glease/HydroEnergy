@@ -33,11 +33,11 @@ void drawQuadHorizontal(vec4 position00, vec2 texCoord00, vec4 position01, vec2 
     gl_Position = g_viewProjection * position00;
     texCoord = g_texCoordStillMin + texCoord00 * g_texCoordStillDelta;
     EmitVertex();
-    gl_Position = g_viewProjection * position01;
-    texCoord = g_texCoordStillMin + texCoord01 * g_texCoordStillDelta;
-    EmitVertex();
     gl_Position = g_viewProjection * position10;
     texCoord = g_texCoordStillMin + texCoord10 * g_texCoordStillDelta;
+    EmitVertex();
+    gl_Position = g_viewProjection * position01;
+    texCoord = g_texCoordStillMin + texCoord01 * g_texCoordStillDelta;
     EmitVertex();
     EndPrimitive();
 
@@ -57,11 +57,11 @@ void drawQuadVertical(vec4 position00, vec2 texCoord00, vec4 position01, vec2 te
     gl_Position = g_viewProjection * position00;
     texCoord = g_texCoordFlowingMin + texCoord00 * g_texCoordFlowingDelta;
     EmitVertex();
-    gl_Position = g_viewProjection * position01;
-    texCoord = g_texCoordFlowingMin + texCoord01 * g_texCoordFlowingDelta;
-    EmitVertex();
     gl_Position = g_viewProjection * position10;
     texCoord = g_texCoordFlowingMin + texCoord10 * g_texCoordFlowingDelta;
+    EmitVertex();
+    gl_Position = g_viewProjection * position01;
+    texCoord = g_texCoordFlowingMin + texCoord01 * g_texCoordFlowingDelta;
     EmitVertex();
     EndPrimitive();
 
@@ -128,10 +128,10 @@ void main() {
 
         vec4 position00 = position;
         vec2 texCoord00 = vec2(0.0, height);
-        vec4 position01 = position + _up;
-        vec2 texCoord01 = vec2(0.0, 0.5);
-        vec4 position10 = position + back;
-        vec2 texCoord10 = vec2(0.5, height);
+        vec4 position01 = position + back;
+        vec2 texCoord01 = vec2(0.5, height);
+        vec4 position10 = position + _up;
+        vec2 texCoord10 = vec2(0.0, 0.5);
         vec4 position11 = position + _up + back;
         vec2 texCoord11 = vec2(0.5, 0.5);
         drawQuadVertical(position00, texCoord00, position01, texCoord01, position10, texCoord10, position11, texCoord11);
@@ -184,10 +184,10 @@ void main() {
 
         vec4 position00 = position;
         vec2 texCoord00 = vec2(0.5, height);
-        vec4 position01 = position + _up;
-        vec2 texCoord01 = vec2(0.5, 0.5);
-        vec4 position10 = position + right;
-        vec2 texCoord10 = vec2(0.0, height);
+        vec4 position01 = position + right;
+        vec2 texCoord01 = vec2(0.0, height);
+        vec4 position10 = position + _up;
+        vec2 texCoord10 = vec2(0.5, 0.5);
         vec4 position11 = position + _up + right;
         vec2 texCoord11 = vec2(0.0, 0.5);
         drawQuadVertical(position00, texCoord00, position01, texCoord01, position10, texCoord10, position11, texCoord11);
