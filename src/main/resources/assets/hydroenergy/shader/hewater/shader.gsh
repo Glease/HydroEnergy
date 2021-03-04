@@ -9,8 +9,10 @@ in VS_OUT {
 
 uniform mat4 g_viewProjection;
 uniform float g_waterLevels[NUM_CONTROLLERS];
-uniform vec2 g_texCoordMin;
-uniform vec2 g_texCoordDelta;
+uniform vec2 g_texCoordStillMin;
+uniform vec2 g_texCoordStillDelta;
+uniform vec2 g_texCoordFlowingMin;
+uniform vec2 g_texCoordFlowingDelta;
 
 const vec4 up = vec4(0, 1, 0, 0);
 const vec4 right = vec4(1, 0, 0, 0);
@@ -27,26 +29,50 @@ out vec2 texCoord;
 out float blockLight;
 out float skyLight;
 
-void drawQuad(vec4 position00, vec2 texCoord00, vec4 position01, vec2 texCoord01, vec4 position10, vec2 texCoord10, vec4 position11, vec2 texCoord11) {
+void drawQuadHorizontal(vec4 position00, vec2 texCoord00, vec4 position01, vec2 texCoord01, vec4 position10, vec2 texCoord10, vec4 position11, vec2 texCoord11) {
     gl_Position = g_viewProjection * position00;
-    texCoord = g_texCoordMin + texCoord00 * g_texCoordDelta;
+    texCoord = g_texCoordStillMin + texCoord00 * g_texCoordStillDelta;
     EmitVertex();
     gl_Position = g_viewProjection * position01;
-    texCoord = g_texCoordMin + texCoord01 * g_texCoordDelta;
+    texCoord = g_texCoordStillMin + texCoord01 * g_texCoordStillDelta;
     EmitVertex();
     gl_Position = g_viewProjection * position10;
-    texCoord = g_texCoordMin + texCoord10 * g_texCoordDelta;
+    texCoord = g_texCoordStillMin + texCoord10 * g_texCoordStillDelta;
     EmitVertex();
     EndPrimitive();
 
     gl_Position = g_viewProjection * position01;
-    texCoord = g_texCoordMin + texCoord01 * g_texCoordDelta;
+    texCoord = g_texCoordStillMin + texCoord01 * g_texCoordStillDelta;
     EmitVertex();
     gl_Position = g_viewProjection * position10;
-    texCoord = g_texCoordMin + texCoord10 * g_texCoordDelta;
+    texCoord = g_texCoordStillMin + texCoord10 * g_texCoordStillDelta;
     EmitVertex();
     gl_Position = g_viewProjection * position11;
-    texCoord = g_texCoordMin + texCoord11 * g_texCoordDelta;
+    texCoord = g_texCoordStillMin + texCoord11 * g_texCoordStillDelta;
+    EmitVertex();
+    EndPrimitive();
+}
+
+void drawQuadVertical(vec4 position00, vec2 texCoord00, vec4 position01, vec2 texCoord01, vec4 position10, vec2 texCoord10, vec4 position11, vec2 texCoord11) {
+    gl_Position = g_viewProjection * position00;
+    texCoord = g_texCoordFlowingMin + texCoord00 * g_texCoordFlowingDelta;
+    EmitVertex();
+    gl_Position = g_viewProjection * position01;
+    texCoord = g_texCoordFlowingMin + texCoord01 * g_texCoordFlowingDelta;
+    EmitVertex();
+    gl_Position = g_viewProjection * position10;
+    texCoord = g_texCoordFlowingMin + texCoord10 * g_texCoordFlowingDelta;
+    EmitVertex();
+    EndPrimitive();
+
+    gl_Position = g_viewProjection * position01;
+    texCoord = g_texCoordFlowingMin + texCoord01 * g_texCoordFlowingDelta;
+    EmitVertex();
+    gl_Position = g_viewProjection * position10;
+    texCoord = g_texCoordFlowingMin + texCoord10 * g_texCoordFlowingDelta;
+    EmitVertex();
+    gl_Position = g_viewProjection * position11;
+    texCoord = g_texCoordFlowingMin + texCoord11 * g_texCoordFlowingDelta;
     EmitVertex();
     EndPrimitive();
 }
@@ -81,14 +107,14 @@ void main() {
         position.x += RENDER_OFFSET;
 
         vec4 position00 = position;
-        vec2 texCoord00 = vec2(0.5, 0.5);
+        vec2 texCoord00 = vec2(0.5, height);
         vec4 position01 = position + _up;
-        vec2 texCoord01 = vec2(0.0, 0.5);
+        vec2 texCoord01 = vec2(0.5, 0.5);
         vec4 position10 = position + back;
-        vec2 texCoord10 = vec2(0.5, height);
+        vec2 texCoord10 = vec2(0.0, height);
         vec4 position11 = position + _up + back;
-        vec2 texCoord11 = vec2(0.0, height);
-        drawQuad(position00, texCoord00, position01, texCoord01, position10, texCoord10, position11, texCoord11);
+        vec2 texCoord11 = vec2(0.0, 0.5);
+        drawQuadVertical(position00, texCoord00, position01, texCoord01, position10, texCoord10, position11, texCoord11);
     }
 
     position = gl_in[0].gl_Position;
@@ -101,14 +127,14 @@ void main() {
         position = position + right;
 
         vec4 position00 = position;
-        vec2 texCoord00 = vec2(0.0, 0.5);
+        vec2 texCoord00 = vec2(0.0, height);
         vec4 position01 = position + _up;
-        vec2 texCoord01 = vec2(0.5, 0.5);
+        vec2 texCoord01 = vec2(0.0, 0.5);
         vec4 position10 = position + back;
-        vec2 texCoord10 = vec2(0.0, height);
+        vec2 texCoord10 = vec2(0.5, height);
         vec4 position11 = position + _up + back;
-        vec2 texCoord11 = vec2(0.5, height);
-        drawQuad(position00, texCoord00, position01, texCoord01, position10, texCoord10, position11, texCoord11);
+        vec2 texCoord11 = vec2(0.5, 0.5);
+        drawQuadVertical(position00, texCoord00, position01, texCoord01, position10, texCoord10, position11, texCoord11);
     }
 
     position = gl_in[0].gl_Position;
@@ -128,7 +154,7 @@ void main() {
         vec2 texCoord10 = vec2(1.0, 0.0);
         vec4 position11 = position + right + back;
         vec2 texCoord11 = vec2(1.0, 1.0);
-        drawQuad(position00, texCoord00, position01, texCoord01, position10, texCoord10, position11, texCoord11);
+        drawQuadHorizontal(position00, texCoord00, position01, texCoord01, position10, texCoord10, position11, texCoord11);
     }
 
     position = gl_in[0].gl_Position;
@@ -145,7 +171,7 @@ void main() {
         vec2 texCoord10 = vec2(1.0, 0.0);
         vec4 position11 = position + back + right;
         vec2 texCoord11 = vec2(1.0, 1.0);
-        drawQuad(position00, texCoord00, position01, texCoord01, position10, texCoord10, position11, texCoord11);
+        drawQuadHorizontal(position00, texCoord00, position01, texCoord01, position10, texCoord10, position11, texCoord11);
     }
 
     position = gl_in[0].gl_Position;
@@ -157,14 +183,14 @@ void main() {
         position.z += RENDER_OFFSET;
 
         vec4 position00 = position;
-        vec2 texCoord00 = vec2(0.0, 0.5);
+        vec2 texCoord00 = vec2(0.5, height);
         vec4 position01 = position + _up;
-        vec2 texCoord01 = vec2(0.0, height);
+        vec2 texCoord01 = vec2(0.5, 0.5);
         vec4 position10 = position + right;
-        vec2 texCoord10 = vec2(0.5, 0.5);
+        vec2 texCoord10 = vec2(0.0, height);
         vec4 position11 = position + _up + right;
-        vec2 texCoord11 = vec2(0.5, height);
-        drawQuad(position00, texCoord00, position01, texCoord01, position10, texCoord10, position11, texCoord11);
+        vec2 texCoord11 = vec2(0.0, 0.5);
+        drawQuadVertical(position00, texCoord00, position01, texCoord01, position10, texCoord10, position11, texCoord11);
     }
 
     position = gl_in[0].gl_Position;
@@ -177,13 +203,13 @@ void main() {
         position = position + back;
 
         vec4 position00 = position;
-        vec2 texCoord00 = vec2(0.5, 0.5);
+        vec2 texCoord00 = vec2(0.0, height);
         vec4 position01 = position + _up;
-        vec2 texCoord01 = vec2(0.5, height);
+        vec2 texCoord01 = vec2(0.0, 0.5);
         vec4 position10 = position + right;
-        vec2 texCoord10 = vec2(0.0, 0.5);
+        vec2 texCoord10 = vec2(0.5, height);
         vec4 position11 = position + _up + right;
-        vec2 texCoord11 = vec2(0.0, height);
-        drawQuad(position00, texCoord00, position01, texCoord01, position10, texCoord10, position11, texCoord11);
+        vec2 texCoord11 = vec2(0.5, 0.5);
+        drawQuadVertical(position00, texCoord00, position01, texCoord01, position10, texCoord10, position11, texCoord11);
     }
 }

@@ -4,13 +4,13 @@ import com.google.common.base.Charsets;
 import com.sinthoras.hydroenergy.HE;
 
 import com.sinthoras.hydroenergy.controller.HEDamsClient;
-import com.sinthoras.hydroenergy.proxy.HECommonProxy;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.util.IIcon;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fluids.FluidRegistry;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.lwjgl.BufferUtils;
@@ -37,8 +37,10 @@ public class HEProgram {
     private static int waterLevelsID;
     private static int lightLUTID;
     private static int atlasTextureID;
-    private static int texCoordMinID;
-    private static int texCoordDeltaID;
+    private static int texCoordStillMinID;
+    private static int texCoordStillDeltaID;
+    private static int texCoordFlowingMinID;
+    private static int texCoordFlowingDeltaID;
 
     private static final FloatBuffer projection = GLAllocation.createDirectFloatBuffer(16);
     private static final FloatBuffer modelview = GLAllocation.createDirectFloatBuffer(16);
@@ -75,8 +77,10 @@ public class HEProgram {
         waterLevelsID = GL20.glGetUniformLocation(programID, "g_waterLevels");
         lightLUTID = GL20.glGetUniformLocation(programID, "g_lightLUT");
         atlasTextureID = GL20.glGetUniformLocation(programID, "g_atlasTexture");
-        texCoordMinID = GL20.glGetUniformLocation(programID, "g_texCoordMin");
-        texCoordDeltaID = GL20.glGetUniformLocation(programID, "g_texCoordDelta");
+        texCoordStillMinID = GL20.glGetUniformLocation(programID, "g_texCoordStillMin");
+        texCoordStillDeltaID = GL20.glGetUniformLocation(programID, "g_texCoordStillDelta");
+        texCoordFlowingMinID = GL20.glGetUniformLocation(programID, "g_texCoordFlowingMin");
+        texCoordFlowingDeltaID = GL20.glGetUniformLocation(programID, "g_texCoordFlowingDelta");
 
         GL20.glUseProgram(0);
     }
@@ -136,11 +140,16 @@ public class HEProgram {
     }
 
     public static void setWaterUV() {
-        IIcon iconStill = HECommonProxy.blockWaterStill.getIcon();
-        final float minU = iconStill.getInterpolatedU(0.0);
-        final float minV = iconStill.getInterpolatedV(0.0);
-        GL20.glUniform2f(texCoordMinID, minU, minV);
-        GL20.glUniform2f(texCoordDeltaID, iconStill.getInterpolatedU(16.0) - minU, iconStill.getInterpolatedV(16.0) - minV);
+        IIcon iconStill = FluidRegistry.WATER.getStillIcon();
+        float minU = iconStill.getInterpolatedU(0.0);
+        float minV = iconStill.getInterpolatedV(0.0);
+        GL20.glUniform2f(texCoordStillMinID, minU, minV);
+        GL20.glUniform2f(texCoordStillDeltaID, iconStill.getInterpolatedU(16.0) - minU, iconStill.getInterpolatedV(16.0) - minV);
+        IIcon iconFlowing = FluidRegistry.WATER.getFlowingIcon();
+        minU = iconFlowing.getInterpolatedU(0.0);
+        minV = iconFlowing.getInterpolatedV(0.0);
+        GL20.glUniform2f(texCoordFlowingMinID, minU, minV);
+        GL20.glUniform2f(texCoordFlowingDeltaID, iconFlowing.getInterpolatedU(16.0) - minU, iconFlowing.getInterpolatedV(16.0) - minV);
     }
 
     public static void bindLightLUT() {
