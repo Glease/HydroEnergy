@@ -22,7 +22,7 @@ const float LIGHT_Y_NEG = 0.5;
 const float LIGHT_Y_POS = 1.0;
 const float LIGHT_XZ_NEG = 0.8;
 const float LIGHT_XZ_POS = 0.6;
-const float RENDER_OFFSET = 0.002;
+const float RENDER_OFFSET = 0.0010000000474974513;
 
 out vec3 color;
 out vec2 texCoord;
