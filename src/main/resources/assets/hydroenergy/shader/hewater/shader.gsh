@@ -9,6 +9,8 @@ in VS_OUT {
 
 uniform mat4 g_viewProjection;
 uniform float g_waterLevels[NUM_CONTROLLERS];
+uniform vec2 g_texCoordMin;
+uniform vec2 g_texCoordDelta;
 
 const vec4 up = vec4(0, 1, 0, 0);
 const vec4 right = vec4(1, 0, 0, 0);
@@ -27,24 +29,24 @@ out float skyLight;
 
 void drawQuad(vec4 position00, vec2 texCoord00, vec4 position01, vec2 texCoord01, vec4 position10, vec2 texCoord10, vec4 position11, vec2 texCoord11) {
     gl_Position = g_viewProjection * position00;
-    texCoord = texCoord00;
+    texCoord = g_texCoordMin + texCoord00 * g_texCoordDelta;
     EmitVertex();
     gl_Position = g_viewProjection * position01;
-    texCoord = texCoord01;
+    texCoord = g_texCoordMin + texCoord01 * g_texCoordDelta;
     EmitVertex();
     gl_Position = g_viewProjection * position10;
-    texCoord = texCoord10;
+    texCoord = g_texCoordMin + texCoord10 * g_texCoordDelta;
     EmitVertex();
     EndPrimitive();
 
     gl_Position = g_viewProjection * position01;
-    texCoord = texCoord01;
+    texCoord = g_texCoordMin + texCoord01 * g_texCoordDelta;
     EmitVertex();
     gl_Position = g_viewProjection * position10;
-    texCoord = texCoord10;
+    texCoord = g_texCoordMin + texCoord10 * g_texCoordDelta;
     EmitVertex();
     gl_Position = g_viewProjection * position11;
-    texCoord = texCoord11;
+    texCoord = g_texCoordMin + texCoord11 * g_texCoordDelta;
     EmitVertex();
     EndPrimitive();
 }

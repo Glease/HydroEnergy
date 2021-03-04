@@ -4,10 +4,12 @@ import com.google.common.base.Charsets;
 import com.sinthoras.hydroenergy.HE;
 
 import com.sinthoras.hydroenergy.controller.HEDamsClient;
+import com.sinthoras.hydroenergy.proxy.HECommonProxy;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraft.util.IIcon;
 import net.minecraft.util.ResourceLocation;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -35,6 +37,8 @@ public class HEProgram {
     private static int waterLevelsID;
     private static int lightLUTID;
     private static int atlasTextureID;
+    private static int texCoordMinID;
+    private static int texCoordDeltaID;
 
     private static final FloatBuffer projection = GLAllocation.createDirectFloatBuffer(16);
     private static final FloatBuffer modelview = GLAllocation.createDirectFloatBuffer(16);
@@ -71,6 +75,8 @@ public class HEProgram {
         waterLevelsID = GL20.glGetUniformLocation(programID, "g_waterLevels");
         lightLUTID = GL20.glGetUniformLocation(programID, "g_lightLUT");
         atlasTextureID = GL20.glGetUniformLocation(programID, "g_atlasTexture");
+        texCoordMinID = GL20.glGetUniformLocation(programID, "g_texCoordMin");
+        texCoordDeltaID = GL20.glGetUniformLocation(programID, "g_texCoordDelta");
 
         GL20.glUseProgram(0);
     }
@@ -127,6 +133,14 @@ public class HEProgram {
         waterLevels.put(HEDamsClient.instance.getAllWaterLevels());
         waterLevels.flip();
         GL20.glUniform1(waterLevelsID, waterLevels);
+    }
+
+    public static void setWaterUV() {
+        IIcon iconStill = HECommonProxy.blockWaterStill.getIcon();
+        final float minU = iconStill.getInterpolatedU(0.0);
+        final float minV = iconStill.getInterpolatedV(0.0);
+        GL20.glUniform2f(texCoordMinID, minU, minV);
+        GL20.glUniform2f(texCoordDeltaID, iconStill.getInterpolatedU(16.0) - minU, iconStill.getInterpolatedV(16.0) - minV);
     }
 
     public static void bindLightLUT() {

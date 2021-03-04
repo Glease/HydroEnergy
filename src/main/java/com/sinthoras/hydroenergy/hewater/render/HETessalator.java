@@ -143,6 +143,7 @@ public class HETessalator {
             HEProgram.bind();
             HEProgram.setViewProjection();
             HEProgram.setWaterLevels();
+            HEProgram.setWaterUV();
             HEProgram.bindLightLUT();
             HEProgram.bindAtlasTexture();
 
