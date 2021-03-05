@@ -15,7 +15,6 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
-import org.lwjgl.util.vector.Vector3f;
 
 import java.lang.reflect.Field;
 import java.nio.FloatBuffer;
@@ -25,7 +24,7 @@ import java.util.HashMap;
 @SideOnly(Side.CLIENT)
 public class HETessalator {
 
-    private static FloatBuffer vboBuffer = GLAllocation.createDirectFloatBuffer(7 * (1 << 12));
+    private static FloatBuffer vboBuffer = GLAllocation.createDirectFloatBuffer(7 * (16 * 16 * 16));
     private static BitSet lightUpdateFlags = new BitSet(16*16*16);
     private static int numWaterBlocks = 0;
 
@@ -91,8 +90,14 @@ public class HETessalator {
                 GL20.glVertexAttribPointer(1, 1, GL11.GL_FLOAT, false, 7 * HE.FLOAT_SIZE, 3 * HE.FLOAT_SIZE);
                 GL20.glEnableVertexAttribArray(1);
 
-                GL20.glVertexAttribPointer(2, 3, GL11.GL_FLOAT, false, 7 * HE.FLOAT_SIZE, 4 * HE.FLOAT_SIZE);
+                GL20.glVertexAttribPointer(2, 1, GL11.GL_FLOAT, false, 7 * HE.FLOAT_SIZE, 4 * HE.FLOAT_SIZE);
                 GL20.glEnableVertexAttribArray(2);
+
+                GL20.glVertexAttribPointer(3, 1, GL11.GL_FLOAT, false, 7 * HE.FLOAT_SIZE, 5 * HE.FLOAT_SIZE);
+                GL20.glEnableVertexAttribArray(3);
+
+                GL20.glVertexAttribPointer(4, 1, GL11.GL_FLOAT, false, 7 * HE.FLOAT_SIZE, 6 * HE.FLOAT_SIZE);
+                GL20.glEnableVertexAttribArray(4);
 
                 GL30.glBindVertexArray(0);
             }
@@ -106,19 +111,27 @@ public class HETessalator {
         }
     }
 
-    public synchronized void addBlock(int x, int y, int z, int waterId, Vector3f worldColorModifier, boolean[] shouldSideBeRendered) {
-        waterId <<= 6;
+    public synchronized void addBlock(int x, int y, int z, int waterId, int worldColorModifier, boolean[] shouldSideBeRendered) {
+        int renderSides = 0;
         for(int i=0;i<shouldSideBeRendered.length;i++)
             if(shouldSideBeRendered[i])
-                waterId |= 1 << i;
+                renderSides |= 1 << i;
 
         vboBuffer.put(x);
         vboBuffer.put(y);
         vboBuffer.put(z);
-        vboBuffer.put(waterId);
-        vboBuffer.put(worldColorModifier.x);
-        vboBuffer.put(worldColorModifier.y);
-        vboBuffer.put(worldColorModifier.z);
+
+        int lightXMinus = 15, lightXPlus = 15, lightYMinus = 15, lightYPlus = 15, lightZMinus = 15, lightZPlus = 15;
+        int light0 = (lightXMinus << 16) | (lightXPlus << 8) | lightYMinus;
+        int light1 = (lightYPlus << 16) | (lightZMinus << 8) | lightZPlus;
+        vboBuffer.put(light0);
+        vboBuffer.put(light1);
+
+        int info = (waterId << 6) | renderSides;
+        vboBuffer.put(info);
+
+        vboBuffer.put(worldColorModifier);
+
         numWaterBlocks++;
 
         // Light update stuff

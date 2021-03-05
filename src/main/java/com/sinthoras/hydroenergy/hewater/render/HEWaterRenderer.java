@@ -70,11 +70,7 @@ public class HEWaterRenderer extends RenderBlockFluid {
                 !neighbors[5].isOpaqueCube() && neighbors[5] != block
         };
 
-        int color = block.colorMultiplier(world, x, y, z);
-        float red = (color >> 16 & 255) / 255.0F;
-        float green = (color >> 8 & 255) / 255.0F;
-        float blue = (color & 255) / 255.0F;
-        Vector3f worldColorModifier = new Vector3f(red, green, blue);
+        int worldColorModifier = block.colorMultiplier(world, x, y, z);
         HETessalator.instance.addBlock(x, y, z, ((HEWater)block).getId(), worldColorModifier, shouldSidesBeRendered);
         
         HEWaterStatic water = (HEWaterStatic) block;
