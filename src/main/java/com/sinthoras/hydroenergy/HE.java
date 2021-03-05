@@ -14,6 +14,8 @@ public class HE {
     public static final int FLOAT_SIZE = 4;
     public static SimpleNetworkWrapper network;
     public static Logger LOG;
+    public static final int maxRenderDist = 16;
+
     static{
         LOG = LogManager.getLogger(MODID);
     }

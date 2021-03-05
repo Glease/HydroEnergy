@@ -163,6 +163,9 @@ public class HETessalator {
                 float z = (float)frustrumZ.getDouble(frustrum);
                 HEProgram.setViewProjection(x, y, z);
                 HEProgram.setCameraPosition(x, y, z);
+                HESortedRenderList.setup(HEUtil.bucketInt16((int)x),
+                                         HEUtil.bucketInt16((int)y),
+                                         HEUtil.bucketInt16((int)z));
             } catch(Exception e) {}
             HEProgram.setWaterLevels();
             HEProgram.setWaterUV();
@@ -170,7 +173,6 @@ public class HETessalator {
             HEProgram.bindLightLUT();
             HEProgram.bindAtlasTexture();
 
-            // TODO: sort chunks
             for (long key : chunks.keySet()) {
                 int chunkX = (int) (key >> 32);
                 int chunkZ = (int) key;
@@ -180,10 +182,12 @@ public class HETessalator {
                     int z = HEUtil.debucketInt16(chunkZ);
                     // TODO: compare with WorldRenderer:112
                     if (frustrum.isBoundingBoxInFrustum(AxisAlignedBB.getBoundingBox(x, y, z, x + 16, y + 16, z + 16))) {
-                        chunks.get(key)[chunkY].render(partialTickTime);
+                        HESubChunk subChunk = chunks.get(key)[chunkY];
+                        HESortedRenderList.add(subChunk.vaoId, subChunk.numWaterBlocks, chunkX, chunkY, chunkZ);
                     }
                 }
             }
+            HESortedRenderList.render();
 
             HEProgram.unbind();
 
