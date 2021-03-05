@@ -25,6 +25,11 @@ uniform vec2 g_texCoordStillMin;
 uniform vec2 g_texCoordStillDelta;
 uniform vec2 g_texCoordFlowingMin;
 uniform vec2 g_texCoordFlowingDelta;
+uniform float g_fogDiff;
+uniform float g_fogEnd;
+uniform float g_fogDensity;
+uniform float g_fogModeLinear;
+uniform vec3 g_cameraPosition;
 
 const vec4 up = vec4(0, 1, 0, 0);
 const vec4 right = vec4(1, 0, 0, 0);
@@ -39,26 +44,40 @@ const float RENDER_OFFSET = 0.0010000000474974513;
 out vec3 colorModifier;
 out vec2 texCoord;
 out vec2 lightCoord;
+out float fogCoefficient;
+
+void setFogCoefficient(vec4 position) {
+    float c = length(position.xyz - g_cameraPosition);
+    float c_linear = clamp((g_fogEnd - c) / g_fogDiff, 0.0, 1.0);
+    float c_exp = clamp(exp(-g_fogDensity * c), 0.0, 1.0);
+    fogCoefficient =  g_fogModeLinear * c_linear + (1.0 - g_fogModeLinear) * c_exp;
+}
 
 void drawQuadHorizontal(vec4 position00, vec2 texCoord00, vec4 position01, vec2 texCoord01, vec4 position10, vec2 texCoord10, vec4 position11, vec2 texCoord11) {
     gl_Position = g_viewProjection * position00;
+    setFogCoefficient(position00);
     texCoord = g_texCoordStillMin + texCoord00 * g_texCoordStillDelta;
     EmitVertex();
     gl_Position = g_viewProjection * position10;
+    setFogCoefficient(position10);
     texCoord = g_texCoordStillMin + texCoord10 * g_texCoordStillDelta;
     EmitVertex();
     gl_Position = g_viewProjection * position01;
+    setFogCoefficient(position01);
     texCoord = g_texCoordStillMin + texCoord01 * g_texCoordStillDelta;
     EmitVertex();
     EndPrimitive();
 
     gl_Position = g_viewProjection * position01;
+    setFogCoefficient(position01);
     texCoord = g_texCoordStillMin + texCoord01 * g_texCoordStillDelta;
     EmitVertex();
     gl_Position = g_viewProjection * position10;
+    setFogCoefficient(position10);
     texCoord = g_texCoordStillMin + texCoord10 * g_texCoordStillDelta;
     EmitVertex();
     gl_Position = g_viewProjection * position11;
+    setFogCoefficient(position11);
     texCoord = g_texCoordStillMin + texCoord11 * g_texCoordStillDelta;
     EmitVertex();
     EndPrimitive();
@@ -66,23 +85,29 @@ void drawQuadHorizontal(vec4 position00, vec2 texCoord00, vec4 position01, vec2 
 
 void drawQuadVertical(vec4 position00, vec2 texCoord00, vec4 position01, vec2 texCoord01, vec4 position10, vec2 texCoord10, vec4 position11, vec2 texCoord11) {
     gl_Position = g_viewProjection * position00;
+    setFogCoefficient(position00);
     texCoord = g_texCoordFlowingMin + texCoord00 * g_texCoordFlowingDelta;
     EmitVertex();
     gl_Position = g_viewProjection * position10;
+    setFogCoefficient(position10);
     texCoord = g_texCoordFlowingMin + texCoord10 * g_texCoordFlowingDelta;
     EmitVertex();
     gl_Position = g_viewProjection * position01;
+    setFogCoefficient(position01);
     texCoord = g_texCoordFlowingMin + texCoord01 * g_texCoordFlowingDelta;
     EmitVertex();
     EndPrimitive();
 
     gl_Position = g_viewProjection * position01;
+    setFogCoefficient(position01);
     texCoord = g_texCoordFlowingMin + texCoord01 * g_texCoordFlowingDelta;
     EmitVertex();
     gl_Position = g_viewProjection * position10;
+    setFogCoefficient(position10);
     texCoord = g_texCoordFlowingMin + texCoord10 * g_texCoordFlowingDelta;
     EmitVertex();
     gl_Position = g_viewProjection * position11;
+    setFogCoefficient(position11);
     texCoord = g_texCoordFlowingMin + texCoord11 * g_texCoordFlowingDelta;
     EmitVertex();
     EndPrimitive();

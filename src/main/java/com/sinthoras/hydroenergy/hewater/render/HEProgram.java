@@ -14,10 +14,7 @@ import net.minecraftforge.fluids.FluidRegistry;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.lwjgl.BufferUtils;
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL13;
-import org.lwjgl.opengl.GL20;
-import org.lwjgl.opengl.GL32;
+import org.lwjgl.opengl.*;
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
 
@@ -41,10 +38,17 @@ public class HEProgram {
     private static int texCoordStillDeltaID;
     private static int texCoordFlowingMinID;
     private static int texCoordFlowingDeltaID;
+    private static int fogDiffID;
+    private static int fogEndID;
+    private static int fogDensityID;
+    private static int fogModeLinearID;
+    private static int fogColorID;
+    private static int cameraPositionID;
 
     private static final FloatBuffer projection = GLAllocation.createDirectFloatBuffer(16);
     private static final FloatBuffer modelview = GLAllocation.createDirectFloatBuffer(16);
     private static final FloatBuffer modelviewProjection = GLAllocation.createDirectFloatBuffer(16);
+    private static final FloatBuffer fogColor = GLAllocation.createDirectFloatBuffer(16);
 
     private static Field locationLightMap;
     static {
@@ -81,6 +85,12 @@ public class HEProgram {
         texCoordStillDeltaID = GL20.glGetUniformLocation(programID, "g_texCoordStillDelta");
         texCoordFlowingMinID = GL20.glGetUniformLocation(programID, "g_texCoordFlowingMin");
         texCoordFlowingDeltaID = GL20.glGetUniformLocation(programID, "g_texCoordFlowingDelta");
+        fogDiffID = GL20.glGetUniformLocation(programID, "g_fogDiff");
+        fogEndID = GL20.glGetUniformLocation(programID, "g_fogEnd");
+        fogDensityID = GL20.glGetUniformLocation(programID, "g_fogDensity");
+        fogModeLinearID = GL20.glGetUniformLocation(programID, "g_fogModeLinear");
+        fogColorID = GL20.glGetUniformLocation(programID, "g_fogColor");
+        cameraPositionID = GL20.glGetUniformLocation(programID, "g_cameraPosition");
 
         GL20.glUseProgram(0);
     }
@@ -113,7 +123,7 @@ public class HEProgram {
     }
 
     // TODO: glGetFloat is quite slow. If possible just recalculate those matricies
-    public static void calculateViewProjection(float cameraX, float cameraY, float cameraZ) {
+    public static void setViewProjection(float cameraX, float cameraY, float cameraZ) {
         projection.clear();
         modelview.clear();
         modelviewProjection.clear();
@@ -126,10 +136,11 @@ public class HEProgram {
         result = Matrix4f.mul(projectionMatrix, result, null);
         result.store(modelviewProjection);
         modelviewProjection.flip();
+        GL20.glUniformMatrix4(viewProjectionID, false, modelviewProjection);
     }
 
-    public static void setViewProjection() {
-        GL20.glUniformMatrix4(viewProjectionID, false, modelviewProjection);
+    public static void setCameraPosition(float cameraX, float cameraY, float cameraZ) {
+        GL20.glUniform3f(cameraPositionID, cameraX, cameraY, cameraZ);
     }
 
     public static void setWaterLevels() {
@@ -150,6 +161,22 @@ public class HEProgram {
         minV = iconFlowing.getInterpolatedV(0.0);
         GL20.glUniform2f(texCoordFlowingMinID, minU, minV);
         GL20.glUniform2f(texCoordFlowingDeltaID, iconFlowing.getInterpolatedU(16.0) - minU, iconFlowing.getInterpolatedV(16.0) - minV);
+    }
+
+    // TODO: get fog density and color from event
+    public static void setFog() {
+        float fogStart = GL11.glGetFloat(GL11.GL_FOG_START);
+        float fogEnd = GL11.glGetFloat(GL11.GL_FOG_END);
+        GL20.glUniform1f(fogDiffID, fogEnd - fogStart);
+        GL20.glUniform1f(fogEndID, fogEnd);
+
+        GL20.glUniform1f(fogDensityID, GL11.glGetFloat(GL11.GL_FOG_DENSITY));
+
+        GL20.glUniform1f(fogModeLinearID, GL11.glGetFloat(GL11.GL_FOG_MODE) == GL11.GL_LINEAR ? 1.0f : 0.0f);
+
+        fogColor.clear();
+        GL11.glGetFloat(GL11.GL_FOG_COLOR, fogColor);
+        GL20.glUniform3f(fogColorID, fogColor.get(0), fogColor.get(1), fogColor.get(2));
     }
 
     public static void bindLightLUT() {

@@ -152,19 +152,21 @@ public class HETessalator {
 
     public synchronized void render(ICamera frustrum, float partialTickTime) {
         if(MinecraftForgeClient.getRenderPass() == HECommonProxy.blockWaterStill.getRenderBlockPass()) {
+
+            GL11.glEnable(GL11.GL_BLEND);
+
+            HEProgram.bind();
+
             try {
                 float x = (float)frustrumX.getDouble(frustrum);
                 float y = (float)frustrumY.getDouble(frustrum);
                 float z = (float)frustrumZ.getDouble(frustrum);
-                HEProgram.calculateViewProjection(x, y, z);
+                HEProgram.setViewProjection(x, y, z);
+                HEProgram.setCameraPosition(x, y, z);
             } catch(Exception e) {}
-            
-            GL11.glEnable(GL11.GL_BLEND);
-
-            HEProgram.bind();
-            HEProgram.setViewProjection();
             HEProgram.setWaterLevels();
             HEProgram.setWaterUV();
+            HEProgram.setFog();
             HEProgram.bindLightLUT();
             HEProgram.bindAtlasTexture();
 
