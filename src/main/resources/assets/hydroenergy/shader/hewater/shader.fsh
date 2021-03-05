@@ -10,5 +10,6 @@ uniform sampler2D g_atlasTexture;
 out vec4 gl_FragColor;
 
 void main(void) {
-    gl_FragColor = texture2D(g_atlasTexture, texCoord) * vec4(colorModifier, 1.0) * texture2D(g_lightLUT, lightCoord).x;
+    gl_FragColor = texture2D(g_atlasTexture, texCoord);
+    gl_FragColor.rgb = gl_FragColor.rgb * colorModifier * texture2D(g_lightLUT, lightCoord).x;
 }

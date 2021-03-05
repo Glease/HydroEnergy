@@ -16,19 +16,6 @@ public class HESubChunk {
     public int vboId = -1;
     public int numWaterBlocks = 0;
 
-    public void reset() {
-        if(vaoId != -1) {
-            GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
-            GL15.glDeleteBuffers(vboId);
-            vboId = -1;
-
-            GL30.glBindVertexArray(0);
-            GL30.glDeleteVertexArrays(vaoId);
-            vaoId = -1;
-        }
-        numWaterBlocks = 0;
-    }
-
     public void render(double partialTickTime) {
         if(numWaterBlocks != 0) {
             GL11.glCullFace(GL11.GL_FRONT);

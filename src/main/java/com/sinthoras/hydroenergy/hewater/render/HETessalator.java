@@ -20,10 +20,17 @@ import java.lang.reflect.Field;
 import java.nio.FloatBuffer;
 import java.util.BitSet;
 import java.util.HashMap;
+import java.util.Stack;
 
 @SideOnly(Side.CLIENT)
 public class HETessalator {
 
+    private class HEIds {
+        public int vaoId;
+        public int vboId;
+    }
+
+    private static Stack availableBuffers = new Stack<HEIds>();
     private static FloatBuffer vboBuffer = GLAllocation.createDirectFloatBuffer(7 * (16 * 16 * 16));
     private static BitSet lightUpdateFlags = new BitSet(16*16*16);
     private static int numWaterBlocks = 0;
@@ -43,10 +50,6 @@ public class HETessalator {
     }
 
     private HashMap<Long, HESubChunk[]> chunks = new HashMap<Long, HESubChunk[]>();
-
-    public HETessalator() {
-
-    }
 
     public static final HETessalator instance = new HETessalator();
 
@@ -76,30 +79,36 @@ public class HETessalator {
             HESubChunk subChunk = chunks.get(key)[chunkY];
 
             if (subChunk.vaoId == -1) {
-                subChunk.vaoId = GL30.glGenVertexArrays();
-                subChunk.vboId = GL15.glGenBuffers();
+                if(availableBuffers.empty()) {
+                    subChunk.vaoId = GL30.glGenVertexArrays();
+                    subChunk.vboId = GL15.glGenBuffers();
 
-                GL30.glBindVertexArray(subChunk.vaoId);
+                    GL30.glBindVertexArray(subChunk.vaoId);
 
-                GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, subChunk.vboId);
-                GL15.glBufferData(GL15.GL_ARRAY_BUFFER, vboBuffer.capacity() * HE.FLOAT_SIZE, GL15.GL_STATIC_DRAW);
+                    GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, subChunk.vboId);
+                    GL15.glBufferData(GL15.GL_ARRAY_BUFFER, vboBuffer.capacity() * HE.FLOAT_SIZE, GL15.GL_STATIC_DRAW);
 
-                GL20.glVertexAttribPointer(0, 3, GL11.GL_FLOAT, false, 7 * HE.FLOAT_SIZE, 0 * HE.FLOAT_SIZE);
-                GL20.glEnableVertexAttribArray(0);
+                    GL20.glVertexAttribPointer(0, 3, GL11.GL_FLOAT, false, 7 * HE.FLOAT_SIZE, 0 * HE.FLOAT_SIZE);
+                    GL20.glEnableVertexAttribArray(0);
 
-                GL20.glVertexAttribPointer(1, 1, GL11.GL_FLOAT, false, 7 * HE.FLOAT_SIZE, 3 * HE.FLOAT_SIZE);
-                GL20.glEnableVertexAttribArray(1);
+                    GL20.glVertexAttribPointer(1, 1, GL11.GL_FLOAT, false, 7 * HE.FLOAT_SIZE, 3 * HE.FLOAT_SIZE);
+                    GL20.glEnableVertexAttribArray(1);
 
-                GL20.glVertexAttribPointer(2, 1, GL11.GL_FLOAT, false, 7 * HE.FLOAT_SIZE, 4 * HE.FLOAT_SIZE);
-                GL20.glEnableVertexAttribArray(2);
+                    GL20.glVertexAttribPointer(2, 1, GL11.GL_FLOAT, false, 7 * HE.FLOAT_SIZE, 4 * HE.FLOAT_SIZE);
+                    GL20.glEnableVertexAttribArray(2);
 
-                GL20.glVertexAttribPointer(3, 1, GL11.GL_FLOAT, false, 7 * HE.FLOAT_SIZE, 5 * HE.FLOAT_SIZE);
-                GL20.glEnableVertexAttribArray(3);
+                    GL20.glVertexAttribPointer(3, 1, GL11.GL_FLOAT, false, 7 * HE.FLOAT_SIZE, 5 * HE.FLOAT_SIZE);
+                    GL20.glEnableVertexAttribArray(3);
 
-                GL20.glVertexAttribPointer(4, 1, GL11.GL_FLOAT, false, 7 * HE.FLOAT_SIZE, 6 * HE.FLOAT_SIZE);
-                GL20.glEnableVertexAttribArray(4);
+                    GL20.glVertexAttribPointer(4, 1, GL11.GL_FLOAT, false, 7 * HE.FLOAT_SIZE, 6 * HE.FLOAT_SIZE);
+                    GL20.glEnableVertexAttribArray(4);
 
-                GL30.glBindVertexArray(0);
+                    GL30.glBindVertexArray(0);
+                } else {
+                    HEIds ids = (HEIds) availableBuffers.pop();
+                    subChunk.vaoId = ids.vaoId;
+                    subChunk.vboId = ids.vboId;
+                }
             }
 
             vboBuffer.flip();
@@ -196,7 +205,15 @@ public class HETessalator {
             if(chunks.containsKey(oldKey)) {
                 subChunks = chunks.get(oldKey);
                 for (HESubChunk subChunk : subChunks)
-                    subChunk.reset();
+                    if(subChunk.vaoId != -1){
+                        HEIds ids = new HEIds();
+                        ids.vaoId = subChunk.vaoId;
+                        ids.vboId = subChunk.vboId;
+                        availableBuffers.push(ids);
+                        subChunk.vaoId = -1;
+                        subChunk.vboId = -1;
+                        subChunk.numWaterBlocks = 0;
+                    }
                 chunks.remove(oldKey);
             }
 
