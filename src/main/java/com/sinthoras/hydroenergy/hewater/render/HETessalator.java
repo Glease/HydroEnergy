@@ -168,6 +168,7 @@ public class HETessalator {
                                          HEUtil.bucketInt16((int)z));
             } catch(Exception e) {}
             HEProgram.setWaterLevels();
+            HEProgram.setDebugModes();
             HEProgram.setWaterUV();
             HEProgram.setFog();
             HEProgram.bindLightLUT();

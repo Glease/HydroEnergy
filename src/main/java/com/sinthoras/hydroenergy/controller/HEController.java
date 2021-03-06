@@ -23,6 +23,7 @@ public class HEController {
 	// NBT variables
 	private int id;
 	private double waterLevel;
+	private boolean renderDebug;
 	private float renderedWaterLevel;
 	private boolean placed;
 	private int yLimitUp;
@@ -35,6 +36,7 @@ public class HEController {
 	{
 		id = compound.getInteger(Tags.id);
 		waterLevel = compound.getDouble(Tags.waterLevel);
+		renderDebug = false;
 		renderedWaterLevel = compound.getFloat(Tags.renderedWaterLevel);
 		placed = compound.getBoolean(Tags.placed);
 		yLimitUp = 72;//compound.getInteger(Tags.yLimitUp);
@@ -65,10 +67,17 @@ public class HEController {
 		}
 		waterLevel = level;
 	}
+
+	public void updateDebugState(boolean debugState) {
+		if(debugState != renderDebug) {
+			renderDebug = debugState;
+			sendUpdate();
+		}
+	}
 	
 	public void sendUpdate()
 	{
-		HEPacketUpdate message = new HEPacketUpdate(id, renderedWaterLevel);
+		HEPacketUpdate message = new HEPacketUpdate(id, renderedWaterLevel, renderDebug);
 		HE.network.sendToAll(message);
 	}
 	
@@ -108,7 +117,10 @@ public class HEController {
 	
 	public float getRenderedWaterLevel()
 	{
-		return renderedWaterLevel;
+		if(renderDebug)
+			return 0.0f;
+		else
+			return renderedWaterLevel;
 	}
 	
 	public boolean isPlaced()

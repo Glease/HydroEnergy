@@ -21,6 +21,7 @@ in VS_OUT {
 
 uniform mat4 g_viewProjection;
 uniform float g_waterLevels[NUM_CONTROLLERS];
+uniform float g_debugModes[NUM_CONTROLLERS];
 uniform vec2 g_texCoordStillMin;
 uniform vec2 g_texCoordStillDelta;
 uniform vec2 g_texCoordFlowingMin;
@@ -45,6 +46,7 @@ out vec3 colorModifier;
 out vec2 texCoord;
 out vec2 lightCoord;
 out float fogCoefficient;
+out float debugSwitch;
 
 void setFogCoefficient(vec4 position) {
     float c = length(position.xyz - g_cameraPosition);
@@ -114,6 +116,7 @@ void drawQuadVertical(vec4 position00, vec2 texCoord00, vec4 position01, vec2 te
 }
 
 void main() {
+    debugSwitch = g_debugModes[gs_in[0].waterId];
 
     float waterLevel = g_waterLevels[gs_in[0].waterId];
 

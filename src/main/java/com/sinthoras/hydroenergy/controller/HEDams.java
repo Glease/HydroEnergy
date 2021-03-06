@@ -118,6 +118,10 @@ public class HEDams extends WorldSavedData {
 		markDirty();
 	}
 
+	public void updateDebugState(int id, boolean debugState) {
+		controllers[id].updateDebugState(debugState);
+	}
+
 	public int getWaterLimitUp(int id) {
 		return controllers[id].getWaterLimitUp();
 	}

@@ -32,6 +32,7 @@ public class HEProgram {
     private static int programID;
     private static int viewProjectionID;
     private static int waterLevelsID;
+    private static int debugModesID;
     private static int lightLUTID;
     private static int atlasTextureID;
     private static int texCoordStillMinID;
@@ -49,6 +50,8 @@ public class HEProgram {
     private static final FloatBuffer modelview = GLAllocation.createDirectFloatBuffer(16);
     private static final FloatBuffer modelviewProjection = GLAllocation.createDirectFloatBuffer(16);
     private static final FloatBuffer fogColor = GLAllocation.createDirectFloatBuffer(16);
+    private static final FloatBuffer waterLevels = GLAllocation.createDirectFloatBuffer(HE.maxController);
+    private static final FloatBuffer debugModes = GLAllocation.createDirectFloatBuffer(HE.maxController);
 
     private static Field locationLightMap;
     static {
@@ -79,6 +82,7 @@ public class HEProgram {
 
         viewProjectionID = GL20.glGetUniformLocation(programID, "g_viewProjection");
         waterLevelsID = GL20.glGetUniformLocation(programID, "g_waterLevels");
+        debugModesID = GL20.glGetUniformLocation(programID, "g_debugModes");
         lightLUTID = GL20.glGetUniformLocation(programID, "g_lightLUT");
         atlasTextureID = GL20.glGetUniformLocation(programID, "g_atlasTexture");
         texCoordStillMinID = GL20.glGetUniformLocation(programID, "g_texCoordStillMin");
@@ -144,10 +148,17 @@ public class HEProgram {
     }
 
     public static void setWaterLevels() {
-        FloatBuffer waterLevels = GLAllocation.createDirectFloatBuffer(HE.maxController);
+        waterLevels.clear();
         waterLevels.put(HEDamsClient.instance.getAllWaterLevels());
         waterLevels.flip();
         GL20.glUniform1(waterLevelsID, waterLevels);
+    }
+
+    public static void setDebugModes() {
+        debugModes.clear();
+        debugModes.put(HEDamsClient.instance.getDebugModes());
+        debugModes.flip();
+        GL20.glUniform1(debugModesID, debugModes);
     }
 
     public static void setWaterUV() {

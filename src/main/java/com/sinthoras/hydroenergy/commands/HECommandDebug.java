@@ -1,6 +1,7 @@
 package com.sinthoras.hydroenergy.commands;
 
 import com.sinthoras.hydroenergy.HE;
+import com.sinthoras.hydroenergy.controller.HEDams;
 import com.sinthoras.hydroenergy.network.HEPacketDebug;
 
 import net.minecraft.command.CommandBase;
@@ -17,29 +18,39 @@ public class HECommandDebug extends CommandBase {
 
 	@Override
 	public String getCommandUsage(ICommandSender sender) {
-		return getCommandName() + " <on|off>";
+		return getCommandName() + " <id> <on|off>";
 	}
 
 	@Override
 	public void processCommand(ICommandSender sender, String[] params) {
-		boolean couldParse = false;
-		if(params.length == 1)
+		boolean flag = true;
+		if(params.length != 2) flag = false;
+		else
 		{
-			if(params[0].equalsIgnoreCase("on"))
+			try
 			{
-				//HE.network.sendTo(new HEPacketDebug(true), MinecraftServer.getServer().getConfigurationManager().func_152612_a(sender.getCommandSenderName()));
-				HE.DEBUGslowFill = true;
-				couldParse = true;
+				int controllerId = Integer.parseInt(params[0]);
+				boolean debugState = false;
+				if (params[1].equalsIgnoreCase("on")) {
+					debugState = true;
+				} else if(params[1].equalsIgnoreCase("off")) {
+					debugState = false;
+				} else {
+					flag = false;
+				}
+				if (flag)
+				{
+					HEDams.instance.updateDebugState(controllerId, debugState);
+					sender.addChatMessage(new ChatComponentText("Set controller " + controllerId + " to debug mode " + params[1].toUpperCase()));
+					HE.LOG.info(sender.getCommandSenderName() + " set controller " + controllerId + " to debug mode " + params[1].toUpperCase());
+				}
 			}
-			else if(params[0].equalsIgnoreCase("off"))
+			catch(Exception ex)
 			{
-				//HE.network.sendTo(new HEPacketDebug(false), MinecraftServer.getServer().getConfigurationManager().func_152612_a(sender.getCommandSenderName()));
-				couldParse = true;
-				HE.DEBUGslowFill = false; 
+				flag = false;
 			}
 		}
-		if(!couldParse)
+		if(!flag)
 			sender.addChatMessage(new ChatComponentText("Could not parse command!\n" + getCommandUsage(null)));
 	}
-
 }
