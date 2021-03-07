@@ -295,11 +295,8 @@ public class EntityWaterLevelTransformer implements IClassTransformer {
 		final String METHOD_endSection = isObfuscated ? "b" : "endSection";
 		final String METHOD_endSection_DESC = "()V";
 
-		final String FIELD_instance = "instance";
-		final String FIELD_instance_DESC = "L" + CLASS_HETessalator + ";";
-
 		final String METHOD_render = "render";
-		final String METHOD_render_DESC = "(L" + CLASS_ICamera + ";F)V";
+		final String METHOD_render_DESC = "(L" + CLASS_ICamera + ";)V";
 
 		// Transform to human readable byte code
 		ClassNode classNode = new ClassNode();
@@ -307,10 +304,8 @@ public class EntityWaterLevelTransformer implements IClassTransformer {
 		classReader.accept(classNode, 0);
 
 		InsnList instructionToInsert = new InsnList();
-		instructionToInsert.add(new FieldInsnNode(GETSTATIC, CLASS_HETessalator, FIELD_instance, FIELD_instance_DESC));
 		instructionToInsert.add(new VarInsnNode(ALOAD, 2));
-		instructionToInsert.add(new VarInsnNode(FLOAD, 3));
-		instructionToInsert.add(new MethodInsnNode(INVOKEVIRTUAL,
+		instructionToInsert.add(new MethodInsnNode(INVOKESTATIC,
 				CLASS_HETessalator,
 				METHOD_render,
 				METHOD_render_DESC,
@@ -347,9 +342,6 @@ public class EntityWaterLevelTransformer implements IClassTransformer {
 		final String METHOD_setDontDraw = isObfuscated ? "a" : "setDontDraw";
 		final String METHOD_setDontDraw_DESC = "()V";
 
-		final String FIELD_instance = "instance";
-		final String FIELD_instance_DESC = "L" + CLASS_HETessalator + ";";
-
 		final String METHOD_hook = "onRenderChunkUpdate";
 		final String METHOD_hook_DESC = "(IIIIII)V";
 
@@ -366,7 +358,6 @@ public class EntityWaterLevelTransformer implements IClassTransformer {
 		classReader.accept(classNode, 0);
 
 		InsnList instructionToInsert = new InsnList();
-		instructionToInsert.add(new FieldInsnNode(GETSTATIC, CLASS_HETessalator, FIELD_instance, FIELD_instance_DESC));
 		instructionToInsert.add(new VarInsnNode(ALOAD, 0));
 		instructionToInsert.add(new FieldInsnNode(GETFIELD, CLASS_WorldRenderer, FIELD_posX, FIELD_posX_DESC));
 		instructionToInsert.add(new VarInsnNode(ALOAD, 0));
@@ -376,7 +367,7 @@ public class EntityWaterLevelTransformer implements IClassTransformer {
 		instructionToInsert.add(new VarInsnNode(ILOAD, 1));
 		instructionToInsert.add(new VarInsnNode(ILOAD, 2));
 		instructionToInsert.add(new VarInsnNode(ILOAD, 3));
-		instructionToInsert.add(new MethodInsnNode(INVOKEVIRTUAL,
+		instructionToInsert.add(new MethodInsnNode(INVOKESTATIC,
 				CLASS_HETessalator,
 				METHOD_hook,
 				METHOD_hook_DESC,

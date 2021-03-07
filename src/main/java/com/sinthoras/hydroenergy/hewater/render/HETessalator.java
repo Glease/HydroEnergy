@@ -18,21 +18,14 @@ import org.lwjgl.opengl.GL30;
 
 import java.lang.reflect.Field;
 import java.nio.FloatBuffer;
-import java.util.BitSet;
 import java.util.HashMap;
 import java.util.Stack;
 
 @SideOnly(Side.CLIENT)
 public class HETessalator {
 
-    private class HEIds {
-        public int vaoId;
-        public int vboId;
-    }
-
     private static Stack availableBuffers = new Stack<HEIds>();
     private static FloatBuffer vboBuffer = GLAllocation.createDirectFloatBuffer(7 * (16 * 16 * 16));
-    private static BitSet lightUpdateFlags = new BitSet(16*16*16);
     private static int numWaterBlocks = 0;
 
     private static Field frustrumX;
@@ -49,28 +42,9 @@ public class HETessalator {
         } catch(Exception e) {}
     }
 
-    private HashMap<Long, HESubChunk[]> chunks = new HashMap<Long, HESubChunk[]>();
+    private static final HashMap<Long, HESubChunk[]> chunks = new HashMap<Long, HESubChunk[]>();
 
-    public static final HETessalator instance = new HETessalator();
-
-
-    public synchronized void onPreRender(World world, int x, int y, int z) {
-        if(numWaterBlocks != 0) {
-            lightUpdateFlags.clear();
-            vboBuffer.clear();
-            numWaterBlocks = 0;
-        }
-
-        // TODO: Light update (gotta link update flag and waterID to provide patch with correct waterLevel
-        // Or post render? hmmmm
-        /*
-        Chunk chunk = world.getChunkFromChunkCoords(chunkX, chunkZ);
-        for (int linearCoord = lightUpdateFlags.nextSetBit(0); linearCoord != -1; linearCoord = lightUpdateFlags.nextSetBit(linearCoord + 1))
-            patchBlockLight(chunkX, chunkY, chunkZ, linearCoord >> 8, (linearCoord >> 4) & 15, linearCoord & 15, waterLevel, world, chunk);
-        */
-    }
-
-    public synchronized void onPostRender(World world, int x, int y, int z) {
+    public static void onPostRender(World world, int x, int y, int z) {
         if(numWaterBlocks != 0) {
             int chunkX = HEUtil.bucketInt16(x);
             int chunkY = HEUtil.bucketInt16(y);
@@ -117,10 +91,14 @@ public class HETessalator {
             GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
 
             subChunk.numWaterBlocks = numWaterBlocks;
+
+            // reset tesselator
+            vboBuffer.clear();
+            numWaterBlocks = 0;
         }
     }
 
-    public synchronized void addBlock(int x, int y, int z, int waterId, int worldColorModifier, boolean[] shouldSideBeRendered) {
+    public static void addBlock(int x, int y, int z, int waterId, int worldColorModifier, boolean[] shouldSideBeRendered) {
         int renderSides = 0;
         for(int i=0;i<shouldSideBeRendered.length;i++)
             if(shouldSideBeRendered[i])
@@ -142,15 +120,9 @@ public class HETessalator {
         vboBuffer.put(worldColorModifier);
 
         numWaterBlocks++;
-
-        // Light update stuff
-        x = x & 15;
-        y = y & 15;
-        z = z & 15;
-        lightUpdateFlags.set((x << 8) | (y << 4) | z);
     }
 
-    public synchronized void render(ICamera frustrum, float partialTickTime) {
+    public static void render(ICamera frustrum) {
         if(MinecraftForgeClient.getRenderPass() == HECommonProxy.blockWaterStill.getRenderBlockPass()) {
 
             GL11.glEnable(GL11.GL_BLEND);
@@ -198,7 +170,7 @@ public class HETessalator {
 
     // One can argue to use ChunkEvent.Load and ChunkEvent.Unload for this stuff,
     // but those are not in the GL thread and cause issues with cleanup etc
-    public void onRenderChunkUpdate(int oldX, int oldY, int oldZ, int x, int y, int z) {
+    public static void onRenderChunkUpdate(int oldX, int oldY, int oldZ, int x, int y, int z) {
         // Just execute once per vertical SubChunk-stack
         if(y == 0) {
             int oldChunkX = HEUtil.bucketInt16(oldX);
@@ -235,4 +207,9 @@ public class HETessalator {
             }
         }
     }
+}
+
+class HEIds {
+    public int vaoId;
+    public int vboId;
 }
