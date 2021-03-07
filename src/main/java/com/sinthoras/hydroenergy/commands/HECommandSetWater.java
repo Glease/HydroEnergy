@@ -34,6 +34,8 @@ public class HECommandSetWater extends CommandBase {
 					HEDams.instance.updateWaterLevel(controllerId, waterLevel);
 			        sender.addChatMessage(new ChatComponentText("Set water level of controller " + controllerId + " to " + waterLevel));
 			        HE.LOG.info(sender.getCommandSenderName() + " set water level of controller " + controllerId + " to " + waterLevel);
+				} else {
+					flag = false;
 				}
 			}
 			catch(Exception ex)

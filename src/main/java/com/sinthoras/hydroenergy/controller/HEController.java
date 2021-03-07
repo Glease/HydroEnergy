@@ -59,10 +59,9 @@ public class HEController {
 	
 	public void updateWaterLevel(double level)
 	{
-		float waterLevelToRender = Math.round(level * HE.waterRenderResolution) / HE.waterRenderResolution;
-		if(Math.abs(waterLevelToRender - renderedWaterLevel) >= 1.0f / waterLevelToRender / 1000.0f)
+		if(Math.abs(level - renderedWaterLevel) >= HE.waterRenderResolution)
 		{
-			renderedWaterLevel = waterLevelToRender;
+			renderedWaterLevel = (float)level;
 			sendUpdate();
 		}
 		waterLevel = level;

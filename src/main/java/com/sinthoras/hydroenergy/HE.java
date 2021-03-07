@@ -24,7 +24,7 @@ public class HE {
     // TODO: Move to config
 	public static final int worldHeight = 256;
 	public static final int maxController = 16;
-	public static final float waterRenderResolution = 16.0f;
+	public static final float waterRenderResolution = 1.0f / 256.0f;
 	
 	public static final int maxRerenderChunksPerRenderTick = 8;
 	
