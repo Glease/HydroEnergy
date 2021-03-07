@@ -21,7 +21,8 @@ public class EntityWaterLevelTransformer implements IClassTransformer {
 			"net.minecraft.client.renderer.EntityRenderer",
 			"net.minecraft.entity.Entity",
 			"net.minecraft.client.renderer.RenderGlobal",
-			"net.minecraft.client.renderer.WorldRenderer"});
+			"net.minecraft.client.renderer.WorldRenderer",
+			"net.minecraft.world.chunk.Chunk"});
 
 	@Override
 	public byte[] transform(String name, String transformedName, byte[] basicClass) {
@@ -44,6 +45,8 @@ public class EntityWaterLevelTransformer implements IClassTransformer {
 				return transformRenderGlobal(basicClass, isObfuscated);
 			case 5:
 				return transformWorldRenderer(basicClass, isObfuscated);
+			case 6:
+				return transformChunk(basicClass, isObfuscated);
 			default:
 				return basicClass;
 		}
@@ -62,9 +65,9 @@ public class EntityWaterLevelTransformer implements IClassTransformer {
 		final String METHOD_getMaterial_DESC_NEW = "(I)L" + CLASS_Material + ";";
 
 		// Transform to human readable byte code
-		ClassNode worldClass = new ClassNode();
+		ClassNode classNode = new ClassNode();
 		ClassReader classReader = new ClassReader(basicClass);
-		classReader.accept(worldClass, 0);
+		classReader.accept(classNode, 0);
 
 		InsnList instructionToInsert = new InsnList();
 		instructionToInsert.add(new VarInsnNode(ILOAD, 13));
@@ -74,7 +77,7 @@ public class EntityWaterLevelTransformer implements IClassTransformer {
 				METHOD_getMaterial_DESC_NEW,
 				false));
 
-		for(MethodNode method : worldClass.methods) {
+		for(MethodNode method : classNode.methods) {
 			if(method.name.equals(METHOD_handleMaterialAcceleration) && method.desc.equals(METHOD_handleMaterialAcceleration_DESC)) {
 				for(AbstractInsnNode instruction : method.instructions.toArray()) {
 					if(instruction.getOpcode() == INVOKEVIRTUAL
@@ -84,7 +87,7 @@ public class EntityWaterLevelTransformer implements IClassTransformer {
 						AbstractInsnNode insertAfter = instruction.getPrevious();
 						method.instructions.remove(instruction);
 						method.instructions.insert(insertAfter, instructionToInsert);
-						HE.LOG.info("Successfully injected net.minecraft.world.World.handleMaterialAcceleration");
+						HE.LOG.info("Successfully injected net/minecraft/world/World.handleMaterialAcceleration");
 						break;
 					}
 				}
@@ -93,7 +96,7 @@ public class EntityWaterLevelTransformer implements IClassTransformer {
 
 		// Transform back into pure machine code
 		ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);
-		worldClass.accept(classWriter);
+		classNode.accept(classWriter);
 		return classWriter.toByteArray();
 	}
 
@@ -108,11 +111,11 @@ public class EntityWaterLevelTransformer implements IClassTransformer {
 		final String METHOD_getMaterial_DESC_NEW_ELB = "(L" + CLASS_EntityLivingBase + ";)L" + CLASS_Material + ";";
 		final String METHOD_getMaterial_DESC_NEW_D = "(D)L" + CLASS_Material + ";";
 
-		ClassNode blockClass = new ClassNode();
+		ClassNode classNode = new ClassNode();
 		ClassReader classReader = new ClassReader(basicClass);
-		classReader.accept(blockClass, 0);
+		classReader.accept(classNode, 0);
 		ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);
-		blockClass.accept(classWriter);
+		classNode.accept(classWriter);
 
 		// public Material getMaterial(Entity entity)
 		MethodVisitor mv = classWriter.visitMethod(ACC_PUBLIC, METHOD_getMaterial, METHOD_getMaterial_DESC_NEW_I, null, null);
@@ -138,7 +141,7 @@ public class EntityWaterLevelTransformer implements IClassTransformer {
 		mv.visitMaxs(1, 1);
 		mv.visitEnd();
 
-		HE.LOG.info("Successfully injected net.minecraft.client.block.Block");
+		HE.LOG.info("Successfully injected net/minecraft/client/block/Block");
 
 		return classWriter.toByteArray();
 	}
@@ -160,11 +163,11 @@ public class EntityWaterLevelTransformer implements IClassTransformer {
 		final String METHOD_getMaterial_DESC_NEW = "(L" + CLASS_EntityLivingBase + ";)L" + CLASS_Material + ";";
 
 		// Transform to human readable byte code
-		ClassNode worldClass = new ClassNode();
+		ClassNode classNode = new ClassNode();
 		ClassReader classReader = new ClassReader(basicClass);
-		classReader.accept(worldClass, 0);
+		classReader.accept(classNode, 0);
 
-		for (MethodNode method : worldClass.methods) {
+		for (MethodNode method : classNode.methods) {
 			if (method.name.equals(METHOD_setupFog) && method.desc.equals(METHOD_setupFog_DESC)) {
 				for (AbstractInsnNode instruction : method.instructions.toArray()) {
 					if (instruction.getOpcode() == INVOKEVIRTUAL
@@ -181,7 +184,7 @@ public class EntityWaterLevelTransformer implements IClassTransformer {
 						AbstractInsnNode insertAfter = instruction.getPrevious();
 						method.instructions.remove(instruction);
 						method.instructions.insert(insertAfter, instructionToInsert);
-						HE.LOG.info("Successfully injected net.minecraft.client.renderer.EntityRenderer.setupFog");
+						HE.LOG.info("Successfully injected net/minecraft/client/renderer/EntityRenderer.setupFog");
 						break;
 					}
 				}
@@ -201,7 +204,7 @@ public class EntityWaterLevelTransformer implements IClassTransformer {
 						AbstractInsnNode insertAfter = instruction.getPrevious();
 						method.instructions.remove(instruction);
 						method.instructions.insert(insertAfter, instructionToInsert);
-						HE.LOG.info("Successfully injected net.minecraft.client.renderer.EntityRenderer.updateFogColor");
+						HE.LOG.info("Successfully injected net/minecraft/client/renderer/EntityRenderer.updateFogColor");
 						break;
 					}
 				}
@@ -221,7 +224,7 @@ public class EntityWaterLevelTransformer implements IClassTransformer {
 						AbstractInsnNode insertAfter = instruction.getPrevious();
 						method.instructions.remove(instruction);
 						method.instructions.insert(insertAfter, instructionToInsert);
-						HE.LOG.info("Successfully injected net.minecraft.client.renderer.EntityRenderer.getFOVModifier");
+						HE.LOG.info("Successfully injected net/minecraft/client/renderer/EntityRenderer.getFOVModifier");
 						break;
 					}
 				}
@@ -230,7 +233,7 @@ public class EntityWaterLevelTransformer implements IClassTransformer {
 
 		// Transform back into pure machine code
 		ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);
-		worldClass.accept(classWriter);
+		classNode.accept(classWriter);
 		return classWriter.toByteArray();
 	}
 
@@ -245,9 +248,9 @@ public class EntityWaterLevelTransformer implements IClassTransformer {
 		final String METHOD_getMaterial_DESC_NEW = "(D)L" + CLASS_Material + ";";
 
 		// Transform to human readable byte code
-		ClassNode worldClass = new ClassNode();
+		ClassNode classNode = new ClassNode();
 		ClassReader classReader = new ClassReader(basicClass);
-		classReader.accept(worldClass, 0);
+		classReader.accept(classNode, 0);
 
 		InsnList instructionToInsert = new InsnList();
 		instructionToInsert.add(new VarInsnNode(DLOAD, 2));
@@ -257,7 +260,7 @@ public class EntityWaterLevelTransformer implements IClassTransformer {
 				METHOD_getMaterial_DESC_NEW,
 				false));
 
-		for(MethodNode method : worldClass.methods) {
+		for(MethodNode method : classNode.methods) {
 			if(method.name.equals(METHOD_isInsideOfMaterial) && method.desc.equals(METHOD_isInsideOfMaterial_DESC)) {
 				for(AbstractInsnNode instruction : method.instructions.toArray()) {
 					if(instruction.getOpcode() == INVOKEVIRTUAL
@@ -267,7 +270,7 @@ public class EntityWaterLevelTransformer implements IClassTransformer {
 						AbstractInsnNode insertAfter = instruction.getPrevious();
 						method.instructions.remove(instruction);
 						method.instructions.insert(insertAfter, instructionToInsert);
-						HE.LOG.info("Successfully injected net.minecraft.client.entity.Entity.isInsideOfMaterial");
+						HE.LOG.info("Successfully injected net/minecraft/client/entity/Entity.isInsideOfMaterial");
 						break;
 					}
 				}
@@ -276,7 +279,7 @@ public class EntityWaterLevelTransformer implements IClassTransformer {
 
 		// Transform back into pure machine code
 		ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);
-		worldClass.accept(classWriter);
+		classNode.accept(classWriter);
 		return classWriter.toByteArray();
 	}
 
@@ -299,9 +302,9 @@ public class EntityWaterLevelTransformer implements IClassTransformer {
 		final String METHOD_render_DESC = "(L" + CLASS_ICamera + ";F)V";
 
 		// Transform to human readable byte code
-		ClassNode worldClass = new ClassNode();
+		ClassNode classNode = new ClassNode();
 		ClassReader classReader = new ClassReader(basicClass);
-		classReader.accept(worldClass, 0);
+		classReader.accept(classNode, 0);
 
 		InsnList instructionToInsert = new InsnList();
 		instructionToInsert.add(new FieldInsnNode(GETSTATIC, CLASS_HETessalator, FIELD_instance, FIELD_instance_DESC));
@@ -313,7 +316,7 @@ public class EntityWaterLevelTransformer implements IClassTransformer {
 				METHOD_render_DESC,
 				false));
 
-		for(MethodNode method : worldClass.methods) {
+		for(MethodNode method : classNode.methods) {
 			if(method.name.equals(METHOD_renderEntities) && method.desc.equals(METHOD_renderEntities_DESC)) {
 				for(AbstractInsnNode instruction : method.instructions.toArray()) {
 					if(instruction.getOpcode() == INVOKEVIRTUAL
@@ -321,7 +324,7 @@ public class EntityWaterLevelTransformer implements IClassTransformer {
 							&& ((MethodInsnNode)instruction).name.equals(METHOD_endSection)
 							&& ((MethodInsnNode)instruction).desc.equals(METHOD_endSection_DESC)) {
 						method.instructions.insert(instruction, instructionToInsert);
-						HE.LOG.info("Successfully injected net.minecraft.client.renderer.RenderGlobal.renderEntities");
+						HE.LOG.info("Successfully injected net/minecraft/client/renderer/RenderGlobal.renderEntities");
 						break;
 					}
 				}
@@ -330,7 +333,7 @@ public class EntityWaterLevelTransformer implements IClassTransformer {
 
 		// Transform back into pure machine code
 		ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);
-		worldClass.accept(classWriter);
+		classNode.accept(classWriter);
 		return classWriter.toByteArray();
 	}
 
@@ -358,9 +361,9 @@ public class EntityWaterLevelTransformer implements IClassTransformer {
 		final String FIELD_posZ_DESC = "I";
 
 		// Transform to human readable byte code
-		ClassNode worldClass = new ClassNode();
+		ClassNode classNode = new ClassNode();
 		ClassReader classReader = new ClassReader(basicClass);
-		classReader.accept(worldClass, 0);
+		classReader.accept(classNode, 0);
 
 		InsnList instructionToInsert = new InsnList();
 		instructionToInsert.add(new FieldInsnNode(GETSTATIC, CLASS_HETessalator, FIELD_instance, FIELD_instance_DESC));
@@ -379,7 +382,7 @@ public class EntityWaterLevelTransformer implements IClassTransformer {
 				METHOD_hook_DESC,
 				false));
 
-		for(MethodNode method : worldClass.methods) {
+		for(MethodNode method : classNode.methods) {
 			if(method.name.equals(METHOD_setPosition) && method.desc.equals(METHOD_setPosition_DESC)) {
 				for(AbstractInsnNode instruction : method.instructions.toArray()) {
 					if(instruction.getOpcode() == INVOKEVIRTUAL
@@ -387,7 +390,7 @@ public class EntityWaterLevelTransformer implements IClassTransformer {
 							&& ((MethodInsnNode)instruction).name.equals(METHOD_setDontDraw)
 							&& ((MethodInsnNode)instruction).desc.equals(METHOD_setDontDraw_DESC)) {
 						method.instructions.insert(instruction, instructionToInsert);
-						HE.LOG.info("Successfully injected net.minecraft.client.renderer.WorldRenderer.setPosition");
+						HE.LOG.info("Successfully injected net/minecraft/client/renderer/WorldRenderer.setPosition");
 						break;
 					}
 				}
