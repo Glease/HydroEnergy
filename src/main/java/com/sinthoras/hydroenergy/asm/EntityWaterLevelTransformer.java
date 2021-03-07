@@ -50,12 +50,16 @@ public class EntityWaterLevelTransformer implements IClassTransformer {
 	}
 	
 	private static byte[] transformWorld(byte[] basicClass, boolean isObfuscated) {
-		final String TARGET_METHOD = isObfuscated ? "a" : "handleMaterialAcceleration";
-		final String TARGET_DESC = isObfuscated ? "(Lazt;Lawt;Lsa;)Z" : "(Lnet/minecraft/util/AxisAlignedBB;Lnet/minecraft/block/material/Material;Lnet/minecraft/entity/Entity;)Z";
-		final String CALL_OWNER = isObfuscated ? "aji" : "net/minecraft/block/Block";
-		final String CALL_NAME = isObfuscated ? "o" : "getMaterial";
-		final String CALL_DESC = isObfuscated ? "()Lawt;" : "()Lnet/minecraft/block/material/Material;";
-		final String CALL_NEW_DESC = isObfuscated ? "(I)Lawt;" : "(I)Lnet/minecraft/block/material/Material;";
+		final String CLASS_AxisAlignedBB = isObfuscated ? "azt" : "net/minecraft/util/AxisAlignedBB";
+		final String CLASS_Material = isObfuscated ? "awt" : "net/minecraft/block/material/Material";
+		final String CLASS_Entity = isObfuscated ? "sa" : "net/minecraft/entity/Entity";
+		final String CLASS_Block = isObfuscated ? "aji" : "net/minecraft/block/Block";
+
+		final String METHOD_handleMaterialAcceleration = isObfuscated ? "a" : "handleMaterialAcceleration";
+		final String METHOD_handleMaterialAcceleration_DESC = "(L" + CLASS_AxisAlignedBB + ";L" + CLASS_Material + ";L" + CLASS_Entity + ";)Z";
+		final String METHOD_getMaterial = isObfuscated ? "o" : "getMaterial";
+		final String METHOD_getMaterial_DESC = "()L" + CLASS_Material + ";";
+		final String METHOD_getMaterial_DESC_NEW = "(I)L" + CLASS_Material + ";";
 
 		// Transform to human readable byte code
 		ClassNode worldClass = new ClassNode();
@@ -65,18 +69,18 @@ public class EntityWaterLevelTransformer implements IClassTransformer {
 		InsnList instructionToInsert = new InsnList();
 		instructionToInsert.add(new VarInsnNode(ILOAD, 13));
 		instructionToInsert.add(new MethodInsnNode(INVOKEVIRTUAL,
-				CALL_OWNER,
-				CALL_NAME,
-				CALL_NEW_DESC,
+				CLASS_Block,
+				METHOD_getMaterial,
+				METHOD_getMaterial_DESC_NEW,
 				false));
 
 		for(MethodNode method : worldClass.methods) {
-			if(method.name.equals(TARGET_METHOD) && method.desc.equals(TARGET_DESC)) {
+			if(method.name.equals(METHOD_handleMaterialAcceleration) && method.desc.equals(METHOD_handleMaterialAcceleration_DESC)) {
 				for(AbstractInsnNode instruction : method.instructions.toArray()) {
 					if(instruction.getOpcode() == INVOKEVIRTUAL
-							&& ((MethodInsnNode)instruction).owner.equals(CALL_OWNER)
-							&& ((MethodInsnNode)instruction).name.equals(CALL_NAME)
-							&& ((MethodInsnNode)instruction).desc.equals(CALL_DESC)) {
+							&& ((MethodInsnNode)instruction).owner.equals(CLASS_Block)
+							&& ((MethodInsnNode)instruction).name.equals(METHOD_getMaterial)
+							&& ((MethodInsnNode)instruction).desc.equals(METHOD_getMaterial_DESC)) {
 						AbstractInsnNode insertAfter = instruction.getPrevious();
 						method.instructions.remove(instruction);
 						method.instructions.insert(insertAfter, instructionToInsert);
@@ -94,12 +98,15 @@ public class EntityWaterLevelTransformer implements IClassTransformer {
 	}
 
 	private static byte[] transformBlock(byte[] basicClass, boolean isObfuscated) {
-		final String CALL_OWNER = isObfuscated ? "aji" : "net/minecraft/block/Block";
-		final String CALL_NAME = isObfuscated ? "o" : "getMaterial";
-		final String CALL_DESC = isObfuscated ? "()Lawt;" : "()Lnet/minecraft/block/material/Material;";
-		final String CALL_NEW_I_DESC = isObfuscated ? "(I)Lawt;" : "(I)Lnet/minecraft/block/material/Material;";
-		final String CALL_NEW_ELB_DESC = isObfuscated ? "(Lsv;)Lawt;" : "(Lnet/minecraft/entity/EntityLivingBase;)Lnet/minecraft/block/material/Material;";
-		final String CALL_NEW_D_DESC = isObfuscated ? "(D)Lawt;" : "(D)Lnet/minecraft/block/material/Material;";
+		final String CLASS_Block = isObfuscated ? "aji" : "net/minecraft/block/Block";
+		final String CLASS_Material = isObfuscated ? "awt" : "net/minecraft/block/material/Material";
+		final String CLASS_EntityLivingBase = isObfuscated ? "sa" : "net/minecraft/entity/EntityLivingBase";
+
+		final String METHOD_getMaterial = isObfuscated ? "o" : "getMaterial";
+		final String METHOD_getMaterial_DESC = "()L" + CLASS_Material + ";";
+		final String METHOD_getMaterial_DESC_NEW_I = "(I)L" + CLASS_Material + ";";
+		final String METHOD_getMaterial_DESC_NEW_ELB = "(L" + CLASS_EntityLivingBase + ";)L" + CLASS_Material + ";";
+		final String METHOD_getMaterial_DESC_NEW_D = "(D)L" + CLASS_Material + ";";
 
 		ClassNode blockClass = new ClassNode();
 		ClassReader classReader = new ClassReader(basicClass);
@@ -108,25 +115,25 @@ public class EntityWaterLevelTransformer implements IClassTransformer {
 		blockClass.accept(classWriter);
 
 		// public Material getMaterial(Entity entity)
-		MethodVisitor mv = classWriter.visitMethod(ACC_PUBLIC, CALL_NAME, CALL_NEW_I_DESC, null, null);
+		MethodVisitor mv = classWriter.visitMethod(ACC_PUBLIC, METHOD_getMaterial, METHOD_getMaterial_DESC_NEW_I, null, null);
 		mv.visitVarInsn(ALOAD, 0); // load this
-		mv.visitMethodInsn(INVOKEVIRTUAL, CALL_OWNER, CALL_NAME, CALL_DESC, false);
+		mv.visitMethodInsn(INVOKEVIRTUAL, CLASS_Block, METHOD_getMaterial, METHOD_getMaterial_DESC, false);
 		mv.visitInsn(ARETURN);
 		mv.visitMaxs(1, 1);
 		mv.visitEnd();
 
 		// public Material getMaterial(EntityLivingBase entitylivingbase)
-		mv = classWriter.visitMethod(ACC_PUBLIC, CALL_NAME, CALL_NEW_ELB_DESC, null, null);
+		mv = classWriter.visitMethod(ACC_PUBLIC, METHOD_getMaterial, METHOD_getMaterial_DESC_NEW_ELB, null, null);
 		mv.visitVarInsn(ALOAD, 0); // load this
-		mv.visitMethodInsn(INVOKEVIRTUAL, CALL_OWNER, CALL_NAME, CALL_DESC, false);
+		mv.visitMethodInsn(INVOKEVIRTUAL, CLASS_Block, METHOD_getMaterial, METHOD_getMaterial_DESC, false);
 		mv.visitInsn(ARETURN);
 		mv.visitMaxs(1, 1);
 		mv.visitEnd();
 
 		// public Material getMaterial(double y)
-		mv = classWriter.visitMethod(ACC_PUBLIC, CALL_NAME, CALL_NEW_D_DESC, null, null);
+		mv = classWriter.visitMethod(ACC_PUBLIC, METHOD_getMaterial, METHOD_getMaterial_DESC_NEW_D, null, null);
 		mv.visitVarInsn(ALOAD, 0); // load this
-		mv.visitMethodInsn(INVOKEVIRTUAL, CALL_OWNER, CALL_NAME, CALL_DESC, false);
+		mv.visitMethodInsn(INVOKEVIRTUAL, CLASS_Block, METHOD_getMaterial, METHOD_getMaterial_DESC, false);
 		mv.visitInsn(ARETURN);
 		mv.visitMaxs(1, 1);
 		mv.visitEnd();
@@ -137,18 +144,20 @@ public class EntityWaterLevelTransformer implements IClassTransformer {
 	}
 
 	private static byte[] transformEntityRenderer(byte[] basicClass, boolean isObfuscated) {
-		final String TARGET_METHOD_setupFog = isObfuscated ? "a" : "setupFog";
-		final String TARGET_DESC_setupFog = "(IF)V";
-		final String TARGET_METHOD_updateFogColor = isObfuscated ? "j" : "updateFogColor";
-		final String TARGET_DESC_updateFogColor = "(F)V";
-		final String TARGET_METHOD_getFOVModifier = isObfuscated ? "a" : "getFOVModifier";
-		final String TARGET_DESC_getFOVModifier = "(FZ)F";
+		final String CLASS_Block = isObfuscated ? "aji" : "net/minecraft/block/Block";
+		final String CLASS_Material = isObfuscated ? "awt" : "net/minecraft/block/material/Material";
+		final String CLASS_EntityLivingBase = isObfuscated ? "sa" : "net/minecraft/entity/EntityLivingBase";
 
+		final String METHOD_setupFog = isObfuscated ? "a" : "setupFog";
+		final String METHOD_setupFog_DESC = "(IF)V";
+		final String METHOD_updateFogColor = isObfuscated ? "j" : "updateFogColor";
+		final String METHOD_updateFogColor_DESC = "(F)V";
+		final String METHOD_getFOVModifier = isObfuscated ? "a" : "getFOVModifier";
+		final String METHOD_getFOVModifier_DESC = "(FZ)F";
 
-		final String CALL_OWNER = isObfuscated ? "aji" : "net/minecraft/block/Block";
-		final String CALL_NAME = isObfuscated ? "o" : "getMaterial";
-		final String CALL_DESC = isObfuscated ? "()Lawt;" : "()Lnet/minecraft/block/material/Material;";
-		final String CALL_NEW_DESC = isObfuscated ? "(Lsv;)Lawt;" : "(Lnet/minecraft/entity/EntityLivingBase;)Lnet/minecraft/block/material/Material;";
+		final String METHOD_getMaterial = isObfuscated ? "o" : "getMaterial";
+		final String METHOD_getMaterial_DESC = "()L" + CLASS_Material + ";";
+		final String METHOD_getMaterial_DESC_NEW = "(L" + CLASS_EntityLivingBase + ";)L" + CLASS_Material + ";";
 
 		// Transform to human readable byte code
 		ClassNode worldClass = new ClassNode();
@@ -156,18 +165,18 @@ public class EntityWaterLevelTransformer implements IClassTransformer {
 		classReader.accept(worldClass, 0);
 
 		for (MethodNode method : worldClass.methods) {
-			if (method.name.equals(TARGET_METHOD_setupFog) && method.desc.equals(TARGET_DESC_setupFog)) {
+			if (method.name.equals(METHOD_setupFog) && method.desc.equals(METHOD_setupFog_DESC)) {
 				for (AbstractInsnNode instruction : method.instructions.toArray()) {
 					if (instruction.getOpcode() == INVOKEVIRTUAL
-							&& ((MethodInsnNode) instruction).owner.equals(CALL_OWNER)
-							&& ((MethodInsnNode) instruction).name.equals(CALL_NAME)
-							&& ((MethodInsnNode) instruction).desc.equals(CALL_DESC)) {
+							&& ((MethodInsnNode) instruction).owner.equals(CLASS_Block)
+							&& ((MethodInsnNode) instruction).name.equals(METHOD_getMaterial)
+							&& ((MethodInsnNode) instruction).desc.equals(METHOD_getMaterial_DESC)) {
 						InsnList instructionToInsert = new InsnList();
 						instructionToInsert.add(new VarInsnNode(ALOAD, 3));
 						instructionToInsert.add(new MethodInsnNode(INVOKEVIRTUAL,
-								CALL_OWNER,
-								CALL_NAME,
-								CALL_NEW_DESC,
+								CLASS_Block,
+								METHOD_getMaterial,
+								METHOD_getMaterial_DESC_NEW,
 								false));
 						AbstractInsnNode insertAfter = instruction.getPrevious();
 						method.instructions.remove(instruction);
@@ -176,18 +185,18 @@ public class EntityWaterLevelTransformer implements IClassTransformer {
 						break;
 					}
 				}
-			} else if (method.name.equals(TARGET_METHOD_updateFogColor) && method.desc.equals(TARGET_DESC_updateFogColor)) {
+			} else if (method.name.equals(METHOD_updateFogColor) && method.desc.equals(METHOD_updateFogColor_DESC)) {
 				for (AbstractInsnNode instruction : method.instructions.toArray()) {
 					if (instruction.getOpcode() == INVOKEVIRTUAL
-							&& ((MethodInsnNode) instruction).owner.equals(CALL_OWNER)
-							&& ((MethodInsnNode) instruction).name.equals(CALL_NAME)
-							&& ((MethodInsnNode) instruction).desc.equals(CALL_DESC)) {
+							&& ((MethodInsnNode) instruction).owner.equals(CLASS_Block)
+							&& ((MethodInsnNode) instruction).name.equals(METHOD_getMaterial)
+							&& ((MethodInsnNode) instruction).desc.equals(METHOD_getMaterial_DESC)) {
 						InsnList instructionToInsert = new InsnList();
 						instructionToInsert.add(new VarInsnNode(ALOAD, 3));
 						instructionToInsert.add(new MethodInsnNode(INVOKEVIRTUAL,
-								CALL_OWNER,
-								CALL_NAME,
-								CALL_NEW_DESC,
+								CLASS_Block,
+								METHOD_getMaterial,
+								METHOD_getMaterial_DESC_NEW,
 								false));
 						AbstractInsnNode insertAfter = instruction.getPrevious();
 						method.instructions.remove(instruction);
@@ -196,18 +205,18 @@ public class EntityWaterLevelTransformer implements IClassTransformer {
 						break;
 					}
 				}
-			} else if (method.name.equals(TARGET_METHOD_getFOVModifier) && method.desc.equals(TARGET_DESC_getFOVModifier)) {
+			} else if (method.name.equals(METHOD_getFOVModifier) && method.desc.equals(METHOD_getFOVModifier_DESC)) {
 				for (AbstractInsnNode instruction : method.instructions.toArray()) {
 					if (instruction.getOpcode() == INVOKEVIRTUAL
-							&& ((MethodInsnNode) instruction).owner.equals(CALL_OWNER)
-							&& ((MethodInsnNode) instruction).name.equals(CALL_NAME)
-							&& ((MethodInsnNode) instruction).desc.equals(CALL_DESC)) {
+							&& ((MethodInsnNode) instruction).owner.equals(CLASS_Block)
+							&& ((MethodInsnNode) instruction).name.equals(METHOD_getMaterial)
+							&& ((MethodInsnNode) instruction).desc.equals(METHOD_getMaterial_DESC)) {
 						InsnList instructionToInsert = new InsnList();
 						instructionToInsert.add(new VarInsnNode(ALOAD, 3));
 						instructionToInsert.add(new MethodInsnNode(INVOKEVIRTUAL,
-								CALL_OWNER,
-								CALL_NAME,
-								CALL_NEW_DESC,
+								CLASS_Block,
+								METHOD_getMaterial,
+								METHOD_getMaterial_DESC_NEW,
 								false));
 						AbstractInsnNode insertAfter = instruction.getPrevious();
 						method.instructions.remove(instruction);
@@ -226,12 +235,14 @@ public class EntityWaterLevelTransformer implements IClassTransformer {
 	}
 
 	private static byte[] transformEntity(byte[] basicClass, boolean isObfuscated) {
-		final String TARGET_METHOD = isObfuscated ? "a" : "isInsideOfMaterial";
-		final String TARGET_DESC = isObfuscated ? "(Lawt;)Z" : "(Lnet/minecraft/block/material/Material;)Z";
-		final String CALL_OWNER = isObfuscated ? "aji" : "net/minecraft/block/Block";
-		final String CALL_NAME = isObfuscated ? "o" : "getMaterial";
-		final String CALL_DESC = isObfuscated ? "()Lawt;" : "()Lnet/minecraft/block/material/Material;";
-		final String CALL_NEW_DESC = isObfuscated ? "(D)Lawt;" : "(D)Lnet/minecraft/block/material/Material;";
+		final String CLASS_Block = isObfuscated ? "aji" : "net/minecraft/block/Block";
+		final String CLASS_Material = isObfuscated ? "awt" : "net/minecraft/block/material/Material";
+
+		final String METHOD_isInsideOfMaterial = isObfuscated ? "a" : "isInsideOfMaterial";
+		final String METHOD_isInsideOfMaterial_DESC = "(L" + CLASS_Material + ";)Z";
+		final String METHOD_getMaterial = isObfuscated ? "o" : "getMaterial";
+		final String METHOD_getMaterial_DESC = "()L" + CLASS_Material + ";";
+		final String METHOD_getMaterial_DESC_NEW = "(D)L" + CLASS_Material + ";";
 
 		// Transform to human readable byte code
 		ClassNode worldClass = new ClassNode();
@@ -241,18 +252,18 @@ public class EntityWaterLevelTransformer implements IClassTransformer {
 		InsnList instructionToInsert = new InsnList();
 		instructionToInsert.add(new VarInsnNode(DLOAD, 2));
 		instructionToInsert.add(new MethodInsnNode(INVOKEVIRTUAL,
-				CALL_OWNER,
-				CALL_NAME,
-				CALL_NEW_DESC,
+				CLASS_Block,
+				METHOD_getMaterial,
+				METHOD_getMaterial_DESC_NEW,
 				false));
 
 		for(MethodNode method : worldClass.methods) {
-			if(method.name.equals(TARGET_METHOD) && method.desc.equals(TARGET_DESC)) {
+			if(method.name.equals(METHOD_isInsideOfMaterial) && method.desc.equals(METHOD_isInsideOfMaterial_DESC)) {
 				for(AbstractInsnNode instruction : method.instructions.toArray()) {
 					if(instruction.getOpcode() == INVOKEVIRTUAL
-							&& ((MethodInsnNode)instruction).owner.equals(CALL_OWNER)
-							&& ((MethodInsnNode)instruction).name.equals(CALL_NAME)
-							&& ((MethodInsnNode)instruction).desc.equals(CALL_DESC)) {
+							&& ((MethodInsnNode)instruction).owner.equals(CLASS_Block)
+							&& ((MethodInsnNode)instruction).name.equals(METHOD_getMaterial)
+							&& ((MethodInsnNode)instruction).desc.equals(METHOD_getMaterial_DESC)) {
 						AbstractInsnNode insertAfter = instruction.getPrevious();
 						method.instructions.remove(instruction);
 						method.instructions.insert(insertAfter, instructionToInsert);
