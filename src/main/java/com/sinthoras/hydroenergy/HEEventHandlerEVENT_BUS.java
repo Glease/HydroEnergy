@@ -1,5 +1,6 @@
 package com.sinthoras.hydroenergy;
 
+import com.sinthoras.hydroenergy.hewater.light.HELightManager;
 import com.sinthoras.hydroenergy.hewater.render.HETessalator;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.relauncher.Side;
@@ -11,12 +12,12 @@ public class HEEventHandlerEVENT_BUS {
 	@SubscribeEvent
 	@SideOnly(Side.CLIENT)
 	public void onEvent(RenderWorldEvent.Pre event) {
-		HETessalator.instance.onPreRender(event.renderer.worldObj, event.renderer.posX, event.renderer.posY, event.renderer.posZ);
+		HELightManager.onPreRender(event.renderer.worldObj, event.renderer.posX, event.renderer.posY, event.renderer.posZ);
 	}
 
 	@SubscribeEvent
 	@SideOnly(Side.CLIENT)
 	public void onEvent(RenderWorldEvent.Post event) {
-		HETessalator.instance.onPostRender(event.renderer.worldObj, event.renderer.posX, event.renderer.posY, event.renderer.posZ);
+		HETessalator.onPostRender(event.renderer.worldObj, event.renderer.posX, event.renderer.posY, event.renderer.posZ);
 	}
 }
