@@ -1,6 +1,7 @@
 package com.sinthoras.hydroenergy.controller;
 
 import com.sinthoras.hydroenergy.HE;
+import com.sinthoras.hydroenergy.hewater.light.HELightManager;
 
 public class HEDamsClient {
 
@@ -20,7 +21,7 @@ public class HEDamsClient {
 		HE.LOG.info("UPDATE RECEIVED:   " + id + "  " + renderedWaterLevel);
 		this.renderedWaterLevel[id] = renderedWaterLevel;
 		this.renderDebug[id] = renderDebug;
-		//HERenderManager.instance.triggerRenderUpdate(id);
+		HELightManager.onUpdateWaterLevels();
 	}
 	
 	public void onSetDebugMode(int id, boolean value)

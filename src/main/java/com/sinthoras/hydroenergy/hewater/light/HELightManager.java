@@ -7,6 +7,8 @@ import com.sinthoras.hydroenergy.hewater.HEWater;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.RenderGlobal;
 import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
@@ -19,6 +21,8 @@ import java.util.Stack;
 
 @SideOnly(Side.CLIENT)
 public class HELightManager {
+
+    private static float[] renderedWaterLevel = new float[HE.maxController];
 
     private static final HashMap<Long, HELightChunk> chunks = new HashMap<Long, HELightChunk>();
     private static final Stack<HELightChunk> availableBuffers = new Stack<HELightChunk>();
@@ -40,10 +44,6 @@ public class HELightManager {
             lightChunk = availableBuffers.pop();
 
         lightChunk.parseChunk(chunk, subChunkHasDataFlags);
-        String s = "";
-        for(boolean b : lightChunk.subChunkHasWaterFlags)
-            s += b ? "1 " : "0 ";
-        HE.LOG.info(s);
 
         int chunkX = chunk.xPosition;
         int chunkZ = chunk.zPosition;
@@ -77,6 +77,32 @@ public class HELightManager {
         long key = HEUtil.chunkCoordsToKey(chunkX, chunkZ);
         HELightChunk lightChunk = chunks.get(key);
         lightChunk.patch(world.getChunkFromChunkCoords(chunkX, chunkZ), chunkY);
+    }
+
+    public static void onUpdateWaterLevels() {
+        RenderGlobal renderGlobal = Minecraft.getMinecraft().renderGlobal;
+        float[] newWaterLevels = HEDamsClient.instance.getAllWaterLevels();
+        for(int id=0;id<renderedWaterLevel.length;id++) {
+            if(Math.abs(renderedWaterLevel[id] - newWaterLevels[id]) > (1.0f / HE.waterBlocks[0].getLightOpacity())) {
+                renderedWaterLevel = newWaterLevels;
+                for(long key : chunks.keySet()) {
+                    HELightChunk chunk = chunks.get(key);
+                    int chunkX = (int)(key >> 32);
+                    int chunkZ = (int)key;
+                    for(int chunkY=0;chunkY<chunk.requiresPatching.length;chunkY++) {
+                        if(chunk.subChunkHasWaterFlags[chunkY]) {
+                            chunk.requiresPatching[chunkY] = true;
+                            int blockX = HEUtil.coordChunkToBlock(chunkX);
+                            int blockY = HEUtil.coordChunkToBlock(chunkY);
+                            int blockZ = HEUtil.coordChunkToBlock(chunkZ);
+                            renderGlobal.markBlocksForUpdate(blockX, blockY, blockZ, blockX + 15, blockY + 15, blockZ + 15);
+                        }
+                    }
+
+                }
+                return;
+            }
+        }
     }
 }
 
