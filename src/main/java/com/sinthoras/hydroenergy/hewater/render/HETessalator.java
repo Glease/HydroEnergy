@@ -204,11 +204,13 @@ public class HETessalator {
     }
 }
 
+@SideOnly(Side.CLIENT)
 class HEBufferIds {
     public int vaoId;
     public int vboId;
 }
 
+@SideOnly(Side.CLIENT)
 class HERenderChunk {
     public HERenderSubChunk[] subChunks;
 
@@ -219,6 +221,7 @@ class HERenderChunk {
     }
 }
 
+@SideOnly(Side.CLIENT)
 class HERenderSubChunk {
     public int vaoId = -1;
     public int vboId = -1;

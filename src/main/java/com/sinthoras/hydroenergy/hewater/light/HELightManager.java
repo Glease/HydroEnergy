@@ -69,6 +69,7 @@ public class HELightManager {
 }
 
 
+@SideOnly(Side.CLIENT)
 class HELightChunk {
     public BitSet[] lightFlags;
     public int[][] waterIds;
