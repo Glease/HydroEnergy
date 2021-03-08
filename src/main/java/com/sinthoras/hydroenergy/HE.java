@@ -26,8 +26,9 @@ public class HE {
     // TODO: Move to config
 	public static final int maxController = 16;
 	public static final float waterRenderResolution = 1.0f / 256.0f;
+    public static HEControllerBlock controller;
 	public static final HEWaterStatic[] waterBlocks = new HEWaterStatic[maxController];
-    public static final HEControllerBlock controller = new HEControllerBlock();
+	public static final int[] waterBlockIds = new int[maxController];
 	
 	public static boolean DEBUGslowFill = false;
 }

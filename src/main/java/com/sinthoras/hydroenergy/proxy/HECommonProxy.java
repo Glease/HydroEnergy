@@ -5,6 +5,7 @@ import com.sinthoras.hydroenergy.HEEventHandlerEVENT_BUS;
 import com.sinthoras.hydroenergy.HEEventHandlerFML;
 import com.sinthoras.hydroenergy.commands.HECommandDebug;
 import com.sinthoras.hydroenergy.commands.HECommandSetWater;
+import com.sinthoras.hydroenergy.controller.HEControllerBlock;
 import com.sinthoras.hydroenergy.controller.HEControllerTileEntity;
 import com.sinthoras.hydroenergy.controller.HEDams;
 import com.sinthoras.hydroenergy.hewater.HEBlockQueue;
@@ -25,6 +26,7 @@ import cpw.mods.fml.common.event.FMLServerStoppingEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
+import net.minecraft.block.Block;
 import net.minecraftforge.common.MinecraftForge;
 
 public class HECommonProxy {
@@ -45,8 +47,9 @@ public class HECommonProxy {
 		for(int id=0;id<HE.waterBlocks.length;id++) {
 			HE.waterBlocks[id] = new HEWaterStatic(id);
 			GameRegistry.registerBlock(HE.waterBlocks[id], HE.waterBlocks[id].getUnlocalizedName());
+			HE.waterBlockIds[id] = Block.blockRegistry.getIDForObject(HE.waterBlocks[id]);
 		}
-    	
+    	HE.controller = new HEControllerBlock();
 		GameRegistry.registerBlock(HE.controller, HE.controller.getUnlocalizedName());
 		GameRegistry.registerTileEntity(HEControllerTileEntity.class, "he_controller_tile_entity");
 	}
