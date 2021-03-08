@@ -22,7 +22,8 @@ public class EntityWaterLevelTransformer implements IClassTransformer {
 			"net.minecraft.entity.Entity",
 			"net.minecraft.client.renderer.RenderGlobal",
 			"net.minecraft.client.renderer.WorldRenderer",
-			"net.minecraft.world.chunk.Chunk"});
+			"net.minecraft.world.chunk.Chunk",
+			"net.minecraft.client.multiplayer.ChunkProviderClient"});
 
 	@Override
 	public byte[] transform(String name, String transformedName, byte[] basicClass) {
@@ -47,6 +48,8 @@ public class EntityWaterLevelTransformer implements IClassTransformer {
 				return transformWorldRenderer(basicClass, isObfuscated);
 			case 6:
 				return transformChunk(basicClass, isObfuscated);
+			case 7:
+				return transformChunkProviderClient(basicClass, isObfuscated);
 			default:
 				return basicClass;
 		}
@@ -57,12 +60,22 @@ public class EntityWaterLevelTransformer implements IClassTransformer {
 		final String CLASS_Material = isObfuscated ? "awt" : "net/minecraft/block/material/Material";
 		final String CLASS_Entity = isObfuscated ? "sa" : "net/minecraft/entity/Entity";
 		final String CLASS_Block = isObfuscated ? "aji" : "net/minecraft/block/Block";
+		final String CLASS_HELightSMPHooks = "com/sinthoras/hydroenergy/hewater/light/HELightSMPHooks";
+		final String CLASS_Chunk = isObfuscated ? "apx" : "net/minecraft/world/chunk/Chunk";
+		final String CLASS_World = isObfuscated ? "ahb" : "net/minecraft/world/World";
 
 		final String METHOD_handleMaterialAcceleration = isObfuscated ? "a" : "handleMaterialAcceleration";
 		final String METHOD_handleMaterialAcceleration_DESC = "(L" + CLASS_AxisAlignedBB + ";L" + CLASS_Material + ";L" + CLASS_Entity + ";)Z";
 		final String METHOD_getMaterial = isObfuscated ? "o" : "getMaterial";
 		final String METHOD_getMaterial_DESC = "()L" + CLASS_Material + ";";
 		final String METHOD_getMaterial_DESC_NEW = "(I)L" + CLASS_Material + ";";
+
+		final String METHOD_setBlock = isObfuscated ? "d" : "setBlock";
+		final String METHOD_setBlock_DESC = "(IIIL" + CLASS_Block + ";II)Z";
+		final String METHOD_func_150807_a = isObfuscated ? "" : "func_150807_a";
+		final String METHOD_func_150807_a_DESC = "(IIIL" + CLASS_Block + ";I)Z";
+		final String METHOD_onSetBlock = "onSetBlock";
+		final String METHOD_onSetBlock_DESC = "(L" + CLASS_World + ";IIIL" + CLASS_Block + ";IL" + CLASS_Block + ";)V";
 
 		InsnList instructionToInsert = new InsnList();
 		instructionToInsert.add(new VarInsnNode(ILOAD, 13));
@@ -71,11 +84,31 @@ public class EntityWaterLevelTransformer implements IClassTransformer {
 				METHOD_getMaterial,
 				METHOD_getMaterial_DESC_NEW,
 				false));
-		
+
 		basicClass = injectReplaceInvokeVirtual(METHOD_handleMaterialAcceleration, METHOD_handleMaterialAcceleration_DESC,
 				CLASS_Block, METHOD_getMaterial, METHOD_getMaterial_DESC, instructionToInsert, basicClass);
 
 		HE.LOG.info("Injected net/minecraft/world/World.handleMaterialAcceleration");
+
+
+		instructionToInsert = new InsnList();
+		instructionToInsert.add(new VarInsnNode(ALOAD, 0));
+		instructionToInsert.add(new VarInsnNode(ILOAD, 1));
+		instructionToInsert.add(new VarInsnNode(ILOAD, 2));
+		instructionToInsert.add(new VarInsnNode(ILOAD, 3));
+		instructionToInsert.add(new VarInsnNode(ALOAD, 4));
+		instructionToInsert.add(new VarInsnNode(ILOAD, 5));
+		instructionToInsert.add(new VarInsnNode(ALOAD, 8));
+		instructionToInsert.add(new MethodInsnNode(INVOKESTATIC,
+				CLASS_HELightSMPHooks,
+				METHOD_onSetBlock,
+				METHOD_onSetBlock_DESC,
+				false));
+
+		basicClass = injectAfterInvokeVirtual(METHOD_setBlock, METHOD_setBlock_DESC,
+				CLASS_Chunk, METHOD_func_150807_a, METHOD_func_150807_a_DESC, instructionToInsert, basicClass);
+
+		HE.LOG.info("Injected net/minecraft/world/World.setBlock");
 
 		return basicClass;
 	}
@@ -284,6 +317,65 @@ public class EntityWaterLevelTransformer implements IClassTransformer {
 				instructionToInsert, basicClass);
 
 		HE.LOG.info("Injected net/minecraft/client/renderer/WorldRenderer.setPosition");
+
+		return basicClass;
+	}
+
+	private static byte[] transformChunk(byte[] basicClass, boolean isObfuscated) {
+		final String CLASS_Chunk = isObfuscated ? "apx" : "net/minecraft/world/chunk/Chunk";
+		final String CLASS_HELightManager = "com/sinthoras/hydroenergy/hewater/light/HELightManager";
+
+		final String METHOD_fillChunk = isObfuscated ? "a" : "fillChunk";
+		final String METHOD_fillChunk_DESC = "([BIIZ)V";
+
+		final String METHOD_onChunkDataLoad = "onChunkDataLoad";
+		final String METHOD_onChunkDataLoad_DESC = "(L" + CLASS_Chunk + ";I)V";
+
+		final String METHOD_generateHeightMap = isObfuscated ? "a" : "generateHeightMap";
+		final String METHOD_generateHeightMap_DESC = "()V";
+
+		InsnList instructionToInsert = new InsnList();
+		instructionToInsert.add(new VarInsnNode(ALOAD, 0));
+		instructionToInsert.add(new VarInsnNode(ILOAD, 2));
+		instructionToInsert.add(new MethodInsnNode(INVOKESTATIC,
+				CLASS_HELightManager,
+				METHOD_onChunkDataLoad,
+				METHOD_onChunkDataLoad_DESC,
+				false));
+
+		basicClass = injectAfterInvokeVirtual(METHOD_fillChunk, METHOD_fillChunk_DESC,
+				CLASS_Chunk, METHOD_generateHeightMap, METHOD_generateHeightMap_DESC,
+				instructionToInsert, basicClass);
+
+		HE.LOG.info("Injected net/minecraft/world/chunk/Chunk.fillChunk");
+
+		return basicClass;
+	}
+
+	private static byte [] transformChunkProviderClient(byte[] basicClass, boolean isObfuscated) {
+		final String CLASS_HELightManager = "com/sinthoras/hydroenergy/hewater/light/HELightManager";
+		final String CLASS_LongHashMap = isObfuscated ? "qd" : "net/minecraft/util/LongHashMap";
+
+		final String METHOD_unloadChunk = isObfuscated ? "b" : "unloadChunk";
+		final String METHOD_unloadChunk_DESC = "(II)V";
+		final String METHOD_remove = isObfuscated ? "d" : "remove";
+		final String METHOD_remove_DESC = "(J)Ljava/lang/Object;";
+		final String METHOD_onChunkUnload = "onChunkUnload";
+		final String METHOD_onChunkUnload_DESC = "(II)V";
+
+		InsnList instructionToInsert = new InsnList();
+		instructionToInsert.add(new VarInsnNode(ILOAD, 1));
+		instructionToInsert.add(new VarInsnNode(ILOAD, 2));
+		instructionToInsert.add(new MethodInsnNode(INVOKESTATIC,
+				CLASS_HELightManager,
+				METHOD_onChunkUnload,
+				METHOD_onChunkUnload_DESC,
+				false));
+
+		basicClass = injectAfterInvokeVirtual(METHOD_unloadChunk, METHOD_unloadChunk_DESC,
+				CLASS_LongHashMap, METHOD_remove, METHOD_remove_DESC, instructionToInsert, basicClass);
+
+		HE.LOG.info("Injected net/minecraft/client/multiplayer/ChunkProviderClient.unloadChunk");
 
 		return basicClass;
 	}
