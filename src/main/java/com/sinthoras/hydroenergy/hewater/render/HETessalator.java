@@ -24,8 +24,9 @@ import java.util.Stack;
 @SideOnly(Side.CLIENT)
 public class HETessalator {
 
-    private static Stack availableBuffers = new Stack<HEIds>();
-    private static FloatBuffer vboBuffer = GLAllocation.createDirectFloatBuffer(7 * (16 * 16 * 16));
+    private static final HashMap<Long, HERenderChunk> chunks = new HashMap<Long, HERenderChunk>();
+    private static final Stack<HEBufferIds> availableBuffers = new Stack<HEBufferIds>();
+    private static final FloatBuffer vboBuffer = GLAllocation.createDirectFloatBuffer(7 * (16 * 16 * 16));
     private static int numWaterBlocks = 0;
 
     private static Field frustrumX;
@@ -42,15 +43,13 @@ public class HETessalator {
         } catch(Exception e) {}
     }
 
-    private static final HashMap<Long, HESubChunk[]> chunks = new HashMap<Long, HESubChunk[]>();
-
-    public static void onPostRender(World world, int x, int y, int z) {
+    public static void onPostRender(World world, int blockX, int blockY, int blockZ) {
         if(numWaterBlocks != 0) {
-            int chunkX = HEUtil.bucketInt16(x);
-            int chunkY = HEUtil.bucketInt16(y);
-            int chunkZ = HEUtil.bucketInt16(z);
+            int chunkX = HEUtil.bucketInt16(blockX);
+            int chunkY = HEUtil.bucketInt16(blockY);
+            int chunkZ = HEUtil.bucketInt16(blockZ);
             long key = HEUtil.chunkXZ2Int(chunkX, chunkZ);
-            HESubChunk subChunk = chunks.get(key)[chunkY];
+            HERenderSubChunk subChunk = chunks.get(key).subChunks[chunkY];
 
             if (subChunk.vaoId == -1) {
                 if(availableBuffers.empty()) {
@@ -79,7 +78,7 @@ public class HETessalator {
 
                     GL30.glBindVertexArray(0);
                 } else {
-                    HEIds ids = (HEIds) availableBuffers.pop();
+                    HEBufferIds ids = availableBuffers.pop();
                     subChunk.vaoId = ids.vaoId;
                     subChunk.vboId = ids.vboId;
                 }
@@ -98,15 +97,15 @@ public class HETessalator {
         }
     }
 
-    public static void addBlock(int x, int y, int z, int waterId, int worldColorModifier, boolean[] shouldSideBeRendered) {
+    public static void addBlock(int blockX, int blockY, int blockZ, int waterId, int worldColorModifier, boolean[] shouldSideBeRendered) {
         int renderSides = 0;
         for(int i=0;i<shouldSideBeRendered.length;i++)
             if(shouldSideBeRendered[i])
                 renderSides |= 1 << i;
 
-        vboBuffer.put(x);
-        vboBuffer.put(y);
-        vboBuffer.put(z);
+        vboBuffer.put(blockX);
+        vboBuffer.put(blockY);
+        vboBuffer.put(blockZ);
 
         int lightXMinus = 15, lightXPlus = 15, lightYMinus = 15, lightYPlus = 15, lightZMinus = 15, lightZPlus = 15;
         int light0 = (lightXMinus << 16) | (lightXPlus << 8) | lightYMinus;
@@ -130,14 +129,14 @@ public class HETessalator {
             HEProgram.bind();
 
             try {
-                float x = (float)frustrumX.getDouble(frustrum);
-                float y = (float)frustrumY.getDouble(frustrum);
-                float z = (float)frustrumZ.getDouble(frustrum);
-                HEProgram.setViewProjection(x, y, z);
-                HEProgram.setCameraPosition(x, y, z);
-                HESortedRenderList.setup(HEUtil.bucketInt16((int)x),
-                                         HEUtil.bucketInt16((int)y),
-                                         HEUtil.bucketInt16((int)z));
+                float blockX = (float)frustrumX.getDouble(frustrum);
+                float blockY = (float)frustrumY.getDouble(frustrum);
+                float blockZ = (float)frustrumZ.getDouble(frustrum);
+                HEProgram.setViewProjection(blockX, blockY, blockZ);
+                HEProgram.setCameraPosition(blockX, blockY, blockZ);
+                HESortedRenderList.setup(HEUtil.bucketInt16((int)blockX),
+                                         HEUtil.bucketInt16((int)blockY),
+                                         HEUtil.bucketInt16((int)blockZ));
             } catch(Exception e) {}
             HEProgram.setWaterLevels();
             HEProgram.setDebugModes();
@@ -150,12 +149,12 @@ public class HETessalator {
                 int chunkX = (int) (key >> 32);
                 int chunkZ = (int) key;
                 for (int chunkY = 0; chunkY < 16; chunkY++) {
-                    int x = HEUtil.debucketInt16(chunkX);
-                    int y = HEUtil.debucketInt16(chunkY);
-                    int z = HEUtil.debucketInt16(chunkZ);
+                    int blockX = HEUtil.debucketInt16(chunkX);
+                    int blockY = HEUtil.debucketInt16(chunkY);
+                    int blockZ = HEUtil.debucketInt16(chunkZ);
                     // TODO: compare with WorldRenderer:112
-                    if (frustrum.isBoundingBoxInFrustum(AxisAlignedBB.getBoundingBox(x, y, z, x + 16, y + 16, z + 16))) {
-                        HESubChunk subChunk = chunks.get(key)[chunkY];
+                    if (frustrum.isBoundingBoxInFrustum(AxisAlignedBB.getBoundingBox(blockX, blockY, blockZ, blockX + 16, blockY + 16, blockZ + 16))) {
+                        HERenderSubChunk subChunk = chunks.get(key).subChunks[chunkY];
                         HESortedRenderList.add(subChunk.vaoId, subChunk.numWaterBlocks, chunkX, chunkY, chunkZ);
                     }
                 }
@@ -170,22 +169,22 @@ public class HETessalator {
 
     // One can argue to use ChunkEvent.Load and ChunkEvent.Unload for this stuff,
     // but those are not in the GL thread and cause issues with cleanup etc
-    public static void onRenderChunkUpdate(int oldX, int oldY, int oldZ, int x, int y, int z) {
+    public static void onRenderChunkUpdate(int oldBlockX, int oldBlockY, int oldBlockZ, int blockX, int blockY, int blockZ) {
         // Just execute once per vertical SubChunk-stack
-        if(y == 0) {
-            int oldChunkX = HEUtil.bucketInt16(oldX);
-            int oldChunkZ = HEUtil.bucketInt16(oldZ);
+        if(blockY == 0) {
+            int oldChunkX = HEUtil.bucketInt16(oldBlockX);
+            int oldChunkZ = HEUtil.bucketInt16(oldBlockZ);
             long oldKey = HEUtil.chunkXZ2Int(oldChunkX, oldChunkZ);
-            int chunkX = HEUtil.bucketInt16(x);
-            int chunkZ = HEUtil.bucketInt16(z);
+            int chunkX = HEUtil.bucketInt16(blockX);
+            int chunkZ = HEUtil.bucketInt16(blockZ);
             long newKey = HEUtil.chunkXZ2Int(chunkX, chunkZ);
 
-            HESubChunk[] subChunks = null;
+            HERenderChunk renderChunk = null;
             if(chunks.containsKey(oldKey)) {
-                subChunks = chunks.get(oldKey);
-                for (HESubChunk subChunk : subChunks)
+                renderChunk = chunks.get(oldKey);
+                for (HERenderSubChunk subChunk : renderChunk.subChunks)
                     if(subChunk.vaoId != -1){
-                        HEIds ids = new HEIds();
+                        HEBufferIds ids = new HEBufferIds();
                         ids.vaoId = subChunk.vaoId;
                         ids.vboId = subChunk.vboId;
                         availableBuffers.push(ids);
@@ -197,19 +196,31 @@ public class HETessalator {
             }
 
             if(!chunks.containsKey(newKey)) {
-                if(subChunks == null)
-                    subChunks = new HESubChunk[] {
-                            new HESubChunk(), new HESubChunk(), new HESubChunk(), new HESubChunk(),
-                            new HESubChunk(), new HESubChunk(), new HESubChunk(), new HESubChunk(),
-                            new HESubChunk(), new HESubChunk(), new HESubChunk(), new HESubChunk(),
-                            new HESubChunk(), new HESubChunk(), new HESubChunk(), new HESubChunk()};
-                chunks.put(newKey, subChunks);
+                if(renderChunk == null)
+                    renderChunk = new HERenderChunk();
+                chunks.put(newKey, renderChunk);
             }
         }
     }
 }
 
-class HEIds {
+class HEBufferIds {
     public int vaoId;
     public int vboId;
+}
+
+class HERenderChunk {
+    public HERenderSubChunk[] subChunks;
+
+    public HERenderChunk() {
+        subChunks = new HERenderSubChunk[16];
+        for(int i=0;i<subChunks.length;i++)
+            subChunks[i] = new HERenderSubChunk();
+    }
+}
+
+class HERenderSubChunk {
+    public int vaoId = -1;
+    public int vboId = -1;
+    public int numWaterBlocks = 0;
 }
