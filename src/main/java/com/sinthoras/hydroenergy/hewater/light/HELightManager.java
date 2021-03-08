@@ -19,7 +19,7 @@ public class HELightManager {
     private static final Stack<HELightChunk> availableBuffers = new Stack<HELightChunk>();
 
     public static void onChunkUnload(int chunkX, int chunkZ) {
-        long key = HEUtil.chunkXZ2Int(chunkX, chunkZ);
+        long key = HEUtil.chunkCoordsToKey(chunkX, chunkZ);
         HELightChunk lightChunk = chunks.get(key);
         availableBuffers.push(lightChunk);
         chunks.remove(key);
@@ -35,7 +35,7 @@ public class HELightManager {
 
         int chunkX = chunk.xPosition;
         int chunkZ = chunk.zPosition;
-        long key = HEUtil.chunkXZ2Int(chunkX, chunkZ);
+        long key = HEUtil.chunkCoordsToKey(chunkX, chunkZ);
         chunks.put(key, lightChunk);
 
         // iterate through block and note down water blocks

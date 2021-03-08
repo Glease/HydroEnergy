@@ -45,10 +45,10 @@ public class HETessalator {
 
     public static void onPostRender(World world, int blockX, int blockY, int blockZ) {
         if(numWaterBlocks != 0) {
-            int chunkX = HEUtil.bucketInt16(blockX);
-            int chunkY = HEUtil.bucketInt16(blockY);
-            int chunkZ = HEUtil.bucketInt16(blockZ);
-            long key = HEUtil.chunkXZ2Int(chunkX, chunkZ);
+            int chunkX = HEUtil.coordBlockToChunk(blockX);
+            int chunkY = HEUtil.coordBlockToChunk(blockY);
+            int chunkZ = HEUtil.coordBlockToChunk(blockZ);
+            long key = HEUtil.chunkCoordsToKey(chunkX, chunkZ);
             HERenderSubChunk subChunk = chunks.get(key).subChunks[chunkY];
 
             if (subChunk.vaoId == -1) {
@@ -134,9 +134,9 @@ public class HETessalator {
                 float blockZ = (float)frustrumZ.getDouble(frustrum);
                 HEProgram.setViewProjection(blockX, blockY, blockZ);
                 HEProgram.setCameraPosition(blockX, blockY, blockZ);
-                HESortedRenderList.setup(HEUtil.bucketInt16((int)blockX),
-                                         HEUtil.bucketInt16((int)blockY),
-                                         HEUtil.bucketInt16((int)blockZ));
+                HESortedRenderList.setup(HEUtil.coordBlockToChunk((int)blockX),
+                                         HEUtil.coordBlockToChunk((int)blockY),
+                                         HEUtil.coordBlockToChunk((int)blockZ));
             } catch(Exception e) {}
             HEProgram.setWaterLevels();
             HEProgram.setDebugModes();
@@ -149,9 +149,9 @@ public class HETessalator {
                 int chunkX = (int) (key >> 32);
                 int chunkZ = (int) key;
                 for (int chunkY = 0; chunkY < 16; chunkY++) {
-                    int blockX = HEUtil.debucketInt16(chunkX);
-                    int blockY = HEUtil.debucketInt16(chunkY);
-                    int blockZ = HEUtil.debucketInt16(chunkZ);
+                    int blockX = HEUtil.coordChunkToBlock(chunkX);
+                    int blockY = HEUtil.coordChunkToBlock(chunkY);
+                    int blockZ = HEUtil.coordChunkToBlock(chunkZ);
                     // TODO: compare with WorldRenderer:112
                     if (frustrum.isBoundingBoxInFrustum(AxisAlignedBB.getBoundingBox(blockX, blockY, blockZ, blockX + 16, blockY + 16, blockZ + 16))) {
                         HERenderSubChunk subChunk = chunks.get(key).subChunks[chunkY];
@@ -172,12 +172,12 @@ public class HETessalator {
     public static void onRenderChunkUpdate(int oldBlockX, int oldBlockY, int oldBlockZ, int blockX, int blockY, int blockZ) {
         // Just execute once per vertical SubChunk-stack
         if(blockY == 0) {
-            int oldChunkX = HEUtil.bucketInt16(oldBlockX);
-            int oldChunkZ = HEUtil.bucketInt16(oldBlockZ);
-            long oldKey = HEUtil.chunkXZ2Int(oldChunkX, oldChunkZ);
-            int chunkX = HEUtil.bucketInt16(blockX);
-            int chunkZ = HEUtil.bucketInt16(blockZ);
-            long newKey = HEUtil.chunkXZ2Int(chunkX, chunkZ);
+            int oldChunkX = HEUtil.coordBlockToChunk(oldBlockX);
+            int oldChunkZ = HEUtil.coordBlockToChunk(oldBlockZ);
+            long oldKey = HEUtil.chunkCoordsToKey(oldChunkX, oldChunkZ);
+            int chunkX = HEUtil.coordBlockToChunk(blockX);
+            int chunkZ = HEUtil.coordBlockToChunk(blockZ);
+            long newKey = HEUtil.chunkCoordsToKey(chunkX, chunkZ);
 
             HERenderChunk renderChunk = null;
             if(chunks.containsKey(oldKey)) {
