@@ -1,12 +1,17 @@
 package com.sinthoras.hydroenergy.hewater.light;
 
+import com.sinthoras.hydroenergy.HE;
 import com.sinthoras.hydroenergy.HEUtil;
+import com.sinthoras.hydroenergy.controller.HEDamsClient;
 import com.sinthoras.hydroenergy.hewater.HEWater;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
+import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
+import net.minecraft.world.chunk.NibbleArray;
+import net.minecraft.world.chunk.storage.ExtendedBlockStorage;
 
 import java.util.BitSet;
 import java.util.HashMap;
@@ -21,6 +26,7 @@ public class HELightManager {
     public static void onChunkUnload(int chunkX, int chunkZ) {
         long key = HEUtil.chunkCoordsToKey(chunkX, chunkZ);
         HELightChunk lightChunk = chunks.get(key);
+        lightChunk.reset();
         availableBuffers.push(lightChunk);
         chunks.remove(key);
     }
@@ -33,52 +39,155 @@ public class HELightManager {
         else
             lightChunk = availableBuffers.pop();
 
+        lightChunk.parseChunk(chunk, subChunkHasDataFlags);
+        String s = "";
+        for(boolean b : lightChunk.subChunkHasWaterFlags)
+            s += b ? "1 " : "0 ";
+        HE.LOG.info(s);
+
         int chunkX = chunk.xPosition;
         int chunkZ = chunk.zPosition;
         long key = HEUtil.chunkCoordsToKey(chunkX, chunkZ);
         chunks.put(key, lightChunk);
 
-        // iterate through block and note down water blocks
-        // also apply light patch
+        for(int chunkY=0;chunkY<16;chunkY++) {
+            lightChunk.patch(chunk, chunkY);
+        }
     }
 
-    public static void onSetBlock(int x, int y, int z, Block block, int metadata, Block oldBlock) {
-        if(oldBlock instanceof HEWater) {
-
-            // remove flag
-        }
+    public static void onSetBlock(int blockX, int blockY, int blockZ, Block block, int metadata, Block oldBlock) {
         if(block instanceof  HEWater) {
-
-            // add flag
-            // apply light patch? Probably needs to be later
+            int waterId = ((HEWater)block).getId();
+            int chunkX = HEUtil.coordBlockToChunk(blockX);
+            int chunkZ = HEUtil.coordBlockToChunk(blockZ);
+            long key = HEUtil.chunkCoordsToKey(chunkX, chunkZ);
+            chunks.get(key).addWaterBlock(blockX, blockY, blockZ, waterId);
+        } else if(oldBlock instanceof HEWater) {
+            int chunkX = HEUtil.coordBlockToChunk(blockX);
+            int chunkZ = HEUtil.coordBlockToChunk(blockZ);
+            long key = HEUtil.chunkCoordsToKey(chunkX, chunkZ);
+            chunks.get(key).removeWaterBlock(blockX, blockY, blockZ);
         }
     }
 
-    public static void onPreRender(World world, int blockX, int bockY, int blockZ) {
-        //apply light patch every time? Some times? benchmark for decision
+    public static void onPreRender(World world, int blockX, int blockY, int blockZ) {
+        int chunkX = HEUtil.coordBlockToChunk(blockX);
+        int chunkY = HEUtil.coordBlockToChunk(blockY);
+        int chunkZ = HEUtil.coordBlockToChunk(blockZ);
+        long key = HEUtil.chunkCoordsToKey(chunkX, chunkZ);
+        HELightChunk lightChunk = chunks.get(key);
+        lightChunk.patch(world.getChunkFromChunkCoords(chunkX, chunkZ), chunkY);
     }
-
-
-    /*
-    Light update stuff
-        x = x & 15;
-        y = y & 15;
-        z = z & 15;
-        lightUpdateFlags.set((x << 8) | (y << 4) | z);
-     */
 }
 
 
 @SideOnly(Side.CLIENT)
 class HELightChunk {
     public BitSet[] lightFlags;
+    public boolean[] subChunkHasWaterFlags;
+    public boolean[] requiresPatching;
+    // Holds corresponding waterId for X/Z combination. I don't expect people to stack
+    // multiple on top of each other. If they do the light calculation will be incorrect.
+    // Acceptable to save quite some RAM.
     public int[][] waterIds;
+
 
     public HELightChunk() {
         lightFlags = new BitSet[16];
-        for(int i=0;i<lightFlags.length;i++)
-            lightFlags[i] = new BitSet(16*16*16);
+        for(int chunkY=0;chunkY<lightFlags.length;chunkY++)
+            lightFlags[chunkY] = new BitSet(16*16*16);
 
         waterIds = new int[16][16];
+        subChunkHasWaterFlags = new boolean[16];
+        requiresPatching = new boolean[16];
+    }
+
+    public void reset() {
+        for(int chunkY=0;chunkY<16;chunkY++) {
+            lightFlags[chunkY].clear();
+            subChunkHasWaterFlags[chunkY] = false;
+            // waterIds does not need to be reset since it is only accessed
+            // whenever data is found and for that to happen there must be a
+            // valid value in it again
+        }
+    }
+
+    // This method checks for each block in the chunk what block it is
+    // with the logic from ExtendedBlockStorage.getBlockByExtId(x, y, z)
+    // and a waterId LUT (getWaterIdFromBlockId)
+    public void parseChunk(Chunk chunk, int subChunkHasDataFlags) {
+        ExtendedBlockStorage[] chunkStorage = chunk.getBlockStorageArray();
+        for(int chunkY=0;chunkY<16;chunkY++) {
+            if((subChunkHasDataFlags & (1 << chunkY)) != 0) {
+                ExtendedBlockStorage subChunkStorage = chunkStorage[chunkY];
+                BitSet flags = lightFlags[chunkY];
+                byte[] LSB = subChunkStorage.getBlockLSBArray();
+                NibbleArray MSB = subChunkStorage.getBlockMSBArray();
+
+                for (int blockX = 0; blockX < 16; blockX++) {
+                    for (int blockY = 0; blockY < 16; blockY++) {
+                        for (int blockZ = 0; blockZ < 16; blockZ++) {
+                            int blockId = LSB[blockY << 8 | blockZ << 4 | blockX] & 255;
+                            if (MSB != null) {
+                                blockId |= MSB.get(blockX, blockY, blockZ) << 8;
+                            }
+                            int waterId = getWaterIdFromBlockId(blockId);
+                            if (waterId >= 0) {
+                                flags.set((blockX << 8) | (blockY << 4) | blockZ);
+                                waterIds[blockX][blockZ] = waterId;
+                                this.subChunkHasWaterFlags[chunkY] = true;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        requiresPatching = subChunkHasWaterFlags.clone();
+    }
+
+    public void removeWaterBlock(int blockX, int blockY, int blockZ) {
+        BitSet flags = lightFlags[blockY >> 4];
+        blockX = blockX & 15;
+        blockY = blockY & 15;
+        blockZ = blockZ & 15;
+        flags.clear((blockX << 8) | (blockY << 4) | blockZ);
+    }
+
+    public void addWaterBlock(int blockX, int blockY, int blockZ, int waterId) {
+        int chunkY = HEUtil.coordBlockToChunk(blockY);
+        BitSet flags = lightFlags[chunkY];
+        this.subChunkHasWaterFlags[chunkY] = true;
+        blockX = blockX & 15;
+        blockY = blockY & 15;
+        blockZ = blockZ & 15;
+        flags.set((blockX << 8) | (blockY << 4) | blockZ);
+        waterIds[blockX][blockZ] = waterId;
+    }
+
+    public void patch(Chunk chunk, int chunkY) {
+        if(subChunkHasWaterFlags[chunkY] && requiresPatching[chunkY])  {
+            float[] waterLevels = HEDamsClient.instance.getAllWaterLevels();
+            BitSet flags = lightFlags[chunkY];
+            NibbleArray skyLightArray = chunk.getBlockStorageArray()[chunkY].getSkylightArray();
+            for (int linearCoord = flags.nextSetBit(0); linearCoord != -1; linearCoord = flags.nextSetBit(linearCoord + 1)) {
+                int blockX = linearCoord >> 8;
+                int blockY = (linearCoord >> 4) & 15;
+                int blockZ = linearCoord & 15;
+                int waterId = waterIds[blockX][blockZ];
+                float diff = Math.min((chunkY << 4) - waterLevels[waterId] + blockY, 0);
+                int lightVal = (int)(15 + diff * HE.waterBlocks[0].getLightOpacity());
+                lightVal = Math.max(lightVal, 0);
+                skyLightArray.set(blockX, blockY, blockZ, lightVal);
+            }
+            requiresPatching[chunkY] = false;
+        }
+    }
+
+    private static int getWaterIdFromBlockId(int blockId) {
+        for(int i=0;i<HE.waterBlockIds.length;i++) {
+            if(HE.waterBlockIds[i] == blockId)
+                return i;
+        }
+        return -1;
     }
 }
