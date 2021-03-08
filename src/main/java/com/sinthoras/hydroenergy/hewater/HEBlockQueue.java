@@ -2,11 +2,10 @@ package com.sinthoras.hydroenergy.hewater;
 
 import java.util.LinkedList;
 
-import com.sinthoras.hydroenergy.proxy.HECommonProxy;
+import com.sinthoras.hydroenergy.HE;
 
 import cpw.mods.fml.common.gameevent.TickEvent;
 import net.minecraft.block.Block;
-import net.minecraft.block.material.Material;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.WorldServer;
 
@@ -44,7 +43,7 @@ public class HEBlockQueue {
 				final Block block = world.getBlock(element.x, element.y, element.z);
 				if(!(block instanceof HEWater))
 				{
-					world.setBlock(element.x, element.y, element.z, HECommonProxy.getWaterBlock(element.id));
+					world.setBlock(element.x, element.y, element.z, HE.waterBlocks[element.id]);
 					countPlaced++;
 				}
 			}

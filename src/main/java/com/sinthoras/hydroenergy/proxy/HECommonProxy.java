@@ -5,11 +5,9 @@ import com.sinthoras.hydroenergy.HEEventHandlerEVENT_BUS;
 import com.sinthoras.hydroenergy.HEEventHandlerFML;
 import com.sinthoras.hydroenergy.commands.HECommandDebug;
 import com.sinthoras.hydroenergy.commands.HECommandSetWater;
-import com.sinthoras.hydroenergy.controller.HEControllerBlock;
 import com.sinthoras.hydroenergy.controller.HEControllerTileEntity;
 import com.sinthoras.hydroenergy.controller.HEDams;
 import com.sinthoras.hydroenergy.hewater.HEBlockQueue;
-import com.sinthoras.hydroenergy.hewater.HEWaterDynamic;
 import com.sinthoras.hydroenergy.hewater.HEWaterStatic;
 import com.sinthoras.hydroenergy.network.HEPacketDebug;
 import com.sinthoras.hydroenergy.network.HEPacketSynchronize;
@@ -27,20 +25,9 @@ import cpw.mods.fml.common.event.FMLServerStoppingEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
-import net.minecraft.block.Block;
-import net.minecraft.client.Minecraft;
-import net.minecraft.server.MinecraftServer;
-//import net.bytebuddy.ByteBuddy;
-//import net.bytebuddy.implementation.FixedValue;
-//import net.bytebuddy.matcher.ElementMatchers;
 import net.minecraftforge.common.MinecraftForge;
 
 public class HECommonProxy {
-	
-	//public static HEWater[] water_instances;
-	public static HEWaterStatic blockWaterStill = new HEWaterStatic();
-	public static HEWaterDynamic blockWaterFlowing = new HEWaterDynamic();
-	public static HEControllerBlock controller = new HEControllerBlock();
 	
 	// preInit "Run before anything else. Read your config, create blocks, items, 
 	// etc, and register them with the GameRegistry."
@@ -53,32 +40,14 @@ public class HECommonProxy {
     	HE.network.registerMessage(HEPacketDebug.Handler.class, HEPacketDebug.class, 1, Side.CLIENT);
     	HE.network.registerMessage(HEPacketSynchronize.Handler.class, HEPacketSynchronize.class, 2, Side.CLIENT);
 
-    	/*HE.LOG.info("The subsequent " + 16 + " liquid errors are intendend. Please ignore...");  // TODO: move to config
-    	water_instances = new HEWater[16];  // TODO: move to config
-    	for(int i=0;i<16;i++)  // TODO: move to config
-    	{
-    		try
-    		{
-    			water_instances[i] = new ByteBuddy()
-						.subclass(HEWater.class)
-						.name("HEWater" + i)
-						.method(ElementMatchers.named("getId"))
-						.intercept(FixedValue.value(i))
-						.make()
-						.load(getClass().getClassLoader())
-						.getLoaded()
-						.newInstance();
-				GameRegistry.registerBlock(water_instances[i], water_instances[i].getUnlocalizedName() + i);
-			} catch (InstantiationException e) {
-				e.printStackTrace();
-			} catch (IllegalAccessException e) {
-				e.printStackTrace();
-			}
-    	}*/
-    	GameRegistry.registerBlock(blockWaterStill, blockWaterStill.getUnlocalizedName() + 0);
+    	HE.LOG.info("The subsequent " + HE.maxController + " liquid errors are intendend. Please ignore...");
+
+		for(int id=0;id<HE.waterBlocks.length;id++) {
+			HE.waterBlocks[id] = new HEWaterStatic(id);
+			GameRegistry.registerBlock(HE.waterBlocks[id], HE.waterBlocks[id].getUnlocalizedName());
+		}
     	
-		GameRegistry.registerBlock(controller, controller.getUnlocalizedName());
-		
+		GameRegistry.registerBlock(HE.controller, HE.controller.getUnlocalizedName());
 		GameRegistry.registerTileEntity(HEControllerTileEntity.class, "he_controller_tile_entity");
 	}
 	
@@ -124,10 +93,5 @@ public class HECommonProxy {
 	public void fmlLifeCycleEvent(FMLServerStoppedEvent event)
 	{
 		
-	}
-
-	public static Block getWaterBlock(int id)
-	{
-		return blockWaterStill;
 	}
 }

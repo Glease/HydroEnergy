@@ -9,17 +9,19 @@ import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.ActiveRenderInfo;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.util.Vec3;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.BlockFluidBase;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 
-public abstract class HEWater extends BlockFluidBase {
+public class HEWater extends BlockFluidBase {
 
-	public HEWater() {
+	private int id;
+
+	public HEWater(int id) {
 		super(FluidRegistry.WATER, Material.water);
+		this.id = id;
 	}
 
 	@Override
@@ -120,5 +122,13 @@ public abstract class HEWater extends BlockFluidBase {
 		return getWaterLevel() < y ? Material.air : Material.water;
 	}
 	
-	public abstract int getId();
+	public int getId() {
+		return id;
+	}
+
+	@Override
+	public String getUnlocalizedName()
+	{
+		return super.getUnlocalizedName() + id;
+	}
 }

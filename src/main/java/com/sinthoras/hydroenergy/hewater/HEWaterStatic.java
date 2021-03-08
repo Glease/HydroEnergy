@@ -10,8 +10,8 @@ import net.minecraft.world.World;
 
 public class HEWaterStatic extends HEWater {
 
-	public HEWaterStatic() {
-		super();
+	public HEWaterStatic(int id) {
+		super(id);
 		setHardness(100.0F);
 		setLightOpacity(3);
 		setBlockName("water");
@@ -19,14 +19,6 @@ public class HEWaterStatic extends HEWater {
 		setTickRandomly(false);
 		setCreativeTab(CreativeTabs.tabBlock);
 		//HE.LOG.info("Water created " + getId());
-	}
-	
-	// Will be overwritten by ByteBuddy!
-	// Or metadata, or, or...
-	@Override
-	public int getId()
-	{
-		return 0;
 	}
 	
 	@Override

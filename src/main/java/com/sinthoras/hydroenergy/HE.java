@@ -1,5 +1,7 @@
 package com.sinthoras.hydroenergy;
 
+import com.sinthoras.hydroenergy.controller.HEControllerBlock;
+import com.sinthoras.hydroenergy.hewater.HEWaterStatic;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -22,11 +24,10 @@ public class HE {
     public static boolean logicalClientLoaded = false;
     
     // TODO: Move to config
-	public static final int worldHeight = 256;
 	public static final int maxController = 16;
 	public static final float waterRenderResolution = 1.0f / 256.0f;
-	
-	public static final int maxRerenderChunksPerRenderTick = 8;
+	public static final HEWaterStatic[] waterBlocks = new HEWaterStatic[maxController];
+    public static final HEControllerBlock controller = new HEControllerBlock();
 	
 	public static boolean DEBUGslowFill = false;
 }

@@ -2,14 +2,9 @@ package com.sinthoras.hydroenergy.hewater;
 
 public class HEWaterDynamic extends HEWater {
 
-	public HEWaterDynamic()
+	public HEWaterDynamic(int id)
 	{
-		super();
+		super(id);
 		setTickRandomly(true);
-	}
-
-	@Override
-	public int getId() {
-		return 0;
 	}
 }

@@ -1,18 +1,14 @@
 package com.sinthoras.hydroenergy.hewater.render;
 
-import com.sinthoras.hydroenergy.HE;
 import com.sinthoras.hydroenergy.hewater.HEWater;
 import com.sinthoras.hydroenergy.hewater.HEWaterStatic;
 
 import cpw.mods.fml.client.registry.RenderingRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.fluids.BlockFluidBase;
 import net.minecraftforge.fluids.RenderBlockFluid;
-import org.lwjgl.util.vector.Vector3f;
 
 public class HEWaterRenderer extends RenderBlockFluid {
 	

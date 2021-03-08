@@ -2,11 +2,9 @@ package com.sinthoras.hydroenergy.commands;
 
 import com.sinthoras.hydroenergy.HE;
 import com.sinthoras.hydroenergy.controller.HEDams;
-import com.sinthoras.hydroenergy.network.HEPacketDebug;
 
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ChatComponentText;
 
 public class HECommandDebug extends CommandBase {

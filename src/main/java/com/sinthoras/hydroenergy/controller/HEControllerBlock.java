@@ -1,6 +1,6 @@
 package com.sinthoras.hydroenergy.controller;
 
-import com.sinthoras.hydroenergy.proxy.HECommonProxy;
+import com.sinthoras.hydroenergy.HE;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
@@ -43,6 +43,6 @@ public class HEControllerBlock extends BlockContainer{
 	@Override
 	public void onBlockAdded(World world, int x, int y, int z)
 	{
-		world.setBlock(x + 1, y, z, HECommonProxy.blockWaterStill);
+		world.setBlock(x + 1, y, z, HE.waterBlocks[0]);
 	}
 }

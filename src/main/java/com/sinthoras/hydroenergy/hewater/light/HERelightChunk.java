@@ -1,17 +1,11 @@
 package com.sinthoras.hydroenergy.hewater.light;
 
-import java.lang.reflect.Field;
 import java.util.BitSet;
-import java.util.List;
 
 import com.sinthoras.hydroenergy.HE;
-import com.sinthoras.hydroenergy.proxy.HECommonProxy;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
-import net.minecraft.client.renderer.RenderGlobal;
 import net.minecraft.world.EnumSkyBlock;
-import net.minecraft.world.IWorldAccess;
 import net.minecraft.world.chunk.Chunk;
 
 public class HERelightChunk {
@@ -41,7 +35,7 @@ public class HERelightChunk {
 	
 	private void patchBlockLight(int chunkX, int chunkY, int chunkZ, int x, int y, int z, float waterLevel, WorldClient world, Chunk chunk) {
 		float diff = Math.min((chunkY << 4) - waterLevel + y, 0);
-		int lightVal = (int)(15 + diff * HECommonProxy.blockWaterStill.getLightOpacity());
+		int lightVal = (int)(15 + diff * HE.waterBlocks[0].getLightOpacity());
 		lightVal = Math.max(lightVal, 0);
 		world.setLightValue(EnumSkyBlock.Sky, chunkX*16+x, chunkY*16+y, chunkZ*16+z, lightVal);
 	}
