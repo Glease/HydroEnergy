@@ -83,7 +83,7 @@ public class HELightManager {
         RenderGlobal renderGlobal = Minecraft.getMinecraft().renderGlobal;
         float[] newWaterLevels = HEDamsClient.instance.getAllWaterLevels();
         for(int id=0;id<renderedWaterLevel.length;id++) {
-            if(Math.abs(renderedWaterLevel[id] - newWaterLevels[id]) > (1.0f / HE.waterBlocks[0].getLightOpacity())) {
+            if(Math.abs(renderedWaterLevel[id] - newWaterLevels[id]) > (0.5f / HE.waterBlocks[0].getLightOpacity())) {
                 renderedWaterLevel = newWaterLevels;
                 for(long key : chunks.keySet()) {
                     HELightChunk chunk = chunks.get(key);
