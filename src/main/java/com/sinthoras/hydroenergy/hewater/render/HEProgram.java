@@ -3,9 +3,9 @@ package com.sinthoras.hydroenergy.hewater.render;
 import com.google.common.base.Charsets;
 import com.sinthoras.hydroenergy.HE;
 
+import com.sinthoras.hydroenergy.HEUtil;
 import com.sinthoras.hydroenergy.controller.HEDamsClient;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.util.IIcon;
@@ -19,7 +19,6 @@ import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
 
 import java.io.*;
-import java.lang.reflect.Field;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 
@@ -52,15 +51,6 @@ public class HEProgram {
     private static final FloatBuffer fogColor = GLAllocation.createDirectFloatBuffer(16);
     private static final FloatBuffer waterLevels = GLAllocation.createDirectFloatBuffer(HE.maxController);
     private static final FloatBuffer debugModes = GLAllocation.createDirectFloatBuffer(HE.maxController);
-
-    private static Field locationLightMap;
-    static {
-        try {
-            locationLightMap = EntityRenderer.class.getDeclaredField("locationLightMap");
-            locationLightMap.setAccessible(true);
-        }
-        catch(Exception e) {}
-    }
 
 
     public static void init() {
@@ -193,19 +183,16 @@ public class HEProgram {
     }
 
     public static void bindLightLUT() {
-        try {
-            GL13.glActiveTexture(GL13.GL_TEXTURE0);
-            ResourceLocation lightMapLocation = (ResourceLocation) locationLightMap.get(Minecraft.getMinecraft().entityRenderer);
-            Minecraft.getMinecraft().getTextureManager().bindTexture(lightMapLocation);
-            GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR);
-            GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);
-            GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR);
-            GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);
-            GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_S, GL11.GL_CLAMP);
-            GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_T, GL11.GL_CLAMP);
-            GL20.glUniform1i(lightLUTID, 0);
-        }
-        catch(Exception e) {}
+        GL13.glActiveTexture(GL13.GL_TEXTURE0);
+        ResourceLocation lightMapLocation = HEUtil.getLightMapLocation();
+        Minecraft.getMinecraft().getTextureManager().bindTexture(lightMapLocation);
+        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR);
+        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);
+        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR);
+        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);
+        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_S, GL11.GL_CLAMP);
+        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_T, GL11.GL_CLAMP);
+        GL20.glUniform1i(lightLUTID, 0);
     }
 
     public static void bindAtlasTexture() {

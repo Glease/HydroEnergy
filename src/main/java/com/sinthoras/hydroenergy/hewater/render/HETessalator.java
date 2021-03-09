@@ -5,7 +5,6 @@ import com.sinthoras.hydroenergy.HEUtil;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.renderer.GLAllocation;
-import net.minecraft.client.renderer.culling.Frustrum;
 import net.minecraft.client.renderer.culling.ICamera;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.World;
@@ -15,7 +14,6 @@ import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 
-import java.lang.reflect.Field;
 import java.nio.FloatBuffer;
 import java.util.HashMap;
 import java.util.Stack;
@@ -28,20 +26,6 @@ public class HETessalator {
     private static final FloatBuffer vboBuffer = GLAllocation.createDirectFloatBuffer(7 * (16 * 16 * 16));
     private static int numWaterBlocks = 0;
 
-    private static Field frustrumX;
-    private static Field frustrumY;
-    private static Field frustrumZ;
-    static {
-        try {
-            frustrumX = Frustrum.class.getDeclaredField("xPosition");
-            frustrumX.setAccessible(true);
-            frustrumY = Frustrum.class.getDeclaredField("yPosition");
-            frustrumY.setAccessible(true);
-            frustrumZ = Frustrum.class.getDeclaredField("zPosition");
-            frustrumZ.setAccessible(true);
-        }
-        catch(Exception e) {}
-    }
 
     public static void onPostRender(World world, int blockX, int blockY, int blockZ) {
         if(numWaterBlocks != 0) {
@@ -126,28 +110,26 @@ public class HETessalator {
 
     public static void render(ICamera frustrum) {
         if(MinecraftForgeClient.getRenderPass() == HE.waterBlocks[0].getRenderBlockPass()) {
+            float cameraBlockX = HEUtil.getCameraBlockX(frustrum);
+            float cameraBlockY = HEUtil.getCameraBlockY(frustrum);
+            float cameraBlockZ = HEUtil.getCameraBlockZ(frustrum);
 
             GL11.glEnable(GL11.GL_BLEND);
 
             HEProgram.bind();
 
-            try {
-                float blockX = (float)frustrumX.getDouble(frustrum);
-                float blockY = (float)frustrumY.getDouble(frustrum);
-                float blockZ = (float)frustrumZ.getDouble(frustrum);
-                HEProgram.setViewProjection(blockX, blockY, blockZ);
-                HEProgram.setCameraPosition(blockX, blockY, blockZ);
-                HESortedRenderList.setup(HEUtil.coordBlockToChunk((int)blockX),
-                                         HEUtil.coordBlockToChunk((int)blockY),
-                                         HEUtil.coordBlockToChunk((int)blockZ));
-            }
-            catch(Exception e) {}
+            HEProgram.setViewProjection(cameraBlockX, cameraBlockY, cameraBlockZ);
+            HEProgram.setCameraPosition(cameraBlockX, cameraBlockY, cameraBlockZ);
             HEProgram.setWaterLevels();
             HEProgram.setDebugModes();
             HEProgram.setWaterUV();
             HEProgram.setFog();
             HEProgram.bindLightLUT();
             HEProgram.bindAtlasTexture();
+
+            HESortedRenderList.setup(HEUtil.coordBlockToChunk((int)cameraBlockX),
+                    HEUtil.coordBlockToChunk((int)cameraBlockY),
+                    HEUtil.coordBlockToChunk((int)cameraBlockZ));
 
             for (long key : chunks.keySet()) {
                 int chunkX = (int) (key >> 32);
@@ -156,7 +138,6 @@ public class HETessalator {
                     int blockX = HEUtil.coordChunkToBlock(chunkX);
                     int blockY = HEUtil.coordChunkToBlock(chunkY);
                     int blockZ = HEUtil.coordChunkToBlock(chunkZ);
-                    // TODO: compare with WorldRenderer:112
                     if (frustrum.isBoundingBoxInFrustum(AxisAlignedBB.getBoundingBox(blockX, blockY, blockZ, blockX + 16, blockY + 16, blockZ + 16))) {
                         HERenderSubChunk subChunk = chunks.get(key).subChunks[chunkY];
                         HESortedRenderList.add(subChunk.vaoId, subChunk.numWaterBlocks, chunkX, chunkY, chunkZ);
