@@ -1,10 +1,10 @@
-package com.sinthoras.hydroenergy.hewater.render;
+package com.sinthoras.hydroenergy.client.renderer;
 
 import com.google.common.base.Charsets;
 import com.sinthoras.hydroenergy.HE;
 
 import com.sinthoras.hydroenergy.HEUtil;
-import com.sinthoras.hydroenergy.controller.HEDamsClient;
+import com.sinthoras.hydroenergy.client.HEClient;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.client.renderer.texture.TextureMap;
@@ -141,14 +141,14 @@ public class HEProgram {
 
     public static void setWaterLevels() {
         waterLevels.clear();
-        waterLevels.put(HEDamsClient.getAllWaterLevels());
+        waterLevels.put(HEClient.getAllWaterLevels());
         waterLevels.flip();
         GL20.glUniform1(waterLevelsID, waterLevels);
     }
 
     public static void setDebugModes() {
         debugModes.clear();
-        debugModes.put(HEDamsClient.getDebugModes());
+        debugModes.put(HEClient.getDebugModes());
         debugModes.flip();
         GL20.glUniform1(debugModesID, debugModes);
     }

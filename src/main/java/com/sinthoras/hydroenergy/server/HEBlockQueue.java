@@ -1,9 +1,10 @@
-package com.sinthoras.hydroenergy.hewater;
+package com.sinthoras.hydroenergy.server;
 
 import java.util.LinkedList;
 
 import com.sinthoras.hydroenergy.HE;
 
+import com.sinthoras.hydroenergy.blocks.HEWater;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import net.minecraft.block.Block;
 import net.minecraft.server.MinecraftServer;

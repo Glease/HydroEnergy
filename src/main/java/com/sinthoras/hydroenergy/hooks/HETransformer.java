@@ -1,4 +1,4 @@
-package com.sinthoras.hydroenergy.asm;
+package com.sinthoras.hydroenergy.hooks;
 
 import com.sinthoras.hydroenergy.HE;
 import org.objectweb.asm.ClassReader;
@@ -60,7 +60,7 @@ public class HETransformer implements IClassTransformer {
 		final String CLASS_Material = isObfuscated ? "awt" : "net/minecraft/block/material/Material";
 		final String CLASS_Entity = isObfuscated ? "sa" : "net/minecraft/entity/Entity";
 		final String CLASS_Block = isObfuscated ? "aji" : "net/minecraft/block/Block";
-		final String CLASS_HELightSMPHooks = "com/sinthoras/hydroenergy/hewater/light/HELightSMPHooks";
+		final String CLASS_HELightSMPHooks = "com/sinthoras/hydroenergy/client/light/HELightSMPHooks";
 		final String CLASS_Chunk = isObfuscated ? "apx" : "net/minecraft/world/chunk/Chunk";
 		final String CLASS_World = isObfuscated ? "ahb" : "net/minecraft/world/World";
 
@@ -248,7 +248,7 @@ public class HETransformer implements IClassTransformer {
 		final String CLASS_ICamera = isObfuscated ? "bmv" : "net/minecraft/client/renderer/culling/ICamera";
 		final String CLASS_EntityLivingBase = isObfuscated ? "sv" : "net/minecraft/entity/EntityLivingBase";
 		final String CLASS_Profiler = isObfuscated ? "qi" : "net/minecraft/profiler/Profiler";
-		final String CLASS_HETessalator = "com/sinthoras/hydroenergy/hewater/render/HETessalator";
+		final String CLASS_HETessalator = "com/sinthoras/hydroenergy/client/renderer/HETessalator";
 
 		final String METHOD_renderEntities = isObfuscated ? "a" : "renderEntities";
 		final String METHOD_renderEntities_DESC = "(L" + CLASS_EntityLivingBase + ";L" + CLASS_ICamera + ";F)V";
@@ -277,7 +277,7 @@ public class HETransformer implements IClassTransformer {
 
 	private static byte[] transformWorldRenderer(byte[] basicClass, boolean isObfuscated) {
 		final String CLASS_WorldRenderer = isObfuscated ? "blo" : "net/minecraft/client/renderer/WorldRenderer";
-		final String CLASS_HETessalator = "com/sinthoras/hydroenergy/hewater/render/HETessalator";
+		final String CLASS_HETessalator = "com/sinthoras/hydroenergy/client/renderer/HETessalator";
 
 		final String METHOD_setPosition = isObfuscated ? "a" : "setPosition";
 		final String METHOD_setPosition_DESC = "(III)V";
@@ -322,7 +322,7 @@ public class HETransformer implements IClassTransformer {
 
 	private static byte[] transformChunk(byte[] basicClass, boolean isObfuscated) {
 		final String CLASS_Chunk = isObfuscated ? "apx" : "net/minecraft/world/chunk/Chunk";
-		final String CLASS_HELightManager = "com/sinthoras/hydroenergy/hewater/light/HELightManager";
+		final String CLASS_HELightManager = "com/sinthoras/hydroenergy/client/light/HELightManager";
 
 		final String METHOD_fillChunk = isObfuscated ? "a" : "fillChunk";
 		final String METHOD_fillChunk_DESC = "([BIIZ)V";
@@ -352,7 +352,7 @@ public class HETransformer implements IClassTransformer {
 	}
 
 	private static byte [] transformChunkProviderClient(byte[] basicClass, boolean isObfuscated) {
-		final String CLASS_HELightManager = "com/sinthoras/hydroenergy/hewater/light/HELightManager";
+		final String CLASS_HELightManager = "com/sinthoras/hydroenergy/client/light/HELightManager";
 		final String CLASS_LongHashMap = isObfuscated ? "qd" : "net/minecraft/util/LongHashMap";
 
 		final String METHOD_unloadChunk = isObfuscated ? "b" : "unloadChunk";

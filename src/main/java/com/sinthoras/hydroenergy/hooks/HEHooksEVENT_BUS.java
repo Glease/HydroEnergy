@@ -1,13 +1,13 @@
-package com.sinthoras.hydroenergy;
+package com.sinthoras.hydroenergy.hooks;
 
-import com.sinthoras.hydroenergy.hewater.light.HELightManager;
-import com.sinthoras.hydroenergy.hewater.render.HETessalator;
+import com.sinthoras.hydroenergy.client.light.HELightManager;
+import com.sinthoras.hydroenergy.client.renderer.HETessalator;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraftforge.client.event.RenderWorldEvent;
 
-public class HEEventHandlerEVENT_BUS {
+public class HEHooksEVENT_BUS {
 
 	@SubscribeEvent
 	@SideOnly(Side.CLIENT)

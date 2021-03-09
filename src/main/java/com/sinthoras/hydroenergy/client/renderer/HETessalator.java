@@ -1,4 +1,4 @@
-package com.sinthoras.hydroenergy.hewater.render;
+package com.sinthoras.hydroenergy.client.renderer;
 
 import com.sinthoras.hydroenergy.HE;
 import com.sinthoras.hydroenergy.HEUtil;

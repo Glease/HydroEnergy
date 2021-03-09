@@ -1,9 +1,9 @@
-package com.sinthoras.hydroenergy.hewater;
+package com.sinthoras.hydroenergy.blocks;
 
 import com.sinthoras.hydroenergy.HE;
 import com.sinthoras.hydroenergy.HEUtil;
-import com.sinthoras.hydroenergy.controller.HEDamsServer;
-import com.sinthoras.hydroenergy.controller.HEDamsClient;
+import com.sinthoras.hydroenergy.client.HEClient;
+import com.sinthoras.hydroenergy.server.HEServer;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -62,10 +62,10 @@ public class HEWater extends BlockFluidBase {
 	
 	public float getRenderedWaterLevel(IBlockAccess world, int blockX, int blockY, int blockZ) {
 		if(HE.logicalClientLoaded) {
-			return HEDamsClient.getRenderedWaterLevel(getId());
+			return HEClient.getRenderedWaterLevel(getId());
 		}
 		else {
-			return HEDamsServer.instance.getRenderedWaterLevel(getId());
+			return HEServer.instance.getRenderedWaterLevel(getId());
 		}
 	}
 	
@@ -78,10 +78,10 @@ public class HEWater extends BlockFluidBase {
 
 	private float getWaterLevel() {
 		if(HE.logicalClientLoaded) {
-			return HEDamsClient.getRenderedWaterLevel(getId());
+			return HEClient.getRenderedWaterLevel(getId());
 		}
 		else {
-			return HEDamsServer.instance.getRenderedWaterLevel(getId());
+			return HEServer.instance.getRenderedWaterLevel(getId());
 		}
 	}
 	

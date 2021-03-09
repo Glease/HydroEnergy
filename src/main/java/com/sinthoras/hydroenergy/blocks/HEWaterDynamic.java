@@ -1,4 +1,4 @@
-package com.sinthoras.hydroenergy.hewater;
+package com.sinthoras.hydroenergy.blocks;
 
 public class HEWaterDynamic extends HEWater {
 

@@ -1,4 +1,4 @@
-package com.sinthoras.hydroenergy.controller;
+package com.sinthoras.hydroenergy.server;
 
 import com.sinthoras.hydroenergy.HE;
 import com.sinthoras.hydroenergy.network.HEPacketSynchronize;
@@ -9,24 +9,24 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldSavedData;
 
-public class HEDamsServer extends WorldSavedData {
+public class HEServer extends WorldSavedData {
 	
-	private HEController[] controllers;
+	private HEDam[] controllers;
 	
-	public HEDamsServer(String name) {
+	public HEServer(String name) {
 		super(name);
-		controllers = new HEController[HE.maxController];
+		controllers = new HEDam[HE.maxController];
 		for(int i=0;i<controllers.length;i++) {
-			controllers[i] = new HEController();
+			controllers[i] = new HEDam();
 		}
 	}
 
-	public static HEDamsServer instance;
+	public static HEServer instance;
 	
-	public static HEDamsServer load(World world) {
-		HEDamsServer instance = (HEDamsServer) world.mapStorage.loadData(HEDamsServer.class, Tags.hydroenergy);
+	public static HEServer load(World world) {
+		HEServer instance = (HEServer) world.mapStorage.loadData(HEServer.class, Tags.hydroenergy);
 		if (instance == null) {
-			instance = new HEDamsServer(Tags.hydroenergy);
+			instance = new HEServer(Tags.hydroenergy);
 			 world.mapStorage.setData(Tags.hydroenergy, instance);
 		}
 		return instance;
@@ -39,9 +39,9 @@ public class HEDamsServer extends WorldSavedData {
 
 	@Override
 	public void readFromNBT(NBTTagCompound compound) {
-		controllers = new HEController[HE.maxController];
+		controllers = new HEDam[HE.maxController];
 		for(int i=0;i<HE.maxController;i++) {
-			controllers[i] = new HEController();
+			controllers[i] = new HEDam();
 			controllers[i].readFromNBTFull(compound.getCompoundTag(Tags.instance + i));
 		}
 	}
@@ -57,7 +57,7 @@ public class HEDamsServer extends WorldSavedData {
 
 	
 	public boolean canControllerBePlaced() {
-		for(HEController controller : controllers) {
+		for(HEDam controller : controllers) {
 			if (!controller.isPlaced()) {
 				return true;
 			}

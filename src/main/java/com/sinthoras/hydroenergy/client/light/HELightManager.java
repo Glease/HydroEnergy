@@ -1,9 +1,9 @@
-package com.sinthoras.hydroenergy.hewater.light;
+package com.sinthoras.hydroenergy.client.light;
 
 import com.sinthoras.hydroenergy.HE;
 import com.sinthoras.hydroenergy.HEUtil;
-import com.sinthoras.hydroenergy.controller.HEDamsClient;
-import com.sinthoras.hydroenergy.hewater.HEWater;
+import com.sinthoras.hydroenergy.client.HEClient;
+import com.sinthoras.hydroenergy.blocks.HEWater;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
@@ -82,7 +82,7 @@ public class HELightManager {
 
     public static void onUpdateWaterLevels() {
         RenderGlobal renderGlobal = Minecraft.getMinecraft().renderGlobal;
-        float[] newWaterLevels = HEDamsClient.getAllWaterLevels();
+        float[] newWaterLevels = HEClient.getAllWaterLevels();
         for(int id=0;id<renderedWaterLevel.length;id++) {
             if(Math.abs(renderedWaterLevel[id] - newWaterLevels[id]) > (0.5f / HE.waterBlocks[0].getLightOpacity())) {
                 renderedWaterLevel = newWaterLevels;
@@ -194,7 +194,7 @@ class HELightChunk {
 
     public void patch(Chunk chunk, int chunkY) {
         if(subChunkHasWaterFlags[chunkY] && requiresPatching[chunkY])  {
-            float[] waterLevels = HEDamsClient.getAllWaterLevels();
+            float[] waterLevels = HEClient.getAllWaterLevels();
             BitSet flags = lightFlags[chunkY];
             NibbleArray skyLightArray = chunk.getBlockStorageArray()[chunkY].getSkylightArray();
             for (int linearCoord = flags.nextSetBit(0); linearCoord != -1; linearCoord = flags.nextSetBit(linearCoord + 1)) {

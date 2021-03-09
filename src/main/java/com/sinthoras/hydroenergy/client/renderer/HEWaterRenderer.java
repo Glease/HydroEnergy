@@ -1,8 +1,8 @@
-package com.sinthoras.hydroenergy.hewater.render;
+package com.sinthoras.hydroenergy.client.renderer;
 
 import com.sinthoras.hydroenergy.HEUtil;
-import com.sinthoras.hydroenergy.hewater.HEWater;
-import com.sinthoras.hydroenergy.hewater.HEWaterStatic;
+import com.sinthoras.hydroenergy.blocks.HEWater;
+import com.sinthoras.hydroenergy.blocks.HEWaterStatic;
 
 import cpw.mods.fml.client.registry.RenderingRegistry;
 import net.minecraft.block.Block;

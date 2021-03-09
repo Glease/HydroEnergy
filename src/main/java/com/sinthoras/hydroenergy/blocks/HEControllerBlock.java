@@ -1,7 +1,8 @@
-package com.sinthoras.hydroenergy.controller;
+package com.sinthoras.hydroenergy.blocks;
 
 import com.sinthoras.hydroenergy.HE;
 
+import com.sinthoras.hydroenergy.server.HEServer;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
@@ -29,7 +30,7 @@ public class HEControllerBlock extends BlockContainer {
 	
 	@Override
 	public boolean canPlaceBlockAt(World p_149742_1_, int p_149742_2_, int p_149742_3_, int p_149742_4_) {
-		return HEDamsServer.instance.canControllerBePlaced() && super.canPlaceBlockAt(p_149742_1_, p_149742_2_, p_149742_3_, p_149742_4_);
+		return HEServer.instance.canControllerBePlaced() && super.canPlaceBlockAt(p_149742_1_, p_149742_2_, p_149742_3_, p_149742_4_);
     }
 	
 	@Override

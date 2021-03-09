@@ -1,14 +1,12 @@
-package com.sinthoras.hydroenergy.proxy;
+package com.sinthoras.hydroenergy.hooks;
 
 import com.sinthoras.hydroenergy.HE;
-import com.sinthoras.hydroenergy.HEEventHandlerEVENT_BUS;
-import com.sinthoras.hydroenergy.HEEventHandlerFML;
-import com.sinthoras.hydroenergy.commands.HECommandDebug;
-import com.sinthoras.hydroenergy.commands.HECommandSetWater;
-import com.sinthoras.hydroenergy.controller.HEControllerBlock;
-import com.sinthoras.hydroenergy.controller.HEControllerTileEntity;
-import com.sinthoras.hydroenergy.controller.HEDamsServer;
-import com.sinthoras.hydroenergy.hewater.HEWaterStatic;
+import com.sinthoras.hydroenergy.server.commands.HECommandDebug;
+import com.sinthoras.hydroenergy.server.commands.HECommandSetWater;
+import com.sinthoras.hydroenergy.blocks.HEControllerBlock;
+import com.sinthoras.hydroenergy.blocks.HEControllerTileEntity;
+import com.sinthoras.hydroenergy.server.HEServer;
+import com.sinthoras.hydroenergy.blocks.HEWaterStatic;
 import com.sinthoras.hydroenergy.network.HEPacketDebug;
 import com.sinthoras.hydroenergy.network.HEPacketSynchronize;
 import com.sinthoras.hydroenergy.network.HEPacketUpdate;
@@ -28,7 +26,7 @@ import cpw.mods.fml.relauncher.Side;
 import net.minecraft.block.Block;
 import net.minecraftforge.common.MinecraftForge;
 
-public class HECommonProxy {
+public class HEHooksShared {
 	
 	// preInit "Run before anything else. Read your config, create blocks, items, 
 	// etc, and register them with the GameRegistry."
@@ -52,8 +50,8 @@ public class HECommonProxy {
 	
 	// load "Do your mod setup. Build whatever data structures you care about. Register recipes."
 	public void fmlLifeCycleEvent(FMLInitializationEvent event) {
-		FMLCommonHandler.instance().bus().register(new HEEventHandlerFML());
-		MinecraftForge.EVENT_BUS.register(new HEEventHandlerEVENT_BUS());
+		FMLCommonHandler.instance().bus().register(new HEHooksFML());
+		MinecraftForge.EVENT_BUS.register(new HEHooksEVENT_BUS());
 	}
 	
 	// postInit "Handle interaction with other mods, complete your setup based on this."
@@ -70,7 +68,7 @@ public class HECommonProxy {
 		event.registerServerCommand(new HECommandSetWater());
 		event.registerServerCommand(new HECommandDebug());
 		if(event.getSide() == Side.SERVER || event.getServer().isSinglePlayer()) {
-			HEDamsServer.instance = HEDamsServer.load(event.getServer().worldServers[0]);
+			HEServer.instance = HEServer.load(event.getServer().worldServers[0]);
 		}
 	}
 	

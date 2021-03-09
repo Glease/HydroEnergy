@@ -1,9 +1,9 @@
-package com.sinthoras.hydroenergy.proxy;
+package com.sinthoras.hydroenergy.hooks;
 
 import com.sinthoras.hydroenergy.HE;
-import com.sinthoras.hydroenergy.hewater.render.HEWaterRenderer;
+import com.sinthoras.hydroenergy.client.renderer.HEWaterRenderer;
 
-import com.sinthoras.hydroenergy.hewater.render.HEProgram;
+import com.sinthoras.hydroenergy.client.renderer.HEProgram;
 import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
@@ -14,7 +14,7 @@ import cpw.mods.fml.common.event.FMLServerStartingEvent;
 import cpw.mods.fml.common.event.FMLServerStoppedEvent;
 import cpw.mods.fml.common.event.FMLServerStoppingEvent;
 
-public class HEClientProxy extends HECommonProxy {
+public class HEHooksClient extends HEHooksShared {
 	
 	@Override
 	// load "Do your mod setup. Build whatever data structures you care about. Register recipes."

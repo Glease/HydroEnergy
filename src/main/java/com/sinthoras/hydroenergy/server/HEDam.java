@@ -1,11 +1,11 @@
-package com.sinthoras.hydroenergy.controller;
+package com.sinthoras.hydroenergy.server;
 
 import com.sinthoras.hydroenergy.HE;
 import com.sinthoras.hydroenergy.network.HEPacketUpdate;
 
 import net.minecraft.nbt.NBTTagCompound;
 
-public class HEController {
+public class HEDam {
 	
 	public class Tags {
 		public static final String id = "id";

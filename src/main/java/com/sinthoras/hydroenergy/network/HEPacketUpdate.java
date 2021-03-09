@@ -1,6 +1,6 @@
 package com.sinthoras.hydroenergy.network;
 
-import com.sinthoras.hydroenergy.controller.HEDamsClient;
+import com.sinthoras.hydroenergy.client.HEClient;
 
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
@@ -41,7 +41,7 @@ public class HEPacketUpdate implements IMessage {
 
 		@Override
 		public IMessage onMessage(HEPacketUpdate message, MessageContext ctx) {
-			HEDamsClient.onClientUpdate(message.id, message.renderedWaterLevel, message.renderDebug);
+			HEClient.onClientUpdate(message.id, message.renderedWaterLevel, message.renderDebug);
 			return null;
 		}
 	}

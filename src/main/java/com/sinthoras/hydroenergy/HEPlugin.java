@@ -1,8 +1,7 @@
-package com.sinthoras.hydroenergy.asm;
+package com.sinthoras.hydroenergy;
 
-import com.sinthoras.hydroenergy.HE;
-import com.sinthoras.hydroenergy.proxy.HEClientProxy;
-import com.sinthoras.hydroenergy.proxy.HECommonProxy;
+import com.sinthoras.hydroenergy.hooks.HEHooksClient;
+import com.sinthoras.hydroenergy.hooks.HEHooksShared;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.*;
@@ -11,21 +10,21 @@ import cpw.mods.fml.relauncher.IFMLLoadingPlugin;
 import java.util.Map;
 
 @IFMLLoadingPlugin.MCVersion(HE.MC_VERSION)
-@IFMLLoadingPlugin.TransformerExclusions(HE.COM_SINTHORAS_HYDROENERGY + ".asm")
+@IFMLLoadingPlugin.TransformerExclusions(HE.COM_SINTHORAS_HYDROENERGY + ".hooks.HETransformer")
 @Mod(modid = HE.MODID, version = HE.VERSION, name = HE.NAME)
 public class HEPlugin implements IFMLLoadingPlugin {
 
-    @SidedProxy(clientSide=HE.COM_SINTHORAS_HYDROENERGY + ".proxy.HEClientProxy", serverSide=HE.COM_SINTHORAS_HYDROENERGY + ".proxy.HECommonProxy")
-    public static HECommonProxy proxy;
+    @SidedProxy(clientSide=HE.COM_SINTHORAS_HYDROENERGY + ".hooks.HEHooksClient", serverSide=HE.COM_SINTHORAS_HYDROENERGY + ".hooks.HEHooksShared")
+    public static HEHooksShared proxy;
 
     @Override
     public String[] getASMTransformerClass() {
-        return new String[] {HE.COM_SINTHORAS_HYDROENERGY + ".asm.HETransformer"};
+        return new String[] {HE.COM_SINTHORAS_HYDROENERGY + ".hooks.HETransformer"};
     }
 
     @Override
     public String getModContainerClass() {
-        return HE.COM_SINTHORAS_HYDROENERGY + ".asm.HEModContainer";
+        return HE.COM_SINTHORAS_HYDROENERGY + ".HEModContainer";
     }
 
     @Override
@@ -47,7 +46,7 @@ public class HEPlugin implements IFMLLoadingPlugin {
     // preInit "Run before anything else. Read your config, create blocks, items,
     // etc, and register them with the GameRegistry."
     public void fmlLifeCycleEvent(FMLPreInitializationEvent event) {
-        HE.LOG.info("Registered sided proxy for: " + (proxy instanceof HEClientProxy ? "Client" : "Dedicated server"));
+        HE.LOG.info("Registered sided proxy for: " + (proxy instanceof HEHooksClient ? "Client" : "Dedicated server"));
         HE.LOG.info("preInit()"+event.getModMetadata().name);
         proxy.fmlLifeCycleEvent(event);
     }

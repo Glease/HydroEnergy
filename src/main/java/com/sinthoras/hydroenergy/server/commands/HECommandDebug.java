@@ -1,7 +1,7 @@
-package com.sinthoras.hydroenergy.commands;
+package com.sinthoras.hydroenergy.server.commands;
 
 import com.sinthoras.hydroenergy.HE;
-import com.sinthoras.hydroenergy.controller.HEDamsServer;
+import com.sinthoras.hydroenergy.server.HEServer;
 
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
@@ -39,7 +39,7 @@ public class HECommandDebug extends CommandBase {
 					flag = false;
 				}
 				if (flag) {
-					HEDamsServer.instance.updateDebugState(controllerId, debugState);
+					HEServer.instance.updateDebugState(controllerId, debugState);
 					sender.addChatMessage(new ChatComponentText("Set controller " + controllerId + " to debug mode " + params[1].toUpperCase()));
 					HE.LOG.info(sender.getCommandSenderName() + " set controller " + controllerId + " to debug mode " + params[1].toUpperCase());
 				}

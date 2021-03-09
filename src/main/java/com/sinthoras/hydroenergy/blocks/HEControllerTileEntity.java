@@ -1,7 +1,8 @@
-package com.sinthoras.hydroenergy.controller;
+package com.sinthoras.hydroenergy.blocks;
 
 import com.sinthoras.hydroenergy.HE;
 
+import com.sinthoras.hydroenergy.server.HEServer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 
@@ -21,7 +22,7 @@ public class HEControllerTileEntity extends TileEntity {
 	@Override
 	public void validate() {
 		if(id == -1 && !this.worldObj.isRemote) {
-			id = HEDamsServer.instance.reserveControllerId(yCoord);
+			id = HEServer.instance.reserveControllerId(yCoord);
 			HE.LOG.info("New controller " + id);
 			this.markDirtyHack = true;
 			markDirty(); //triggers validate() again
@@ -72,7 +73,7 @@ public class HEControllerTileEntity extends TileEntity {
 	
 	public void onRemoveTileEntity() {
 		if(!this.worldObj.isRemote) {
-			HEDamsServer.instance.onBreakController(id);
+			HEServer.instance.onBreakController(id);
 		}
 	}
 }

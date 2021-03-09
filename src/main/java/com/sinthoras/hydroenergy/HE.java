@@ -1,7 +1,7 @@
 package com.sinthoras.hydroenergy;
 
-import com.sinthoras.hydroenergy.controller.HEControllerBlock;
-import com.sinthoras.hydroenergy.hewater.HEWaterStatic;
+import com.sinthoras.hydroenergy.blocks.HEControllerBlock;
+import com.sinthoras.hydroenergy.blocks.HEWaterStatic;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

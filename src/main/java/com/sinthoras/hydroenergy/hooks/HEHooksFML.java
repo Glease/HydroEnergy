@@ -1,13 +1,14 @@
-package com.sinthoras.hydroenergy;
+package com.sinthoras.hydroenergy.hooks;
 
-import com.sinthoras.hydroenergy.controller.HEDamsServer;
-import com.sinthoras.hydroenergy.hewater.HEBlockQueue;
+import com.sinthoras.hydroenergy.HE;
+import com.sinthoras.hydroenergy.server.HEServer;
+import com.sinthoras.hydroenergy.server.HEBlockQueue;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
 import cpw.mods.fml.common.gameevent.TickEvent.ServerTickEvent;
 
-public class HEEventHandlerFML {
+public class HEHooksFML {
 	
 	private int counter = 0;
 	private float waterLevel = 63.0f;
@@ -21,7 +22,7 @@ public class HEEventHandlerFML {
 				counter = 0;
 				if(HE.DEBUGslowFill) {
 					waterLevel += sign * 0.02f;
-					HEDamsServer.instance.updateWaterLevel(0, waterLevel);
+					HEServer.instance.updateWaterLevel(0, waterLevel);
 				}
 			}
 			if(waterLevel >= 73.0f) {
@@ -36,6 +37,6 @@ public class HEEventHandlerFML {
 	
 	@SubscribeEvent
 	public void onEvent(PlayerLoggedInEvent event) {
-		HEDamsServer.instance.synchronizeClient(event);
+		HEServer.instance.synchronizeClient(event);
 	}
 }

@@ -1,9 +1,9 @@
-package com.sinthoras.hydroenergy.controller;
+package com.sinthoras.hydroenergy.client;
 
 import com.sinthoras.hydroenergy.HE;
-import com.sinthoras.hydroenergy.hewater.light.HELightManager;
+import com.sinthoras.hydroenergy.client.light.HELightManager;
 
-public class HEDamsClient {
+public class HEClient {
 	
 	public static float[] renderedWaterLevel = new float[HE.maxController];
 	public static boolean[] renderDebug = new boolean[HE.maxController];
