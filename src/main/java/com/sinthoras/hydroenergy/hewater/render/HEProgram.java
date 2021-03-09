@@ -166,7 +166,9 @@ public class HEProgram {
         GL20.glUniform2f(texCoordFlowingDeltaID, iconFlowing.getInterpolatedU(16.0) - minU, iconFlowing.getInterpolatedV(16.0) - minV);
     }
 
-    // TODO: get fog density and color from event
+    // Reads the values from openGL. Sadly, the events EntityViewRenderEvent.FogDensity,
+    // EntityViewRenderEvent.RenderFogEvent and EntityViewRenderEvent.FogColors do not
+    // provide information for all possible states
     public static void setFog() {
         float fogStart = GL11.glGetFloat(GL11.GL_FOG_START);
         float fogEnd = GL11.glGetFloat(GL11.GL_FOG_END);
