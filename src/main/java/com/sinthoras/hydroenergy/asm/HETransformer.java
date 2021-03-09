@@ -13,7 +13,7 @@ import scala.actors.threadpool.Arrays;
 
 import java.util.List;
 
-public class EntityWaterLevelTransformer implements IClassTransformer {
+public class HETransformer implements IClassTransformer {
 	
 	private static final List targetClasses = Arrays.asList(new String[] {
 			"net.minecraft.world.World",

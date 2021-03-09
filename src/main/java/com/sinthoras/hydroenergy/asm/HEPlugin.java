@@ -13,14 +13,14 @@ import java.util.Map;
 @IFMLLoadingPlugin.MCVersion(HE.MC_VERSION)
 @IFMLLoadingPlugin.TransformerExclusions(HE.COM_SINTHORAS_HYDROENERGY + ".asm")
 @Mod(modid = HE.MODID, version = HE.VERSION, name = HE.NAME)
-public class HEASMPlugin implements IFMLLoadingPlugin {
+public class HEPlugin implements IFMLLoadingPlugin {
 
     @SidedProxy(clientSide=HE.COM_SINTHORAS_HYDROENERGY + ".proxy.HEClientProxy", serverSide=HE.COM_SINTHORAS_HYDROENERGY + ".proxy.HECommonProxy")
     public static HECommonProxy proxy;
 
     @Override
     public String[] getASMTransformerClass() {
-        return new String[] {HE.COM_SINTHORAS_HYDROENERGY + ".asm.EntityWaterLevelTransformer"};
+        return new String[] {HE.COM_SINTHORAS_HYDROENERGY + ".asm.HETransformer"};
     }
 
     @Override
