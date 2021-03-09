@@ -20,7 +20,7 @@ public class HEWaterRenderer extends RenderBlockFluid {
 	@Override
 	public float getFluidHeightForRender(IBlockAccess world, int blockX, int blockY, int blockZ, BlockFluidBase block) {
 		HEWaterStatic water = (HEWaterStatic) block;
-		float val = water.getRenderedWaterLevel(world, blockX, blockY, blockZ) - blockY;
+		float val = water.getWaterLevel() - blockY;
 		return HEUtil.clamp(val, 0.0f, 1.0f);
     }
 	

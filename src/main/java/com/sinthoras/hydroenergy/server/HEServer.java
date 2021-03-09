@@ -11,13 +11,13 @@ import net.minecraft.world.WorldSavedData;
 
 public class HEServer extends WorldSavedData {
 	
-	private HEDam[] controllers;
+	private HEDam[] dams;
 	
 	public HEServer(String name) {
 		super(name);
-		controllers = new HEDam[HE.maxController];
-		for(int i=0;i<controllers.length;i++) {
-			controllers[i] = new HEDam();
+		dams = new HEDam[HE.maxController];
+		for(int waterId = 0; waterId< dams.length; waterId++) {
+			dams[waterId] = new HEDam(waterId);
 		}
 	}
 
@@ -34,82 +34,155 @@ public class HEServer extends WorldSavedData {
 	
 	public class Tags {
 		public static final String hydroenergy = "hydroenergy";
-		public static final String instance = "inst";
+		public static final String dam = "dam";
 	}
 
 	@Override
 	public void readFromNBT(NBTTagCompound compound) {
-		controllers = new HEDam[HE.maxController];
-		for(int i=0;i<HE.maxController;i++) {
-			controllers[i] = new HEDam();
-			controllers[i].readFromNBTFull(compound.getCompoundTag(Tags.instance + i));
+		dams = new HEDam[HE.maxController];
+		for(int waterId=0;waterId<HE.maxController;waterId++) {
+			dams[waterId] = new HEDam(waterId);
+			dams[waterId].readFromNBTFull(compound.getCompoundTag(Tags.dam + waterId));
 		}
 	}
 
 	@Override
 	public void writeToNBT(NBTTagCompound compound) {
-		for(int i=0;i<controllers.length;i++) {
-			NBTTagCompound subcompound = new NBTTagCompound();
-			controllers[i].writeToNBTFull(subcompound);
-			compound.setTag(Tags.instance + i, subcompound);
+		for(int waterId = 0; waterId< dams.length; waterId++) {
+			NBTTagCompound damCompound = new NBTTagCompound();
+			dams[waterId].writeToNBTFull(damCompound);
+			compound.setTag(Tags.dam + waterId, damCompound);
 		}
 	}
 
 	
 	public boolean canControllerBePlaced() {
-		for(HEDam controller : controllers) {
-			if (!controller.isPlaced()) {
+		for(HEDam dam : dams) {
+			if (!dam.isPlaced()) {
 				return true;
 			}
 		}
 		return false;
 	}
 	
-	public void onBreakController(int id) {
-		controllers[id].breakController();
+	public void onBreakController(int waterId) {
+		dams[waterId].breakController();
 		markDirty();
 	}
 	
-	public int reserveControllerId(int yCoord) {
-		for(int i=0;i<controllers.length;i++) {
-			if (!controllers[i].isPlaced()) {
-				controllers[i].placeController(yCoord);
+	public int onPlacecontroller(int blockX, int blockY, int blockZ) {
+		for(int waterId = 0; waterId< dams.length; waterId++) {
+			if (!dams[waterId].isPlaced()) {
+				dams[waterId].placeController(blockX, blockY, blockZ);
 				markDirty();
-				return i;
+				return waterId;
 			}
 		}
 		return -1;
 	}
 
-	public double getWaterLevel(int id) {
-		return controllers[id].getWaterLevel();
+	public float getWaterLevel(int waterId) {
+		return dams[waterId].getWaterLevel();
 	}
 	
-	public float getRenderedWaterLevel(int id) {
-		return controllers[id].getRenderedWaterLevel();
-	}
-	
-	public void updateWaterLevel(int id, double waterLevel) {
-		controllers[id].updateWaterLevel(waterLevel);
-		markDirty();
+	public void updateWaterLevel(int waterId, float waterLevel) {
+		if(dams[waterId].updateWaterLevel(waterLevel)) {
+			markDirty();
+		}
 	}
 
-	public void updateDebugState(int id, boolean debugState) {
-		controllers[id].updateDebugState(debugState);
+	public void updateDebugState(int waterId, boolean debugState) {
+		dams[waterId].setDebugMode(debugState);
 	}
 
-	public int getWaterLimitUp(int id) {
-		return controllers[id].getWaterLimitUp();
+	public int getWaterLimitUp(int waterId) {
+		return dams[waterId].limitUp;
 	}
 	
-	public int getWaterLimitDown(int id) {
-		return controllers[id].getWaterLimitDown();
+	public int getWaterLimitDown(int waterId) {
+		return dams[waterId].limitDown;
+	}
+
+	public int getWaterLimitEast(int waterId) {
+		return dams[waterId].limitEast;
+	}
+
+	public int getWaterLimitWest(int waterId) {
+		return dams[waterId].limitWest;
+	}
+
+	public int getWaterLimitSouth(int waterId) {
+		return dams[waterId].limitSouth;
+	}
+
+	public int getWaterLimitNorth(int waterId) {
+		return dams[waterId].limitNorth;
+	}
+
+	public void setWaterLimitUp(int waterId, int limitUp) {
+		if(dams[waterId].limitUp != limitUp) {
+			dams[waterId].limitUp = limitUp;
+			markDirty();
+		}
+	}
+
+	public void setWaterLimitDown(int waterId, int limitDown) {
+		if(dams[waterId].limitDown != limitDown) {
+			dams[waterId].limitDown = limitDown;
+			markDirty();
+		}
+	}
+
+	public void setWaterLimitEast(int waterId, int limitEast) {
+		if(dams[waterId].limitEast != limitEast) {
+			dams[waterId].limitEast = limitEast;
+			markDirty();
+		}
+	}
+
+	public void setWaterLimitWest(int waterId, int limitWest) {
+		if(dams[waterId].limitWest != limitWest) {
+			dams[waterId].limitWest = limitWest;
+			markDirty();
+		}
+	}
+
+	public void setWaterLimitSouth(int waterId, int limitSouth) {
+		if(dams[waterId].limitSouth != limitSouth) {
+			dams[waterId].limitSouth = limitSouth;
+			markDirty();
+		}
+	}
+
+	public void setWaterLimitNorth(int waterId, int limitNorth) {
+		if(dams[waterId].limitNorth != limitNorth) {
+			dams[waterId].limitNorth = limitNorth;
+			markDirty();
+		}
+	}
+
+	public void spreadWater(int waterId) {
+		if(dams[waterId].removeWater) {
+			dams[waterId].removeWater = false;
+			markDirty();
+		}
+	}
+
+	public void removeWater(int waterId) {
+		if(!dams[waterId].removeWater) {
+			dams[waterId].removeWater = true;
+			markDirty();
+		}
+	}
+
+	public boolean canSpread(int waterId) {
+		return dams[waterId].isPlaced() && !dams[waterId].removeWater;
 	}
 
 	public void synchronizeClient(PlayerLoggedInEvent event) {
-		HEPacketSynchronize message = new HEPacketSynchronize(controllers.length);
-		for(int i=0;i<controllers.length;i++) {
-			message.renderedWaterLevel[i] = controllers[i].getRenderedWaterLevel();
+		HEPacketSynchronize message = new HEPacketSynchronize(dams.length);
+		for(int i = 0; i< dams.length; i++) {
+			message.renderedWaterLevel[i] = dams[i].getWaterLevel();
 		}
 		HE.network.sendTo(message, (EntityPlayerMP) event.player);
 	}

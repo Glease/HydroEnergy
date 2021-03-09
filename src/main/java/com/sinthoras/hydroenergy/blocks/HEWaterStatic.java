@@ -37,12 +37,7 @@ public class HEWaterStatic extends HEWater {
 	
 	@Override
 	public void onNeighborBlockChange(World world, int blockX, int blockY, int blockZ, Block block) {
-		if(HEServer.instance.getRenderedWaterLevel(getId()) >= 0.0f) {
-			spread(world, blockX, blockY, blockZ);
-		}
-		else {
-			// cleanup of spread water here
-		}
+		spread(world, blockX, blockY, blockZ);
     }
 
 	@Override
@@ -51,30 +46,52 @@ public class HEWaterStatic extends HEWater {
 	}
 	
 	private void spread(World world, int blockX, int blockY, int blockZ) {
-		if(blockY < HEServer.instance.getWaterLimitUp(getId())) {
-			if(canFlowInto(world, blockX, blockY+1, blockZ)) {
-				HEBlockQueue.addBlock(blockX, blockY+1, blockZ, getId());
+		final int waterId = getId();
+		if(HEServer.instance.canSpread(waterId)) {
+			if (blockY < HEServer.instance.getWaterLimitUp(waterId)) {
+				if (canFlowInto(world, blockX, blockY + 1, blockZ)) {
+					HEBlockQueue.enqueueBlock(HEBlockQueue.Mode.Add, blockX, blockY + 1, blockZ, waterId);
+				}
+			}
+
+			if(blockY > HEServer.instance.getWaterLimitDown(waterId)) {
+				if (canFlowInto(world, blockX, blockY - 1, blockZ)) {
+					HEBlockQueue.enqueueBlock(HEBlockQueue.Mode.Add, blockX, blockY - 1, blockZ, waterId);
+				}
+			}
+
+			if(blockX < HEServer.instance.getWaterLimitEast(waterId)) {
+				if (canFlowInto(world, blockX + 1, blockY, blockZ)) {
+					HEBlockQueue.enqueueBlock(HEBlockQueue.Mode.Add, blockX + 1, blockY, blockZ, waterId);
+				}
+			}
+
+			if(blockX > HEServer.instance.getWaterLimitWest(waterId)) {
+				if (canFlowInto(world, blockX - 1, blockY, blockZ)) {
+					HEBlockQueue.enqueueBlock(HEBlockQueue.Mode.Add, blockX - 1, blockY, blockZ, waterId);
+				}
+			}
+
+			if(blockZ < HEServer.instance.getWaterLimitSouth(waterId)) {
+				if (canFlowInto(world, blockX, blockY, blockZ + 1)) {
+					HEBlockQueue.enqueueBlock(HEBlockQueue.Mode.Add, blockX, blockY, blockZ + 1, waterId);
+				}
+			}
+
+			if(blockZ > HEServer.instance.getWaterLimitNorth(waterId)) {
+				if (canFlowInto(world, blockX, blockY, blockZ - 1)) {
+					HEBlockQueue.enqueueBlock(HEBlockQueue.Mode.Add, blockX, blockY, blockZ - 1, waterId);
+				}
 			}
 		}
-		
-		if(canFlowInto(world, blockX, blockY-1, blockZ)) {
-			HEBlockQueue.addBlock(blockX, blockY-1, blockZ, getId());
-		}
-		
-		if(canFlowInto(world, blockX+1, blockY, blockZ)) {
-			HEBlockQueue.addBlock(blockX+1, blockY, blockZ, getId());
-		}
-		
-		if(canFlowInto(world, blockX-1, blockY, blockZ)) {
-			HEBlockQueue.addBlock(blockX-1, blockY, blockZ, getId());
-		}
-		
-		if(canFlowInto(world, blockX, blockY, blockZ+1)) {
-			HEBlockQueue.addBlock(blockX, blockY, blockZ+1, getId());
-		}
-		
-		if(canFlowInto(world, blockX, blockY, blockZ-1)) {
-			HEBlockQueue.addBlock(blockX, blockY, blockZ-1, getId());
+		else if(!HEServer.instance.canSpread(waterId)
+					|| blockX > HEServer.instance.getWaterLimitEast(waterId)
+					|| blockX < HEServer.instance.getWaterLimitWest(waterId)
+					|| blockY > HEServer.instance.getWaterLimitUp(waterId)
+					|| blockY < HEServer.instance.getWaterLimitDown(waterId)
+					|| blockZ > HEServer.instance.getWaterLimitSouth(waterId)
+					|| blockZ < HEServer.instance.getWaterLimitNorth(waterId)) {
+			HEBlockQueue.enqueueBlock(HEBlockQueue.Mode.Remove, blockX, blockY, blockZ, waterId);
 		}
 	}
 }

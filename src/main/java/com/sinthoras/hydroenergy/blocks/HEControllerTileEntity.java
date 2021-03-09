@@ -22,7 +22,7 @@ public class HEControllerTileEntity extends TileEntity {
 	@Override
 	public void validate() {
 		if(id == -1 && !this.worldObj.isRemote) {
-			id = HEServer.instance.reserveControllerId(yCoord);
+			id = HEServer.instance.onPlacecontroller(xCoord, yCoord, zCoord);
 			HE.LOG.info("New controller " + id);
 			this.markDirtyHack = true;
 			markDirty(); //triggers validate() again

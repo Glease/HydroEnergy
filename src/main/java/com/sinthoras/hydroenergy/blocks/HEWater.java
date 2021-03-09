@@ -37,7 +37,7 @@ public class HEWater extends BlockFluidBase {
 
 	@Override
 	public int getQuantaValue(IBlockAccess world, int blockX, int blockY, int blockZ) {
-		float val = getRenderedWaterLevel(world, blockX, blockY, blockZ) - blockY;
+		float val = getWaterLevel() - blockY;
 		val = HEUtil.clamp(val, 0.0f, 1.0f);
 		return Math.round(val * 8);
 	}
@@ -54,34 +54,18 @@ public class HEWater extends BlockFluidBase {
 	
 	@Override
 	public int getLightOpacity(IBlockAccess world, int blockX, int blockY, int blockZ) {
-		if (getRenderedWaterLevel(world, blockX, blockY, blockZ) <= blockY) {
+		if (getWaterLevel() <= blockY) {
         	return 0;
         }
         return getLightOpacity();
     }
-	
-	public float getRenderedWaterLevel(IBlockAccess world, int blockX, int blockY, int blockZ) {
-		if(HE.logicalClientLoaded) {
-			return HEClient.getRenderedWaterLevel(getId());
-		}
-		else {
-			return HEServer.instance.getRenderedWaterLevel(getId());
-		}
-	}
-	
-	private boolean canReplaceBlock(Block block) {
-		if (displacements.containsKey(block)) {
-            return displacements.get(block);
-        }
-		return false;
-	}
 
-	private float getWaterLevel() {
+	public float getWaterLevel() {
 		if(HE.logicalClientLoaded) {
 			return HEClient.getRenderedWaterLevel(getId());
 		}
 		else {
-			return HEServer.instance.getRenderedWaterLevel(getId());
+			return HEServer.instance.getWaterLevel(getId());
 		}
 	}
 	

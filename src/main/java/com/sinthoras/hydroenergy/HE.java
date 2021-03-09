@@ -17,6 +17,8 @@ public class HE {
     public static SimpleNetworkWrapper network;
     public static Logger LOG;
     public static final int maxRenderDist = 16;
+    public static final int minimalUpdateInterval = 1; // in seconds
+    public static final int queueActionsPerTick = 10;
 
     static {
         LOG = LogManager.getLogger(MODID);
