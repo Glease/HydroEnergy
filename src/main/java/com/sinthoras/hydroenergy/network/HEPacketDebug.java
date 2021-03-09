@@ -38,7 +38,7 @@ public class HEPacketDebug implements IMessage{
 
 		@Override
 		public IMessage onMessage(HEPacketDebug message, MessageContext ctx) {
-			HEDamsClient.instance.onSetDebugMode(message.id, message.debug);
+			HEDamsClient.onSetDebugMode(message.id, message.debug);
 			return null;
 		}
 		

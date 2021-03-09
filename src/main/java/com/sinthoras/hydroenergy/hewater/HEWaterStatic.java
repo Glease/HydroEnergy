@@ -18,7 +18,6 @@ public class HEWaterStatic extends HEWater {
 		setBlockTextureName("minecraft:water_still");
 		setTickRandomly(false);
 		setCreativeTab(CreativeTabs.tabBlock);
-		//HE.LOG.info("Water created " + getId());
 	}
 	
 	@Override
@@ -63,33 +62,33 @@ public class HEWaterStatic extends HEWater {
 		{
 			if(canFlowInto(world, x, y+1, z))
 			{
-				HEBlockQueue.instance.addBlock(x, y+1, z, getId());
+				HEBlockQueue.addBlock(x, y+1, z, getId());
 			}
 		}
 		
 		if(canFlowInto(world, x, y-1, z))
 		{
-			HEBlockQueue.instance.addBlock(x, y-1, z, getId());
+			HEBlockQueue.addBlock(x, y-1, z, getId());
 		}
 		
 		if(canFlowInto(world, x+1, y, z))
 		{
-			HEBlockQueue.instance.addBlock(x+1, y, z, getId());
+			HEBlockQueue.addBlock(x+1, y, z, getId());
 		}
 		
 		if(canFlowInto(world, x-1, y, z))
 		{
-			HEBlockQueue.instance.addBlock(x-1, y, z, getId());
+			HEBlockQueue.addBlock(x-1, y, z, getId());
 		}
 		
 		if(canFlowInto(world, x, y, z+1))
 		{
-			HEBlockQueue.instance.addBlock(x, y, z+1, getId());
+			HEBlockQueue.addBlock(x, y, z+1, getId());
 		}
 		
 		if(canFlowInto(world, x, y, z-1))
 		{
-			HEBlockQueue.instance.addBlock(x, y, z-1, getId());
+			HEBlockQueue.addBlock(x, y, z-1, getId());
 		}
 	}
 }

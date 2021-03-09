@@ -35,8 +35,6 @@ public class HECommonProxy {
 	// etc, and register them with the GameRegistry."
 	public void fmlLifeCycleEvent(FMLPreInitializationEvent event)
 	{
-		HEBlockQueue.instance = new HEBlockQueue();
-		
     	HE.network = NetworkRegistry.INSTANCE.newSimpleChannel("hydroenergy");
     	HE.network.registerMessage(HEPacketUpdate.Handler.class, HEPacketUpdate.class, 0, Side.CLIENT);
     	HE.network.registerMessage(HEPacketDebug.Handler.class, HEPacketDebug.class, 1, Side.CLIENT);

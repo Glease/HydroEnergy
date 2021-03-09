@@ -44,7 +44,7 @@ public class HEPacketUpdate implements IMessage{
 
 		@Override
 		public IMessage onMessage(HEPacketUpdate message, MessageContext ctx) {
-			HEDamsClient.instance.onClientUpdate(message.id, message.renderedWaterLevel, message.renderDebug);
+			HEDamsClient.onClientUpdate(message.id, message.renderedWaterLevel, message.renderDebug);
 			return null;
 		}
 		

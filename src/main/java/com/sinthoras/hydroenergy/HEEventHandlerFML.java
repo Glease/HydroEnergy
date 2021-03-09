@@ -16,7 +16,7 @@ public class HEEventHandlerFML  {
 	@SubscribeEvent
 	public void onEvent(ServerTickEvent event) {
 		if(event.phase == ServerTickEvent.Phase.END) {
-			HEBlockQueue.instance.onTick(event);
+			HEBlockQueue.onTick(event);
 			if(counter > 20) {
 				counter = 0;
 				if(HE.DEBUGslowFill ) {

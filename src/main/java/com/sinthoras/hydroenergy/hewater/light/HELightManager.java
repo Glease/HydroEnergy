@@ -80,7 +80,7 @@ public class HELightManager {
 
     public static void onUpdateWaterLevels() {
         RenderGlobal renderGlobal = Minecraft.getMinecraft().renderGlobal;
-        float[] newWaterLevels = HEDamsClient.instance.getAllWaterLevels();
+        float[] newWaterLevels = HEDamsClient.getAllWaterLevels();
         for(int id=0;id<renderedWaterLevel.length;id++) {
             if(Math.abs(renderedWaterLevel[id] - newWaterLevels[id]) > (0.5f / HE.waterBlocks[0].getLightOpacity())) {
                 renderedWaterLevel = newWaterLevels;
@@ -191,7 +191,7 @@ class HELightChunk {
 
     public void patch(Chunk chunk, int chunkY) {
         if(subChunkHasWaterFlags[chunkY] && requiresPatching[chunkY])  {
-            float[] waterLevels = HEDamsClient.instance.getAllWaterLevels();
+            float[] waterLevels = HEDamsClient.getAllWaterLevels();
             BitSet flags = lightFlags[chunkY];
             NibbleArray skyLightArray = chunk.getBlockStorageArray()[chunkY].getSkylightArray();
             for (int linearCoord = flags.nextSetBit(0); linearCoord != -1; linearCoord = flags.nextSetBit(linearCoord + 1)) {

@@ -4,39 +4,32 @@ import com.sinthoras.hydroenergy.HE;
 import com.sinthoras.hydroenergy.hewater.light.HELightManager;
 
 public class HEDamsClient {
+	
+	public static float[] renderedWaterLevel = new float[HE.maxController];
+	public static boolean[] renderDebug = new boolean[HE.maxController];
 
-	public static HEDamsClient instance;
 	
-	public float[] renderedWaterLevel;
-	public boolean[] renderDebug;
-	
-	public HEDamsClient()
+	public static void onClientUpdate(int id, float newWaterLevel, boolean isDebug)
 	{
-		renderedWaterLevel = new float[HE.maxController];
-		renderDebug = new boolean[HE.maxController];
-	}
-	
-	public void onClientUpdate(int id, float renderedWaterLevel, boolean renderDebug)
-	{
-		HE.LOG.info("UPDATE RECEIVED:   " + id + "  " + renderedWaterLevel);
-		this.renderedWaterLevel[id] = renderedWaterLevel;
-		this.renderDebug[id] = renderDebug;
+		HE.LOG.info("UPDATE RECEIVED:   " + id + "  " + newWaterLevel);
+		renderedWaterLevel[id] = newWaterLevel;
+		renderDebug[id] = isDebug;
 		HELightManager.onUpdateWaterLevels();
 	}
 	
-	public void onSetDebugMode(int id, boolean value)
+	public static void onSetDebugMode(int id, boolean value)
 	{
 		renderDebug[id] = value;
 	}
 
-	public float[] getDebugModes() {
+	public static float[] getDebugModes() {
 		float[] copy = new float[renderDebug.length];
 		for(int i=0;i<renderDebug.length;i++)
 			copy[i] = renderDebug[i] ? 1.0f : 0.0f;
 		return copy;
 	}
 	
-	public float getRenderedWaterLevel(int id)
+	public static float getRenderedWaterLevel(int id)
 	{
 		if(renderDebug[id])
 			return 0.0f;
@@ -44,7 +37,7 @@ public class HEDamsClient {
 			return renderedWaterLevel[id];
 	}
 
-	public float[] getAllWaterLevels() {
+	public static float[] getAllWaterLevels() {
 		float[] copy = new float[renderedWaterLevel.length];
 		for(int i=0;i<renderedWaterLevel.length;i++)
 			if(renderDebug[i])
@@ -54,7 +47,7 @@ public class HEDamsClient {
 		return copy;
 	}
 
-	public void onClientSynchronize(float[] renderedWaterLevel) {
-		this.renderedWaterLevel = renderedWaterLevel;
+	public static void onClientSynchronize(float[] newWaterLevel) {
+		renderedWaterLevel = newWaterLevel;
 	}
 }

@@ -67,7 +67,7 @@ public class HEWaterRenderer extends RenderBlockFluid {
         };
 
         int worldColorModifier = block.colorMultiplier(world, x, y, z);
-        HETessalator.instance.addBlock(x, y, z, ((HEWater)block).getId(), worldColorModifier, shouldSidesBeRendered);
+        HETessalator.addBlock(x, y, z, ((HEWater)block).getId(), worldColorModifier, shouldSidesBeRendered);
         
         HEWaterStatic water = (HEWaterStatic) block;
 

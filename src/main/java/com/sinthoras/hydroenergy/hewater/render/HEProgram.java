@@ -149,14 +149,14 @@ public class HEProgram {
 
     public static void setWaterLevels() {
         waterLevels.clear();
-        waterLevels.put(HEDamsClient.instance.getAllWaterLevels());
+        waterLevels.put(HEDamsClient.getAllWaterLevels());
         waterLevels.flip();
         GL20.glUniform1(waterLevelsID, waterLevels);
     }
 
     public static void setDebugModes() {
         debugModes.clear();
-        debugModes.put(HEDamsClient.instance.getDebugModes());
+        debugModes.put(HEDamsClient.getDebugModes());
         debugModes.flip();
         GL20.glUniform1(debugModesID, debugModes);
     }

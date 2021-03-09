@@ -29,7 +29,6 @@ public class HEClientProxy extends HECommonProxy {
 	// load "Do your mod setup. Build whatever data structures you care about. Register recipes."
 	public void fmlLifeCycleEvent(FMLInitializationEvent event) {
 		super.fmlLifeCycleEvent(event);
-		HEDamsClient.instance = new HEDamsClient();
 		HE.logicalClientLoaded = true;
 
 		HEProgram.init();

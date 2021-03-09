@@ -45,7 +45,7 @@ public class HEPacketSynchronize implements IMessage{
 
 		@Override
 		public IMessage onMessage(HEPacketSynchronize message, MessageContext ctx) {
-			HEDamsClient.instance.onClientSynchronize(message.renderedWaterLevel);
+			HEDamsClient.onClientSynchronize(message.renderedWaterLevel);
 			return null;
 		}
 		

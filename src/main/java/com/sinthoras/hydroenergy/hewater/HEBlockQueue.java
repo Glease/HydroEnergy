@@ -11,27 +11,9 @@ import net.minecraft.world.WorldServer;
 
 public class HEBlockQueue {
 	
-	private class QueueEntry
-	{
-		public int x;
-		public int y;
-		public int z;
-		public int id;
-		
-		public QueueEntry(int x, int y, int z, int id)
-		{
-			this.x = x;
-			this.y = y;
-			this.z = z;
-			this.id = id;
-		}
-	}
+	private static LinkedList<QueueEntry> queue = new LinkedList<QueueEntry>();
 	
-	public static HEBlockQueue instance;
-	
-	private LinkedList<QueueEntry> queue = new LinkedList<QueueEntry>();
-	
-	public void onTick(TickEvent.ServerTickEvent event)
+	public static void onTick(TickEvent.ServerTickEvent event)
 	{
 		if(!queue.isEmpty())
 		{
@@ -50,8 +32,24 @@ public class HEBlockQueue {
 		}
 	}
 
-	public void addBlock(int x, int y, int z, int id)
+	public static void addBlock(int x, int y, int z, int id)
 	{
 		queue.add(new QueueEntry(x, y, z, id));
+	}
+}
+
+class QueueEntry
+{
+	public int x;
+	public int y;
+	public int z;
+	public int id;
+
+	public QueueEntry(int x, int y, int z, int id)
+	{
+		this.x = x;
+		this.y = y;
+		this.z = z;
+		this.id = id;
 	}
 }
