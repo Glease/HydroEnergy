@@ -22,34 +22,34 @@ public class HEBlockQueue {
 			while(countPlaced < 10 && !queue.isEmpty())  // TODO: move 10 to config
 			{
 				final QueueEntry element = queue.poll();
-				final Block block = world.getBlock(element.x, element.y, element.z);
+				final Block block = world.getBlock(element.blockX, element.blockY, element.blockZ);
 				if(!(block instanceof HEWater))
 				{
-					world.setBlock(element.x, element.y, element.z, HE.waterBlocks[element.id]);
+					world.setBlock(element.blockX, element.blockY, element.blockZ, HE.waterBlocks[element.id]);
 					countPlaced++;
 				}
 			}
 		}
 	}
 
-	public static void addBlock(int x, int y, int z, int id)
+	public static void addBlock(int blockX, int blockY, int blockZ, int id)
 	{
-		queue.add(new QueueEntry(x, y, z, id));
+		queue.add(new QueueEntry(blockX, blockY, blockZ, id));
 	}
 }
 
 class QueueEntry
 {
-	public int x;
-	public int y;
-	public int z;
+	public int blockX;
+	public int blockY;
+	public int blockZ;
 	public int id;
 
-	public QueueEntry(int x, int y, int z, int id)
+	public QueueEntry(int blockX, int blockY, int blockZ, int id)
 	{
-		this.x = x;
-		this.y = y;
-		this.z = z;
+		this.blockX = blockX;
+		this.blockY = blockY;
+		this.blockZ = blockZ;
 		this.id = id;
 	}
 }

@@ -27,9 +27,9 @@ public class HEWaterStatic extends HEWater {
     }
 	
 	@Override
-    public boolean shouldSideBeRendered(IBlockAccess world, int x, int y, int z, int side)
+    public boolean shouldSideBeRendered(IBlockAccess world, int blockX, int blockY, int blockZ, int side)
     {
-		Block block = world.getBlock(x, y, z);
+		Block block = world.getBlock(blockX, blockY, blockZ);
         if (block != this)
         {
             return !block.isOpaqueCube();
@@ -38,11 +38,11 @@ public class HEWaterStatic extends HEWater {
     }
 	
 	@Override
-	public void onNeighborBlockChange(World world, int x, int y, int z, Block block)
+	public void onNeighborBlockChange(World world, int blockX, int blockY, int blockZ, Block block)
     {
 		if(HEDams.instance.getRenderedWaterLevel(getId()) >= 0.0f)
 		{
-			spread(world, x, y, z);
+			spread(world, blockX, blockY, blockZ);
 		}
 		else
 		{
@@ -51,44 +51,44 @@ public class HEWaterStatic extends HEWater {
     }
 
 	@Override
-	public void onBlockAdded(World world, int x, int y, int z)
+	public void onBlockAdded(World world, int blockX, int blockY, int blockZ)
 	{
-		spread(world, x, y, z);
+		spread(world, blockX, blockY, blockZ);
 	}
 	
-	private void spread(World world, int x, int y, int z)
+	private void spread(World world, int blockX, int blockY, int blockZ)
 	{
-		if(y < HEDams.instance.getWaterLimitUp(getId()))
+		if(blockY < HEDams.instance.getWaterLimitUp(getId()))
 		{
-			if(canFlowInto(world, x, y+1, z))
+			if(canFlowInto(world, blockX, blockY+1, blockZ))
 			{
-				HEBlockQueue.addBlock(x, y+1, z, getId());
+				HEBlockQueue.addBlock(blockX, blockY+1, blockZ, getId());
 			}
 		}
 		
-		if(canFlowInto(world, x, y-1, z))
+		if(canFlowInto(world, blockX, blockY-1, blockZ))
 		{
-			HEBlockQueue.addBlock(x, y-1, z, getId());
+			HEBlockQueue.addBlock(blockX, blockY-1, blockZ, getId());
 		}
 		
-		if(canFlowInto(world, x+1, y, z))
+		if(canFlowInto(world, blockX+1, blockY, blockZ))
 		{
-			HEBlockQueue.addBlock(x+1, y, z, getId());
+			HEBlockQueue.addBlock(blockX+1, blockY, blockZ, getId());
 		}
 		
-		if(canFlowInto(world, x-1, y, z))
+		if(canFlowInto(world, blockX-1, blockY, blockZ))
 		{
-			HEBlockQueue.addBlock(x-1, y, z, getId());
+			HEBlockQueue.addBlock(blockX-1, blockY, blockZ, getId());
 		}
 		
-		if(canFlowInto(world, x, y, z+1))
+		if(canFlowInto(world, blockX, blockY, blockZ+1))
 		{
-			HEBlockQueue.addBlock(x, y, z+1, getId());
+			HEBlockQueue.addBlock(blockX, blockY, blockZ+1, getId());
 		}
 		
-		if(canFlowInto(world, x, y, z-1))
+		if(canFlowInto(world, blockX, blockY, blockZ-1))
 		{
-			HEBlockQueue.addBlock(x, y, z-1, getId());
+			HEBlockQueue.addBlock(blockX, blockY, blockZ-1, getId());
 		}
 	}
 }

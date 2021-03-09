@@ -1,6 +1,7 @@
 package com.sinthoras.hydroenergy.hewater;
 
 import com.sinthoras.hydroenergy.HE;
+import com.sinthoras.hydroenergy.HEUtil;
 import com.sinthoras.hydroenergy.controller.HEDams;
 import com.sinthoras.hydroenergy.controller.HEDamsClient;
 
@@ -25,22 +26,19 @@ public class HEWater extends BlockFluidBase {
 	}
 
 	@Override
-	public FluidStack drain(World world, int x, int y, int z, boolean doDrain) {
+	public FluidStack drain(World world, int blockX, int blockY, int blockZ, boolean doDrain) {
 		return null;
 	}
 
 	@Override
-	public boolean canDrain(World world, int x, int y, int z) {
+	public boolean canDrain(World world, int blockX, int blockY, int blockZ) {
 		return false;
 	}
 
 	@Override
-	public int getQuantaValue(IBlockAccess world, int x, int y, int z) {
-		float val = getRenderedWaterLevel(world, x, y, z) - y;
-		if (val < 0.0f)
-			return 0;
-		if (val >= 1.0f)
-			return 8;
+	public int getQuantaValue(IBlockAccess world, int blockX, int blockY, int blockZ) {
+		float val = getRenderedWaterLevel(world, blockX, blockY, blockZ) - blockY;
+		val = HEUtil.clamp(val, 0.0f, 1.0f);
 		return Math.round(val * 8);
 	}
 
@@ -55,16 +53,16 @@ public class HEWater extends BlockFluidBase {
 	}
 	
 	@Override
-	public int getLightOpacity(IBlockAccess world, int x, int y, int z)
+	public int getLightOpacity(IBlockAccess world, int blockX, int blockY, int blockZ)
     {
-		if (getRenderedWaterLevel(world, x, y, z) <= y)
+		if (getRenderedWaterLevel(world, blockX, blockY, blockZ) <= blockY)
         {
         	return 0;
         }
         return getLightOpacity();
     }
 	
-	public float getRenderedWaterLevel(IBlockAccess world, int x, int y, int z)
+	public float getRenderedWaterLevel(IBlockAccess world, int blockX, int blockY, int blockZ)
 	{
 		if(HE.logicalClientLoaded)
 		{
@@ -96,11 +94,11 @@ public class HEWater extends BlockFluidBase {
 		}
 	}
 	
-	public boolean canFlowInto(IBlockAccess world, int x, int y, int z)
+	public boolean canFlowInto(IBlockAccess world, int blockX, int blockY, int blockZ)
 	{
-		Block block = world.getBlock(x, y, z);
+		Block block = world.getBlock(blockX, blockY, blockZ);
 		return block.getMaterial() == Material.air
-				|| canDisplace(world, x, y, z)
+				|| canDisplace(world, blockX, blockY, blockZ)
 				|| (block.getMaterial() == Material.water
 					&& !(block instanceof HEWater));
 	}
@@ -114,12 +112,12 @@ public class HEWater extends BlockFluidBase {
 		return getMaterial(entity.posY);
 	}
 
-	public Material getMaterial(int y) {
-		return Math.floor(getWaterLevel()) < y ? Material.air : Material.water;
+	public Material getMaterial(int blockY) {
+		return Math.floor(getWaterLevel()) < blockY ? Material.air : Material.water;
 	}
 
-	public Material getMaterial(double y) {
-		return getWaterLevel() < y ? Material.air : Material.water;
+	public Material getMaterial(double blockY) {
+		return getWaterLevel() < blockY ? Material.air : Material.water;
 	}
 	
 	public int getId() {

@@ -18,10 +18,10 @@ public class HEWaterRenderer extends RenderBlockFluid {
 
 	
 	@Override
-	public float getFluidHeightForRender(IBlockAccess world, int x, int y, int z, BlockFluidBase block)
+	public float getFluidHeightForRender(IBlockAccess world, int blockX, int blockY, int blockZ, BlockFluidBase block)
     {
 		HEWaterStatic water = (HEWaterStatic) block;
-		float val = water.getRenderedWaterLevel(world, x, y, z) - y;
+		float val = water.getRenderedWaterLevel(world, blockX, blockY, blockZ) - blockY;
 		return HEUtil.clamp(val, 0.0f, 1.0f);
     }
 	
@@ -30,53 +30,35 @@ public class HEWaterRenderer extends RenderBlockFluid {
     {
         return renderID;
     }
+
+    private static final Block[] neighbors = new Block[6];
+	private static final boolean[] shouldSidesBeRendered = new boolean[6];
 	
 	@Override
-    public boolean renderWorldBlock(IBlockAccess world, int x, int y, int z, Block block, int modelId, RenderBlocks renderer)
+    public boolean renderWorldBlock(IBlockAccess world, int blockX, int blockY, int blockZ, Block block, int modelId, RenderBlocks renderer)
     {
         if (!(block instanceof HEWater))
         {
             return false;
         }
 
-        Block[] neighbors = new Block[] {
-                world.getBlock(x - 1, y, z),
-                world.getBlock(x + 1, y, z),
-                world.getBlock(x, y - 1, z),
-                world.getBlock(x, y + 1, z),
-                world.getBlock(x, y, z - 1),
-                world.getBlock(x, y, z + 1)
-        };
+        neighbors[0] = world.getBlock(blockX - 1, blockY, blockZ);
+        neighbors[1] = world.getBlock(blockX + 1, blockY, blockZ);
+        neighbors[2] = world.getBlock(blockX, blockY - 1, blockZ);
+        neighbors[3] = world.getBlock(blockX, blockY + 1, blockZ);
+        neighbors[4] = world.getBlock(blockX, blockY, blockZ - 1);
+        neighbors[5] = world.getBlock(blockX, blockY, blockZ + 1);
 
-        boolean[] shouldSidesBeRendered = new boolean[]
-        {
-                !neighbors[0].isOpaqueCube() && neighbors[0] != block,
-                !neighbors[1].isOpaqueCube() && neighbors[1] != block,
-                !neighbors[2].isOpaqueCube() && neighbors[2] != block,
-                !neighbors[3].isOpaqueCube() && neighbors[3] != block,
-                !neighbors[4].isOpaqueCube() && neighbors[4] != block,
-                !neighbors[5].isOpaqueCube() && neighbors[5] != block
-        };
+        shouldSidesBeRendered[0] = !neighbors[0].isOpaqueCube() && neighbors[0] != block;
+        shouldSidesBeRendered[1] = !neighbors[1].isOpaqueCube() && neighbors[1] != block;
+        shouldSidesBeRendered[2] = !neighbors[2].isOpaqueCube() && neighbors[2] != block;
+        shouldSidesBeRendered[3] = !neighbors[3].isOpaqueCube() && neighbors[3] != block;
+        shouldSidesBeRendered[4] = !neighbors[4].isOpaqueCube() && neighbors[4] != block;
+        shouldSidesBeRendered[5] = !neighbors[5].isOpaqueCube() && neighbors[5] != block;
 
-        int worldColorModifier = block.colorMultiplier(world, x, y, z);
-        HETessalator.addBlock(x, y, z, ((HEWater)block).getId(), worldColorModifier, shouldSidesBeRendered);
-        
-        HEWaterStatic water = (HEWaterStatic) block;
+        int worldColorModifier = block.colorMultiplier(world, blockX, blockY, blockZ);
+        HETessalator.addBlock(blockX, blockY, blockZ, ((HEWater)block).getId(), worldColorModifier, shouldSidesBeRendered);
 
-        // legacy for lights:
-        //HERenderManager.instance.addBlock(x, y, z, water.getId(), true);//, lightNeedsPatching);
-
-        /* TODO: add color multiplier into shaders
-        int color = block.colorMultiplier(world, x, y, z);
-        float red = (color >> 16 & 255) / 255.0F;
-        float green = (color >> 8 & 255) / 255.0F;
-        float blue = (color & 255) / 255.0F;
-
-        final float LIGHT_Y_NEG = 0.5F;
-        final float LIGHT_Y_POS = 1.0F;
-        final float LIGHT_XZ_NEG = 0.8F;
-        final float LIGHT_XZ_POS = 0.6F;
-        final double RENDER_OFFSET = 0.0010000000474974513D;*/
         return false;
     }
 }

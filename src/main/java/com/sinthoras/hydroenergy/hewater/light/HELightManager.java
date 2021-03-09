@@ -138,7 +138,7 @@ class HELightChunk {
     }
 
     // This method checks for each block in the chunk what block it is
-    // with the logic from ExtendedBlockStorage.getBlockByExtId(x, y, z)
+    // with the logic from ExtendedBlockStorage.getBlockByExtId(blockX, blockY, blockZ)
     // and a waterId LUT (getWaterIdFromBlockId)
     public void parseChunk(Chunk chunk, int subChunkHasDataFlags) {
         ExtendedBlockStorage[] chunkStorage = chunk.getBlockStorageArray();

@@ -41,8 +41,8 @@ public class HEControllerBlock extends BlockContainer{
     }
 	
 	@Override
-	public void onBlockAdded(World world, int x, int y, int z)
+	public void onBlockAdded(World world, int blockX, int blockY, int blockZ)
 	{
-		world.setBlock(x + 1, y, z, HE.waterBlocks[0]);
+		world.setBlock(blockX + 1, blockY, blockZ, HE.waterBlocks[0]);
 	}
 }
