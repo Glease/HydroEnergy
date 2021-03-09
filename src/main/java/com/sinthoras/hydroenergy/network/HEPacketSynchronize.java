@@ -7,17 +7,15 @@ import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 import io.netty.buffer.ByteBuf;
 
-public class HEPacketSynchronize implements IMessage{
+public class HEPacketSynchronize implements IMessage {
 	
 	public float[] renderedWaterLevel;
 	
-	public HEPacketSynchronize()
-	{
+	public HEPacketSynchronize() {
 		
 	}
 	
-	public HEPacketSynchronize(int size)
-	{
+	public HEPacketSynchronize(int size) {
 		renderedWaterLevel = new float[size];
 	}
 	
@@ -25,8 +23,7 @@ public class HEPacketSynchronize implements IMessage{
 	public void fromBytes(ByteBuf buf) {
 		int length = buf.readInt();
 		renderedWaterLevel = new float[length];
-		for(int i=0;i<renderedWaterLevel.length;i++)
-		{
+		for(int i=0;i<renderedWaterLevel.length;i++) {
 			renderedWaterLevel[i] = buf.readFloat();
 		}
 	}
@@ -34,13 +31,11 @@ public class HEPacketSynchronize implements IMessage{
 	@Override
 	public void toBytes(ByteBuf buf) {
 		buf.writeInt(renderedWaterLevel.length);
-		for(int i=0;i<renderedWaterLevel.length;i++)
-		{
+		for(int i=0;i<renderedWaterLevel.length;i++) {
 			buf.writeFloat(renderedWaterLevel[i]);
 		}
 	}
-	
-	
+
 	public static class Handler implements IMessageHandler<HEPacketSynchronize, IMessage> {
 
 		@Override
@@ -48,6 +43,5 @@ public class HEPacketSynchronize implements IMessage{
 			HEDamsClient.onClientSynchronize(message.renderedWaterLevel);
 			return null;
 		}
-		
 	}
 }

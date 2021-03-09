@@ -7,8 +7,7 @@ import net.minecraft.nbt.NBTTagCompound;
 
 public class HEController {
 	
-	public class Tags
-	{
+	public class Tags {
 		public static final String id = "id";
 		public static final String waterLevel = "walv";
 		public static final String renderedWaterLevel = "rwlv";
@@ -32,8 +31,7 @@ public class HEController {
 	private boolean stopSpreading;
 
 	
-	public void readFromNBTFull(NBTTagCompound compound)
-	{
+	public void readFromNBTFull(NBTTagCompound compound) {
 		id = compound.getInteger(Tags.id);
 		waterLevel = compound.getDouble(Tags.waterLevel);
 		renderDebug = false;
@@ -45,8 +43,7 @@ public class HEController {
 		stopSpreading = compound.getBoolean(Tags.stopSpreading);
 	}
 	
-	public void writeToNBTFull(NBTTagCompound compound)
-	{
+	public void writeToNBTFull(NBTTagCompound compound)	{
 		compound.setInteger(Tags.id, id);
 		compound.setDouble(Tags.waterLevel, waterLevel);
 		compound.setFloat(Tags.renderedWaterLevel, renderedWaterLevel);
@@ -57,10 +54,8 @@ public class HEController {
 		compound.setBoolean(Tags.stopSpreading, stopSpreading);
 	}
 	
-	public void updateWaterLevel(double level)
-	{
-		if(Math.abs(level - renderedWaterLevel) >= HE.waterRenderResolution)
-		{
+	public void updateWaterLevel(double level) {
+		if(Math.abs(level - renderedWaterLevel) >= HE.waterRenderResolution) {
 			renderedWaterLevel = (float)level;
 			sendUpdate();
 		}
@@ -74,56 +69,50 @@ public class HEController {
 		}
 	}
 	
-	public void sendUpdate()
-	{
+	public void sendUpdate() {
 		HEPacketUpdate message = new HEPacketUpdate(id, renderedWaterLevel, renderDebug);
 		HE.network.sendToAll(message);
 	}
 	
-	public void breakController()
-	{
+	public void breakController() {
 		placed = false;
 		waterLevel = 0.0;
 		renderedWaterLevel = -1.0f;
 		sendUpdate();
 	}
 	
-	public void placeController(int y)
-	{
+	public void placeController(int blockY) {
 		placed = true;
-		yLimitDown = y;
-		yLimitUp = y+1;
+		yLimitDown = blockY;
+		yLimitUp = blockY+1;
 		
-		waterLevel = y + 0.5;
-		renderedWaterLevel = y + 0.5f;
+		waterLevel = blockY + 0.5;
+		renderedWaterLevel = blockY + 0.5f;
 		sendUpdate();
 	}
 
-	public int getWaterLimitUp()
-	{
+	public int getWaterLimitUp() {
 		return yLimitUp;
 	}
 	
-	public int getWaterLimitDown()
-	{
+	public int getWaterLimitDown() {
 		return yLimitDown;
 	}
 	
-	public double getWaterLevel()
-	{
+	public double getWaterLevel() {
 		return waterLevel;
 	}
 	
-	public float getRenderedWaterLevel()
-	{
-		if(renderDebug)
+	public float getRenderedWaterLevel() {
+		if(renderDebug) {
 			return 0.0f;
-		else
+		}
+		else {
 			return renderedWaterLevel;
+		}
 	}
 	
-	public boolean isPlaced()
-	{
+	public boolean isPlaced() {
 		return placed;
 	}
 }

@@ -39,8 +39,9 @@ public class HELightManager {
         if(availableBuffers.empty()) {
             lightChunk = new HELightChunk();
         }
-        else
+        else {
             lightChunk = availableBuffers.pop();
+        }
 
         lightChunk.parseChunk(chunk, subChunkHasDataFlags);
 
@@ -61,7 +62,8 @@ public class HELightManager {
             int chunkZ = HEUtil.coordBlockToChunk(blockZ);
             long key = HEUtil.chunkCoordsToKey(chunkX, chunkZ);
             chunks.get(key).addWaterBlock(blockX, blockY, blockZ, waterId);
-        } else if(oldBlock instanceof HEWater) {
+        }
+        else if(oldBlock instanceof HEWater) {
             int chunkX = HEUtil.coordBlockToChunk(blockX);
             int chunkZ = HEUtil.coordBlockToChunk(blockZ);
             long key = HEUtil.chunkCoordsToKey(chunkX, chunkZ);
@@ -119,8 +121,9 @@ class HELightChunk {
 
     public HELightChunk() {
         lightFlags = new BitSet[16];
-        for(int chunkY=0;chunkY<lightFlags.length;chunkY++)
-            lightFlags[chunkY] = new BitSet(16*16*16);
+        for(int chunkY=0;chunkY<lightFlags.length;chunkY++) {
+            lightFlags[chunkY] = new BitSet(16 * 16 * 16);
+        }
 
         waterIds = new int[16][16];
         subChunkHasWaterFlags = new boolean[16];
@@ -210,8 +213,9 @@ class HELightChunk {
 
     private static int getWaterIdFromBlockId(int blockId) {
         for(int i=0;i<HE.waterBlockIds.length;i++) {
-            if(HE.waterBlockIds[i] == blockId)
+            if(HE.waterBlockIds[i] == blockId) {
                 return i;
+            }
         }
         return -1;
     }

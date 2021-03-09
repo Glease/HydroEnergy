@@ -7,7 +7,7 @@ import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
 import cpw.mods.fml.common.gameevent.TickEvent.ServerTickEvent;
 
-public class HEEventHandlerFML  {
+public class HEEventHandlerFML {
 	
 	private int counter = 0;
 	private float waterLevel = 63.0f;
@@ -19,18 +19,18 @@ public class HEEventHandlerFML  {
 			HEBlockQueue.onTick(event);
 			if(counter > 20) {
 				counter = 0;
-				if(HE.DEBUGslowFill ) {
+				if(HE.DEBUGslowFill) {
 					waterLevel += sign * 0.02f;
 					HEDams.instance.updateWaterLevel(0, waterLevel);
 				}
 			}
-			if(waterLevel >= 73.0f)
+			if(waterLevel >= 73.0f) {
 				sign = -1;
-			if(waterLevel <= 63.0f)
+			}
+			if(waterLevel <= 63.0f) {
 				sign = 1;
+			}
 			counter++;
-			
-			
 		}
 	}
 	

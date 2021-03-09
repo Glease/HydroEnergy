@@ -18,7 +18,7 @@ public class HE {
     public static Logger LOG;
     public static final int maxRenderDist = 16;
 
-    static{
+    static {
         LOG = LogManager.getLogger(MODID);
     }
     public static boolean logicalClientLoaded = false;

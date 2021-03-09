@@ -8,8 +8,7 @@ import cpw.mods.fml.common.ModMetadata;
 import java.util.Arrays;
 
 public class HEModContainer extends DummyModContainer {
-    public HEModContainer()
-    {
+    public HEModContainer() {
         super(new ModMetadata());
         ModMetadata meta = getMetadata();
         meta.modId = "he";
@@ -20,8 +19,7 @@ public class HEModContainer extends DummyModContainer {
     }
 
     @Override
-    public boolean registerBus(EventBus bus, LoadController controller)
-    {
+    public boolean registerBus(EventBus bus, LoadController controller) {
         bus.register(this);
         return true;
     }

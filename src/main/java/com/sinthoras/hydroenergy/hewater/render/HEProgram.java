@@ -58,7 +58,8 @@ public class HEProgram {
         try {
             locationLightMap = EntityRenderer.class.getDeclaredField("locationLightMap");
             locationLightMap.setAccessible(true);
-        } catch(Exception e) {}
+        }
+        catch(Exception e) {}
     }
 
 
@@ -120,7 +121,8 @@ public class HEProgram {
             }
             GL20.glUseProgram(programID);
             return shaderID;
-        } catch(Exception e) {
+        }
+        catch(Exception e) {
             e.printStackTrace();
             return -1;
         }
@@ -202,7 +204,8 @@ public class HEProgram {
             GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_S, GL11.GL_CLAMP);
             GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_T, GL11.GL_CLAMP);
             GL20.glUniform1i(lightLUTID, 0);
-        } catch(Exception e) {}
+        }
+        catch(Exception e) {}
     }
 
     public static void bindAtlasTexture() {

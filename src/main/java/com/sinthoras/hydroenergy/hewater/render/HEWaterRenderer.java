@@ -18,16 +18,14 @@ public class HEWaterRenderer extends RenderBlockFluid {
 
 	
 	@Override
-	public float getFluidHeightForRender(IBlockAccess world, int blockX, int blockY, int blockZ, BlockFluidBase block)
-    {
+	public float getFluidHeightForRender(IBlockAccess world, int blockX, int blockY, int blockZ, BlockFluidBase block) {
 		HEWaterStatic water = (HEWaterStatic) block;
 		float val = water.getRenderedWaterLevel(world, blockX, blockY, blockZ) - blockY;
 		return HEUtil.clamp(val, 0.0f, 1.0f);
     }
 	
 	@Override
-    public int getRenderId()
-    {
+    public int getRenderId() {
         return renderID;
     }
 
@@ -35,10 +33,8 @@ public class HEWaterRenderer extends RenderBlockFluid {
 	private static final boolean[] shouldSidesBeRendered = new boolean[6];
 	
 	@Override
-    public boolean renderWorldBlock(IBlockAccess world, int blockX, int blockY, int blockZ, Block block, int modelId, RenderBlocks renderer)
-    {
-        if (!(block instanceof HEWater))
-        {
+    public boolean renderWorldBlock(IBlockAccess world, int blockX, int blockY, int blockZ, Block block, int modelId, RenderBlocks renderer) {
+        if (!(block instanceof HEWater)) {
             return false;
         }
 

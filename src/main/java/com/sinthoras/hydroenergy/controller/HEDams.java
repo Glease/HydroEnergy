@@ -13,27 +13,14 @@ public class HEDams extends WorldSavedData {
 	
 	private HEController[] controllers;
 	
-	public boolean renderDebugMode = false;
-	
-	public HEDams() {
-		super(Tags.hydroenergy);
-		controllers = new HEController[HE.maxController];
-		for(int i=0;i<controllers.length;i++)
-		{
-			controllers[i] = new HEController();
-		}
-	}
-	
 	public HEDams(String name) {
 		super(name);
 		controllers = new HEController[HE.maxController];
-		for(int i=0;i<controllers.length;i++)
-		{
+		for(int i=0;i<controllers.length;i++) {
 			controllers[i] = new HEController();
 		}
 	}
-	
-	
+
 	public static HEDams instance;
 	
 	public static HEDams load(World world) {
@@ -45,8 +32,7 @@ public class HEDams extends WorldSavedData {
 		return instance;
 	}
 	
-	public class Tags
-	{
+	public class Tags {
 		public static final String hydroenergy = "hydroenergy";
 		public static final String instance = "inst";
 	}
@@ -54,8 +40,7 @@ public class HEDams extends WorldSavedData {
 	@Override
 	public void readFromNBT(NBTTagCompound compound) {
 		controllers = new HEController[HE.maxController];
-		for(int i=0;i<HE.maxController;i++)
-		{
+		for(int i=0;i<HE.maxController;i++) {
 			controllers[i] = new HEController();
 			controllers[i].readFromNBTFull(compound.getCompoundTag(Tags.instance + i));
 		}
@@ -63,8 +48,7 @@ public class HEDams extends WorldSavedData {
 
 	@Override
 	public void writeToNBT(NBTTagCompound compound) {
-		for(int i=0;i<controllers.length;i++)
-		{
+		for(int i=0;i<controllers.length;i++) {
 			NBTTagCompound subcompound = new NBTTagCompound();
 			controllers[i].writeToNBTFull(subcompound);
 			compound.setTag(Tags.instance + i, subcompound);
@@ -72,44 +56,40 @@ public class HEDams extends WorldSavedData {
 	}
 
 	
-	public boolean canControllerBePlaced()
-	{
-		for(HEController controller : controllers)
-			if(!controller.isPlaced())
+	public boolean canControllerBePlaced() {
+		for(HEController controller : controllers) {
+			if (!controller.isPlaced()) {
 				return true;
+			}
+		}
 		return false;
 	}
 	
-	public void onBreakController(int id)
-	{
+	public void onBreakController(int id) {
 		controllers[id].breakController();
 		markDirty();
 	}
 	
-	public int reserveControllerId(int yCoord)
-	{
-		for(int i=0;i<controllers.length;i++)
-			if(!controllers[i].isPlaced())
-			{
+	public int reserveControllerId(int yCoord) {
+		for(int i=0;i<controllers.length;i++) {
+			if (!controllers[i].isPlaced()) {
 				controllers[i].placeController(yCoord);
 				markDirty();
 				return i;
 			}
+		}
 		return -1;
 	}
-	
-	public double getWaterLevel(int id)
-	{
+
+	public double getWaterLevel(int id) {
 		return controllers[id].getWaterLevel();
 	}
 	
-	public float getRenderedWaterLevel(int id)
-	{
+	public float getRenderedWaterLevel(int id) {
 		return controllers[id].getRenderedWaterLevel();
 	}
 	
-	public void updateWaterLevel(int id, double waterLevel)
-	{
+	public void updateWaterLevel(int id, double waterLevel) {
 		controllers[id].updateWaterLevel(waterLevel);
 		markDirty();
 	}
@@ -128,8 +108,7 @@ public class HEDams extends WorldSavedData {
 
 	public void synchronizeClient(PlayerLoggedInEvent event) {
 		HEPacketSynchronize message = new HEPacketSynchronize(controllers.length);
-		for(int i=0;i<controllers.length;i++)
-		{
+		for(int i=0;i<controllers.length;i++) {
 			message.renderedWaterLevel[i] = controllers[i].getRenderedWaterLevel();
 		}
 		HE.network.sendTo(message, (EntityPlayerMP) event.player);

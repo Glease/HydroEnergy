@@ -53,49 +53,39 @@ public class HEWater extends BlockFluidBase {
 	}
 	
 	@Override
-	public int getLightOpacity(IBlockAccess world, int blockX, int blockY, int blockZ)
-    {
-		if (getRenderedWaterLevel(world, blockX, blockY, blockZ) <= blockY)
-        {
+	public int getLightOpacity(IBlockAccess world, int blockX, int blockY, int blockZ) {
+		if (getRenderedWaterLevel(world, blockX, blockY, blockZ) <= blockY) {
         	return 0;
         }
         return getLightOpacity();
     }
 	
-	public float getRenderedWaterLevel(IBlockAccess world, int blockX, int blockY, int blockZ)
-	{
-		if(HE.logicalClientLoaded)
-		{
+	public float getRenderedWaterLevel(IBlockAccess world, int blockX, int blockY, int blockZ) {
+		if(HE.logicalClientLoaded) {
 			return HEDamsClient.getRenderedWaterLevel(getId());
 		}
-		else
-		{
+		else {
 			return HEDams.instance.getRenderedWaterLevel(getId());
 		}
 	}
 	
-	private boolean canReplaceBlock(Block block)
-	{
-		if (displacements.containsKey(block))
-        {
+	private boolean canReplaceBlock(Block block) {
+		if (displacements.containsKey(block)) {
             return displacements.get(block);
         }
 		return false;
 	}
 
 	private float getWaterLevel() {
-		if(HE.logicalClientLoaded)
-		{
+		if(HE.logicalClientLoaded) {
 			return HEDamsClient.getRenderedWaterLevel(getId());
 		}
-		else
-		{
+		else {
 			return HEDams.instance.getRenderedWaterLevel(getId());
 		}
 	}
 	
-	public boolean canFlowInto(IBlockAccess world, int blockX, int blockY, int blockZ)
-	{
+	public boolean canFlowInto(IBlockAccess world, int blockX, int blockY, int blockZ) {
 		Block block = world.getBlock(blockX, blockY, blockZ);
 		return block.getMaterial() == Material.air
 				|| canDisplace(world, blockX, blockY, blockZ)
@@ -125,8 +115,7 @@ public class HEWater extends BlockFluidBase {
 	}
 
 	@Override
-	public String getUnlocalizedName()
-	{
+	public String getUnlocalizedName() {
 		return super.getUnlocalizedName() + id;
 	}
 }

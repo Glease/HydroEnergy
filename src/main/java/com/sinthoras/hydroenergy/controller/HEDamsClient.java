@@ -9,41 +9,39 @@ public class HEDamsClient {
 	public static boolean[] renderDebug = new boolean[HE.maxController];
 
 	
-	public static void onClientUpdate(int id, float newWaterLevel, boolean isDebug)
-	{
+	public static void onClientUpdate(int id, float newWaterLevel, boolean isDebug) {
 		HE.LOG.info("UPDATE RECEIVED:   " + id + "  " + newWaterLevel);
 		renderedWaterLevel[id] = newWaterLevel;
 		renderDebug[id] = isDebug;
 		HELightManager.onUpdateWaterLevels();
 	}
 	
-	public static void onSetDebugMode(int id, boolean value)
-	{
+	public static void onSetDebugMode(int id, boolean value) {
 		renderDebug[id] = value;
 	}
 
 	public static float[] getDebugModes() {
 		float[] copy = new float[renderDebug.length];
-		for(int i=0;i<renderDebug.length;i++)
+		for(int i=0;i<renderDebug.length;i++) {
 			copy[i] = renderDebug[i] ? 1.0f : 0.0f;
+		}
 		return copy;
 	}
 	
-	public static float getRenderedWaterLevel(int id)
-	{
-		if(renderDebug[id])
+	public static float getRenderedWaterLevel(int id) {
+		if(renderDebug[id]) {
 			return 0.0f;
-		else
+		}
+		else {
 			return renderedWaterLevel[id];
+		}
 	}
 
 	public static float[] getAllWaterLevels() {
 		float[] copy = new float[renderedWaterLevel.length];
-		for(int i=0;i<renderedWaterLevel.length;i++)
-			if(renderDebug[i])
-				copy[i] = 255.0f;
-			else
-				copy[i] = renderedWaterLevel[i];
+		for(int i=0;i<renderedWaterLevel.length;i++) {
+			copy[i] = renderDebug[i] ? 255.0f : renderedWaterLevel[i];
+		}
 		return copy;
 	}
 

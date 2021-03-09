@@ -15,6 +15,9 @@ import java.util.Map;
 @Mod(modid = HE.MODID, version = HE.VERSION, name = HE.NAME)
 public class HEASMPlugin implements IFMLLoadingPlugin {
 
+    @SidedProxy(clientSide=HE.COM_SINTHORAS_HYDROENERGY + ".proxy.HEClientProxy", serverSide=HE.COM_SINTHORAS_HYDROENERGY + ".proxy.HECommonProxy")
+    public static HECommonProxy proxy;
+
     @Override
     public String[] getASMTransformerClass() {
         return new String[] {HE.COM_SINTHORAS_HYDROENERGY + ".asm.EntityWaterLevelTransformer"};
@@ -40,14 +43,10 @@ public class HEASMPlugin implements IFMLLoadingPlugin {
         return null;
     }
 
-    @SidedProxy(clientSide=HE.COM_SINTHORAS_HYDROENERGY + ".proxy.HEClientProxy", serverSide=HE.COM_SINTHORAS_HYDROENERGY + ".proxy.HECommonProxy")
-    public static HECommonProxy proxy;
-
     @Mod.EventHandler
     // preInit "Run before anything else. Read your config, create blocks, items,
     // etc, and register them with the GameRegistry."
-    public void fmlLifeCycleEvent(FMLPreInitializationEvent event)
-    {
+    public void fmlLifeCycleEvent(FMLPreInitializationEvent event) {
         HE.LOG.info("Registered sided proxy for: " + (proxy instanceof HEClientProxy ? "Client" : "Dedicated server"));
         HE.LOG.info("preInit()"+event.getModMetadata().name);
         proxy.fmlLifeCycleEvent(event);
@@ -55,52 +54,45 @@ public class HEASMPlugin implements IFMLLoadingPlugin {
 
     @Mod.EventHandler
     // load "Do your mod setup. Build whatever data structures you care about. Register recipes."
-    public void fmlLifeCycleEvent(FMLInitializationEvent event)
-    {
+    public void fmlLifeCycleEvent(FMLInitializationEvent event) {
         HE.LOG.info("init()");
         proxy.fmlLifeCycleEvent(event);
     }
 
     @Mod.EventHandler
     // postInit "Handle interaction with other mods, complete your setup based on this."
-    public void fmlLifeCycle(FMLPostInitializationEvent event)
-    {
+    public void fmlLifeCycle(FMLPostInitializationEvent event) {
         HE.LOG.info("postInit()");
         proxy.fmlLifeCycleEvent(event);
     }
 
     @Mod.EventHandler
-    public void fmlLifeCycle(FMLServerAboutToStartEvent event)
-    {
+    public void fmlLifeCycle(FMLServerAboutToStartEvent event) {
         HE.LOG.info("Server about to start");
         proxy.fmlLifeCycleEvent(event);
     }
 
     @Mod.EventHandler
     // register server commands in this event handler
-    public void fmlLifeCycle(FMLServerStartingEvent event)
-    {
+    public void fmlLifeCycle(FMLServerStartingEvent event) {
         HE.LOG.info("Server starting");
         proxy.fmlLifeCycleEvent(event);
     }
 
     @Mod.EventHandler
-    public void fmlLifeCycle(FMLServerStartedEvent event)
-    {
+    public void fmlLifeCycle(FMLServerStartedEvent event) {
         HE.LOG.info("Server started");
         proxy.fmlLifeCycleEvent(event);
     }
 
     @Mod.EventHandler
-    public void fmlLifeCycle(FMLServerStoppingEvent event)
-    {
+    public void fmlLifeCycle(FMLServerStoppingEvent event) {
         HE.LOG.info("Server stopping");
         proxy.fmlLifeCycleEvent(event);
     }
 
     @Mod.EventHandler
-    public void fmlLifeCycle(FMLServerStoppedEvent event)
-    {
+    public void fmlLifeCycle(FMLServerStoppedEvent event) {
         HE.LOG.info("Server stopped");
         proxy.fmlLifeCycleEvent(event);
     }

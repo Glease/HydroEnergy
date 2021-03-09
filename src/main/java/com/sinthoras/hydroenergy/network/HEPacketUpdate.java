@@ -7,21 +7,19 @@ import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 import io.netty.buffer.ByteBuf;
 
-public class HEPacketUpdate implements IMessage{
+public class HEPacketUpdate implements IMessage {
 	
 	public int id;
 	public float renderedWaterLevel;
 	public boolean renderDebug;
 	
-	public HEPacketUpdate(int id, float renderedWaterLevel, boolean renderDebug)
-	{
+	public HEPacketUpdate(int id, float renderedWaterLevel, boolean renderDebug) {
 		this.id = id;
 		this.renderedWaterLevel = renderedWaterLevel;
 		this.renderDebug = renderDebug;
 	}
 	
-	public HEPacketUpdate()
-	{
+	public HEPacketUpdate() {
 		
 	}
 	
@@ -38,8 +36,7 @@ public class HEPacketUpdate implements IMessage{
 		buf.writeFloat(this.renderedWaterLevel);
 		buf.writeBoolean(this.renderDebug);
 	}
-	
-	
+
 	public static class Handler implements IMessageHandler<HEPacketUpdate, IMessage> {
 
 		@Override
@@ -47,6 +44,5 @@ public class HEPacketUpdate implements IMessage{
 			HEDamsClient.onClientUpdate(message.id, message.renderedWaterLevel, message.renderDebug);
 			return null;
 		}
-		
 	}
 }

@@ -22,29 +22,29 @@ public class HECommandSetWater extends CommandBase {
 	@Override
 	public void processCommand(ICommandSender sender, String[] params) {
 		boolean flag = true;
-		if(params.length != 2) flag = false;
-		else
-		{
-			try
-			{
+		if(params.length != 2) {
+			flag = false;
+		}
+		else {
+			try {
 				float waterLevel = Float.parseFloat(params[1]);
 				int controllerId = Integer.parseInt(params[0]);
-				if (controllerId >= 0 || controllerId < HE.maxController)
-				{
+				if (controllerId >= 0 || controllerId < HE.maxController) {
 					HEDams.instance.updateWaterLevel(controllerId, waterLevel);
 			        sender.addChatMessage(new ChatComponentText("Set water level of controller " + controllerId + " to " + waterLevel));
 			        HE.LOG.info(sender.getCommandSenderName() + " set water level of controller " + controllerId + " to " + waterLevel);
-				} else {
+				}
+				else {
 					flag = false;
 				}
 			}
-			catch(Exception ex)
-			{
+			catch(Exception ex) {
 				flag = false;
 			}
 		}
-		if(!flag)
+		if(!flag) {
 			sender.addChatMessage(new ChatComponentText("Could not parse command!\n" + getCommandUsage(null)));
+		}
 	}
 
 }

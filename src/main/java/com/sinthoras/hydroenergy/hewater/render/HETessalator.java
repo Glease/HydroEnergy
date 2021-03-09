@@ -39,7 +39,8 @@ public class HETessalator {
             frustrumY.setAccessible(true);
             frustrumZ = Frustrum.class.getDeclaredField("zPosition");
             frustrumZ.setAccessible(true);
-        } catch(Exception e) {}
+        }
+        catch(Exception e) {}
     }
 
     public static void onPostRender(World world, int blockX, int blockY, int blockZ) {
@@ -76,7 +77,8 @@ public class HETessalator {
                     GL20.glEnableVertexAttribArray(4);
 
                     GL30.glBindVertexArray(0);
-                } else {
+                }
+                else {
                     HEBufferIds ids = availableBuffers.pop();
                     subChunk.vaoId = ids.vaoId;
                     subChunk.vboId = ids.vboId;
@@ -98,9 +100,11 @@ public class HETessalator {
 
     public static void addBlock(int blockX, int blockY, int blockZ, int waterId, int worldColorModifier, boolean[] shouldSideBeRendered) {
         int renderSides = 0;
-        for(int i=0;i<shouldSideBeRendered.length;i++)
-            if(shouldSideBeRendered[i])
+        for(int i=0;i<shouldSideBeRendered.length;i++) {
+            if (shouldSideBeRendered[i]) {
                 renderSides |= 1 << i;
+            }
+        }
 
         vboBuffer.put(blockX);
         vboBuffer.put(blockY);
@@ -136,7 +140,8 @@ public class HETessalator {
                 HESortedRenderList.setup(HEUtil.coordBlockToChunk((int)blockX),
                                          HEUtil.coordBlockToChunk((int)blockY),
                                          HEUtil.coordBlockToChunk((int)blockZ));
-            } catch(Exception e) {}
+            }
+            catch(Exception e) {}
             HEProgram.setWaterLevels();
             HEProgram.setDebugModes();
             HEProgram.setWaterUV();
@@ -169,7 +174,7 @@ public class HETessalator {
     // One can argue to use ChunkEvent.Load and ChunkEvent.Unload for this stuff,
     // but those are not in the GL thread and cause issues with cleanup etc
     public static void onRenderChunkUpdate(int oldBlockX, int oldBlockY, int oldBlockZ, int blockX, int blockY, int blockZ) {
-        // Just execute once per vertical SubChunk-stack
+        // Just execute once per vertical SubChunk-stack (aka chunk)
         if(blockY == 0) {
             int oldChunkX = HEUtil.coordBlockToChunk(oldBlockX);
             int oldChunkZ = HEUtil.coordBlockToChunk(oldBlockZ);
@@ -181,8 +186,8 @@ public class HETessalator {
             HERenderChunk renderChunk = null;
             if(chunks.containsKey(oldKey)) {
                 renderChunk = chunks.get(oldKey);
-                for (HERenderSubChunk subChunk : renderChunk.subChunks)
-                    if(subChunk.vaoId != -1){
+                for (HERenderSubChunk subChunk : renderChunk.subChunks) {
+                    if (subChunk.vaoId != -1) {
                         HEBufferIds ids = new HEBufferIds();
                         ids.vaoId = subChunk.vaoId;
                         ids.vboId = subChunk.vboId;
@@ -191,12 +196,14 @@ public class HETessalator {
                         subChunk.vboId = -1;
                         subChunk.numWaterBlocks = 0;
                     }
+                }
                 chunks.remove(oldKey);
             }
 
             if(!chunks.containsKey(newKey)) {
-                if(renderChunk == null)
+                if(renderChunk == null) {
                     renderChunk = new HERenderChunk();
+                }
                 chunks.put(newKey, renderChunk);
             }
         }
@@ -215,8 +222,9 @@ class HERenderChunk {
 
     public HERenderChunk() {
         subChunks = new HERenderSubChunk[16];
-        for(int i=0;i<subChunks.length;i++)
+        for(int i=0;i<subChunks.length;i++) {
             subChunks[i] = new HERenderSubChunk();
+        }
     }
 }
 

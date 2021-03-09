@@ -33,8 +33,7 @@ public class HECommonProxy {
 	
 	// preInit "Run before anything else. Read your config, create blocks, items, 
 	// etc, and register them with the GameRegistry."
-	public void fmlLifeCycleEvent(FMLPreInitializationEvent event)
-	{
+	public void fmlLifeCycleEvent(FMLPreInitializationEvent event) 	{
     	HE.network = NetworkRegistry.INSTANCE.newSimpleChannel("hydroenergy");
     	HE.network.registerMessage(HEPacketUpdate.Handler.class, HEPacketUpdate.class, 0, Side.CLIENT);
     	HE.network.registerMessage(HEPacketDebug.Handler.class, HEPacketDebug.class, 1, Side.CLIENT);
@@ -53,46 +52,38 @@ public class HECommonProxy {
 	}
 	
 	// load "Do your mod setup. Build whatever data structures you care about. Register recipes."
-	public void fmlLifeCycleEvent(FMLInitializationEvent event)
-	{
+	public void fmlLifeCycleEvent(FMLInitializationEvent event) {
 		FMLCommonHandler.instance().bus().register(new HEEventHandlerFML());
 		MinecraftForge.EVENT_BUS.register(new HEEventHandlerEVENT_BUS());
 	}
 	
 	// postInit "Handle interaction with other mods, complete your setup based on this."
-	public void fmlLifeCycleEvent(FMLPostInitializationEvent event)
-	{
+	public void fmlLifeCycleEvent(FMLPostInitializationEvent event) {
 		
 	}
 	
-	public void fmlLifeCycleEvent(FMLServerAboutToStartEvent event)
-	{
+	public void fmlLifeCycleEvent(FMLServerAboutToStartEvent event) {
 
 	}
 
 	// register server commands in this event handler
-	public void fmlLifeCycleEvent(FMLServerStartingEvent event)
-	{
+	public void fmlLifeCycleEvent(FMLServerStartingEvent event) {
 		event.registerServerCommand(new HECommandSetWater());
 		event.registerServerCommand(new HECommandDebug());
-		if(event.getSide() == Side.SERVER || event.getServer().isSinglePlayer())
-		{
+		if(event.getSide() == Side.SERVER || event.getServer().isSinglePlayer()) {
 			HEDams.instance = HEDams.load(event.getServer().worldServers[0]);
 		}
 	}
 	
-	public void fmlLifeCycleEvent(FMLServerStartedEvent event)
-	{
+	public void fmlLifeCycleEvent(FMLServerStartedEvent event) {
 		
 	}
 	
-	public void fmlLifeCycleEvent(FMLServerStoppingEvent event)
-	{
+	public void fmlLifeCycleEvent(FMLServerStoppingEvent event) {
 		
 	}
 	
-	public void fmlLifeCycleEvent(FMLServerStoppedEvent event)
-	{
+	public void fmlLifeCycleEvent(FMLServerStoppedEvent event) {
 		
 	}
 }

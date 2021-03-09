@@ -19,19 +19,15 @@ public class HEControllerTileEntity extends TileEntity {
 	}
 	
 	@Override
-	public void validate()
-    {
-		if(id == -1 && !this.worldObj.isRemote)
-		{
+	public void validate() {
+		if(id == -1 && !this.worldObj.isRemote) {
 			id = HEDams.instance.reserveControllerId(yCoord);
 			HE.LOG.info("New controller " + id);
 			this.markDirtyHack = true;
 			markDirty(); //triggers validate() again
 		}
-		else
-		{
-			if(this.markDirtyHack)
-			{
+		else {
+			if(this.markDirtyHack) {
 				this.markDirtyHack = false;
 			}
 			this.tileEntityInvalid = false;
@@ -45,8 +41,7 @@ public class HEControllerTileEntity extends TileEntity {
 
 	@Override
 	public void updateEntity() {
-		if (id != -1 && !this.worldObj.isRemote)
-		{
+		if (id != -1 && !this.worldObj.isRemote) {
 			// TODO water stuff
 			/*float level = HEDams.instance.getWaterLevel(id);
 			if (level <= min)
@@ -76,7 +71,8 @@ public class HEControllerTileEntity extends TileEntity {
 	}
 	
 	public void onRemoveTileEntity() {
-		if(!this.worldObj.isRemote)
+		if(!this.worldObj.isRemote) {
 			HEDams.instance.onBreakController(id);
+		}
 	}
 }

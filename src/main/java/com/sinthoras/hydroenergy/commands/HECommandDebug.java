@@ -22,33 +22,34 @@ public class HECommandDebug extends CommandBase {
 	@Override
 	public void processCommand(ICommandSender sender, String[] params) {
 		boolean flag = true;
-		if(params.length != 2) flag = false;
-		else
-		{
-			try
-			{
+		if(params.length != 2) {
+			flag = false;
+		}
+		else {
+			try {
 				int controllerId = Integer.parseInt(params[0]);
 				boolean debugState = false;
 				if (params[1].equalsIgnoreCase("on")) {
 					debugState = true;
-				} else if(params[1].equalsIgnoreCase("off")) {
+				}
+				else if(params[1].equalsIgnoreCase("off")) {
 					debugState = false;
-				} else {
+				}
+				else {
 					flag = false;
 				}
-				if (flag)
-				{
+				if (flag) {
 					HEDams.instance.updateDebugState(controllerId, debugState);
 					sender.addChatMessage(new ChatComponentText("Set controller " + controllerId + " to debug mode " + params[1].toUpperCase()));
 					HE.LOG.info(sender.getCommandSenderName() + " set controller " + controllerId + " to debug mode " + params[1].toUpperCase());
 				}
 			}
-			catch(Exception ex)
-			{
+			catch(Exception ex) {
 				flag = false;
 			}
 		}
-		if(!flag)
+		if(!flag) {
 			sender.addChatMessage(new ChatComponentText("Could not parse command!\n" + getCommandUsage(null)));
+		}
 	}
 }
