@@ -1,5 +1,6 @@
 package com.sinthoras.hydroenergy.hewater.render;
 
+import com.sinthoras.hydroenergy.HEUtil;
 import com.sinthoras.hydroenergy.hewater.HEWater;
 import com.sinthoras.hydroenergy.hewater.HEWaterStatic;
 
@@ -13,24 +14,15 @@ import net.minecraftforge.fluids.RenderBlockFluid;
 public class HEWaterRenderer extends RenderBlockFluid {
 	
 	public static HEWaterRenderer instance = new HEWaterRenderer();
-	private int renderID = -1;
-	
-	public HEWaterRenderer()
-	{
-		if(renderID == -1)
-			renderID = RenderingRegistry.getNextAvailableRenderId();
-	}
+	private final int renderID = RenderingRegistry.getNextAvailableRenderId();
+
 	
 	@Override
 	public float getFluidHeightForRender(IBlockAccess world, int x, int y, int z, BlockFluidBase block)
     {
 		HEWaterStatic water = (HEWaterStatic) block;
 		float val = water.getRenderedWaterLevel(world, x, y, z) - y;
-		if (val <= 0.0f)
-			return 0.0f;
-		if (val >= 1.0f)
-			return 1.0f;
-		return val;
+		return HEUtil.clamp(val, 0.0f, 1.0f);
     }
 	
 	@Override

@@ -13,4 +13,8 @@ public class HEUtil {
 	public static long chunkCoordsToKey(int x, int z) {
 		return (((long)x) << 32) | (z & 0xffffffffL);
 	}
+
+	public static float clamp(float value, float lowerLimit, float upperLimit) {
+		return Math.min(Math.max(value, lowerLimit), upperLimit);
+	}
 }

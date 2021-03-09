@@ -75,7 +75,7 @@ public class EntityWaterLevelTransformer implements IClassTransformer {
 		final String METHOD_func_150807_a = isObfuscated ? "" : "func_150807_a";
 		final String METHOD_func_150807_a_DESC = "(IIIL" + CLASS_Block + ";I)Z";
 		final String METHOD_onSetBlock = "onSetBlock";
-		final String METHOD_onSetBlock_DESC = "(L" + CLASS_World + ";IIIL" + CLASS_Block + ";IL" + CLASS_Block + ";)V";
+		final String METHOD_onSetBlock_DESC = "(L" + CLASS_World + ";IIIL" + CLASS_Block + ";L" + CLASS_Block + ";)V";
 
 		InsnList instructionToInsert = new InsnList();
 		instructionToInsert.add(new VarInsnNode(ILOAD, 13));
@@ -97,7 +97,6 @@ public class EntityWaterLevelTransformer implements IClassTransformer {
 		instructionToInsert.add(new VarInsnNode(ILOAD, 2));
 		instructionToInsert.add(new VarInsnNode(ILOAD, 3));
 		instructionToInsert.add(new VarInsnNode(ALOAD, 4));
-		instructionToInsert.add(new VarInsnNode(ILOAD, 5));
 		instructionToInsert.add(new VarInsnNode(ALOAD, 8));
 		instructionToInsert.add(new MethodInsnNode(INVOKESTATIC,
 				CLASS_HELightSMPHooks,
