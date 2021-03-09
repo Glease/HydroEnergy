@@ -186,8 +186,7 @@ public class HEProgram {
 
     public static void bindLightLUT() {
         GL13.glActiveTexture(GL13.GL_TEXTURE0);
-        ResourceLocation lightMapLocation = HEUtil.getLightMapLocation();
-        Minecraft.getMinecraft().getTextureManager().bindTexture(lightMapLocation);
+        Minecraft.getMinecraft().getTextureManager().bindTexture(HEUtil.getLightMapLocation());
         GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR);
         GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);
         GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR);
@@ -208,6 +207,9 @@ public class HEProgram {
     }
 
     public static void unbind() {
+        GL13.glActiveTexture(GL13.GL_TEXTURE1);
+        GL11.glDisable(GL11.GL_TEXTURE_2D);
+        GL13.glActiveTexture(GL13.GL_TEXTURE0);
         GL20.glUseProgram(0);
     }
 }
