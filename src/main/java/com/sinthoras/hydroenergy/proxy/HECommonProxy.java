@@ -7,8 +7,7 @@ import com.sinthoras.hydroenergy.commands.HECommandDebug;
 import com.sinthoras.hydroenergy.commands.HECommandSetWater;
 import com.sinthoras.hydroenergy.controller.HEControllerBlock;
 import com.sinthoras.hydroenergy.controller.HEControllerTileEntity;
-import com.sinthoras.hydroenergy.controller.HEDams;
-import com.sinthoras.hydroenergy.hewater.HEBlockQueue;
+import com.sinthoras.hydroenergy.controller.HEDamsServer;
 import com.sinthoras.hydroenergy.hewater.HEWaterStatic;
 import com.sinthoras.hydroenergy.network.HEPacketDebug;
 import com.sinthoras.hydroenergy.network.HEPacketSynchronize;
@@ -71,7 +70,7 @@ public class HECommonProxy {
 		event.registerServerCommand(new HECommandSetWater());
 		event.registerServerCommand(new HECommandDebug());
 		if(event.getSide() == Side.SERVER || event.getServer().isSinglePlayer()) {
-			HEDams.instance = HEDams.load(event.getServer().worldServers[0]);
+			HEDamsServer.instance = HEDamsServer.load(event.getServer().worldServers[0]);
 		}
 	}
 	

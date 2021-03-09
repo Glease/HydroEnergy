@@ -21,7 +21,7 @@ public class HEControllerTileEntity extends TileEntity {
 	@Override
 	public void validate() {
 		if(id == -1 && !this.worldObj.isRemote) {
-			id = HEDams.instance.reserveControllerId(yCoord);
+			id = HEDamsServer.instance.reserveControllerId(yCoord);
 			HE.LOG.info("New controller " + id);
 			this.markDirtyHack = true;
 			markDirty(); //triggers validate() again
@@ -72,7 +72,7 @@ public class HEControllerTileEntity extends TileEntity {
 	
 	public void onRemoveTileEntity() {
 		if(!this.worldObj.isRemote) {
-			HEDams.instance.onBreakController(id);
+			HEDamsServer.instance.onBreakController(id);
 		}
 	}
 }

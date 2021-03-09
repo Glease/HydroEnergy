@@ -1,6 +1,6 @@
 package com.sinthoras.hydroenergy.hewater;
 
-import com.sinthoras.hydroenergy.controller.HEDams;
+import com.sinthoras.hydroenergy.controller.HEDamsServer;
 import com.sinthoras.hydroenergy.hewater.render.HEWaterRenderer;
 
 import net.minecraft.block.Block;
@@ -36,7 +36,7 @@ public class HEWaterStatic extends HEWater {
 	
 	@Override
 	public void onNeighborBlockChange(World world, int blockX, int blockY, int blockZ, Block block) {
-		if(HEDams.instance.getRenderedWaterLevel(getId()) >= 0.0f) {
+		if(HEDamsServer.instance.getRenderedWaterLevel(getId()) >= 0.0f) {
 			spread(world, blockX, blockY, blockZ);
 		}
 		else {
@@ -50,7 +50,7 @@ public class HEWaterStatic extends HEWater {
 	}
 	
 	private void spread(World world, int blockX, int blockY, int blockZ) {
-		if(blockY < HEDams.instance.getWaterLimitUp(getId())) {
+		if(blockY < HEDamsServer.instance.getWaterLimitUp(getId())) {
 			if(canFlowInto(world, blockX, blockY+1, blockZ)) {
 				HEBlockQueue.addBlock(blockX, blockY+1, blockZ, getId());
 			}

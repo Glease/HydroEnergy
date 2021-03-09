@@ -1,7 +1,7 @@
 package com.sinthoras.hydroenergy.commands;
 
 import com.sinthoras.hydroenergy.HE;
-import com.sinthoras.hydroenergy.controller.HEDams;
+import com.sinthoras.hydroenergy.controller.HEDamsServer;
 
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
@@ -30,7 +30,7 @@ public class HECommandSetWater extends CommandBase {
 				float waterLevel = Float.parseFloat(params[1]);
 				int controllerId = Integer.parseInt(params[0]);
 				if (controllerId >= 0 || controllerId < HE.maxController) {
-					HEDams.instance.updateWaterLevel(controllerId, waterLevel);
+					HEDamsServer.instance.updateWaterLevel(controllerId, waterLevel);
 			        sender.addChatMessage(new ChatComponentText("Set water level of controller " + controllerId + " to " + waterLevel));
 			        HE.LOG.info(sender.getCommandSenderName() + " set water level of controller " + controllerId + " to " + waterLevel);
 				}

@@ -9,11 +9,11 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldSavedData;
 
-public class HEDams extends WorldSavedData {
+public class HEDamsServer extends WorldSavedData {
 	
 	private HEController[] controllers;
 	
-	public HEDams(String name) {
+	public HEDamsServer(String name) {
 		super(name);
 		controllers = new HEController[HE.maxController];
 		for(int i=0;i<controllers.length;i++) {
@@ -21,12 +21,12 @@ public class HEDams extends WorldSavedData {
 		}
 	}
 
-	public static HEDams instance;
+	public static HEDamsServer instance;
 	
-	public static HEDams load(World world) {
-		HEDams instance = (HEDams) world.mapStorage.loadData(HEDams.class, Tags.hydroenergy);
+	public static HEDamsServer load(World world) {
+		HEDamsServer instance = (HEDamsServer) world.mapStorage.loadData(HEDamsServer.class, Tags.hydroenergy);
 		if (instance == null) {
-			instance = new HEDams(Tags.hydroenergy);
+			instance = new HEDamsServer(Tags.hydroenergy);
 			 world.mapStorage.setData(Tags.hydroenergy, instance);
 		}
 		return instance;

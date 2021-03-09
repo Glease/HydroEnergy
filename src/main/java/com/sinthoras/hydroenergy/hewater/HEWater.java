@@ -2,7 +2,7 @@ package com.sinthoras.hydroenergy.hewater;
 
 import com.sinthoras.hydroenergy.HE;
 import com.sinthoras.hydroenergy.HEUtil;
-import com.sinthoras.hydroenergy.controller.HEDams;
+import com.sinthoras.hydroenergy.controller.HEDamsServer;
 import com.sinthoras.hydroenergy.controller.HEDamsClient;
 
 import net.minecraft.block.Block;
@@ -65,7 +65,7 @@ public class HEWater extends BlockFluidBase {
 			return HEDamsClient.getRenderedWaterLevel(getId());
 		}
 		else {
-			return HEDams.instance.getRenderedWaterLevel(getId());
+			return HEDamsServer.instance.getRenderedWaterLevel(getId());
 		}
 	}
 	
@@ -81,7 +81,7 @@ public class HEWater extends BlockFluidBase {
 			return HEDamsClient.getRenderedWaterLevel(getId());
 		}
 		else {
-			return HEDams.instance.getRenderedWaterLevel(getId());
+			return HEDamsServer.instance.getRenderedWaterLevel(getId());
 		}
 	}
 	
