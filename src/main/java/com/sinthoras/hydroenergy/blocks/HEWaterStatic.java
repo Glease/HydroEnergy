@@ -18,7 +18,6 @@ public class HEWaterStatic extends HEWater {
 		setBlockName("water");
 		setBlockTextureName("minecraft:water_still");
 		setTickRandomly(false);
-		setCreativeTab(CreativeTabs.tabBlock);
 	}
 	
 	@Override
