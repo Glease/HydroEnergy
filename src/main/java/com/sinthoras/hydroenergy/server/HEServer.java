@@ -13,6 +13,10 @@ public class HEServer extends WorldSavedData {
 	
 	private HEDam[] dams;
 
+	public HEServer() {
+		super(Tags.hydroenergy);
+	}
+
 	public HEServer(String name) {
 		super(name);
 		dams = new HEDam[HE.maxController];

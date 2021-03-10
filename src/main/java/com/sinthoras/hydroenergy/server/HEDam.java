@@ -30,7 +30,7 @@ public class HEDam {
 	public int limitWest;
 	public int limitSouth;
 	public int limitNorth;
-	private int[] blocksPerY;
+	private int[] blocksPerY = new int[256];
 
 	private int waterId;
 	private boolean isDebugMode = false;
