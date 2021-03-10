@@ -85,13 +85,13 @@ public class HEServer extends WorldSavedData {
 		return dams[waterId].getWaterLevel();
 	}
 	
-	public void updateWaterLevel(int waterId, float waterLevel) {
+	public void setWaterLevel(int waterId, float waterLevel) {
 		if(dams[waterId].setWaterLevel(waterLevel)) {
 			markDirty();
 		}
 	}
 
-	public void updateDebugState(int waterId, boolean debugState) {
+	public void setDebugState(int waterId, boolean debugState) {
 		dams[waterId].setDebugMode(debugState);
 	}
 

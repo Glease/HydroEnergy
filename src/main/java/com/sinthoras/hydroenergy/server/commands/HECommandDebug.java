@@ -39,7 +39,7 @@ public class HECommandDebug extends CommandBase {
 					flag = false;
 				}
 				if (flag) {
-					HEServer.instance.updateDebugState(controllerId, debugState);
+					HEServer.instance.setDebugState(controllerId, debugState);
 					sender.addChatMessage(new ChatComponentText("Set controller " + controllerId + " to debug mode " + params[1].toUpperCase()));
 					HE.LOG.info(sender.getCommandSenderName() + " set controller " + controllerId + " to debug mode " + params[1].toUpperCase());
 				}

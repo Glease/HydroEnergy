@@ -22,7 +22,7 @@ public class HEHooksFML {
 				counter = 0;
 				if(HE.DEBUGslowFill) {
 					waterLevel += sign * 0.02f;
-					HEServer.instance.updateWaterLevel(0, waterLevel);
+					HEServer.instance.setWaterLevel(0, waterLevel);
 				}
 			}
 			if(waterLevel >= 73.0f) {
