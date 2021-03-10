@@ -12,7 +12,7 @@ import net.minecraft.world.WorldSavedData;
 public class HEServer extends WorldSavedData {
 	
 	private HEDam[] dams;
-	
+
 	public HEServer(String name) {
 		super(name);
 		dams = new HEDam[HE.maxController];
@@ -86,7 +86,7 @@ public class HEServer extends WorldSavedData {
 	}
 	
 	public void updateWaterLevel(int waterId, float waterLevel) {
-		if(dams[waterId].updateWaterLevel(waterLevel)) {
+		if(dams[waterId].setWaterLevel(waterLevel)) {
 			markDirty();
 		}
 	}
@@ -183,6 +183,7 @@ public class HEServer extends WorldSavedData {
 		HEPacketSynchronize message = new HEPacketSynchronize(dams.length);
 		for(int i = 0; i< dams.length; i++) {
 			message.renderedWaterLevel[i] = dams[i].getWaterLevel();
+			message.renderDebug[i] = dams[i].getDebugMode();
 		}
 		HE.network.sendTo(message, (EntityPlayerMP) event.player);
 	}

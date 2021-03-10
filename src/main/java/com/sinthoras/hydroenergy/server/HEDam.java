@@ -73,8 +73,12 @@ public class HEDam {
 			sendUpdate();
 		}
 	}
+
+	public boolean getDebugMode() {
+		return isDebugMode || !isPlaced;
+	}
 	
-	public boolean updateWaterLevel(float level) {
+	public boolean setWaterLevel(float level) {
 		waterLevel = level;
 		long timestamp = System.currentTimeMillis();
 		if(timestamp - timestampLastUpdate >= HE.minimalUpdateInterval * 1000) {

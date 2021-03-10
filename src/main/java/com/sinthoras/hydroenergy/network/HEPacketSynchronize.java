@@ -10,6 +10,7 @@ import io.netty.buffer.ByteBuf;
 public class HEPacketSynchronize implements IMessage {
 	
 	public float[] renderedWaterLevel;
+	public boolean[] renderDebug;
 	
 	public HEPacketSynchronize() {
 		
@@ -17,22 +18,30 @@ public class HEPacketSynchronize implements IMessage {
 	
 	public HEPacketSynchronize(int size) {
 		renderedWaterLevel = new float[size];
+		renderDebug = new boolean[size];
 	}
 	
 	@Override
 	public void fromBytes(ByteBuf buf) {
 		int length = buf.readInt();
 		renderedWaterLevel = new float[length];
-		for(int i=0;i<renderedWaterLevel.length;i++) {
-			renderedWaterLevel[i] = buf.readFloat();
+		for(int waterId=0;waterId<length;waterId++) {
+			renderedWaterLevel[waterId] = buf.readFloat();
+		}
+		renderDebug = new boolean[length];
+		for(int waterId=0;waterId<length;waterId++) {
+			renderDebug[waterId] = buf.readBoolean();
 		}
 	}
 
 	@Override
 	public void toBytes(ByteBuf buf) {
 		buf.writeInt(renderedWaterLevel.length);
-		for(int i=0;i<renderedWaterLevel.length;i++) {
-			buf.writeFloat(renderedWaterLevel[i]);
+		for(int waterId=0;waterId<renderedWaterLevel.length;waterId++) {
+			buf.writeFloat(renderedWaterLevel[waterId]);
+		}
+		for(int waterId=0;waterId<renderDebug.length;waterId++) {
+			buf.writeBoolean(renderDebug[waterId]);
 		}
 	}
 
