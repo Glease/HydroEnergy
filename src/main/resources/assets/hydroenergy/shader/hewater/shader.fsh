@@ -1,5 +1,3 @@
-#version 330
-
 in vec3 colorModifier;
 in vec2 texCoord;
 in vec2 lightCoord;

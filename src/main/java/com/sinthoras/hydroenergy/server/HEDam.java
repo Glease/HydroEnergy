@@ -102,12 +102,12 @@ public class HEDam {
 		removeWater = false;
 		isPlaced = true;
 		isDebugMode = true;
-		limitEast = blockX + 100;
-		limitWest = blockX - 100;
-		limitUp = blockY+16;
+		limitEast = blockX + 200;
+		limitWest = blockX - 200;
+		limitUp = blockY+32;
 		limitDown = blockY;
-		limitSouth = blockZ + 100;
-		limitNorth = blockZ - 100;
+		limitSouth = blockZ + 200;
+		limitNorth = blockZ - 200;
 		waterLevel = blockY;
 		blocksPerY = new int[256];
 

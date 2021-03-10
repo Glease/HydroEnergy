@@ -28,10 +28,12 @@ public class HELightManager {
 
     public static void onChunkUnload(int chunkX, int chunkZ) {
         long key = HEUtil.chunkCoordsToKey(chunkX, chunkZ);
-        HELightChunk lightChunk = chunks.get(key);
-        lightChunk.reset();
-        availableBuffers.push(lightChunk);
-        chunks.remove(key);
+        if(chunks.containsKey(key)) {
+            HELightChunk lightChunk = chunks.get(key);
+            lightChunk.reset();
+            availableBuffers.push(lightChunk);
+            chunks.remove(key);
+        }
     }
 
     public static void onChunkDataLoad(Chunk chunk, int subChunkHasDataFlags) {

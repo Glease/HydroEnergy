@@ -1,5 +1,3 @@
-#version 330 core
-// in_Position was bound to attribute index 0 and in_waterID was bound to attribute index 1
 layout (location = 0) in vec3 in_Position;
 layout (location = 1) in float light0;
 layout (location = 2) in float light1;
