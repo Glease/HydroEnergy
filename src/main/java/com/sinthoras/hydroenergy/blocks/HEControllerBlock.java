@@ -2,6 +2,7 @@ package com.sinthoras.hydroenergy.blocks;
 
 import com.sinthoras.hydroenergy.HE;
 
+import com.sinthoras.hydroenergy.HEUtil;
 import com.sinthoras.hydroenergy.server.HEServer;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
@@ -24,23 +25,30 @@ public class HEControllerBlock extends BlockContainer {
 	}
 
 	@Override
-	public TileEntity createNewTileEntity(World world, int p_149915_2_) {
+	public TileEntity createNewTileEntity(World world, int metaData) {
 		return new HEControllerTileEntity();
 	}
 	
 	@Override
-	public boolean canPlaceBlockAt(World p_149742_1_, int p_149742_2_, int p_149742_3_, int p_149742_4_) {
-		return HEServer.instance.canControllerBePlaced() && super.canPlaceBlockAt(p_149742_1_, p_149742_2_, p_149742_3_, p_149742_4_);
+	public boolean canPlaceBlockAt(World world, int blockX, int blockY, int blockZ) {
+		if(HEUtil.isServerWorld(world)) {
+			return HEServer.instance.canControllerBePlaced() && super.canPlaceBlockAt(world, blockX, blockY, blockZ);
+		}
+		else {
+			// TODO: should be overruled by server... right? So the block appears briefly for the client and thats it?
+			return true;
+		}
     }
 	
 	@Override
-	public void breakBlock(World p_149749_1_, int p_149749_2_, int p_149749_3_, int p_149749_4_, Block p_149749_5_, int p_149749_6_) {
-		((HEControllerTileEntity)(p_149749_1_.getTileEntity(p_149749_2_, p_149749_3_, p_149749_4_))).onRemoveTileEntity();
-		super.breakBlock(p_149749_1_, p_149749_2_, p_149749_3_, p_149749_4_, p_149749_5_, p_149749_6_);
+	public void breakBlock(World world, int blockX, int blockY, int blockZ, Block block, int metaData) {
+		((HEControllerTileEntity)(world.getTileEntity(blockX, blockY, blockZ))).onRemoveTileEntity();
+		super.breakBlock(world, blockX, blockY, blockZ, block, metaData);
     }
 	
 	@Override
 	public void onBlockAdded(World world, int blockX, int blockY, int blockZ) {
-		world.setBlock(blockX + 1, blockY, blockZ, HE.waterBlocks[0]);
+		HEControllerTileEntity controllerEntity = (HEControllerTileEntity)world.getTileEntity(blockX, blockY, blockZ);
+		world.setBlock(blockX + 1, blockY, blockZ, HE.waterBlocks[controllerEntity.getWaterId()]);
 	}
 }

@@ -7,7 +7,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 
 public class HEControllerTileEntity extends TileEntity {
-	private int id = -1;
+	private int waterId = -1;
 	
 	private static float min = 2.3f;
 	private static float max = 4.95f;
@@ -21,9 +21,9 @@ public class HEControllerTileEntity extends TileEntity {
 	
 	@Override
 	public void validate() {
-		if(id == -1 && !this.worldObj.isRemote) {
-			id = HEServer.instance.onPlacecontroller(xCoord, yCoord, zCoord);
-			HE.LOG.info("New controller " + id);
+		if(waterId == -1 && !this.worldObj.isRemote) {
+			waterId = HEServer.instance.onPlacecontroller(xCoord, yCoord, zCoord);
+			HE.LOG.info("New controller " + waterId);
 			this.markDirtyHack = true;
 			markDirty(); //triggers validate() again
 		}
@@ -34,6 +34,10 @@ public class HEControllerTileEntity extends TileEntity {
 			this.tileEntityInvalid = false;
 		}
     }
+
+    public int getWaterId() {
+		return waterId;
+	}
 	
 	@Override
 	public boolean canUpdate() {
@@ -42,7 +46,7 @@ public class HEControllerTileEntity extends TileEntity {
 
 	@Override
 	public void updateEntity() {
-		if (id != -1 && !this.worldObj.isRemote) {
+		if (waterId != -1 && !this.worldObj.isRemote) {
 			// TODO water stuff
 			/*float level = HEDams.instance.getWaterLevel(id);
 			if (level <= min)
@@ -59,7 +63,7 @@ public class HEControllerTileEntity extends TileEntity {
         super.writeToNBT(compound);
 
         //TODO save stuff
-        compound.setInteger("ID", id);
+        compound.setInteger("ID", waterId);
         HE.LOG.info("SAVED");
 	}
 	
@@ -67,13 +71,13 @@ public class HEControllerTileEntity extends TileEntity {
     public void readFromNBT(NBTTagCompound compound) {
         super.readFromNBT(compound);
         
-        id = compound.getInteger("ID");
+        waterId = compound.getInteger("ID");
         HE.LOG.info("LOADED");
 	}
 	
 	public void onRemoveTileEntity() {
 		if(!this.worldObj.isRemote) {
-			HEServer.instance.onBreakController(id);
+			HEServer.instance.onBreakController(waterId);
 		}
 	}
 }
