@@ -1,6 +1,7 @@
 package com.sinthoras.hydroenergy.client.renderer;
 
 import com.sinthoras.hydroenergy.HE;
+import com.sinthoras.hydroenergy.client.HEReflection;
 import com.sinthoras.hydroenergy.HEUtil;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -110,9 +111,9 @@ public class HETessalator {
 
     public static void render(ICamera frustrum) {
         if(MinecraftForgeClient.getRenderPass() == HE.waterBlocks[0].getRenderBlockPass()) {
-            float cameraBlockX = HEUtil.getCameraBlockX(frustrum);
-            float cameraBlockY = HEUtil.getCameraBlockY(frustrum);
-            float cameraBlockZ = HEUtil.getCameraBlockZ(frustrum);
+            float cameraBlockX = HEReflection.getCameraBlockX(frustrum);
+            float cameraBlockY = HEReflection.getCameraBlockY(frustrum);
+            float cameraBlockZ = HEReflection.getCameraBlockZ(frustrum);
 
             GL11.glEnable(GL11.GL_BLEND);
 

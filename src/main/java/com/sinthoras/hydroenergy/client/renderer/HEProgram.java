@@ -3,7 +3,7 @@ package com.sinthoras.hydroenergy.client.renderer;
 import com.google.common.base.Charsets;
 import com.sinthoras.hydroenergy.HE;
 
-import com.sinthoras.hydroenergy.HEUtil;
+import com.sinthoras.hydroenergy.client.HEReflection;
 import com.sinthoras.hydroenergy.client.HEClient;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GLAllocation;
@@ -188,7 +188,7 @@ public class HEProgram {
 
     public static void bindLightLUT() {
         GL13.glActiveTexture(GL13.GL_TEXTURE1);
-        Minecraft.getMinecraft().getTextureManager().bindTexture(HEUtil.getLightMapLocation());
+        Minecraft.getMinecraft().getTextureManager().bindTexture(HEReflection.getLightMapLocation());
         GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR);
         GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);
         GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR);
