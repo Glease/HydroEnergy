@@ -25,7 +25,7 @@ public class HEUtil {
 
 	public static boolean isServerWorld(World world) {
 		return world instanceof WorldServer
-				&& world instanceof WorldServerMulti
-				&& world instanceof DemoWorldServer;
+				|| world instanceof WorldServerMulti
+				|| world instanceof DemoWorldServer;
 	}
 }
