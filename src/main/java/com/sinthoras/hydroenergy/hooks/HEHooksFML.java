@@ -9,29 +9,24 @@ import cpw.mods.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
 import cpw.mods.fml.common.gameevent.TickEvent.ServerTickEvent;
 
 public class HEHooksFML {
-	
-	private int counter = 0;
-	private float waterLevel = 63.0f;
+
+	private float waterLevel = 85.0f;
 	private int sign = 1;
 
 	@SubscribeEvent
 	public void onEvent(ServerTickEvent event) {
 		if(event.phase == ServerTickEvent.Phase.END) {
 			HEBlockQueue.onTick();
-			if(counter > 20) {
-				counter = 0;
-				if(HE.DEBUGslowFill) {
-					waterLevel += sign * 0.02f;
-					HEServer.instance.setWaterLevel(0, waterLevel);
-				}
+			if(HE.DEBUGslowFill) {
+				waterLevel += sign * 0.005f;
+				HEServer.instance.setWaterLevel(0, waterLevel);
 			}
-			if(waterLevel >= 73.0f) {
+			if(waterLevel >= 86.0f) {
 				sign = -1;
 			}
-			if(waterLevel <= 63.0f) {
+			if(waterLevel <= 60.0f) {
 				sign = 1;
 			}
-			counter++;
 		}
 	}
 	
