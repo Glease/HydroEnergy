@@ -5,42 +5,13 @@ import com.sinthoras.hydroenergy.hooks.HEHooksShared;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.*;
-import cpw.mods.fml.relauncher.IFMLLoadingPlugin;
 
-import java.util.Map;
 
-@IFMLLoadingPlugin.MCVersion(HE.MC_VERSION)
-@IFMLLoadingPlugin.TransformerExclusions(HE.COM_SINTHORAS_HYDROENERGY + ".hooks.HETransformer")
 @Mod(modid = HE.MODID, version = HE.VERSION, name = HE.NAME)
-public class HEPlugin implements IFMLLoadingPlugin {
+public class HEMod {
 
     @SidedProxy(clientSide=HE.COM_SINTHORAS_HYDROENERGY + ".hooks.HEHooksClient", serverSide=HE.COM_SINTHORAS_HYDROENERGY + ".hooks.HEHooksShared")
     public static HEHooksShared proxy;
-
-    @Override
-    public String[] getASMTransformerClass() {
-        return new String[] {HE.COM_SINTHORAS_HYDROENERGY + ".hooks.HETransformer"};
-    }
-
-    @Override
-    public String getModContainerClass() {
-        return HE.COM_SINTHORAS_HYDROENERGY + ".HEModContainer";
-    }
-
-    @Override
-    public String getSetupClass() {
-        return null;
-    }
-
-    @Override
-    public void injectData(Map<String, Object> data) {
-
-    }
-
-    @Override
-    public String getAccessTransformerClass() {
-        return null;
-    }
 
     @Mod.EventHandler
     // preInit "Run before anything else. Read your config, create blocks, items,

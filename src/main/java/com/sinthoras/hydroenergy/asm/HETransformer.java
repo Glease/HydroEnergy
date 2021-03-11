@@ -1,4 +1,4 @@
-package com.sinthoras.hydroenergy.hooks;
+package com.sinthoras.hydroenergy.asm;
 
 import com.sinthoras.hydroenergy.HE;
 import org.objectweb.asm.ClassReader;

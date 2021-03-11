@@ -1,4 +1,4 @@
-package com.sinthoras.hydroenergy;
+package com.sinthoras.hydroenergy.asm;
 
 import com.google.common.eventbus.EventBus;
 import cpw.mods.fml.common.DummyModContainer;
