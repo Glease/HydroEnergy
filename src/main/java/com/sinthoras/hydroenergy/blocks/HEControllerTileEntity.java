@@ -7,6 +7,9 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 
 public class HEControllerTileEntity extends TileEntity {
+
+	public static final int guiId = 0;
+
 	private int waterId = -1;
 	
 	private static float min = 2.3f;

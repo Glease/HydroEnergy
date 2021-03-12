@@ -56,7 +56,7 @@ public class HEHooksShared {
 	
 	// postInit "Handle interaction with other mods, complete your setup based on this."
 	public void fmlLifeCycleEvent(FMLPostInitializationEvent event) {
-		
+		NetworkRegistry.INSTANCE.registerGuiHandler(HE.MODID, HE.guiHandler);
 	}
 	
 	public void fmlLifeCycleEvent(FMLServerAboutToStartEvent event) {

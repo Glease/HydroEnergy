@@ -2,13 +2,16 @@ package com.sinthoras.hydroenergy.blocks;
 
 import com.sinthoras.hydroenergy.HE;
 
-import com.sinthoras.hydroenergy.HEUtil;
+import com.sinthoras.hydroenergy.client.gui.HEDamGuiContainer;
 import com.sinthoras.hydroenergy.server.HEBlockQueue;
 import com.sinthoras.hydroenergy.server.HEServer;
+import cpw.mods.fml.common.network.internal.FMLNetworkHandler;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
+import net.minecraft.client.Minecraft;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 
@@ -40,6 +43,23 @@ public class HEControllerBlock extends BlockContainer {
 			return true;
 		}
     }
+
+    @Override
+	public boolean onBlockActivated(World world, int blockX, int blockY, int blockZ, EntityPlayer player, int p_149727_6_, float p_149727_7_, float p_149727_8_, float p_149727_9_) {
+		TileEntity tileEntity = world.getTileEntity(blockX, blockY, blockZ);
+		if(tileEntity instanceof HEControllerTileEntity) {
+			HEControllerTileEntity controllerTileEntity = (HEControllerTileEntity) tileEntity;
+			if(!player.isSneaking()) {
+				if (world.isRemote) {
+					Minecraft.getMinecraft().displayGuiScreen(new HEDamGuiContainer(player.inventory, controllerTileEntity.getWaterId()));
+				} else {
+					FMLNetworkHandler.openGui(player, HE.MODID, HEControllerTileEntity.guiId, controllerTileEntity.getWorldObj(), controllerTileEntity.xCoord, controllerTileEntity.yCoord, controllerTileEntity.zCoord);
+					return true;
+				}
+			}
+		}
+		return false;
+	}
 	
 	@Override
 	public void breakBlock(World world, int blockX, int blockY, int blockZ, Block block, int metaData) {

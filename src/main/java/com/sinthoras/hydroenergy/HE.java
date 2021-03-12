@@ -2,6 +2,8 @@ package com.sinthoras.hydroenergy;
 
 import com.sinthoras.hydroenergy.blocks.HEControllerBlock;
 import com.sinthoras.hydroenergy.blocks.HEWaterStill;
+import com.sinthoras.hydroenergy.client.gui.HEGuiHandler;
+import cpw.mods.fml.common.network.IGuiHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -32,4 +34,8 @@ public class HE {
 	public static final int[] waterBlockIds = new int[maxController];
 	
 	public static boolean DEBUGslowFill = false;
+	public static final IGuiHandler guiHandler = new HEGuiHandler();
+
+	// Texture locations
+    public static String damBackgroundLocation = "";
 }
