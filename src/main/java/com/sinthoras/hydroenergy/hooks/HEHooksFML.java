@@ -1,12 +1,16 @@
 package com.sinthoras.hydroenergy.hooks;
 
 import com.sinthoras.hydroenergy.HE;
+import com.sinthoras.hydroenergy.client.HEClient;
 import com.sinthoras.hydroenergy.server.HEServer;
 import com.sinthoras.hydroenergy.server.HEBlockQueue;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
 import cpw.mods.fml.common.gameevent.TickEvent.ServerTickEvent;
+import cpw.mods.fml.common.network.FMLNetworkEvent;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class HEHooksFML {
 
@@ -33,5 +37,11 @@ public class HEHooksFML {
 	@SubscribeEvent
 	public void onEvent(PlayerLoggedInEvent event) {
 		HEServer.instance.synchronizeClient(event);
+	}
+
+	@SubscribeEvent
+	@SideOnly(Side.CLIENT)
+	public void onEvent(FMLNetworkEvent.ClientDisconnectionFromServerEvent event) {
+		HEClient.onDisconnect();
 	}
 }

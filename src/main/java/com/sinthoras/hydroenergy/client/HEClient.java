@@ -48,4 +48,9 @@ public class HEClient {
 	public static void onClientSynchronize(float[] newWaterLevel) {
 		renderedWaterLevel = newWaterLevel;
 	}
+
+	public static void onDisconnect() {
+		renderedWaterLevel = new float[HE.maxController];
+		renderDebug = new boolean[HE.maxController];
+	}
 }
