@@ -35,7 +35,7 @@ public class HEControllerBlock extends BlockContainer {
 			return HEServer.instance.canControllerBePlaced() && super.canPlaceBlockAt(world, blockX, blockY, blockZ);
 		}
 		else {
-			// TODO: should be overruled by server... right? So the block appears briefly for the client and thats it?
+			// Is be overruled by server. The block appears briefly for the client and then vanishes
 			return true;
 		}
     }
