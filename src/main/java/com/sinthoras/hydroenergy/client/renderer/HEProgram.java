@@ -159,15 +159,15 @@ public class HEProgram {
 
     public static void setWaterUV() {
         IIcon iconStill = FluidRegistry.WATER.getStillIcon();
-        float minU = iconStill.getInterpolatedU(0.0);
-        float minV = iconStill.getInterpolatedV(0.0);
+        float minU = iconStill.getMinU();
+        float minV = iconStill.getMinV();
         GL20.glUniform2f(texCoordStillMinID, minU, minV);
-        GL20.glUniform2f(texCoordStillDeltaID, iconStill.getInterpolatedU(16.0) - minU, iconStill.getInterpolatedV(16.0) - minV);
+        GL20.glUniform2f(texCoordStillDeltaID, iconStill.getMaxU() - minU, iconStill.getMaxV() - minV);
         IIcon iconFlowing = FluidRegistry.WATER.getFlowingIcon();
-        minU = iconFlowing.getInterpolatedU(0.0);
-        minV = iconFlowing.getInterpolatedV(0.0);
+        minU = iconFlowing.getMinU();
+        minV = iconFlowing.getMinV();
         GL20.glUniform2f(texCoordFlowingMinID, minU, minV);
-        GL20.glUniform2f(texCoordFlowingDeltaID, iconFlowing.getInterpolatedU(16.0) - minU, iconFlowing.getInterpolatedV(16.0) - minV);
+        GL20.glUniform2f(texCoordFlowingDeltaID, iconFlowing.getMaxU() - minU, iconFlowing.getMaxV() - minV);
     }
 
     public static void setCullFronts() {
