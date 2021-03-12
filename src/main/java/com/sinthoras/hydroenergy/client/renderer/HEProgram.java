@@ -44,6 +44,7 @@ public class HEProgram {
     private static int fogModeLinearID;
     private static int fogColorID;
     private static int cameraPositionID;
+    private static int renderOffsetID;
 
     private static final FloatBuffer projection = GLAllocation.createDirectFloatBuffer(16);
     private static final FloatBuffer modelview = GLAllocation.createDirectFloatBuffer(16);
@@ -88,6 +89,7 @@ public class HEProgram {
         fogModeLinearID = GL20.glGetUniformLocation(programID, "g_fogModeLinear");
         fogColorID = GL20.glGetUniformLocation(programID, "g_fogColor");
         cameraPositionID = GL20.glGetUniformLocation(programID, "g_cameraPosition");
+        renderOffsetID = GL20.glGetUniformLocation(programID, "g_renderOffset");
 
         GL20.glUseProgram(0);
     }
@@ -166,6 +168,16 @@ public class HEProgram {
         minV = iconFlowing.getInterpolatedV(0.0);
         GL20.glUniform2f(texCoordFlowingMinID, minU, minV);
         GL20.glUniform2f(texCoordFlowingDeltaID, iconFlowing.getInterpolatedU(16.0) - minU, iconFlowing.getInterpolatedV(16.0) - minV);
+    }
+
+    public static void setCullFronts() {
+        GL11.glCullFace(GL11.GL_FRONT);
+        GL20.glUniform1f(renderOffsetID, 0.005f);
+    }
+
+    public static void setCullBacks() {
+        GL11.glCullFace(GL11.GL_BACK);
+        GL20.glUniform1f(renderOffsetID, 0.0f);
     }
 
     // Reads the values from openGL. Sadly, the events EntityViewRenderEvent.FogDensity,

@@ -44,11 +44,12 @@ public class HESortedRenderList {
             for(int n=0;n<numVaos;n++) {
                 GL30.glBindVertexArray(vaoIds[n]);
 
-                GL11.glCullFace(GL11.GL_FRONT);
+                HEProgram.setCullFronts();
                 GL11.glDrawArrays(GL11.GL_POINTS, 0, numWaterBlocks[n]);
 
-                GL11.glCullFace(GL11.GL_BACK);
+                HEProgram.setCullBacks();
                 GL11.glDrawArrays(GL11.GL_POINTS, 0, numWaterBlocks[n]);
+
                 GL30.glBindVertexArray(0);
             }
         }

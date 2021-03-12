@@ -30,6 +30,7 @@ uniform float g_fogEnd;
 uniform float g_fogDensity;
 uniform float g_fogModeLinear;
 uniform vec3 g_cameraPosition;
+uniform float g_renderOffset;
 
 const vec4 up = vec4(0, 1, 0, 0);
 const vec4 east = vec4(1, 0, 0, 0);
@@ -39,7 +40,6 @@ const float LIGHT_Y_NEG = 0.5;
 const float LIGHT_Y_POS = 1.0;
 const float LIGHT_XZ_NEG = 0.8;
 const float LIGHT_XZ_POS = 0.6;
-const float RENDER_OFFSET = 0.0010000000474974513;
 
 out vec3 colorModifier;
 out vec2 texCoord;
@@ -126,7 +126,7 @@ void main() {
 
         float height = position.y + 1 > waterLevel ? waterLevel - position.y : 1.0f;
         vec4 _up = vec4(0.0, height, 0.0, 0.0);
-        position.x += RENDER_OFFSET;
+        position.x += g_renderOffset;
 
         height = height * 0.5;
         vec4 position00 = position;
@@ -147,7 +147,7 @@ void main() {
 
         float height = position.y + 1 > waterLevel ? waterLevel - position.y : 1.0f;
         vec4 _up = vec4(0.0, height, 0.0, 0.0);
-        position.x -= RENDER_OFFSET;
+        position.x -= g_renderOffset;
         position = position + east;
 
         height = height * 0.5;
@@ -167,7 +167,7 @@ void main() {
         colorModifier = gs_in[0].worldColorModifier * LIGHT_Y_NEG;
         lightCoord = gs_in[0].lightDown;
 
-        position.y += RENDER_OFFSET;
+        position.y += g_renderOffset;
 
         vec4 position00 = position;
         vec2 texCoord00 = vec2(0.0, 0.0);
@@ -187,7 +187,7 @@ void main() {
 
         float height = position.y + 1 > waterLevel ? waterLevel - position.y : 1.0f;
         vec4 _up = vec4(0.0, height, 0.0, 0.0);
-        position.y -= RENDER_OFFSET;
+        position.y -= g_renderOffset;
         position = position + _up;
 
         vec4 position00 = position;
@@ -208,7 +208,7 @@ void main() {
 
         float height = position.y + 1 > waterLevel ? waterLevel - position.y : 1.0f;
         vec4 _up = vec4(0.0, height, 0.0, 0.0);
-        position.z += RENDER_OFFSET;
+        position.z += g_renderOffset;
 
         height = height * 0.5;
         vec4 position00 = position;
@@ -229,7 +229,7 @@ void main() {
 
         float height = position.y + 1 > waterLevel ? waterLevel - position.y : 1.0f;
         vec4 _up = vec4(0.0, height, 0.0, 0.0);
-        position.z -= RENDER_OFFSET;
+        position.z -= g_renderOffset;
         position = position + south;
 
         height = height * 0.5;
