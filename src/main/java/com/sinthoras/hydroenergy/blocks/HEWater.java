@@ -18,11 +18,11 @@ import net.minecraftforge.fluids.FluidStack;
 
 public class HEWater extends BlockFluidBase {
 
-	private int id;
+	private int waterId;
 
-	public HEWater(int id) {
+	public HEWater(int waterId) {
 		super(FluidRegistry.WATER, Material.water);
-		this.id = id;
+		this.waterId = waterId;
 	}
 
 	@Override
@@ -62,10 +62,10 @@ public class HEWater extends BlockFluidBase {
 
 	public float getWaterLevel() {
 		if(HE.logicalClientLoaded) {
-			return HEClient.getRenderedWaterLevel(getId());
+			return HEClient.getRenderedWaterLevel(getWaterId());
 		}
 		else {
-			return HEServer.instance.getWaterLevel(getId());
+			return HEServer.instance.getWaterLevel(getWaterId());
 		}
 	}
 	
@@ -78,7 +78,6 @@ public class HEWater extends BlockFluidBase {
 	}
 
 	public Material getMaterial(EntityLivingBase entity) {
-		// TODO: offset
 		return getMaterial(ActiveRenderInfo.projectViewFromEntity(entity, 0).yCoord);
 	}
 	
@@ -97,12 +96,12 @@ public class HEWater extends BlockFluidBase {
 		return (getWaterLevel() + 0.120f) < blockY ? Material.air : Material.water;
 	}
 	
-	public int getId() {
-		return id;
+	public int getWaterId() {
+		return waterId;
 	}
 
 	@Override
 	public String getUnlocalizedName() {
-		return super.getUnlocalizedName() + id;
+		return super.getUnlocalizedName() + waterId;
 	}
 }

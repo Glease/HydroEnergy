@@ -53,7 +53,7 @@ public class HEWaterRenderer extends RenderBlockFluid {
         shouldSidesBeRendered[5] = !neighbors[5].isOpaqueCube() && neighbors[5] != block;
 
         int worldColorModifier = block.colorMultiplier(world, blockX, blockY, blockZ);
-        HETessalator.addBlock(blockX, blockY, blockZ, ((HEWater)block).getId(), worldColorModifier, shouldSidesBeRendered);
+        HETessalator.addBlock(blockX, blockY, blockZ, ((HEWater)block).getWaterId(), worldColorModifier, shouldSidesBeRendered);
 
         return false;
     }

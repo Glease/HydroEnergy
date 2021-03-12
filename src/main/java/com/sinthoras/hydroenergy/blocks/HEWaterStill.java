@@ -4,10 +4,7 @@ import com.sinthoras.hydroenergy.server.HEBlockQueue;
 import com.sinthoras.hydroenergy.server.HEServer;
 import com.sinthoras.hydroenergy.client.renderer.HEWaterRenderer;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
-import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
@@ -46,7 +43,7 @@ public class HEWaterStill extends HEWater {
 	}
 
 	private void spread(World world, int blockX, int blockY, int blockZ) {
-		final int waterId = getId();
+		final int waterId = getWaterId();
 		if(HEServer.instance.canSpread(waterId)) {
 			if (blockY < HEServer.instance.getWaterLimitUp(waterId)) {
 				HEBlockQueue.enqueueBlock(blockX, blockY + 1, blockZ, waterId);

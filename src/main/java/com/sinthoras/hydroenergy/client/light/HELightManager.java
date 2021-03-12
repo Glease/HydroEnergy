@@ -59,7 +59,7 @@ public class HELightManager {
 
     public static void onSetBlock(int blockX, int blockY, int blockZ, Block block, Block oldBlock) {
         if(block instanceof  HEWater) {
-            int waterId = ((HEWater)block).getId();
+            int waterId = ((HEWater)block).getWaterId();
             int chunkX = HEUtil.coordBlockToChunk(blockX);
             int chunkZ = HEUtil.coordBlockToChunk(blockZ);
             long key = HEUtil.chunkCoordsToKey(chunkX, chunkZ);
