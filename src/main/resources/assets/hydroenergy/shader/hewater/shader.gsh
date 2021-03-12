@@ -191,13 +191,13 @@ void main() {
         position = position + _up;
 
         vec4 position00 = position;
-        vec2 texCoord00 = vec2(0.0, 0.0);
+        vec2 texCoord00 = vec2(0.0, 1.0);
         vec4 position01 = position + east;
-        vec2 texCoord01 = vec2(0.0, 1.0);
+        vec2 texCoord01 = vec2(1.0, 1.0);
         vec4 position10 = position + south;
-        vec2 texCoord10 = vec2(1.0, 0.0);
+        vec2 texCoord10 = vec2(0.0, 0.0);
         vec4 position11 = position + east + south;
-        vec2 texCoord11 = vec2(1.0, 1.0);
+        vec2 texCoord11 = vec2(1.0, 0.0);
         drawQuadHorizontal(position00, texCoord00, position01, texCoord01, position10, texCoord10, position11, texCoord11);
     }
 
