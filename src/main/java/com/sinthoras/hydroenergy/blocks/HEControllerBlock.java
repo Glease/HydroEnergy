@@ -23,7 +23,7 @@ public class HEControllerBlock extends BlockContainer {
 		setHardness(100.0F);
 		setLightOpacity(15);
 		setBlockName("controller");
-		//setBlockTextureName("");
+		setBlockTextureName(HE.MODID + ":" + HE.damTextureName);
 		setTickRandomly(false);
 		setCreativeTab(CreativeTabs.tabBlock);
 	}
