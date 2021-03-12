@@ -37,9 +37,9 @@ public class HEWater extends BlockFluidBase {
 
 	@Override
 	public int getQuantaValue(IBlockAccess world, int blockX, int blockY, int blockZ) {
-		float val = getWaterLevel() - blockY;
-		val = HEUtil.clamp(val, 0.0f, 1.0f);
-		return Math.round(val * 8);
+		float waterLevelInBlock = getWaterLevel() - blockY;
+		waterLevelInBlock = HEUtil.clamp(waterLevelInBlock, 0.0f, 1.0f);
+		return Math.round(waterLevelInBlock * 8);
 	}
 
 	@Override
