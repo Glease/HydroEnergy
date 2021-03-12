@@ -123,6 +123,16 @@ public class HEServer extends WorldSavedData {
 		return dams[waterId].limitNorth;
 	}
 
+	public boolean isBlockOutOfBounds(int waterId, int blockX, int blockY, int blockZ) {
+		HEDam dam = dams[waterId];
+		return blockX > dam.limitEast
+				|| blockX < dam.limitWest
+				|| blockY > dam.limitUp
+				|| blockY < dam.limitDown
+				|| blockZ > dam.limitSouth
+				|| blockZ < dam.limitNorth;
+	}
+
 	public void setWaterLimitUp(int waterId, int limitUp) {
 		if(dams[waterId].limitUp != limitUp) {
 			dams[waterId].limitUp = limitUp;

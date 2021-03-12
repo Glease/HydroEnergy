@@ -5,18 +5,13 @@ import java.util.LinkedList;
 import com.sinthoras.hydroenergy.HE;
 
 import com.sinthoras.hydroenergy.blocks.HEWater;
-import cpw.mods.fml.common.gameevent.TickEvent;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 
 public class HEBlockQueue {
-
-	public enum Mode {
-		Add,
-		Remove
-	}
 	
 	private static LinkedList<QueueEntry> queue = new LinkedList<QueueEntry>();
 	
@@ -25,37 +20,42 @@ public class HEBlockQueue {
 			WorldServer world = MinecraftServer.getServer().worldServers[0];
 			int actionsTaken = 0;
 			while(actionsTaken < HE.queueActionsPerTick && !queue.isEmpty()) {
-				final QueueEntry element = queue.poll();
-				final Block block = world.getBlock(element.blockX, element.blockY, element.blockZ);
-				if(element.mode == Mode.Add && !(block instanceof HEWater)) {
-					world.setBlock(element.blockX, element.blockY, element.blockZ, HE.waterBlocks[element.id]);
-					actionsTaken++;
+				QueueEntry element = queue.poll();
+				Block block = world.getBlock(element.blockX, element.blockY, element.blockZ);
+				HEWater waterBlock = HE.waterBlocks[element.waterId];
+				boolean removeBlock = !HEServer.instance.canSpread(element.waterId)
+						|| HEServer.instance.isBlockOutOfBounds(element.waterId, element.blockX, element.blockY, element.blockZ);
+				if(removeBlock) {
+					if(block == waterBlock) {
+						world.setBlock(element.blockX, element.blockY, element.blockZ, Blocks.air);
+						actionsTaken++;
+					}
 				}
-				if(element.mode == Mode.Remove && block instanceof HEWater) {
-					world.setBlock(element.blockX, element.blockY, element.blockZ, Blocks.air);
-					actionsTaken++;
+				else {
+					if(waterBlock.canFlowInto(world, element.blockX, element.blockY, element.blockZ)) {
+						world.setBlock(element.blockX, element.blockY, element.blockZ, waterBlock);
+						actionsTaken++;
+					}
 				}
 			}
 		}
 	}
 
-	public static void enqueueBlock(Mode mode, int blockX, int blockY, int blockZ, int id) {
-		queue.add(new QueueEntry(mode, blockX, blockY, blockZ, id));
+	public static void enqueueBlock(World world, int blockX, int blockY, int blockZ, int waterId) {
+		queue.add(new QueueEntry(blockX, blockY, blockZ, waterId));
 	}
 }
 
 class QueueEntry {
-	public HEBlockQueue.Mode mode;
 	public int blockX;
 	public int blockY;
 	public int blockZ;
-	public int id;
+	public int waterId;
 
-	public QueueEntry(HEBlockQueue.Mode mode, int blockX, int blockY, int blockZ, int id) {
-		this.mode = mode;
+	public QueueEntry(int blockX, int blockY, int blockZ, int waterId) {
 		this.blockX = blockX;
 		this.blockY = blockY;
 		this.blockZ = blockZ;
-		this.id = id;
+		this.waterId = waterId;
 	}
 }
