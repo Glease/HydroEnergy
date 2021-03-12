@@ -32,7 +32,7 @@ public class HEControllerBlock extends BlockContainer {
 	
 	@Override
 	public boolean canPlaceBlockAt(World world, int blockX, int blockY, int blockZ) {
-		if(HEUtil.isServerWorld(world)) {
+		if(!world.isRemote) {
 			return HEServer.instance.canControllerBePlaced() && super.canPlaceBlockAt(world, blockX, blockY, blockZ);
 		}
 		else {

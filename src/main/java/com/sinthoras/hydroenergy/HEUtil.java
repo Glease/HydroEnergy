@@ -22,10 +22,4 @@ public class HEUtil {
 	public static float clamp(float value, float lowerLimit, float upperLimit) {
 		return Math.min(Math.max(value, lowerLimit), upperLimit);
 	}
-
-	public static boolean isServerWorld(World world) {
-		return world instanceof WorldServer
-				|| world instanceof WorldServerMulti
-				|| world instanceof DemoWorldServer;
-	}
 }
