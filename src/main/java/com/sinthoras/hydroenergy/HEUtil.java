@@ -1,10 +1,5 @@
 package com.sinthoras.hydroenergy;
 
-import net.minecraft.world.World;
-import net.minecraft.world.WorldServer;
-import net.minecraft.world.WorldServerMulti;
-import net.minecraft.world.demo.DemoWorldServer;
-
 public class HEUtil {
 	
 	public static int coordBlockToChunk(int blockCoord) {
