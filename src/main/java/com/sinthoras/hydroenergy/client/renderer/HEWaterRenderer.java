@@ -2,7 +2,7 @@ package com.sinthoras.hydroenergy.client.renderer;
 
 import com.sinthoras.hydroenergy.HEUtil;
 import com.sinthoras.hydroenergy.blocks.HEWater;
-import com.sinthoras.hydroenergy.blocks.HEWaterStatic;
+import com.sinthoras.hydroenergy.blocks.HEWaterStill;
 
 import cpw.mods.fml.client.registry.RenderingRegistry;
 import net.minecraft.block.Block;
@@ -19,7 +19,7 @@ public class HEWaterRenderer extends RenderBlockFluid {
 	
 	@Override
 	public float getFluidHeightForRender(IBlockAccess world, int blockX, int blockY, int blockZ, BlockFluidBase block) {
-		HEWaterStatic water = (HEWaterStatic) block;
+		HEWaterStill water = (HEWaterStill) block;
 		float val = water.getWaterLevel() - blockY;
 		return HEUtil.clamp(val, 0.0f, 1.0f);
     }

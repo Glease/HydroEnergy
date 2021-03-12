@@ -11,9 +11,9 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
-public class HEWaterStatic extends HEWater {
+public class HEWaterStill extends HEWater {
 
-	public HEWaterStatic(int id) {
+	public HEWaterStill(int id) {
 		super(id);
 		setHardness(100.0F);
 		setLightOpacity(3);

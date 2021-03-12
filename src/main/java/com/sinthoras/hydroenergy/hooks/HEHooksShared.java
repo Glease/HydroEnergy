@@ -6,7 +6,7 @@ import com.sinthoras.hydroenergy.server.commands.HECommandSetWater;
 import com.sinthoras.hydroenergy.blocks.HEControllerBlock;
 import com.sinthoras.hydroenergy.blocks.HEControllerTileEntity;
 import com.sinthoras.hydroenergy.server.HEServer;
-import com.sinthoras.hydroenergy.blocks.HEWaterStatic;
+import com.sinthoras.hydroenergy.blocks.HEWaterStill;
 import com.sinthoras.hydroenergy.network.HEPacketDebug;
 import com.sinthoras.hydroenergy.network.HEPacketSynchronize;
 import com.sinthoras.hydroenergy.network.HEPacketUpdate;
@@ -39,7 +39,7 @@ public class HEHooksShared {
     	HE.LOG.info("The subsequent " + HE.maxController + " liquid errors are intendend. Please ignore...");
 
 		for(int id=0;id<HE.waterBlocks.length;id++) {
-			HE.waterBlocks[id] = new HEWaterStatic(id);
+			HE.waterBlocks[id] = new HEWaterStill(id);
 			GameRegistry.registerBlock(HE.waterBlocks[id], HE.waterBlocks[id].getUnlocalizedName());
 			HE.waterBlockIds[id] = Block.blockRegistry.getIDForObject(HE.waterBlocks[id]);
 		}
