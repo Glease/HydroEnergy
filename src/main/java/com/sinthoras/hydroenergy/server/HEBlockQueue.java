@@ -28,12 +28,14 @@ public class HEBlockQueue {
 				if(removeBlock) {
 					if(block == waterBlock) {
 						world.setBlock(element.blockX, element.blockY, element.blockZ, Blocks.air);
+						HEServer.instance.onBlockRemoved(waterBlock.getWaterId(), element.blockY);
 						actionsTaken++;
 					}
 				}
 				else {
 					if(waterBlock.canFlowInto(world, element.blockX, element.blockY, element.blockZ)) {
 						world.setBlock(element.blockX, element.blockY, element.blockZ, waterBlock);
+						HEServer.instance.onBlockPlaced(waterBlock.getWaterId(), element.blockY);
 						actionsTaken++;
 					}
 				}

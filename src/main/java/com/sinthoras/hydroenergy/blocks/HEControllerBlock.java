@@ -3,6 +3,7 @@ package com.sinthoras.hydroenergy.blocks;
 import com.sinthoras.hydroenergy.HE;
 
 import com.sinthoras.hydroenergy.HEUtil;
+import com.sinthoras.hydroenergy.server.HEBlockQueue;
 import com.sinthoras.hydroenergy.server.HEServer;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
@@ -49,6 +50,6 @@ public class HEControllerBlock extends BlockContainer {
 	@Override
 	public void onBlockAdded(World world, int blockX, int blockY, int blockZ) {
 		HEControllerTileEntity controllerEntity = (HEControllerTileEntity)world.getTileEntity(blockX, blockY, blockZ);
-		world.setBlock(blockX + 1, blockY, blockZ, HE.waterBlocks[controllerEntity.getWaterId()]);
+		HEBlockQueue.enqueueBlock(blockX + 1, blockY, blockZ, controllerEntity.getWaterId());
 	}
 }

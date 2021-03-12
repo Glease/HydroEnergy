@@ -113,6 +113,14 @@ public class HEDam {
 
 		sendUpdate();
 	}
+
+	public void onBlockRemoved(int blockY) {
+		blocksPerY[blockY]--;
+	}
+
+	public void onBlockPlaced(int blockY) {
+		blocksPerY[blockY]++;
+	}
 	
 	public float getWaterLevel() {
 		return waterLevel;

@@ -85,6 +85,14 @@ public class HEServer extends WorldSavedData {
 		return -1;
 	}
 
+	public void onBlockRemoved(int waterId, int blockY) {
+		dams[waterId].onBlockRemoved(blockY);
+	}
+
+	public void onBlockPlaced(int waterId, int blockY) {
+		dams[waterId].onBlockPlaced(blockY);
+	}
+
 	public float getWaterLevel(int waterId) {
 		return dams[waterId].getWaterLevel();
 	}
