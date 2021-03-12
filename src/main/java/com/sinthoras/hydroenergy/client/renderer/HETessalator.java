@@ -29,13 +29,13 @@ public class HETessalator {
 
 
     public static void onPostRender(World world, int blockX, int blockY, int blockZ) {
-        if(numWaterBlocks != 0) {
-            int chunkX = HEUtil.coordBlockToChunk(blockX);
-            int chunkY = HEUtil.coordBlockToChunk(blockY);
-            int chunkZ = HEUtil.coordBlockToChunk(blockZ);
-            long key = HEUtil.chunkCoordsToKey(chunkX, chunkZ);
-            HERenderSubChunk subChunk = chunks.get(key).subChunks[chunkY];
+        int chunkX = HEUtil.coordBlockToChunk(blockX);
+        int chunkY = HEUtil.coordBlockToChunk(blockY);
+        int chunkZ = HEUtil.coordBlockToChunk(blockZ);
+        long key = HEUtil.chunkCoordsToKey(chunkX, chunkZ);
+        HERenderSubChunk subChunk = chunks.get(key).subChunks[chunkY];
 
+        if(numWaterBlocks != 0) {
             if (subChunk.vaoId == -1) {
                 if(availableBuffers.empty()) {
                     subChunk.vaoId = GL30.glGenVertexArrays();
@@ -80,6 +80,15 @@ public class HETessalator {
             // reset tesselator
             vboBuffer.clear();
             numWaterBlocks = 0;
+        }
+        else if(subChunk.vaoId != -1) {
+            HEBufferIds ids = new HEBufferIds();
+            ids.vaoId = subChunk.vaoId;
+            ids.vboId = subChunk.vboId;
+            availableBuffers.push(ids);
+            subChunk.vaoId = -1;
+            subChunk.vboId = -1;
+            subChunk.numWaterBlocks = 0;
         }
     }
 
