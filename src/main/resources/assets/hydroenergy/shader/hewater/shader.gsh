@@ -4,18 +4,18 @@ layout (triangle_strip, max_vertices = 30) out;
 in VS_OUT {
     int waterId;
     vec3 worldColorModifier;
-    vec2 lightXMinus;
-    vec2 lightXPlus;
-    vec2 lightYMinus;
-    vec2 lightYPlus;
-    vec2 lightZMinus;
-    vec2 lightZPlus;
-    int shouldRenderXMinus;
-    int shouldRenderXPlus;
-    int shouldRenderYMinus;
-    int shouldRenderYPlus;
-    int shouldRenderZMinus;
-    int shouldRenderZPlus;
+    vec2 lightWest;
+    vec2 lightEast;
+    vec2 lightDown;
+    vec2 lightUp;
+    vec2 lightNorth;
+    vec2 lightSouth;
+    int shouldRenderWest;
+    int shouldRenderEast;
+    int shouldRenderDown;
+    int shouldRenderUp;
+    int shouldRenderNorth;
+    int shouldRenderSouth;
 } gs_in[];
 
 uniform mat4 g_viewProjection;
@@ -32,8 +32,8 @@ uniform float g_fogModeLinear;
 uniform vec3 g_cameraPosition;
 
 const vec4 up = vec4(0, 1, 0, 0);
-const vec4 right = vec4(1, 0, 0, 0);
-const vec4 back = vec4(0, 0, 1, 0);
+const vec4 east = vec4(1, 0, 0, 0);
+const vec4 south = vec4(0, 0, 1, 0);
 
 const float LIGHT_Y_NEG = 0.5;
 const float LIGHT_Y_POS = 1.0;
@@ -120,9 +120,9 @@ void main() {
     float waterLevel = g_waterLevels[gs_in[0].waterId];
 
     vec4 position = gl_in[0].gl_Position;
-    if(gs_in[0].shouldRenderXMinus > 0 && waterLevel >= position.y) {
+    if(gs_in[0].shouldRenderWest > 0 && waterLevel >= position.y) {
         colorModifier = gs_in[0].worldColorModifier * LIGHT_XZ_POS;
-        lightCoord = gs_in[0].lightXMinus;
+        lightCoord = gs_in[0].lightWest;
 
         float height = position.y + 1 > waterLevel ? waterLevel - position.y : 1.0f;
         vec4 _up = vec4(0.0, height, 0.0, 0.0);
@@ -133,57 +133,57 @@ void main() {
         vec2 texCoord00 = vec2(0.5, 1.0);
         vec4 position01 = position + _up;
         vec2 texCoord01 = vec2(0.5, 1.0 - height);
-        vec4 position10 = position + back;
+        vec4 position10 = position + south;
         vec2 texCoord10 = vec2(0.0, 1.0);
-        vec4 position11 = position + _up + back;
+        vec4 position11 = position + _up + south;
         vec2 texCoord11 = vec2(0.0, 1.0 - height);
         drawQuadVertical(position00, texCoord00, position01, texCoord01, position10, texCoord10, position11, texCoord11);
     }
 
     position = gl_in[0].gl_Position;
-    if(gs_in[0].shouldRenderXPlus > 0 && waterLevel >= position.y) {
+    if(gs_in[0].shouldRenderEast > 0 && waterLevel >= position.y) {
         colorModifier = gs_in[0].worldColorModifier * LIGHT_XZ_POS;
-        lightCoord = gs_in[0].lightXPlus;
+        lightCoord = gs_in[0].lightEast;
 
         float height = position.y + 1 > waterLevel ? waterLevel - position.y : 1.0f;
         vec4 _up = vec4(0.0, height, 0.0, 0.0);
         position.x -= RENDER_OFFSET;
-        position = position + right;
+        position = position + east;
 
         height = height * 0.5;
         vec4 position00 = position;
         vec2 texCoord00 = vec2(0.0, 1.0);
-        vec4 position01 = position + back;
+        vec4 position01 = position + south;
         vec2 texCoord01 = vec2(0.5, 1.0);
         vec4 position10 = position + _up;
         vec2 texCoord10 = vec2(0.0, 1.0 - height);
-        vec4 position11 = position + _up + back;
+        vec4 position11 = position + _up + south;
         vec2 texCoord11 = vec2(0.5, 1.0 - height);
         drawQuadVertical(position00, texCoord00, position01, texCoord01, position10, texCoord10, position11, texCoord11);
     }
 
     position = gl_in[0].gl_Position;
-    if(gs_in[0].shouldRenderYMinus > 0 && waterLevel >= position.y) {
+    if(gs_in[0].shouldRenderDown > 0 && waterLevel >= position.y) {
         colorModifier = gs_in[0].worldColorModifier * LIGHT_Y_NEG;
-        lightCoord = gs_in[0].lightYMinus;
+        lightCoord = gs_in[0].lightDown;
 
         position.y += RENDER_OFFSET;
 
         vec4 position00 = position;
         vec2 texCoord00 = vec2(0.0, 0.0);
-        vec4 position01 = position + back;
+        vec4 position01 = position + south;
         vec2 texCoord01 = vec2(0.0, 1.0);
-        vec4 position10 = position + right;
+        vec4 position10 = position + east;
         vec2 texCoord10 = vec2(1.0, 0.0);
-        vec4 position11 = position + back + right;
+        vec4 position11 = position + south + east;
         vec2 texCoord11 = vec2(1.0, 1.0);
         drawQuadHorizontal(position00, texCoord00, position01, texCoord01, position10, texCoord10, position11, texCoord11);
     }
 
     position = gl_in[0].gl_Position;
-    if((gs_in[0].shouldRenderYPlus > 0 || waterLevel < (position.y + 1)) && waterLevel >= position.y) {
+    if((gs_in[0].shouldRenderUp > 0 || waterLevel < (position.y + 1)) && waterLevel >= position.y) {
         colorModifier = gs_in[0].worldColorModifier * LIGHT_Y_POS;
-        lightCoord = gs_in[0].lightYPlus;
+        lightCoord = gs_in[0].lightUp;
 
         float height = position.y + 1 > waterLevel ? waterLevel - position.y : 1.0f;
         vec4 _up = vec4(0.0, height, 0.0, 0.0);
@@ -192,19 +192,19 @@ void main() {
 
         vec4 position00 = position;
         vec2 texCoord00 = vec2(0.0, 0.0);
-        vec4 position01 = position + right;
+        vec4 position01 = position + east;
         vec2 texCoord01 = vec2(0.0, 1.0);
-        vec4 position10 = position + back;
+        vec4 position10 = position + south;
         vec2 texCoord10 = vec2(1.0, 0.0);
-        vec4 position11 = position + right + back;
+        vec4 position11 = position + east + south;
         vec2 texCoord11 = vec2(1.0, 1.0);
         drawQuadHorizontal(position00, texCoord00, position01, texCoord01, position10, texCoord10, position11, texCoord11);
     }
 
     position = gl_in[0].gl_Position;
-    if(gs_in[0].shouldRenderZMinus > 0 && waterLevel >= position.y) {
+    if(gs_in[0].shouldRenderNorth > 0 && waterLevel >= position.y) {
         colorModifier = gs_in[0].worldColorModifier * LIGHT_XZ_NEG;
-        lightCoord = gs_in[0].lightZMinus;
+        lightCoord = gs_in[0].lightNorth;
 
         float height = position.y + 1 > waterLevel ? waterLevel - position.y : 1.0f;
         vec4 _up = vec4(0.0, height, 0.0, 0.0);
@@ -213,33 +213,33 @@ void main() {
         height = height * 0.5;
         vec4 position00 = position;
         vec2 texCoord00 = vec2(0.5, 1.0);
-        vec4 position01 = position + right;
+        vec4 position01 = position + east;
         vec2 texCoord01 = vec2(0.0, 1.0);
         vec4 position10 = position + _up;
         vec2 texCoord10 = vec2(0.5, 1.0 - height);
-        vec4 position11 = position + _up + right;
+        vec4 position11 = position + _up + east;
         vec2 texCoord11 = vec2(0.0, 1.0 - height);
         drawQuadVertical(position00, texCoord00, position01, texCoord01, position10, texCoord10, position11, texCoord11);
     }
 
     position = gl_in[0].gl_Position;
-    if(gs_in[0].shouldRenderZPlus > 0 && waterLevel >= position.y) {
+    if(gs_in[0].shouldRenderSouth > 0 && waterLevel >= position.y) {
         colorModifier = gs_in[0].worldColorModifier * LIGHT_XZ_NEG;
-        lightCoord = gs_in[0].lightZPlus;
+        lightCoord = gs_in[0].lightSouth;
 
         float height = position.y + 1 > waterLevel ? waterLevel - position.y : 1.0f;
         vec4 _up = vec4(0.0, height, 0.0, 0.0);
         position.z -= RENDER_OFFSET;
-        position = position + back;
+        position = position + south;
 
         height = height * 0.5;
         vec4 position00 = position;
         vec2 texCoord00 = vec2(0.0, 1.0);
         vec4 position01 = position + _up;
         vec2 texCoord01 = vec2(0.0, 1.0 - height);
-        vec4 position10 = position + right;
+        vec4 position10 = position + east;
         vec2 texCoord10 = vec2(0.5, 1.0);
-        vec4 position11 = position + _up + right;
+        vec4 position11 = position + _up + east;
         vec2 texCoord11 = vec2(0.5, 1.0 - height);
         drawQuadVertical(position00, texCoord00, position01, texCoord01, position10, texCoord10, position11, texCoord11);
     }
