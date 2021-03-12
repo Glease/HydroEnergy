@@ -91,7 +91,10 @@ public class HEWater extends BlockFluidBase {
 	}
 
 	public Material getMaterial(double blockY) {
-		return getWaterLevel() < blockY ? Material.air : Material.water;
+		// This constant is so magic i'm gonna die!
+		// Without this constant there is a gap between rendered water and all under water effects
+		// and the player cannot exit water without half slabs. Not sure where this comes from...yet
+		return (getWaterLevel() + 0.120f) < blockY ? Material.air : Material.water;
 	}
 	
 	public int getId() {
