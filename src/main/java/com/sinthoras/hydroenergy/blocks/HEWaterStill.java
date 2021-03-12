@@ -18,7 +18,6 @@ public class HEWaterStatic extends HEWater {
 		setHardness(100.0F);
 		setLightOpacity(3);
 		setBlockName("water");
-		setBlockTextureName("minecraft:water_still");
 		setTickRandomly(false);
 	}
 	
