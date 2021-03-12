@@ -41,7 +41,7 @@ public class HEBlockQueue {
 		}
 	}
 
-	public static void enqueueBlock(World world, int blockX, int blockY, int blockZ, int waterId) {
+	public static void enqueueBlock(int blockX, int blockY, int blockZ, int waterId) {
 		queue.add(new QueueEntry(blockX, blockY, blockZ, waterId));
 	}
 }
