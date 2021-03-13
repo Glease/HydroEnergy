@@ -1,15 +1,15 @@
 package com.sinthoras.hydroenergy.hooks;
 
 import com.sinthoras.hydroenergy.HE;
+import com.sinthoras.hydroenergy.network.HEPacketConfigUpdate;
 import com.sinthoras.hydroenergy.server.commands.HECommandDebug;
 import com.sinthoras.hydroenergy.server.commands.HECommandSetWater;
 import com.sinthoras.hydroenergy.blocks.HEControllerBlock;
 import com.sinthoras.hydroenergy.blocks.HEControllerTileEntity;
 import com.sinthoras.hydroenergy.server.HEServer;
 import com.sinthoras.hydroenergy.blocks.HEWaterStill;
-import com.sinthoras.hydroenergy.network.HEPacketDebug;
 import com.sinthoras.hydroenergy.network.HEPacketSynchronize;
-import com.sinthoras.hydroenergy.network.HEPacketUpdate;
+import com.sinthoras.hydroenergy.network.HEPacketWaterUpdate;
 
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
@@ -32,11 +32,12 @@ public class HEHooksShared {
 	// etc, and register them with the GameRegistry."
 	public void fmlLifeCycleEvent(FMLPreInitializationEvent event) 	{
     	HE.network = NetworkRegistry.INSTANCE.newSimpleChannel("hydroenergy");
-    	HE.network.registerMessage(HEPacketUpdate.Handler.class, HEPacketUpdate.class, 0, Side.CLIENT);
-    	HE.network.registerMessage(HEPacketDebug.Handler.class, HEPacketDebug.class, 1, Side.CLIENT);
-    	HE.network.registerMessage(HEPacketSynchronize.Handler.class, HEPacketSynchronize.class, 2, Side.CLIENT);
+    	HE.network.registerMessage(HEPacketWaterUpdate.Handler.class, HEPacketWaterUpdate.class, 0, Side.CLIENT);
+    	HE.network.registerMessage(HEPacketSynchronize.Handler.class, HEPacketSynchronize.class, 1, Side.CLIENT);
+		HE.network.registerMessage(HEPacketConfigUpdate.Handler.class, HEPacketConfigUpdate.class, 2, Side.CLIENT);
 
-    	HE.LOG.info("The subsequent " + HE.maxController + " liquid errors are intendend. Please ignore...");
+
+		HE.LOG.info("The subsequent " + HE.maxControllers + " liquid errors are intendend. Please ignore...");
 
 		for(int id=0;id<HE.waterBlocks.length;id++) {
 			HE.waterBlocks[id] = new HEWaterStill(id);

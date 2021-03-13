@@ -19,7 +19,7 @@ public class HEServer extends WorldSavedData {
 
 	public HEServer(String name) {
 		super(name);
-		dams = new HEDam[HE.maxController];
+		dams = new HEDam[HE.maxControllers];
 		for(int waterId = 0; waterId< dams.length; waterId++) {
 			dams[waterId] = new HEDam(waterId);
 		}
@@ -43,8 +43,8 @@ public class HEServer extends WorldSavedData {
 
 	@Override
 	public void readFromNBT(NBTTagCompound compound) {
-		dams = new HEDam[HE.maxController];
-		for(int waterId=0;waterId<HE.maxController;waterId++) {
+		dams = new HEDam[HE.maxControllers];
+		for(int waterId = 0; waterId<HE.maxControllers; waterId++) {
 			dams[waterId] = new HEDam(waterId);
 			dams[waterId].readFromNBTFull(compound.getCompoundTag(Tags.dam + waterId));
 		}
@@ -104,31 +104,31 @@ public class HEServer extends WorldSavedData {
 	}
 
 	public void setDebugState(int waterId, boolean debugState) {
-		dams[waterId].setDebugMode(debugState);
-	}
-
-	public int getWaterLimitUp(int waterId) {
-		return dams[waterId].limitUp;
-	}
-	
-	public int getWaterLimitDown(int waterId) {
-		return dams[waterId].limitDown;
-	}
-
-	public int getWaterLimitEast(int waterId) {
-		return dams[waterId].limitEast;
+		dams[waterId].setDebugState(debugState);
 	}
 
 	public int getWaterLimitWest(int waterId) {
-		return dams[waterId].limitWest;
+		return dams[waterId].getLimitWest();
 	}
-
-	public int getWaterLimitSouth(int waterId) {
-		return dams[waterId].limitSouth;
+	
+	public int getWaterLimitDown(int waterId) {
+		return dams[waterId].getLimitDown();
 	}
 
 	public int getWaterLimitNorth(int waterId) {
-		return dams[waterId].limitNorth;
+		return dams[waterId].getLimitNorth();
+	}
+
+	public int getWaterLimitEast(int waterId) {
+		return dams[waterId].getLimitEast();
+	}
+
+	public int getWaterLimitUp(int waterId) {
+		return dams[waterId].getLimitUp();
+	}
+
+	public int getWaterLimitSouth(int waterId) {
+		return dams[waterId].getLimitSouth();
 	}
 
 	public boolean isBlockOutOfBounds(int waterId, int blockX, int blockY, int blockZ) {
@@ -141,44 +141,38 @@ public class HEServer extends WorldSavedData {
 				|| blockZ < dam.limitNorth;
 	}
 
-	public void setWaterLimitUp(int waterId, int limitUp) {
-		if(dams[waterId].limitUp != limitUp) {
-			dams[waterId].limitUp = limitUp;
+	public void setWaterLimitWest(int waterId, int limitWest) {
+		if(dams[waterId].setLimitWest(limitWest)) {
 			markDirty();
 		}
 	}
 
 	public void setWaterLimitDown(int waterId, int limitDown) {
-		if(dams[waterId].limitDown != limitDown) {
-			dams[waterId].limitDown = limitDown;
-			markDirty();
-		}
-	}
-
-	public void setWaterLimitEast(int waterId, int limitEast) {
-		if(dams[waterId].limitEast != limitEast) {
-			dams[waterId].limitEast = limitEast;
-			markDirty();
-		}
-	}
-
-	public void setWaterLimitWest(int waterId, int limitWest) {
-		if(dams[waterId].limitWest != limitWest) {
-			dams[waterId].limitWest = limitWest;
-			markDirty();
-		}
-	}
-
-	public void setWaterLimitSouth(int waterId, int limitSouth) {
-		if(dams[waterId].limitSouth != limitSouth) {
-			dams[waterId].limitSouth = limitSouth;
+		if(dams[waterId].setLimitDown(limitDown)) {
 			markDirty();
 		}
 	}
 
 	public void setWaterLimitNorth(int waterId, int limitNorth) {
-		if(dams[waterId].limitNorth != limitNorth) {
-			dams[waterId].limitNorth = limitNorth;
+		if(dams[waterId].setLimitNorth(limitNorth)) {
+			markDirty();
+		}
+	}
+
+	public void setWaterLimitEast(int waterId, int limitEast) {
+		if(dams[waterId].setLimitEast(limitEast)) {
+			markDirty();
+		}
+	}
+
+	public void setWaterLimitUp(int waterId, int limitUp) {
+		if(dams[waterId].setLimitUp(limitUp)) {
+			markDirty();
+		}
+	}
+
+	public void setWaterLimitSouth(int waterId, int limitSouth) {
+		if(dams[waterId].setLimitSouth(limitSouth)) {
 			markDirty();
 		}
 	}
@@ -202,10 +196,16 @@ public class HEServer extends WorldSavedData {
 	}
 
 	public void synchronizeClient(PlayerLoggedInEvent event) {
-		HEPacketSynchronize message = new HEPacketSynchronize(dams.length);
+		HEPacketSynchronize message = new HEPacketSynchronize();
 		for(int i = 0; i< dams.length; i++) {
-			message.renderedWaterLevel[i] = dams[i].getWaterLevel();
-			message.renderDebug[i] = dams[i].getDebugMode();
+			message.waterLevels[i] = dams[i].getWaterLevel();
+			message.debugStates[i] = dams[i].getDebugState();
+			message.limitsWest[i] = dams[i].limitWest;
+			message.limitsDown[i] = dams[i].limitDown;
+			message.limitsNorth[i] = dams[i].limitNorth;
+			message.limitsEast[i] = dams[i].limitEast;
+			message.limitsUp[i] = dams[i].limitUp;
+			message.limitsSouth[i] = dams[i].limitSouth;
 		}
 		HE.network.sendTo(message, (EntityPlayerMP) event.player);
 	}

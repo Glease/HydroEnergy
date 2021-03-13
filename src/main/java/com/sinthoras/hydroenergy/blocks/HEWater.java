@@ -63,7 +63,7 @@ public class HEWater extends BlockFluidBase {
 
 	public float getWaterLevel() {
 		if(HE.logicalClientLoaded) {
-			return HEClient.getRenderedWaterLevel(getWaterId());
+			return HEClient.getWaterLevelForPhysics(getWaterId());
 		}
 		else {
 			return HEServer.instance.getWaterLevel(getWaterId());

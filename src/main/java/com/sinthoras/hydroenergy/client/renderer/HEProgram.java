@@ -50,13 +50,13 @@ public class HEProgram {
     private static final FloatBuffer modelview = GLAllocation.createDirectFloatBuffer(16);
     private static final FloatBuffer modelviewProjection = GLAllocation.createDirectFloatBuffer(16);
     private static final FloatBuffer fogColor = GLAllocation.createDirectFloatBuffer(16);
-    private static final FloatBuffer waterLevels = GLAllocation.createDirectFloatBuffer(HE.maxController);
-    private static final FloatBuffer debugModes = GLAllocation.createDirectFloatBuffer(HE.maxController);
+    private static final FloatBuffer waterLevels = GLAllocation.createDirectFloatBuffer(HE.maxControllers);
+    private static final FloatBuffer debugModes = GLAllocation.createDirectFloatBuffer(HE.maxControllers);
 
 
     public static void init() {
         final String defines = "#version 330 core\n"
-                + "#define NUM_CONTROLLERS " + HE.maxController + "\n";
+                + "#define NUM_CONTROLLERS " + HE.maxControllers + "\n";
         final int vertexShader = loadShader(vertexShaderLocation, GL20.GL_VERTEX_SHADER, defines);
         final int geometryShader = loadShader(geometryShaderLocation, GL32.GL_GEOMETRY_SHADER, defines);
         final int fragmentShader = loadShader(fragmentShaderLocation, GL20.GL_FRAGMENT_SHADER, defines);
@@ -145,14 +145,14 @@ public class HEProgram {
 
     public static void setWaterLevels() {
         waterLevels.clear();
-        waterLevels.put(HEClient.getAllWaterLevels());
+        waterLevels.put(HEClient.getAllWaterLevelsForRendering());
         waterLevels.flip();
         GL20.glUniform1(waterLevelsID, waterLevels);
     }
 
     public static void setDebugModes() {
         debugModes.clear();
-        debugModes.put(HEClient.getDebugModes());
+        debugModes.put(HEClient.getDebugStates());
         debugModes.flip();
         GL20.glUniform1(debugModesID, debugModes);
     }

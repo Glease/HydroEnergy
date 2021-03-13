@@ -29,7 +29,7 @@ public class HECommandSetWater extends CommandBase {
 			try {
 				float waterLevel = Float.parseFloat(params[1]);
 				int controllerId = Integer.parseInt(params[0]);
-				if (controllerId >= 0 || controllerId < HE.maxController) {
+				if (controllerId >= 0 || controllerId < HE.maxControllers) {
 					HEServer.instance.setWaterLevel(controllerId, waterLevel);
 			        sender.addChatMessage(new ChatComponentText("Set water level of controller " + controllerId + " to " + waterLevel));
 			        HE.LOG.info(sender.getCommandSenderName() + " set water level of controller " + controllerId + " to " + waterLevel);

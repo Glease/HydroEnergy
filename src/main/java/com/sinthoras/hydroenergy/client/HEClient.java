@@ -5,52 +5,70 @@ import com.sinthoras.hydroenergy.client.light.HELightManager;
 
 public class HEClient {
 	
-	public static float[] renderedWaterLevel = new float[HE.maxController];
-	public static boolean[] renderDebug = new boolean[HE.maxController];
+	public static float[] waterLevels = new float[HE.maxControllers];
+	public static boolean[] debugStates = new boolean[HE.maxControllers];
+	public static int[] limitsWest = new int[HE.maxControllers];
+	public static int[] limitsDown = new int[HE.maxControllers];
+	public static int[] limitsNorth = new int[HE.maxControllers];
+	public static int[] limitsEast = new int[HE.maxControllers];
+	public static int[] limitsUp = new int[HE.maxControllers];
+	public static int[] limitsSouth = new int[HE.maxControllers];
 
 	
-	public static void onClientUpdate(int id, float newWaterLevel, boolean isDebug) {
-		HE.LOG.info("UPDATE RECEIVED:   " + id + "  " + newWaterLevel);
-		renderedWaterLevel[id] = newWaterLevel;
-		renderDebug[id] = isDebug;
+	public static void onWaterUpdate(int waterId, float waterLevel) {
+		waterLevels[waterId] = waterLevel;
 		HELightManager.onUpdateWaterLevels();
 	}
-	
-	public static void onSetDebugMode(int id, boolean value) {
-		renderDebug[id] = value;
+
+	public static void onConfigUpdate(int waterId, boolean debugState, int limitWest, int limitDown, int limitNorth, int limitEast, int limitUp, int limitSouth) {
+		debugStates[waterId] = debugState;
+		limitsWest[waterId] = limitWest;
+		limitsDown[waterId] = limitDown;
+		limitsNorth[waterId] = limitNorth;
+		limitsEast[waterId] = limitEast;
+		limitsUp[waterId] = limitUp;
+		limitsSouth[waterId] = limitSouth;
 	}
 
-	public static float[] getDebugModes() {
-		float[] copy = new float[renderDebug.length];
-		for(int i=0;i<renderDebug.length;i++) {
-			copy[i] = renderDebug[i] ? 1.0f : 0.0f;
+	public static float[] getDebugStates() {
+		float[] copy = new float[debugStates.length];
+		for(int waterId = 0; waterId< debugStates.length; waterId++) {
+			copy[waterId] = debugStates[waterId] ? 1.0f : 0.0f;
 		}
 		return copy;
 	}
 	
-	public static float getRenderedWaterLevel(int id) {
-		if(renderDebug[id]) {
+	public static float getWaterLevelForPhysics(int waterId) {
+		if(debugStates[waterId]) {
 			return 0.0f;
 		}
 		else {
-			return renderedWaterLevel[id];
+			return waterLevels[waterId];
 		}
 	}
 
-	public static float[] getAllWaterLevels() {
-		float[] copy = new float[renderedWaterLevel.length];
-		for(int i=0;i<renderedWaterLevel.length;i++) {
-			copy[i] = renderDebug[i] ? 255.0f : renderedWaterLevel[i];
+	public static float[] getAllWaterLevelsForRendering() {
+		float[] copy = new float[waterLevels.length];
+		for(int waterId = 0; waterId< waterLevels.length; waterId++) {
+			copy[waterId] = debugStates[waterId] ? 255.0f : waterLevels[waterId];
 		}
 		return copy;
 	}
 
-	public static void onClientSynchronize(float[] newWaterLevel) {
-		renderedWaterLevel = newWaterLevel;
+	public static void onSynchronize(float[] waterLevels, boolean[] debugStates, int[] limitsWest, int[] limitsDown, int[] limitsNorth, int[] limitsEast, int[] limitsUp, int[] limitsSouth) {
+		HEClient.waterLevels = waterLevels;
+		HEClient.debugStates = debugStates;
+		HEClient.limitsWest = limitsWest;
+		HEClient.limitsDown = limitsDown;
+		HEClient.limitsNorth = limitsNorth;
+		HEClient.limitsEast = limitsEast;
+		HEClient.limitsUp = limitsUp;
+		HEClient.limitsSouth = limitsSouth;
 	}
 
+	// TODO: required?
 	public static void onDisconnect() {
-		renderedWaterLevel = new float[HE.maxController];
-		renderDebug = new boolean[HE.maxController];
+		waterLevels = new float[HE.maxControllers];
+		debugStates = new boolean[HE.maxControllers];
 	}
 }

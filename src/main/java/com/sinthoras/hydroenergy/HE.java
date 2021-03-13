@@ -28,10 +28,10 @@ public class HE {
     public static boolean logicalClientLoaded = false;
     
     // TODO: Move to config
-	public static final int maxController = 16;
+	public static final int maxControllers = 16;
     public static HEControllerBlock controller;
-	public static final HEWaterStill[] waterBlocks = new HEWaterStill[maxController];
-	public static final int[] waterBlockIds = new int[maxController];
+	public static final HEWaterStill[] waterBlocks = new HEWaterStill[maxControllers];
+	public static final int[] waterBlockIds = new int[maxControllers];
 	
 	public static boolean DEBUGslowFill = false;
 	public static final IGuiHandler guiHandler = new HEGuiHandler();

@@ -21,7 +21,7 @@ import java.util.Stack;
 @SideOnly(Side.CLIENT)
 public class HELightManager {
 
-    private static float[] renderedWaterLevel = new float[HE.maxController];
+    private static float[] renderedWaterLevel = new float[HE.maxControllers];
 
     private static final HashMap<Long, HELightChunk> chunks = new HashMap<Long, HELightChunk>();
     private static final Stack<HELightChunk> availableBuffers = new Stack<HELightChunk>();
@@ -84,7 +84,7 @@ public class HELightManager {
 
     public static void onUpdateWaterLevels() {
         RenderGlobal renderGlobal = Minecraft.getMinecraft().renderGlobal;
-        float[] newWaterLevels = HEClient.getAllWaterLevels();
+        float[] newWaterLevels = HEClient.getAllWaterLevelsForRendering();
         for(int id=0;id<renderedWaterLevel.length;id++) {
             if(Math.abs(renderedWaterLevel[id] - newWaterLevels[id]) > (0.5f / HE.waterBlocks[0].getLightOpacity())) {
                 renderedWaterLevel = newWaterLevels;
@@ -196,7 +196,7 @@ class HELightChunk {
 
     public void patch(Chunk chunk, int chunkY) {
         if(subChunkHasWaterFlags[chunkY] && requiresPatching[chunkY])  {
-            float[] waterLevels = HEClient.getAllWaterLevels();
+            float[] waterLevels = HEClient.getAllWaterLevelsForRendering();
             BitSet flags = lightFlags[chunkY];
             NibbleArray skyLightArray = chunk.getBlockStorageArray()[chunkY].getSkylightArray();
             for (int linearCoord = flags.nextSetBit(0); linearCoord != -1; linearCoord = flags.nextSetBit(linearCoord + 1)) {
