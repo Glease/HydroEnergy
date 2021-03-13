@@ -26,6 +26,13 @@ minecraft {
     runDir = "eclipse"
 }
 
+jar {
+    manifest {
+        attributes 'FMLCorePlugin': 'com.sinthoras.hydroenergy.asm.HEPlugin'
+        attributes 'FMLCorePluginContainsMod': 'true'
+    }
+}
+
 dependencies {
     // you may put jars on which you depend on in ./libs
     // or you may define them like so..
@@ -39,8 +46,6 @@ dependencies {
     // for more info...
     // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html
     // http://www.gradle.org/docs/current/userguide/dependency_management.html
-
-    compile 'net.bytebuddy:byte-buddy:1.10.9'
 }
 
 processResources
