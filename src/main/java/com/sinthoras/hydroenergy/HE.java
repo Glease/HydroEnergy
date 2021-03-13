@@ -26,9 +26,10 @@ public class HE {
         LOG = LogManager.getLogger(MODID);
     }
     public static boolean logicalClientLoaded = false;
+    public static final String ERROR_serverIdsOutOfBounds = "Server uses invalid waterIds! Server message ignored.";
     
     // TODO: Move to config
-	public static final int maxControllers = 16;
+	public static int maxControllers = 16;
     public static HEControllerBlock controller;
 	public static final HEWaterStill[] waterBlocks = new HEWaterStill[maxControllers];
 	public static final int[] waterBlockIds = new int[maxControllers];

@@ -16,11 +16,19 @@ public class HEClient {
 
 	
 	public static void onWaterUpdate(int waterId, float waterLevel) {
+		if(waterId < 0 || waterId >= HE.maxControllers) {
+			HE.LOG.error(HE.ERROR_serverIdsOutOfBounds);
+			return;
+		}
 		waterLevels[waterId] = waterLevel;
 		HELightManager.onUpdateWaterLevels();
 	}
 
 	public static void onConfigUpdate(int waterId, boolean debugState, int limitWest, int limitDown, int limitNorth, int limitEast, int limitUp, int limitSouth) {
+		if(waterId < 0 || waterId >= HE.maxControllers) {
+			HE.LOG.error(HE.ERROR_serverIdsOutOfBounds);
+			return;
+		}
 		debugStates[waterId] = debugState;
 		limitsWest[waterId] = limitWest;
 		limitsDown[waterId] = limitDown;
@@ -56,6 +64,9 @@ public class HEClient {
 	}
 
 	public static void onSynchronize(float[] waterLevels, boolean[] debugStates, int[] limitsWest, int[] limitsDown, int[] limitsNorth, int[] limitsEast, int[] limitsUp, int[] limitsSouth) {
+		if(HE.maxControllers != waterLevels.length) {
+			HE.maxControllers = waterLevels.length;
+		}
 		HEClient.waterLevels = waterLevels;
 		HEClient.debugStates = debugStates;
 		HEClient.limitsWest = limitsWest;
