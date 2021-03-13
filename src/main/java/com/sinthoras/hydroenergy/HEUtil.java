@@ -17,4 +17,8 @@ public class HEUtil {
 	public static float clamp(float value, float lowerLimit, float upperLimit) {
 		return Math.min(Math.max(value, lowerLimit), upperLimit);
 	}
+
+	public static int clamp(int value, int lowerLimit, int upperLimit) {
+		return Math.min(Math.max(value, lowerLimit), upperLimit);
+	}
 }

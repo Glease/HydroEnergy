@@ -1,6 +1,7 @@
 package com.sinthoras.hydroenergy.hooks;
 
 import com.sinthoras.hydroenergy.HE;
+import com.sinthoras.hydroenergy.network.HEPacketConfigRequest;
 import com.sinthoras.hydroenergy.network.HEPacketConfigUpdate;
 import com.sinthoras.hydroenergy.server.commands.HECommandDebug;
 import com.sinthoras.hydroenergy.server.commands.HECommandSetWater;
@@ -35,6 +36,7 @@ public class HEHooksShared {
     	HE.network.registerMessage(HEPacketWaterUpdate.Handler.class, HEPacketWaterUpdate.class, 0, Side.CLIENT);
     	HE.network.registerMessage(HEPacketSynchronize.Handler.class, HEPacketSynchronize.class, 1, Side.CLIENT);
 		HE.network.registerMessage(HEPacketConfigUpdate.Handler.class, HEPacketConfigUpdate.class, 2, Side.CLIENT);
+		HE.network.registerMessage(HEPacketConfigRequest.Handler.class, HEPacketConfigRequest.class, 3, Side.SERVER);
 
 
 		HE.LOG.info("The subsequent " + HE.maxControllers + " liquid errors are intendend. Please ignore...");

@@ -1,6 +1,7 @@
 package com.sinthoras.hydroenergy.server;
 
 import com.sinthoras.hydroenergy.HE;
+import com.sinthoras.hydroenergy.HEUtil;
 import com.sinthoras.hydroenergy.network.HEPacketConfigUpdate;
 import com.sinthoras.hydroenergy.network.HEPacketWaterUpdate;
 
@@ -19,6 +20,9 @@ public class HEDam {
 		public static final String limitSouth = "limS";
 		public static final String limitNorth = "limN";
 		public static final String blocksPerY = "BlPY";
+		public static final String blockX = "bloX";
+		public static final String blockY = "bloY";
+		public static final String blockZ = "bloZ";
 	}
 
 	// NBT variables
@@ -32,6 +36,9 @@ public class HEDam {
 	public int limitSouth;
 	public int limitNorth;
 	private int[] blocksPerY = new int[256];
+	private int blockX;
+	private int blockY;
+	private int blockZ;
 
 	private int waterId;
 	private boolean debugState = false;
@@ -53,6 +60,9 @@ public class HEDam {
 		limitSouth = compound.getInteger(Tags.limitSouth);
 		limitNorth = compound.getInteger(Tags.limitNorth);
 		blocksPerY = compound.getIntArray(Tags.blocksPerY);
+		blockX = compound.getInteger(Tags.blockX);
+		blockY = compound.getInteger(Tags.blockY);
+		blockZ = compound.getInteger(Tags.blockZ);
 	}
 	
 	public void writeToNBTFull(NBTTagCompound compound)	{
@@ -66,6 +76,9 @@ public class HEDam {
 		compound.setInteger(Tags.limitSouth, limitSouth);
 		compound.setInteger(Tags.limitNorth, limitNorth);
 		compound.setIntArray(Tags.blocksPerY, blocksPerY);
+		compound.setInteger(Tags.blockX, blockX);
+		compound.setInteger(Tags.blockY, blockY);
+		compound.setInteger(Tags.blockZ, blockZ);
 	}
 
 	public void setDebugState(boolean debugState) {
@@ -194,6 +207,9 @@ public class HEDam {
 		limitNorth = blockZ - 200;
 		waterLevel = blockY;
 		blocksPerY = new int[256];
+		this.blockX = blockX;
+		this.blockY = blockY;
+		this.blockZ = blockZ;
 
 		sendConfigUpdate();
 	}
@@ -220,5 +236,38 @@ public class HEDam {
 
 	public void onWaterPlaced(int blockY) {
 		blocksPerY[blockY]++;
+	}
+
+	public int getBlockX() {
+		return blockX;
+	}
+
+	public int getBlockY() {
+		return blockY;
+	}
+
+	public int getBlockZ() {
+		return blockZ;
+	}
+
+	public void onConfigRequest(boolean debugState, int limitWest, int limitDown, int limitNorth, int limitEast, int limitUp, int limitSouth) {
+		// Clap change requests to server limits before processing
+		limitWest = blockX - HEUtil.clamp(blockX - limitWest, 0, HE.maxWaterSpreadWest);
+		limitDown = blockY - HEUtil.clamp(blockY - limitDown, 0, HE.maxWaterSpreadDown);
+		limitNorth = blockZ - HEUtil.clamp(blockZ - limitNorth, 0, HE.maxWaterSpreadNorth);
+		limitEast = blockX + HEUtil.clamp(limitEast - blockX, 0, HE.maxWaterSpreadEast);
+		limitUp = blockY + HEUtil.clamp(limitUp - blockY, 0, HE.maxWaterSpreadUp);
+		limitSouth = blockZ + HEUtil.clamp(limitSouth - blockZ, 0, HE.maxWaterSpreadSouth);
+
+		if(this.limitWest != limitWest || this.limitDown != limitDown || this.limitNorth != limitNorth
+				|| this.limitEast != limitEast || this.limitUp != limitUp || limitSouth != limitSouth) {
+			this.limitWest = limitWest;
+			this.limitDown = limitDown;
+			this.limitNorth = limitNorth;
+			this.limitEast = limitEast;
+			this.limitUp = limitUp;
+			this.limitSouth = limitSouth;
+			sendConfigUpdate();
+		}
 	}
 }

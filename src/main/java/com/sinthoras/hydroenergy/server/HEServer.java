@@ -197,16 +197,23 @@ public class HEServer extends WorldSavedData {
 
 	public void synchronizeClient(PlayerLoggedInEvent event) {
 		HEPacketSynchronize message = new HEPacketSynchronize();
-		for(int i = 0; i< dams.length; i++) {
-			message.waterLevels[i] = dams[i].getWaterLevel();
-			message.debugStates[i] = dams[i].getDebugState();
-			message.limitsWest[i] = dams[i].limitWest;
-			message.limitsDown[i] = dams[i].limitDown;
-			message.limitsNorth[i] = dams[i].limitNorth;
-			message.limitsEast[i] = dams[i].limitEast;
-			message.limitsUp[i] = dams[i].limitUp;
-			message.limitsSouth[i] = dams[i].limitSouth;
+		for(int waterId = 0; waterId< dams.length; waterId++) {
+			message.waterLevels[waterId] = dams[waterId].getWaterLevel();
+			message.debugStates[waterId] = dams[waterId].getDebugState();
+			message.limitsWest[waterId] = dams[waterId].limitWest;
+			message.limitsDown[waterId] = dams[waterId].limitDown;
+			message.limitsNorth[waterId] = dams[waterId].limitNorth;
+			message.limitsEast[waterId] = dams[waterId].limitEast;
+			message.limitsUp[waterId] = dams[waterId].limitUp;
+			message.limitsSouth[waterId] = dams[waterId].limitSouth;
 		}
 		HE.network.sendTo(message, (EntityPlayerMP) event.player);
+	}
+
+	public void onConfigRequest(int waterId, boolean debugState, int limitWest, int limitDown, int limitNorth, int limitEast, int limitUp, int limitSouth) {
+		if(waterId < 0 || waterId >= HE.maxControllers) {
+			return;
+		}
+		dams[waterId].onConfigRequest(debugState, limitWest, limitDown, limitNorth, limitEast, limitUp, limitSouth);
 	}
 }

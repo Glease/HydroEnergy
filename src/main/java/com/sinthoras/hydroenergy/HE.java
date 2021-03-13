@@ -32,6 +32,13 @@ public class HE {
     public static HEControllerBlock controller;
 	public static final HEWaterStill[] waterBlocks = new HEWaterStill[maxControllers];
 	public static final int[] waterBlockIds = new int[maxControllers];
+
+	public static final int maxWaterSpreadWest = Integer.MAX_VALUE;
+    public static final int maxWaterSpreadDown = Integer.MAX_VALUE;
+    public static final int maxWaterSpreadNorth = Integer.MAX_VALUE;
+    public static final int maxWaterSpreadEast = Integer.MAX_VALUE;
+    public static final int maxWaterSpreadUp = Integer.MAX_VALUE;
+    public static final int maxWaterSpreadSouth = Integer.MAX_VALUE;
 	
 	public static boolean DEBUGslowFill = false;
 	public static final IGuiHandler guiHandler = new HEGuiHandler();
