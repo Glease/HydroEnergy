@@ -28,7 +28,7 @@ minecraft {
 
 jar {
     manifest {
-        attributes 'FMLCorePlugin': 'com.sinthoras.hydroenergy.asm.HEASMPlugin'
+        attributes 'FMLCorePlugin': 'com.sinthoras.hydroenergy.asm.HEPlugin'
         attributes 'FMLCorePluginContainsMod': 'true'
     }
 }
