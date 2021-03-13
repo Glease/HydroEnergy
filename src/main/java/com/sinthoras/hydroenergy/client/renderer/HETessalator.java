@@ -131,10 +131,10 @@ public class HETessalator {
             HEProgram.setViewProjection(cameraBlockX, cameraBlockY, cameraBlockZ);
             HEProgram.setCameraPosition(cameraBlockX, cameraBlockY, cameraBlockZ);
             HEProgram.setWaterLevels();
-            HEProgram.setDebugModes();
+            HEProgram.setDebugStates();
             HEProgram.setWaterUV();
             HEProgram.setFog();
-            HEProgram.bindLightLUT();
+            HEProgram.bindLightLookupTable();
             HEProgram.bindAtlasTexture();
 
             HESortedRenderList.setup(HEUtil.coordBlockToChunk((int)cameraBlockX),
