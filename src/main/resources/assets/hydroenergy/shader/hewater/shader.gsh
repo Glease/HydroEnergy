@@ -162,7 +162,8 @@ void main() {
         drawQuadVertical(position00, texCoord00, position01, texCoord01, position10, texCoord10, position11, texCoord11);
     }
 
-    position = gl_in[0].gl_Position;
+    // Vanilla water does not render the lower side of a water block if it touches eg. glass. Uncommend for nicer water
+    /*position = gl_in[0].gl_Position;
     if(gs_in[0].shouldRenderDown > 0 && waterLevel >= position.y) {
         colorModifier = gs_in[0].worldColorModifier * LIGHT_Y_NEG;
         lightCoord = gs_in[0].lightDown;
@@ -178,7 +179,7 @@ void main() {
         vec4 position11 = position + south + east;
         vec2 texCoord11 = vec2(1.0, 1.0);
         drawQuadHorizontal(position00, texCoord00, position01, texCoord01, position10, texCoord10, position11, texCoord11);
-    }
+    }*/
 
     position = gl_in[0].gl_Position;
     if((gs_in[0].shouldRenderUp > 0 || waterLevel < (position.y + 1)) && waterLevel >= position.y) {
