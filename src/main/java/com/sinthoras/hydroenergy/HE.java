@@ -38,6 +38,7 @@ public class HE {
 
 	// Texture locations
     public static String damBackgroundLocation = "textures/gui/he_dam.png";
+    public static String damLimitBackgroundLocation = "textures/gui/he_dam_settings.png";
     public static String damTextureName = "he_dam";
     // To silence the water missing texture error. Points to a random but valid texture
     public static String dummyTexture = damTextureName;
