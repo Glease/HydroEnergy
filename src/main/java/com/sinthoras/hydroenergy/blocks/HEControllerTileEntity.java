@@ -83,4 +83,20 @@ public class HEControllerTileEntity extends TileEntity {
 			HEServer.instance.onBreakController(waterId);
 		}
 	}
+
+	public int getEnergyStored() {
+		return 656432435;
+	}
+
+	public int getEnergyCapacity() {
+		return 856432435;
+	}
+
+	public int getEnergyPerTickIn() {
+		return 456;
+	}
+
+	public int getEnergyPerTickOut() {
+		return 512;
+	}
 }

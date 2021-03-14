@@ -38,4 +38,13 @@ public class HENumberInput extends GuiTextField {
     public int parseValue(int value) {
         return Math.min(Math.max(value, minValue), maxValue);
     }
+
+    public int getValue() {
+        try {
+            return Integer.parseInt(getText());
+        }
+        catch (NumberFormatException e) {
+            return 0;
+        }
+    }
 }

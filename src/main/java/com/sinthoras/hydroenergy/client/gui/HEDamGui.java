@@ -1,26 +1,22 @@
 package com.sinthoras.hydroenergy.client.gui;
 
 import com.sinthoras.hydroenergy.HE;
+import com.sinthoras.hydroenergy.blocks.HEControllerTileEntity;
+import com.sinthoras.hydroenergy.client.HEClient;
+import com.sinthoras.hydroenergy.network.HEPacketConfigRequest;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.gui.inventory.GuiContainer;
-import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.init.Blocks;
 import net.minecraft.util.IIcon;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.FluidRegistry;
 import org.lwjgl.opengl.GL11;
-import scala.collection.parallel.ParIterableLike;
-
-import javax.swing.*;
 
 @SideOnly(Side.CLIENT)
 public class HEDamGui extends GuiContainer {
@@ -40,10 +36,15 @@ public class HEDamGui extends GuiContainer {
     private int centerX = 0;
     private int centerY = 0;
 
-    public HEDamGui(InventoryPlayer inventoryPlayer, int waterId) {
-        super(new HEDamContainer(inventoryPlayer, waterId));
+    private int waterId;
+    private HEControllerTileEntity controllerTileEntity;
+
+    public HEDamGui(InventoryPlayer inventoryPlayer, int waterId, HEControllerTileEntity controllerTileEntity) {
+        super(new HEDamContainer(inventoryPlayer, waterId, controllerTileEntity));
         xSize = 256;
         ySize = 176;
+        this.waterId = 0;  // TODO: waterId;
+        this.controllerTileEntity = controllerTileEntity;
     }
 
     @Override
@@ -75,33 +76,33 @@ public class HEDamGui extends GuiContainer {
         height = 20;
         changeWest = new GuiButton(id, pixelX, pixelY, width, height, "Change");
         buttonList.add(changeWest);
-        limitGuis[0] = new HELimitGui("Western limit (-X)", popupLeft, popupTop, 123);
+        limitGuis[0] = new HELimitGui("Western limit (-X)", popupLeft, popupTop, HEClient.limitsWest[waterId]);
 
         pixelY += 30;
         changeDown = new GuiButton(id, pixelX, pixelY, width, height, "Change");
         buttonList.add(changeDown);
-        limitGuis[1] = new HELimitGui("Lower limit (-Y)", popupLeft, popupTop, 234);
+        limitGuis[1] = new HELimitGui("Lower limit (-Y)", popupLeft, popupTop, HEClient.limitsDown[waterId]);
 
         pixelY += 30;
         changeNorth = new GuiButton(id, pixelX, pixelY, width, height, "Change");
         buttonList.add(changeNorth);
-        limitGuis[2] = new HELimitGui("Northern limit (-Z)", popupLeft, popupTop, 76);
+        limitGuis[2] = new HELimitGui("Northern limit (-Z)", popupLeft, popupTop, HEClient.limitsNorth[waterId]);
 
         pixelX = guiLeft + xSize - width - 10;
         pixelY = guiTop + 86;
         changeEast = new GuiButton(id, pixelX, pixelY, width, height, "Change");
         buttonList.add(changeEast);
-        limitGuis[3] = new HELimitGui("Eastern limit (+X)", popupLeft, popupTop, 123);
+        limitGuis[3] = new HELimitGui("Eastern limit (+X)", popupLeft, popupTop, HEClient.limitsEast[waterId]);
 
         pixelY += 30;
         changeUp = new GuiButton(id, pixelX, pixelY, width, height, "Change");
         buttonList.add(changeUp);
-        limitGuis[4] = new HELimitGui("Upper limit (+Y)", popupLeft, popupTop, 123);
+        limitGuis[4] = new HELimitGui("Upper limit (+Y)", popupLeft, popupTop, HEClient.limitsUp[waterId]);
 
         pixelY += 30;
         changeSouth = new GuiButton(id, pixelX, pixelY, width, height, "Change");
         buttonList.add(changeSouth);
-        limitGuis[5] = new HELimitGui("Southern limit (+Z)", popupLeft, popupTop, 123);
+        limitGuis[5] = new HELimitGui("Southern limit (+Z)", popupLeft, popupTop, HEClient.limitsSouth[waterId]);
 
         for(HELimitGui limitGui : limitGuis) {
             limitGui.init(0, buttonList);
@@ -134,8 +135,73 @@ public class HEDamGui extends GuiContainer {
         }
     }
 
+    private void updateValues() {
+        if(limitGuis[0].getValueChangedAndReset()) {
+            HE.network.sendToServer(new HEPacketConfigRequest(waterId,
+                    HEClient.debugStates[waterId],
+                    limitGuis[0].getValue(),
+                    HEClient.limitsDown[waterId],
+                    HEClient.limitsNorth[waterId],
+                    HEClient.limitsEast[waterId],
+                    HEClient.limitsUp[waterId],
+                    HEClient.limitsSouth[waterId]));
+        }
+        if(limitGuis[1].getValueChangedAndReset()) {
+            HE.network.sendToServer(new HEPacketConfigRequest(waterId,
+                    HEClient.debugStates[waterId],
+                    HEClient.limitsWest[waterId],
+                    limitGuis[1].getValue(),
+                    HEClient.limitsNorth[waterId],
+                    HEClient.limitsEast[waterId],
+                    HEClient.limitsUp[waterId],
+                    HEClient.limitsSouth[waterId]));
+        }
+        if(limitGuis[2].getValueChangedAndReset()) {
+            HE.network.sendToServer(new HEPacketConfigRequest(waterId,
+                    HEClient.debugStates[waterId],
+                    HEClient.limitsWest[waterId],
+                    HEClient.limitsDown[waterId],
+                    limitGuis[2].getValue(),
+                    HEClient.limitsEast[waterId],
+                    HEClient.limitsUp[waterId],
+                    HEClient.limitsSouth[waterId]));
+        }
+        if(limitGuis[3].getValueChangedAndReset()) {
+            HE.network.sendToServer(new HEPacketConfigRequest(waterId,
+                    HEClient.debugStates[waterId],
+                    HEClient.limitsWest[waterId],
+                    HEClient.limitsDown[waterId],
+                    HEClient.limitsNorth[waterId],
+                    limitGuis[3].getValue(),
+                    HEClient.limitsUp[waterId],
+                    HEClient.limitsSouth[waterId]));
+        }
+        if(limitGuis[4].getValueChangedAndReset()) {
+            HE.network.sendToServer(new HEPacketConfigRequest(waterId,
+                    HEClient.debugStates[waterId],
+                    HEClient.limitsWest[waterId],
+                    HEClient.limitsDown[waterId],
+                    HEClient.limitsNorth[waterId],
+                    HEClient.limitsEast[waterId],
+                    limitGuis[4].getValue(),
+                    HEClient.limitsSouth[waterId]));
+        }
+        if(limitGuis[5].getValueChangedAndReset()) {
+            HE.network.sendToServer(new HEPacketConfigRequest(waterId,
+                    HEClient.debugStates[waterId],
+                    HEClient.limitsWest[waterId],
+                    HEClient.limitsDown[waterId],
+                    HEClient.limitsNorth[waterId],
+                    HEClient.limitsEast[waterId],
+                    HEClient.limitsUp[waterId],
+                    limitGuis[5].getValue()));
+        }
+    }
+
     @Override
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
+        updateValues();
+
         Minecraft minecraft = Minecraft.getMinecraft();
         FontRenderer fontRenderer = minecraft.fontRenderer;
 
@@ -154,24 +220,26 @@ public class HEDamGui extends GuiContainer {
 
         {
             // Power info
+            int euStored = controllerTileEntity.getEnergyStored();
+            int euCapacity = controllerTileEntity.getEnergyCapacity();
+            float euRelative = ((float)euStored) / ((float)euCapacity);
+
             minecraft.getTextureManager().bindTexture(TextureMap.locationBlocksTexture);
             IIcon iconStill = FluidRegistry.WATER.getStillIcon();
             GL11.glColor4f(0.6f, 0.6f, 0.6f, 1.0f);
-            drawTexturedBar(guiLeft + 20, guiTop + 40, xSize - 40, 10, iconStill, 1.0f);
+            drawTexturedBar(guiLeft + 20, guiTop + 40, xSize - 40, 10, iconStill, euRelative);
 
-            int euStored = 1234567;
-            int euCapacity = 12030445;
             int slashWidth = fontRenderer.getStringWidth("/");
             int storedWidth = fontRenderer.getStringWidth("" + euStored + " EU ");
             fontRenderer.drawString("" + euStored + " EU / " + euCapacity + " EU", centerX - slashWidth / 2 - storedWidth, guiTop + 30, 0x000000);
 
-            float percentage = ((float)euStored) / ((float)euCapacity) * 100.0f;
+            float percentage = euRelative * 100.0f;
             String relativeInfo = String.format("%.2f", percentage) + "%";
             int relativeInfoWidth = fontRenderer.getStringWidth(relativeInfo);
             fontRenderer.drawString(relativeInfo, centerX - relativeInfoWidth / 2, guiTop + 42, 0xFFFFFF);
 
-            int euPerTickIn = 512;
-            int euPerTickOut = 423;
+            int euPerTickIn = controllerTileEntity.getEnergyPerTickIn();
+            int euPerTickOut = controllerTileEntity.getEnergyPerTickOut();
             String in = "IN: " + euPerTickIn + " EU/t";
             String out = "OUT: " + euPerTickOut + " EU/t";
             fontRenderer.drawString(in, guiLeft + 20, guiTop + 53, 0x000000);
@@ -227,12 +295,12 @@ public class HEDamGui extends GuiContainer {
             changeUp.drawButton(minecraft, mouseX, mouseY);
             changeSouth.drawButton(minecraft, mouseX, mouseY);
 
-            int limitWest = 456;
-            int limitDown = 64;
-            int limitNorth = -1234;
-            int limitEast = 4023;
-            int limitUp = 86;
-            int limitSouth = -1899;
+            int limitWest = HEClient.limitsWest[waterId];
+            int limitDown = HEClient.limitsDown[waterId];
+            int limitNorth = HEClient.limitsNorth[waterId];
+            int limitEast = HEClient.limitsEast[waterId];
+            int limitUp = HEClient.limitsUp[waterId];
+            int limitSouth = HEClient.limitsSouth[waterId];
 
             int constStringWidthHalf = fontRenderer.getStringWidth(" < X < ") / 2;
             fontRenderer.drawString(" < X < ", centerX - constStringWidthHalf, guiTop + 92, 0x000000);

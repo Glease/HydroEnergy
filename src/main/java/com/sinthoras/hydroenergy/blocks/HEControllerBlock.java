@@ -51,7 +51,7 @@ public class HEControllerBlock extends BlockContainer {
 			HEControllerTileEntity controllerTileEntity = (HEControllerTileEntity) tileEntity;
 			if(!player.isSneaking()) {
 				if (world.isRemote) {
-					Minecraft.getMinecraft().displayGuiScreen(new HEDamGui(player.inventory, controllerTileEntity.getWaterId()));
+					Minecraft.getMinecraft().displayGuiScreen(new HEDamGui(player.inventory, controllerTileEntity.getWaterId(), controllerTileEntity));
 				} else {
 					FMLNetworkHandler.openGui(player, HE.MODID, HEControllerTileEntity.guiId, controllerTileEntity.getWorldObj(), controllerTileEntity.xCoord, controllerTileEntity.yCoord, controllerTileEntity.zCoord);
 					return true;

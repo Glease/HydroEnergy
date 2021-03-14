@@ -45,6 +45,7 @@ public class HELimitGui extends Gui {
         this.originalValue = originalValue;
         this.currentValue = originalValue;
         this.visible = false;
+        this.valueChanged = false;
     }
 
     public void init(int id, List buttonList) {
@@ -117,7 +118,18 @@ public class HELimitGui extends Gui {
         setVisibility(false);
     }
 
+    public boolean getValueChangedAndReset() {
+        boolean tmp = valueChanged;
+        valueChanged = false;
+        return tmp;
+    }
+
+    public int getValue() {
+        return currentValue;
+    }
+
     public void show() {
+        textField.setText("" + originalValue);
         setVisibility(true);
     }
 
@@ -129,7 +141,7 @@ public class HELimitGui extends Gui {
 
     private void cancel() {
         setVisibility(false);
-        add(originalValue);
+        currentValue = originalValue;
     }
 
     private void setVisibility(boolean value) {
@@ -164,7 +176,6 @@ public class HELimitGui extends Gui {
     public boolean keyTyped(char c, int keyCode) {
         if(visible) {
             if (keyCode == 1 || keyCode == Minecraft.getMinecraft().gameSettings.keyBindInventory.getKeyCode()) {
-                currentValue = originalValue;
                 cancel();
             } else {
                 textField.textboxKeyTyped(c, keyCode);
@@ -207,6 +218,7 @@ public class HELimitGui extends Gui {
                 add(1000);
             }
         }
+        currentValue = textField.getValue();
     }
 
     public void draw(int mouseX, int mouseY) {
