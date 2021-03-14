@@ -1,6 +1,8 @@
 package com.sinthoras.hydroenergy.client.gui.widgets;
 
 import com.sinthoras.hydroenergy.client.HEClient;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
@@ -9,9 +11,15 @@ import net.minecraft.client.renderer.RenderHelper;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
+import java.awt.*;
 import java.util.List;
 
+@SideOnly(Side.CLIENT)
 public class HEWidgetModes extends Gui {
+
+    private static final Color nearBlack = new Color(16, 0, 16, 240);
+    private static final Color lightPurple = new Color(80, 0, 255, 80);
+    private static final Color darkPurple = new Color(40, 0, 127, 80);
 
     private int waterId;
     private int pixelX;
@@ -129,20 +137,20 @@ public class HEWidgetModes extends Gui {
         // Make sure the end does not leave the image
         mouseX -= Math.max(0, mouseX + stringWidth + 3 - rightMostPosition);
 
-        int color = 0xf0100010;
-        this.drawGradientRect(mouseX - 3, mouseY - 4, mouseX + stringWidth + 3, mouseY - 3, color, color);
-        this.drawGradientRect(mouseX - 3, mouseY + 11, mouseX + stringWidth + 3, mouseY + 12, color, color);
-        this.drawGradientRect(mouseX - 3, mouseY - 3, mouseX + stringWidth + 3, mouseY + 11, color, color);
-        this.drawGradientRect(mouseX - 4, mouseY - 3, mouseX - 3, mouseY + 11, color, color);
-        this.drawGradientRect(mouseX + stringWidth + 3, mouseY - 3, mouseX + stringWidth + 4, mouseY + 11, color, color);
-        int color1 = 0x505000ff;
-        int color2 = (color1 & 0xfefefe) >> 1 | color1 & 0xff000000 ;
-        this.drawGradientRect(mouseX - 3, mouseY - 2, mouseX - 2, mouseY + 10, color1, color2);
-        this.drawGradientRect(mouseX + stringWidth + 2, mouseY - 2, mouseX + stringWidth + 3, mouseY + 10, color1, color2);
-        this.drawGradientRect(mouseX - 3, mouseY - 3, mouseX + stringWidth + 3, mouseY - 2, color1, color1);
-        this.drawGradientRect(mouseX - 3, mouseY + 10, mouseX + stringWidth + 3, mouseY + 11, color2, color2);
+        this.drawGradientRect(mouseX - 3, mouseY - 4, mouseX + stringWidth + 3, mouseY - 3, nearBlack.getRGB(), nearBlack.getRGB());
+        this.drawGradientRect(mouseX - 3, mouseY + 11, mouseX + stringWidth + 3, mouseY + 12, nearBlack.getRGB(), nearBlack.getRGB());
+        this.drawGradientRect(mouseX - 3, mouseY - 3, mouseX + stringWidth + 3, mouseY + 11, nearBlack.getRGB(), nearBlack.getRGB());
+        this.drawGradientRect(mouseX - 4, mouseY - 3, mouseX - 3, mouseY + 11, nearBlack.getRGB(), nearBlack.getRGB());
+        this.drawGradientRect(mouseX + stringWidth + 3, mouseY - 3, mouseX + stringWidth + 4, mouseY + 11, nearBlack.getRGB(), nearBlack.getRGB());
+        this.drawGradientRect(mouseX - 3, mouseY - 2, mouseX - 2, mouseY + 10, lightPurple.getRGB(), darkPurple.getRGB());
+        this.drawGradientRect(mouseX + stringWidth + 2, mouseY - 2, mouseX + stringWidth + 3, mouseY + 10, lightPurple.getRGB(), darkPurple.getRGB());
+        this.drawGradientRect(mouseX - 3, mouseY - 3, mouseX + stringWidth + 3, mouseY - 2, lightPurple.getRGB(), lightPurple.getRGB());
+        this.drawGradientRect(mouseX - 3, mouseY + 10, mouseX + stringWidth + 3, mouseY + 11, darkPurple.getRGB(), darkPurple.getRGB());
 
-        fontRenderer.drawStringWithShadow(s, mouseX, mouseY, 0xffffffff);
+        fontRenderer.drawStringWithShadow(s, mouseX, mouseY, Color.BLACK.getRGB());
+
+        // Reset color
+        GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 
         GL11.glEnable(GL11.GL_LIGHTING);
         GL11.glEnable(GL11.GL_DEPTH_TEST);
