@@ -178,21 +178,21 @@ public class HEServer extends WorldSavedData {
 	}
 
 	public void spreadWater(int waterId) {
-		if(dams[waterId].removeWater) {
-			dams[waterId].removeWater = false;
+		if(dams[waterId].drainState) {
+			dams[waterId].drainState = false;
 			markDirty();
 		}
 	}
 
-	public void removeWater(int waterId) {
-		if(!dams[waterId].removeWater) {
-			dams[waterId].removeWater = true;
+	public void drainWater(int waterId) {
+		if(!dams[waterId].drainState) {
+			dams[waterId].drainState = true;
 			markDirty();
 		}
 	}
 
 	public boolean canSpread(int waterId) {
-		return dams[waterId].isPlaced() && !dams[waterId].removeWater;
+		return dams[waterId].isPlaced() && !dams[waterId].drainState;
 	}
 
 	public void synchronizeClient(PlayerLoggedInEvent event) {
@@ -200,6 +200,7 @@ public class HEServer extends WorldSavedData {
 		for(int waterId = 0; waterId< dams.length; waterId++) {
 			message.waterLevels[waterId] = dams[waterId].getWaterLevel();
 			message.debugStates[waterId] = dams[waterId].getDebugState();
+			message.drainStates[waterId] = dams[waterId].drainState;
 			message.limitsWest[waterId] = dams[waterId].limitWest;
 			message.limitsDown[waterId] = dams[waterId].limitDown;
 			message.limitsNorth[waterId] = dams[waterId].limitNorth;

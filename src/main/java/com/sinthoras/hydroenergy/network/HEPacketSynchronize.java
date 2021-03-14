@@ -12,6 +12,7 @@ public class HEPacketSynchronize implements IMessage {
 	
 	public float[] waterLevels = new float[HE.maxControllers];
 	public boolean[] debugStates = new boolean[HE.maxControllers];
+	public boolean[] drainStates = new boolean[HE.maxControllers];
 	public int[] limitsWest = new int[HE.maxControllers];
 	public int[] limitsDown = new int[HE.maxControllers];
 	public int[] limitsNorth = new int[HE.maxControllers];
@@ -24,6 +25,7 @@ public class HEPacketSynchronize implements IMessage {
 		int length = buf.readInt();
 		waterLevels = new float[length];
 		debugStates = new boolean[length];
+		drainStates = new boolean[length];
 		limitsWest = new int[length];
 		limitsDown = new int[length];
 		limitsNorth = new int[length];
@@ -33,6 +35,7 @@ public class HEPacketSynchronize implements IMessage {
 		for(int waterId=0;waterId<length;waterId++) {
 			waterLevels[waterId] = buf.readFloat();
 			debugStates[waterId] = buf.readBoolean();
+			drainStates[waterId] = buf.readBoolean();
 			limitsWest[waterId] = buf.readInt();
 			limitsDown[waterId] = buf.readInt();
 			limitsNorth[waterId] = buf.readInt();
@@ -48,6 +51,7 @@ public class HEPacketSynchronize implements IMessage {
 		for(int waterId = 0; waterId< HE.maxControllers; waterId++) {
 			buf.writeFloat(waterLevels[waterId]);
 			buf.writeBoolean(debugStates[waterId]);
+			buf.writeBoolean(drainStates[waterId]);
 			buf.writeInt(limitsWest[waterId]);
 			buf.writeInt(limitsDown[waterId]);
 			buf.writeInt(limitsNorth[waterId]);
@@ -62,6 +66,7 @@ public class HEPacketSynchronize implements IMessage {
 		@Override
 		public IMessage onMessage(HEPacketSynchronize message, MessageContext ctx) {
 			HEClient.onSynchronize(message.waterLevels,
+					message.drainStates,
 					message.debugStates,
 					message.limitsWest,
 					message.limitsDown,

@@ -11,7 +11,7 @@ public class HEDam {
 	
 	public class Tags {
 		public static final String waterLevel = "walv";
-		public static final String removeWater = "remW";
+		public static final String drainState = "drai";
 		public static final String isPlaced = "isPl";
 		public static final String limitUp = "limU";
 		public static final String limitDown = "limD";
@@ -27,7 +27,7 @@ public class HEDam {
 
 	// NBT variables
 	private float waterLevel;
-	public boolean removeWater;
+	public boolean drainState;
 	private boolean isPlaced;
 	public int limitUp;
 	public int limitDown;
@@ -51,7 +51,7 @@ public class HEDam {
 
 	public void readFromNBTFull(NBTTagCompound compound) {
 		waterLevel = compound.getFloat(Tags.waterLevel);
-		removeWater = compound.getBoolean(Tags.removeWater);
+		drainState = compound.getBoolean(Tags.drainState);
 		isPlaced = compound.getBoolean(Tags.isPlaced);
 		limitUp = compound.getInteger(Tags.limitUp);
 		limitDown = compound.getInteger(Tags.limitDown);
@@ -67,7 +67,7 @@ public class HEDam {
 	
 	public void writeToNBTFull(NBTTagCompound compound)	{
 		compound.setFloat(Tags.waterLevel, waterLevel);
-		compound.setBoolean(Tags.removeWater, removeWater);
+		compound.setBoolean(Tags.drainState, drainState);
 		compound.setBoolean(Tags.isPlaced, isPlaced);
 		compound.setInteger(Tags.limitUp, limitUp);
 		compound.setInteger(Tags.limitDown, limitDown);
@@ -186,7 +186,7 @@ public class HEDam {
 	}
 
 	public void sendConfigUpdate() {
-		HEPacketConfigUpdate message = new HEPacketConfigUpdate(waterId, !isPlaced || debugState, limitWest, limitDown, limitNorth, limitEast, limitUp, limitSouth);
+		HEPacketConfigUpdate message = new HEPacketConfigUpdate(waterId, !isPlaced || debugState, drainState, limitWest, limitDown, limitNorth, limitEast, limitUp, limitSouth);
 		HE.network.sendToAll(message);
 	}
 	
@@ -196,7 +196,7 @@ public class HEDam {
 	}
 	
 	public void placeController(int blockX, int blockY, int blockZ) {
-		removeWater = false;
+		drainState = false;
 		isPlaced = true;
 		debugState = true;
 		limitEast = blockX + 200;
