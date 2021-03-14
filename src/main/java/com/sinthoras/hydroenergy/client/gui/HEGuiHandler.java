@@ -14,7 +14,7 @@ public class HEGuiHandler implements IGuiHandler {
         if(id == 0) {
             TileEntity tileEntity = world.getTileEntity(blockX, blockY, blockZ);
             if (tileEntity instanceof HEControllerTileEntity) {
-                return new HEDamContainer(entityPlayer.inventory, ((HEControllerTileEntity)tileEntity).getWaterId(), (HEControllerTileEntity)tileEntity);
+                return new HEDamContainer(entityPlayer.inventory, (HEControllerTileEntity)tileEntity);
             }
         }
         return null;
@@ -26,7 +26,7 @@ public class HEGuiHandler implements IGuiHandler {
             if(id == 0) {
                 TileEntity tileEntity = world.getTileEntity(blockX, blockY, blockZ);
                 if (tileEntity instanceof HEControllerTileEntity) {
-                    return new HEDamGui(entityPlayer.inventory, HEClient.getWaterId(blockX, blockY, blockZ), (HEControllerTileEntity)tileEntity);
+                    return new HEDamGui(entityPlayer.inventory, (HEControllerTileEntity)tileEntity);
                 }
             }
         }

@@ -41,11 +41,11 @@ public class HEDamGui extends GuiContainer {
     private int waterId;
     private HEControllerTileEntity controllerTileEntity;
 
-    public HEDamGui(InventoryPlayer inventoryPlayer, int waterId, HEControllerTileEntity controllerTileEntity) {
-        super(new HEDamContainer(inventoryPlayer, waterId, controllerTileEntity));
+    public HEDamGui(InventoryPlayer inventoryPlayer, HEControllerTileEntity controllerTileEntity) {
+        super(new HEDamContainer(inventoryPlayer, controllerTileEntity));
         xSize = 256;
         ySize = 176;
-        this.waterId = waterId;
+        this.waterId = controllerTileEntity.getWaterId();
         this.controllerTileEntity = controllerTileEntity;
     }
 

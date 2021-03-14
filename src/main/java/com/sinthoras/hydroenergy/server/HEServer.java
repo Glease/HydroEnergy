@@ -220,4 +220,13 @@ public class HEServer extends WorldSavedData {
 		}
 		dams[waterId].onConfigRequest(debugState, drainState, limitWest, limitDown, limitNorth, limitEast, limitUp, limitSouth);
 	}
+
+	public int getWaterId(int blockX, int blockY, int blockZ) {
+		for(int waterId=0;waterId<HE.maxControllers;waterId++) {
+			if(blockX == dams[waterId].getBlockX() && blockY == dams[waterId].getBlockY() && blockZ == dams[waterId].getBlockZ()) {
+				return waterId;
+			}
+		}
+		return -1;
+	}
 }

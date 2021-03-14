@@ -7,7 +7,7 @@ import net.minecraft.inventory.Container;
 
 public class HEDamContainer extends Container {
 
-    public HEDamContainer(InventoryPlayer inventoryPlayer, int waterId, HEControllerTileEntity controllerTileEntity) {
+    public HEDamContainer(InventoryPlayer inventoryPlayer, HEControllerTileEntity controllerTileEntity) {
 
     }
 
