@@ -4,7 +4,6 @@ import com.sinthoras.hydroenergy.HE;
 import com.sinthoras.hydroenergy.blocks.HEControllerTileEntity;
 import com.sinthoras.hydroenergy.client.HEClient;
 import com.sinthoras.hydroenergy.client.gui.widgets.HEWidgetModes;
-import com.sinthoras.hydroenergy.network.HEPacketConfigRequest;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;
@@ -46,7 +45,7 @@ public class HEDamGui extends GuiContainer {
         super(new HEDamContainer(inventoryPlayer, waterId, controllerTileEntity));
         xSize = 256;
         ySize = 176;
-        this.waterId = 0;  // TODO: waterId;
+        this.waterId = waterId;
         this.controllerTileEntity = controllerTileEntity;
     }
 

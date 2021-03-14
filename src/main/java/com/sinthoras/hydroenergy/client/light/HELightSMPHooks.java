@@ -1,6 +1,5 @@
 package com.sinthoras.hydroenergy.client.light;
 
-import com.sinthoras.hydroenergy.HEUtil;
 import net.minecraft.block.Block;
 import net.minecraft.world.World;
 

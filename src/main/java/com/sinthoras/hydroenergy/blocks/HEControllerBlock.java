@@ -2,14 +2,12 @@ package com.sinthoras.hydroenergy.blocks;
 
 import com.sinthoras.hydroenergy.HE;
 
-import com.sinthoras.hydroenergy.client.gui.HEDamGui;
 import com.sinthoras.hydroenergy.server.HEBlockQueue;
 import com.sinthoras.hydroenergy.server.HEServer;
 import cpw.mods.fml.common.network.internal.FMLNetworkHandler;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.Minecraft;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
@@ -50,9 +48,7 @@ public class HEControllerBlock extends BlockContainer {
 		if(tileEntity instanceof HEControllerTileEntity) {
 			HEControllerTileEntity controllerTileEntity = (HEControllerTileEntity) tileEntity;
 			if(!player.isSneaking()) {
-				if (world.isRemote) {
-					Minecraft.getMinecraft().displayGuiScreen(new HEDamGui(player.inventory, controllerTileEntity.getWaterId(), controllerTileEntity));
-				} else {
+				if (!world.isRemote) {
 					FMLNetworkHandler.openGui(player, HE.MODID, HEControllerTileEntity.guiId, controllerTileEntity.getWorldObj(), controllerTileEntity.xCoord, controllerTileEntity.yCoord, controllerTileEntity.zCoord);
 					return true;
 				}
