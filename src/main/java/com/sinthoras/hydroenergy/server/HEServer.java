@@ -211,10 +211,10 @@ public class HEServer extends WorldSavedData {
 		HE.network.sendTo(message, (EntityPlayerMP) event.player);
 	}
 
-	public void onConfigRequest(int waterId, boolean debugState, int limitWest, int limitDown, int limitNorth, int limitEast, int limitUp, int limitSouth) {
+	public void onConfigRequest(int waterId, boolean debugState, boolean drainState, int limitWest, int limitDown, int limitNorth, int limitEast, int limitUp, int limitSouth) {
 		if(waterId < 0 || waterId >= HE.maxControllers) {
 			return;
 		}
-		dams[waterId].onConfigRequest(debugState, limitWest, limitDown, limitNorth, limitEast, limitUp, limitSouth);
+		dams[waterId].onConfigRequest(debugState, drainState, limitWest, limitDown, limitNorth, limitEast, limitUp, limitSouth);
 	}
 }

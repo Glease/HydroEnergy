@@ -2,6 +2,7 @@ package com.sinthoras.hydroenergy.client;
 
 import com.sinthoras.hydroenergy.HE;
 import com.sinthoras.hydroenergy.client.light.HELightManager;
+import com.sinthoras.hydroenergy.network.HEPacketConfigRequest;
 
 public class HEClient {
 	
@@ -78,6 +79,18 @@ public class HEClient {
 		HEClient.limitsEast = limitsEast;
 		HEClient.limitsUp = limitsUp;
 		HEClient.limitsSouth = limitsSouth;
+	}
+
+	public static void configRequest(int waterId) {
+		HE.network.sendToServer(new HEPacketConfigRequest(waterId,
+				HEClient.debugStates[waterId],
+				HEClient.drainStates[waterId],
+				HEClient.limitsWest[waterId],
+				HEClient.limitsDown[waterId],
+				HEClient.limitsNorth[waterId],
+				HEClient.limitsEast[waterId],
+				HEClient.limitsUp[waterId],
+				HEClient.limitsSouth[waterId]));
 	}
 
 	// TODO: required?

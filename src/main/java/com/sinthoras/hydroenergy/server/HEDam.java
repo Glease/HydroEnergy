@@ -250,7 +250,7 @@ public class HEDam {
 		return blockZ;
 	}
 
-	public void onConfigRequest(boolean debugState, int limitWest, int limitDown, int limitNorth, int limitEast, int limitUp, int limitSouth) {
+	public void onConfigRequest(boolean debugState, boolean drainState, int limitWest, int limitDown, int limitNorth, int limitEast, int limitUp, int limitSouth) {
 		// Clap change requests to server limits before processing
 		limitWest = blockX - HEUtil.clamp(blockX - limitWest, 0, HE.maxWaterSpreadWest);
 		limitDown = blockY - HEUtil.clamp(blockY - limitDown, 0, HE.maxWaterSpreadDown);
@@ -261,6 +261,8 @@ public class HEDam {
 
 		if(this.limitWest != limitWest || this.limitDown != limitDown || this.limitNorth != limitNorth
 				|| this.limitEast != limitEast || this.limitUp != limitUp || limitSouth != limitSouth) {
+			this.debugState = debugState;
+			this.drainState = drainState;
 			this.limitWest = limitWest;
 			this.limitDown = limitDown;
 			this.limitNorth = limitNorth;

@@ -3,6 +3,7 @@ package com.sinthoras.hydroenergy.client.gui;
 import com.sinthoras.hydroenergy.HE;
 import com.sinthoras.hydroenergy.blocks.HEControllerTileEntity;
 import com.sinthoras.hydroenergy.client.HEClient;
+import com.sinthoras.hydroenergy.client.gui.widgets.HEWidgetModes;
 import com.sinthoras.hydroenergy.network.HEPacketConfigRequest;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -21,7 +22,9 @@ import org.lwjgl.opengl.GL11;
 @SideOnly(Side.CLIENT)
 public class HEDamGui extends GuiContainer {
 
-    private static final ResourceLocation backgroundTextureLocation = new ResourceLocation(HE.MODID, HE.damBackgroundLocation);
+    public static final ResourceLocation backgroundTextureLocation = new ResourceLocation(HE.MODID, HE.damBackgroundLocation);
+
+    private HEWidgetModes widgetModes;
 
     private GuiTextField textField;
     private GuiButton changeWest;
@@ -104,6 +107,9 @@ public class HEDamGui extends GuiContainer {
         buttonList.add(changeSouth);
         limitGuis[5] = new HELimitGui("Southern limit (+Z)", popupLeft, popupTop, HEClient.limitsSouth[waterId]);
 
+        widgetModes = new HEWidgetModes(waterId, guiLeft + xSize - 75, guiTop + 5);
+        widgetModes.init(buttonList);
+
         for(HELimitGui limitGui : limitGuis) {
             limitGui.init(0, buttonList);
         }
@@ -113,88 +119,59 @@ public class HEDamGui extends GuiContainer {
     protected void actionPerformed(final GuiButton button)
     {
         if(button == changeWest) {
+            widgetModes.setEnabled(false);
             limitGuis[0].show();
         }
         else if(button == changeDown) {
+            widgetModes.setEnabled(false);
             limitGuis[1].show();
         }
         else if(button == changeNorth) {
+            widgetModes.setEnabled(false);
             limitGuis[2].show();
         }
         else if(button == changeEast) {
+            widgetModes.setEnabled(false);
             limitGuis[3].show();
         }
         else if(button == changeUp) {
+            widgetModes.setEnabled(false);
             limitGuis[4].show();
         }
         else if(button == changeSouth) {
+            widgetModes.setEnabled(false);
             limitGuis[5].show();
         }
         for(HELimitGui limitGui : limitGuis) {
             limitGui.actionPerformed(button);
         }
+        widgetModes.actionPerformed(button);
     }
 
     private void updateValues() {
         if(limitGuis[0].getValueChangedAndReset()) {
-            HE.network.sendToServer(new HEPacketConfigRequest(waterId,
-                    HEClient.debugStates[waterId],
-                    limitGuis[0].getValue(),
-                    HEClient.limitsDown[waterId],
-                    HEClient.limitsNorth[waterId],
-                    HEClient.limitsEast[waterId],
-                    HEClient.limitsUp[waterId],
-                    HEClient.limitsSouth[waterId]));
+            HEClient.limitsWest[waterId] = limitGuis[0].getValue();
+            HEClient.configRequest(waterId);
         }
         if(limitGuis[1].getValueChangedAndReset()) {
-            HE.network.sendToServer(new HEPacketConfigRequest(waterId,
-                    HEClient.debugStates[waterId],
-                    HEClient.limitsWest[waterId],
-                    limitGuis[1].getValue(),
-                    HEClient.limitsNorth[waterId],
-                    HEClient.limitsEast[waterId],
-                    HEClient.limitsUp[waterId],
-                    HEClient.limitsSouth[waterId]));
+            HEClient.limitsDown[waterId] = limitGuis[1].getValue();
+            HEClient.configRequest(waterId);
         }
         if(limitGuis[2].getValueChangedAndReset()) {
-            HE.network.sendToServer(new HEPacketConfigRequest(waterId,
-                    HEClient.debugStates[waterId],
-                    HEClient.limitsWest[waterId],
-                    HEClient.limitsDown[waterId],
-                    limitGuis[2].getValue(),
-                    HEClient.limitsEast[waterId],
-                    HEClient.limitsUp[waterId],
-                    HEClient.limitsSouth[waterId]));
+            HEClient.limitsNorth[waterId] = limitGuis[2].getValue();
+            HEClient.configRequest(waterId);
         }
         if(limitGuis[3].getValueChangedAndReset()) {
-            HE.network.sendToServer(new HEPacketConfigRequest(waterId,
-                    HEClient.debugStates[waterId],
-                    HEClient.limitsWest[waterId],
-                    HEClient.limitsDown[waterId],
-                    HEClient.limitsNorth[waterId],
-                    limitGuis[3].getValue(),
-                    HEClient.limitsUp[waterId],
-                    HEClient.limitsSouth[waterId]));
+            HEClient.limitsEast[waterId] = limitGuis[3].getValue();
+            HEClient.configRequest(waterId);
         }
         if(limitGuis[4].getValueChangedAndReset()) {
-            HE.network.sendToServer(new HEPacketConfigRequest(waterId,
-                    HEClient.debugStates[waterId],
-                    HEClient.limitsWest[waterId],
-                    HEClient.limitsDown[waterId],
-                    HEClient.limitsNorth[waterId],
-                    HEClient.limitsEast[waterId],
-                    limitGuis[4].getValue(),
-                    HEClient.limitsSouth[waterId]));
+            HEClient.limitsUp[waterId] = limitGuis[4].getValue();
+            HEClient.configRequest(waterId);
         }
         if(limitGuis[5].getValueChangedAndReset()) {
-            HE.network.sendToServer(new HEPacketConfigRequest(waterId,
-                    HEClient.debugStates[waterId],
-                    HEClient.limitsWest[waterId],
-                    HEClient.limitsDown[waterId],
-                    HEClient.limitsNorth[waterId],
-                    HEClient.limitsEast[waterId],
-                    HEClient.limitsUp[waterId],
-                    limitGuis[5].getValue()));
+            HEClient.limitsSouth[waterId] = limitGuis[5].getValue();
+            HEClient.configRequest(waterId);
         }
     }
 
@@ -211,11 +188,13 @@ public class HEDamGui extends GuiContainer {
 
         {
             // Title
-            int constStringWidthHalf = fontRenderer.getStringWidth("Hydroelectric Power Station") / 2;
-            fontRenderer.drawString("Hydroelectric Power Station", centerX - constStringWidthHalf, guiTop + 6, 0x000000);
+            fontRenderer.drawString("Hydroelectric Power Station", guiLeft + 15, guiTop + 6, 0x000000);
 
             // Reset color
             GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+
+            // Draw title bar buttons if popup is open
+            widgetModes.draw(minecraft, mouseX, mouseY);
         }
 
         {
@@ -253,6 +232,7 @@ public class HEDamGui extends GuiContainer {
         {
             // Disable buttons if a popup is open and render them before the popup is rendered
             boolean enableElements = !isAnyLimitGuiOpen();
+            widgetModes.setEnabled(enableElements);
             changeWest.enabled = enableElements;
             changeDown.enabled = enableElements;
             changeNorth.enabled = enableElements;
@@ -342,7 +322,7 @@ public class HEDamGui extends GuiContainer {
 
     @Override
     protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
-
+        widgetModes.drawTooltip(Minecraft.getMinecraft().fontRenderer, mouseX - guiLeft, mouseY - guiTop, mouseX, mouseY, width - guiLeft);
     }
 
     @Override

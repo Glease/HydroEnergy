@@ -10,6 +10,7 @@ public class HEPacketConfigRequest implements IMessage {
 
     public int waterId;
     public boolean debugState;
+    public boolean drainState;
     public int limitWest;
     public int limitDown;
     public int limitNorth;
@@ -17,9 +18,10 @@ public class HEPacketConfigRequest implements IMessage {
     public int limitUp;
     public int limitSouth;
 
-    public HEPacketConfigRequest(int waterId, boolean debugState, int limitWest, int limitDown, int limitNorth, int limitEast, int limitUp, int limitSouth) {
+    public HEPacketConfigRequest(int waterId, boolean debugState, boolean drainState, int limitWest, int limitDown, int limitNorth, int limitEast, int limitUp, int limitSouth) {
         this.waterId = waterId;
         this.debugState = debugState;
+        this.drainState = drainState;
         this.limitWest = limitWest;
         this.limitDown = limitDown;
         this.limitNorth = limitNorth;
@@ -36,6 +38,7 @@ public class HEPacketConfigRequest implements IMessage {
     public void fromBytes(ByteBuf buf) {
         waterId = buf.readInt();
         debugState = buf.readBoolean();
+        drainState = buf.readBoolean();
         limitWest = buf.readInt();
         limitDown = buf.readInt();
         limitNorth = buf.readInt();
@@ -48,6 +51,7 @@ public class HEPacketConfigRequest implements IMessage {
     public void toBytes(ByteBuf buf) {
         buf.writeInt(waterId);
         buf.writeBoolean(debugState);
+        buf.writeBoolean(drainState);
         buf.writeInt(limitWest);
         buf.writeInt(limitDown);
         buf.writeInt(limitNorth);
@@ -62,6 +66,7 @@ public class HEPacketConfigRequest implements IMessage {
         public IMessage onMessage(HEPacketConfigRequest message, MessageContext ctx) {
             HEServer.instance.onConfigRequest(message.waterId,
                     message.debugState,
+                    message.drainState,
                     message.limitWest,
                     message.limitDown,
                     message.limitNorth,
