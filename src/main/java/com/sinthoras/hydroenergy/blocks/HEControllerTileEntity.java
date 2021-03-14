@@ -10,6 +10,10 @@ public class HEControllerTileEntity extends TileEntity {
 
 	public static final int guiId = 0;
 
+	public static class Tags {
+		public static final String waterId = "waId";
+	}
+
 	private int waterId = -1;
 	
 	private static float min = 2.3f;
@@ -65,17 +69,14 @@ public class HEControllerTileEntity extends TileEntity {
     public void writeToNBT(NBTTagCompound compound) {
         super.writeToNBT(compound);
 
-        //TODO save stuff
-        compound.setInteger("ID", waterId);
-        HE.LOG.info("SAVED");
+        compound.setInteger(Tags.waterId, waterId);
 	}
 	
 	@Override
     public void readFromNBT(NBTTagCompound compound) {
         super.readFromNBT(compound);
         
-        waterId = compound.getInteger("ID");
-        HE.LOG.info("LOADED");
+        waterId = compound.getInteger(Tags.waterId);
 	}
 	
 	public void onRemoveTileEntity() {
