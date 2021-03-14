@@ -9,7 +9,10 @@ import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 import io.netty.buffer.ByteBuf;
 
 public class HEPacketSynchronize implements IMessage {
-	
+
+	public int[] blocksX = new int[HE.maxControllers];
+	public int[] blocksY = new int[HE.maxControllers];
+	public int[] blocksZ = new int[HE.maxControllers];
 	public float[] waterLevels = new float[HE.maxControllers];
 	public boolean[] debugStates = new boolean[HE.maxControllers];
 	public boolean[] drainStates = new boolean[HE.maxControllers];
@@ -23,6 +26,9 @@ public class HEPacketSynchronize implements IMessage {
 	@Override
 	public void fromBytes(ByteBuf buf) {
 		int length = buf.readInt();
+		blocksX = new int[length];
+		blocksY = new int[length];
+		blocksZ = new int[length];
 		waterLevels = new float[length];
 		debugStates = new boolean[length];
 		drainStates = new boolean[length];
@@ -33,6 +39,9 @@ public class HEPacketSynchronize implements IMessage {
 		limitsUp = new int[length];
 		limitsSouth = new int[length];
 		for(int waterId=0;waterId<length;waterId++) {
+			blocksX[waterId] = buf.readInt();
+			blocksY[waterId] = buf.readInt();
+			blocksZ[waterId] = buf.readInt();
 			waterLevels[waterId] = buf.readFloat();
 			debugStates[waterId] = buf.readBoolean();
 			drainStates[waterId] = buf.readBoolean();
@@ -49,6 +58,9 @@ public class HEPacketSynchronize implements IMessage {
 	public void toBytes(ByteBuf buf) {
 		buf.writeInt(HE.maxControllers);
 		for(int waterId = 0; waterId< HE.maxControllers; waterId++) {
+			buf.writeInt(blocksX[waterId]);
+			buf.writeInt(blocksY[waterId]);
+			buf.writeInt(blocksZ[waterId]);
 			buf.writeFloat(waterLevels[waterId]);
 			buf.writeBoolean(debugStates[waterId]);
 			buf.writeBoolean(drainStates[waterId]);
@@ -65,7 +77,10 @@ public class HEPacketSynchronize implements IMessage {
 
 		@Override
 		public IMessage onMessage(HEPacketSynchronize message, MessageContext ctx) {
-			HEClient.onSynchronize(message.waterLevels,
+			HEClient.onSynchronize(message.blocksX,
+					message.blocksY,
+					message.blocksZ,
+					message.waterLevels,
 					message.drainStates,
 					message.debugStates,
 					message.limitsWest,

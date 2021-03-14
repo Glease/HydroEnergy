@@ -198,6 +198,9 @@ public class HEServer extends WorldSavedData {
 	public void synchronizeClient(PlayerLoggedInEvent event) {
 		HEPacketSynchronize message = new HEPacketSynchronize();
 		for(int waterId = 0; waterId< dams.length; waterId++) {
+			message.blocksX[waterId] = dams[waterId].getBlockX();
+			message.blocksY[waterId] = dams[waterId].getBlockY();
+			message.blocksZ[waterId] = dams[waterId].getBlockZ();
 			message.waterLevels[waterId] = dams[waterId].getWaterLevel();
 			message.debugStates[waterId] = dams[waterId].getDebugState();
 			message.drainStates[waterId] = dams[waterId].drainState;
