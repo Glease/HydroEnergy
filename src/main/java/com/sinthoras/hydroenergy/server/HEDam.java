@@ -198,9 +198,9 @@ public class HEDam {
 	}
 	
 	public void placeController(int blockX, int blockY, int blockZ) {
-		drainState = false;
 		isPlaced = true;
 		debugState = true;
+		drainState = false;
 		limitEast = blockX + 200;
 		limitWest = blockX - 200;
 		limitUp = blockY+32;
@@ -261,8 +261,9 @@ public class HEDam {
 		limitUp = blockY + HEUtil.clamp(limitUp - blockY, 0, HE.maxWaterSpreadUp);
 		limitSouth = blockZ + HEUtil.clamp(limitSouth - blockZ, 0, HE.maxWaterSpreadSouth);
 
-		if(this.limitWest != limitWest || this.limitDown != limitDown || this.limitNorth != limitNorth
-				|| this.limitEast != limitEast || this.limitUp != limitUp || limitSouth != limitSouth) {
+		if(this.debugState != debugState || this.drainState != drainState
+				|| this.limitWest != limitWest || this.limitDown != limitDown || this.limitNorth != limitNorth
+				|| this.limitEast != limitEast || this.limitUp != limitUp || this.limitSouth != limitSouth) {
 			this.debugState = debugState;
 			this.drainState = drainState;
 			this.limitWest = limitWest;

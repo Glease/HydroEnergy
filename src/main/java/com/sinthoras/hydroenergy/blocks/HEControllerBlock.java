@@ -56,6 +56,12 @@ public class HEControllerBlock extends BlockContainer {
 		}
 		return false;
 	}
+
+	@Override
+	public void onNeighborBlockChange(World world, int blockX, int blockY, int blockZ, Block block) {
+		HEControllerTileEntity controllerEntity = (HEControllerTileEntity)world.getTileEntity(blockX, blockY, blockZ);
+		HEBlockQueue.enqueueBlock(blockX + 1, blockY, blockZ, controllerEntity.getWaterId());
+	}
 	
 	@Override
 	public void breakBlock(World world, int blockX, int blockY, int blockZ, Block block, int metaData) {
@@ -65,7 +71,7 @@ public class HEControllerBlock extends BlockContainer {
 	
 	@Override
 	public void onBlockAdded(World world, int blockX, int blockY, int blockZ) {
-		HEControllerTileEntity controllerEntity = (HEControllerTileEntity)world.getTileEntity(blockX, blockY, blockZ);
-		HEBlockQueue.enqueueBlock(blockX + 1, blockY, blockZ, controllerEntity.getWaterId());
+		int id  = HEServer.instance.onPlacecontroller(blockX, blockY, blockZ);
+		HEBlockQueue.enqueueBlock(blockX + 1, blockY, blockZ, id);
 	}
 }
