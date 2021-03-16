@@ -187,7 +187,7 @@ public class HEDam {
 
 	public void sendConfigUpdate() {
 		HEPacketConfigUpdate message = new HEPacketConfigUpdate(waterId, blockX, blockY, blockZ,
-				!isPlaced || debugState, drainState, limitWest, limitDown, limitNorth,
+				!isPlaced || debugState || drainState, drainState, limitWest, limitDown, limitNorth,
 				limitEast, limitUp, limitSouth);
 		HE.network.sendToAll(message);
 	}

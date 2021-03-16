@@ -52,25 +52,16 @@ public class HEWidgetModes extends Gui {
             HEClient.drainStates[waterId] = true;
             HEClient.debugStates[waterId] = true;
             HEClient.configRequest(waterId);
-            buttonDrain.enabled = true;
-            buttonDebug.enabled = false;
-            buttonWater.enabled = false;
         }
         else if(button == buttonDebug) {
             HEClient.drainStates[waterId] = false;
             HEClient.debugStates[waterId] = true;
             HEClient.configRequest(waterId);
-            buttonDrain.enabled = false;
-            buttonDebug.enabled = true;
-            buttonWater.enabled = false;
         }
         else if(button == buttonWater) {
             HEClient.drainStates[waterId] = false;
             HEClient.debugStates[waterId] = false;
             HEClient.configRequest(waterId);
-            buttonDrain.enabled = false;
-            buttonDebug.enabled = false;
-            buttonWater.enabled = true;
         }
     }
 
