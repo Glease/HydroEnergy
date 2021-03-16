@@ -147,7 +147,7 @@ public class HEWidgetModes extends Gui {
         this.drawGradientRect(mouseX - 3, mouseY - 3, mouseX + stringWidth + 3, mouseY - 2, lightPurple.getRGB(), lightPurple.getRGB());
         this.drawGradientRect(mouseX - 3, mouseY + 10, mouseX + stringWidth + 3, mouseY + 11, darkPurple.getRGB(), darkPurple.getRGB());
 
-        fontRenderer.drawStringWithShadow(s, mouseX, mouseY, Color.BLACK.getRGB());
+        fontRenderer.drawStringWithShadow(s, mouseX, mouseY, Color.WHITE.getRGB());
 
         // Reset color
         GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
