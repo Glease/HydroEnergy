@@ -1,8 +1,11 @@
 package com.sinthoras.hydroenergy.client.gui;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiTextField;
 
+@SideOnly(Side.CLIENT)
 public class HENumberInput extends GuiTextField {
     public HENumberInput(FontRenderer fontRenderer, int pixelX, int pixelY, int pixelWidth, int pixelHeight) {
         super(fontRenderer, pixelX, pixelY, pixelWidth, pixelHeight);

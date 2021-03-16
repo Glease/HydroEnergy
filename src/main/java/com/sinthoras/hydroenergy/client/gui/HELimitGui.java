@@ -1,6 +1,8 @@
 package com.sinthoras.hydroenergy.client.gui;
 
 import com.sinthoras.hydroenergy.HE;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiButton;
@@ -8,6 +10,7 @@ import net.minecraft.util.ResourceLocation;
 
 import java.util.List;
 
+@SideOnly(Side.CLIENT)
 public class HELimitGui extends Gui {
 
     private static ResourceLocation limitBackgroundTextureLocation = new ResourceLocation(HE.MODID, HE.damLimitBackgroundLocation);

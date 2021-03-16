@@ -1,6 +1,8 @@
 package com.sinthoras.hydroenergy.client.gui.widgets;
 
 import com.sinthoras.hydroenergy.blocks.HEControllerTileEntity;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
@@ -11,6 +13,7 @@ import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
 
+@SideOnly(Side.CLIENT)
 public class HEWidgetPowerInfo extends Gui {
 
     private HEControllerTileEntity controllerTileEntity;
