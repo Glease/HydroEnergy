@@ -92,6 +92,16 @@ public class HELightManager {
                     HELightChunk chunk = chunks.get(key);
                     int chunkX = (int)(key >> 32);
                     int chunkZ = (int)key;
+
+                    long keyWest = HEUtil.chunkCoordsToKey(chunkX - 1, chunkZ);
+                    long keyNorth = HEUtil.chunkCoordsToKey(chunkX, chunkZ - 1);
+                    long keyEast = HEUtil.chunkCoordsToKey(chunkX + 1, chunkZ);
+                    long keySouth = HEUtil.chunkCoordsToKey(chunkX, chunkZ + 1);
+                    HELightChunk neighborChunkWest = chunks.get(keyWest);
+                    HELightChunk neighborChunkNorth = chunks.get(keyNorth);
+                    HELightChunk neighborChunkEast = chunks.get(keyEast);
+                    HELightChunk neighborChunkSouth = chunks.get(keySouth);
+
                     for(int chunkY=0;chunkY<chunk.requiresPatching.length;chunkY++) {
                         if(chunk.subChunkHasWaterFlags[chunkY]) {
                             chunk.requiresPatching[chunkY] = true;
@@ -99,6 +109,22 @@ public class HELightManager {
                             int blockY = HEUtil.coordChunkToBlock(chunkY);
                             int blockZ = HEUtil.coordChunkToBlock(chunkZ);
                             renderGlobal.markBlocksForUpdate(blockX, blockY, blockZ, blockX + 15, blockY + 15, blockZ + 15);
+
+                            // Handle neighbors that don't have water, but touch it
+                            // Technically, a chunk like this could be surrounded by chunks with water and receive multiple
+                            // updates, but this scenario is rather unlikely and therefore, not worth checking for.
+                            if(neighborChunkWest == null && chunk.neighborRequiresPatchingWest[chunkY]) {
+                                renderGlobal.markBlocksForUpdate(blockX - 16, blockY, blockZ, blockX - 1, blockY + 15, blockZ + 15);
+                            }
+                            if(neighborChunkNorth == null && chunk.neighborRequiresPatchingNorth[chunkY]) {
+                                renderGlobal.markBlocksForUpdate(blockX, blockY, blockZ - 16, blockX + 15, blockY + 15, blockZ - 1);
+                            }
+                            if(neighborChunkEast == null && chunk.neighborRequiresPatchingEast[chunkY]) {
+                                renderGlobal.markBlocksForUpdate(blockX + 16, blockY, blockZ, blockX + 31, blockY + 15, blockZ + 15);
+                            }
+                            if(neighborChunkSouth == null && chunk.neighborRequiresPatchingSouth[chunkY]) {
+                                renderGlobal.markBlocksForUpdate(blockX, blockY, blockZ + 16, blockX + 15, blockY + 15, blockZ + 31);
+                            }
                         }
                     }
 
@@ -115,6 +141,10 @@ class HELightChunk {
     public BitSet[] lightFlags;
     public boolean[] subChunkHasWaterFlags;
     public boolean[] requiresPatching;
+    public boolean[] neighborRequiresPatchingWest;
+    public boolean[] neighborRequiresPatchingNorth;
+    public boolean[] neighborRequiresPatchingEast;
+    public boolean[] neighborRequiresPatchingSouth;
     // Holds corresponding waterId for X/Z combination. I don't expect people to stack
     // multiple on top of each other. If they do the light calculation will be incorrect.
     // Acceptable to save quite some RAM.
@@ -130,12 +160,22 @@ class HELightChunk {
         waterIds = new int[16][16];
         subChunkHasWaterFlags = new boolean[16];
         requiresPatching = new boolean[16];
+
+        // If a block at the chunk border is from water it means that the neighbors need to be handled as well
+        neighborRequiresPatchingWest = new boolean[16];
+        neighborRequiresPatchingNorth = new boolean[16];
+        neighborRequiresPatchingEast = new boolean[16];
+        neighborRequiresPatchingSouth = new boolean[16];
     }
 
     public void reset() {
         for(int chunkY=0;chunkY<16;chunkY++) {
             lightFlags[chunkY].clear();
             subChunkHasWaterFlags[chunkY] = false;
+            neighborRequiresPatchingWest[chunkY] = false;
+            neighborRequiresPatchingNorth[chunkY] = false;
+            neighborRequiresPatchingEast[chunkY] = false;
+            neighborRequiresPatchingSouth[chunkY] = false;
             // waterIds does not need to be reset since it is only accessed
             // whenever data is found and for that to happen there must be a
             // valid value in it again
@@ -154,6 +194,9 @@ class HELightChunk {
                 byte[] LSB = subChunkStorage.getBlockLSBArray();
                 NibbleArray MSB = subChunkStorage.getBlockMSBArray();
 
+                int[] bucketsBlockX = new int[16];
+                int[] bucketsBlockZ = new int[16];
+
                 for (int blockX = 0; blockX < 16; blockX++) {
                     for (int blockY = 0; blockY < 16; blockY++) {
                         for (int blockZ = 0; blockZ < 16; blockZ++) {
@@ -163,6 +206,8 @@ class HELightChunk {
                             }
                             int waterId = getWaterIdFromBlockId(blockId);
                             if (waterId >= 0) {
+                                bucketsBlockX[blockX]++;
+                                bucketsBlockZ[blockZ]++;
                                 flags.set((blockX << 8) | (blockY << 4) | blockZ);
                                 waterIds[blockX][blockZ] = waterId;
                                 this.subChunkHasWaterFlags[chunkY] = true;
@@ -170,6 +215,11 @@ class HELightChunk {
                         }
                     }
                 }
+
+                neighborRequiresPatchingWest[chunkY] = bucketsBlockX[0] > 0;
+                neighborRequiresPatchingNorth[chunkY] = bucketsBlockZ[0] > 0;
+                neighborRequiresPatchingEast[chunkY] = bucketsBlockX[15] > 0;
+                neighborRequiresPatchingSouth[chunkY] = bucketsBlockZ[15] > 0;
             }
         }
         requiresPatching = subChunkHasWaterFlags.clone();
