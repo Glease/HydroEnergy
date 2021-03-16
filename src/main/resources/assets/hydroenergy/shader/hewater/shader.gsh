@@ -182,7 +182,7 @@ void main() {
     }*/
 
     position = gl_in[0].gl_Position;
-    if((gs_in[0].shouldRenderUp > 0 || waterLevel < (position.y + 1)) && waterLevel >= position.y) {
+    if(((gs_in[0].shouldRenderUp > 0 || waterLevel < (position.y + 1)) && waterLevel >= position.y) && !(gs_in[0].shouldRenderDown > 0 && waterLevel <= position.y + CLIPPING_OFFSET)) {
         colorModifier = gs_in[0].worldColorModifier * LIGHT_Y_POS;
         lightCoord = gs_in[0].lightUp;
 

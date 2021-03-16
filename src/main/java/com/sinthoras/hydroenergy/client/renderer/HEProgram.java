@@ -56,7 +56,8 @@ public class HEProgram {
 
     public static void init() {
         final String defines = "#version 330 core\n"
-                + "#define NUM_CONTROLLERS " + HE.maxControllers + "\n";
+                + "#define NUM_CONTROLLERS " + HE.maxControllers + "\n"
+                + "#define CLIPPING_OFFSET " + HE.clippingOffset + "\n";
         final int vertexShader = loadShader(vertexShaderLocation, GL20.GL_VERTEX_SHADER, defines);
         final int geometryShader = loadShader(geometryShaderLocation, GL32.GL_GEOMETRY_SHADER, defines);
         final int fragmentShader = loadShader(fragmentShaderLocation, GL20.GL_FRAGMENT_SHADER, defines);

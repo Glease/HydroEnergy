@@ -47,7 +47,7 @@ public class HEWaterRenderer extends RenderBlockFluid {
 
         shouldSidesBeRendered[0] = !neighbors[0].isOpaqueCube() && neighbors[0] != block;
         shouldSidesBeRendered[1] = !neighbors[1].isOpaqueCube() && neighbors[1] != block;
-        shouldSidesBeRendered[2] = !neighbors[2].isOpaqueCube() && neighbors[2] != block;
+        shouldSidesBeRendered[2] = neighbors[2] != block;
         shouldSidesBeRendered[3] = !neighbors[3].isOpaqueCube() && neighbors[3] != block;
         shouldSidesBeRendered[4] = !neighbors[4].isOpaqueCube() && neighbors[4] != block;
         shouldSidesBeRendered[5] = !neighbors[5].isOpaqueCube() && neighbors[5] != block;

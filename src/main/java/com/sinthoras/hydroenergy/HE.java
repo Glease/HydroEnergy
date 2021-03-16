@@ -21,6 +21,7 @@ public class HE {
     public static final int maxRenderDist = 16;
     public static final float minimalUpdateInterval = 0.001f; // in seconds
     public static final int queueActionsPerTick = 10;
+    public static final float clippingOffset = 0.05f;
 
     static {
         LOG = LogManager.getLogger(MODID);
