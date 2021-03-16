@@ -39,8 +39,8 @@ public class HEHooksFML {
 		HEServer.instance.synchronizeClient(event);
 	}
 
-	@SubscribeEvent
 	@SideOnly(Side.CLIENT)
+	@SubscribeEvent
 	public void onEvent(FMLNetworkEvent.ClientDisconnectionFromServerEvent event) {
 		HEClient.onDisconnect();
 	}

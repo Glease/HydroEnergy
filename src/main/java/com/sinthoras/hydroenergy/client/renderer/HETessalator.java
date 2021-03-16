@@ -199,6 +199,18 @@ public class HETessalator {
             }
         }
     }
+
+    public static int getGpuMemoryUsage() {
+        int subChunkCounter = 0;
+        for(HERenderChunk chunk : chunks.values()) {
+            for(HERenderSubChunk subChunk : chunk.subChunks) {
+                if(subChunk.vaoId != -1) {
+                    subChunkCounter++;
+                }
+            }
+        }
+        return subChunkCounter * vboBuffer.capacity();
+    }
 }
 
 @SideOnly(Side.CLIENT)
