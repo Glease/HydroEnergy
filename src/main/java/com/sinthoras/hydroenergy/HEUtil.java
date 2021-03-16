@@ -21,4 +21,8 @@ public class HEUtil {
 	public static int clamp(int value, int lowerLimit, int upperLimit) {
 		return Math.min(Math.max(value, lowerLimit), upperLimit);
 	}
+
+	public static short chunkYToFlag(int chunkY) {
+		return (short)(1 << chunkY);
+	}
 }
