@@ -5,6 +5,8 @@ import com.sinthoras.hydroenergy.HEUtil;
 import com.sinthoras.hydroenergy.client.HEClient;
 import com.sinthoras.hydroenergy.server.HEServer;
 
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.relauncher.Side;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.ActiveRenderInfo;
@@ -24,6 +26,9 @@ public class HEWater extends BlockFluidBase {
 		super(FluidRegistry.WATER, Material.water);
 		this.waterId = waterId;
 		setBlockTextureName(HE.MODID + ":" + HE.dummyTexture);
+		setHardness(100.0F);
+		setLightOpacity(0);
+		setBlockName("water");
 	}
 
 	@Override
@@ -46,6 +51,16 @@ public class HEWater extends BlockFluidBase {
 	@Override
 	public boolean canCollideCheck(int meta, boolean fullHit) {
 		return false;
+	}
+
+	@Override
+	public int getLightOpacity() {
+		if(FMLCommonHandler.instance().getSide() == Side.CLIENT) {
+			return 3;
+		}
+		else {
+			return 0;
+		}
 	}
 
 	@Override
