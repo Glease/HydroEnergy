@@ -1,7 +1,6 @@
 package com.sinthoras.hydroenergy.client.gui;
 
 import com.sinthoras.hydroenergy.blocks.HEControllerTileEntity;
-import com.sinthoras.hydroenergy.client.HEClient;
 import cpw.mods.fml.common.network.IGuiHandler;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;

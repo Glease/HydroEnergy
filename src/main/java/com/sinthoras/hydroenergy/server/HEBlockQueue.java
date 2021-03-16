@@ -8,7 +8,6 @@ import com.sinthoras.hydroenergy.blocks.HEWater;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 
 public class HEBlockQueue {
