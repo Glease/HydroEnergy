@@ -13,7 +13,7 @@ public class HEWaterStill extends HEWater {
 	public HEWaterStill(int id) {
 		super(id);
 		setHardness(100.0F);
-		setLightOpacity(3);
+		setLightOpacity(0);
 		setBlockName("water");
 		setTickRandomly(false);
 	}
@@ -36,6 +36,10 @@ public class HEWaterStill extends HEWater {
 	public void onNeighborBlockChange(World world, int blockX, int blockY, int blockZ, Block block) {
 		spread(world, blockX, blockY, blockZ);
     }
+
+    public int getActualLightOpacity() {
+		return 3;
+	}
 
 	@Override
 	public void onBlockAdded(World world, int blockX, int blockY, int blockZ) {

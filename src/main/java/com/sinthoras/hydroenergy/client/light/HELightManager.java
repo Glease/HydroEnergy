@@ -86,7 +86,7 @@ public class HELightManager {
         RenderGlobal renderGlobal = Minecraft.getMinecraft().renderGlobal;
         float[] newWaterLevels = HEClient.getAllWaterLevelsForRendering();
         for(int id=0;id<renderedWaterLevel.length;id++) {
-            if(Math.abs(renderedWaterLevel[id] - newWaterLevels[id]) > (0.5f / HE.waterBlocks[0].getLightOpacity())) {
+            if(Math.abs(renderedWaterLevel[id] - newWaterLevels[id]) > (0.5f / HE.waterBlocks[0].getActualLightOpacity())) {
                 renderedWaterLevel = newWaterLevels;
                 for(long key : chunks.keySet()) {
                     HELightChunk chunk = chunks.get(key);
@@ -205,7 +205,7 @@ class HELightChunk {
                 int blockZ = linearCoord & 15;
                 int waterId = waterIds[blockX][blockZ];
                 float diff = Math.min((chunkY << 4) - waterLevels[waterId] + blockY, 0);
-                int lightVal = (int)(15 + diff * HE.waterBlocks[0].getLightOpacity());
+                int lightVal = (int)(15 + diff * HE.waterBlocks[0].getActualLightOpacity());
                 lightVal = Math.max(lightVal, 0);
                 skyLightArray.set(blockX, blockY, blockZ, lightVal);
             }

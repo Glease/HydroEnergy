@@ -52,14 +52,6 @@ public class HEWater extends BlockFluidBase {
 	public int getMaxRenderHeightMeta() {
 		return 0;
 	}
-	
-	@Override
-	public int getLightOpacity(IBlockAccess world, int blockX, int blockY, int blockZ) {
-		if (getWaterLevel() <= blockY) {
-        	return 0;
-        }
-        return getLightOpacity();
-    }
 
 	public float getWaterLevel() {
 		if(HE.logicalClientLoaded) {
