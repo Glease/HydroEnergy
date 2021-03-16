@@ -1,6 +1,7 @@
 package com.sinthoras.hydroenergy.client.gui.widgets;
 
-import com.sinthoras.hydroenergy.client.HEClient;
+import com.sinthoras.hydroenergy.HE;
+import com.sinthoras.hydroenergy.client.HEDam;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;
@@ -21,7 +22,7 @@ public class HEWidgetModes extends Gui {
     private static final Color lightPurple = new Color(80, 0, 255, 80);
     private static final Color darkPurple = new Color(40, 0, 127, 80);
 
-    private int waterId;
+    private HEDam dam;
     private int pixelX;
     private int pixelY;
 
@@ -30,8 +31,8 @@ public class HEWidgetModes extends Gui {
     private HEButtonTextured.Water buttonWater;
     private boolean isEnabled;
 
-    public HEWidgetModes(int waterId, int pixelX, int pixelY) {
-        this.waterId = waterId;
+    public HEWidgetModes(HEDam dam, int pixelX, int pixelY) {
+        this.dam = dam;
         this.pixelX = pixelX;
         this.pixelY = pixelY;
     }
@@ -49,19 +50,16 @@ public class HEWidgetModes extends Gui {
     public void actionPerformed(final GuiButton button)
     {
         if(button == buttonDrain) {
-            HEClient.drainStates[waterId] = true;
-            HEClient.debugStates[waterId] = true;
-            HEClient.configRequest(waterId);
+            dam.setMode(HE.DamMode.DRAIN);
+            dam.applyChanges();
         }
         else if(button == buttonDebug) {
-            HEClient.drainStates[waterId] = false;
-            HEClient.debugStates[waterId] = true;
-            HEClient.configRequest(waterId);
+            dam.setMode(HE.DamMode.DEBUG);
+            dam.applyChanges();
         }
         else if(button == buttonWater) {
-            HEClient.drainStates[waterId] = false;
-            HEClient.debugStates[waterId] = false;
-            HEClient.configRequest(waterId);
+            dam.setMode(HE.DamMode.SPREAD);
+            dam.applyChanges();
         }
     }
 
@@ -69,9 +67,10 @@ public class HEWidgetModes extends Gui {
         this.isEnabled = isEnabled;
 
         if(isEnabled) {
-            buttonDrain.enabled = !HEClient.drainStates[waterId];
-            buttonDebug.enabled = HEClient.drainStates[waterId] || !HEClient.debugStates[waterId];
-            buttonWater.enabled = HEClient.drainStates[waterId] || HEClient.debugStates[waterId];
+            HE.DamMode mode = dam.getMode();
+            buttonDrain.enabled = mode != HE.DamMode.DRAIN;
+            buttonDebug.enabled = mode != HE.DamMode.DEBUG;
+            buttonWater.enabled = mode != HE.DamMode.SPREAD;
         }
         else {
             buttonDrain.enabled = false;

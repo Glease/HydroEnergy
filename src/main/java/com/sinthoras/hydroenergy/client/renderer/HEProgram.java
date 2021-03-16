@@ -153,7 +153,7 @@ public class HEProgram {
 
     public static void setDebugStates() {
         debugStates.clear();
-        debugStates.put(HEClient.getDebugStates());
+        debugStates.put(HEClient.getDebugStatesAsFactors());
         debugStates.flip();
         GL20.glUniform1(debugStatesId, debugStates);
     }

@@ -27,8 +27,8 @@ public class HEDam {
 
 	// NBT variables
 	private float waterLevel;
-	public boolean drainState;
 	private boolean isPlaced;
+	private HE.DamMode mode;
 	public int limitUp;
 	public int limitDown;
 	public int limitEast;
@@ -41,7 +41,6 @@ public class HEDam {
 	private int blockZ;
 
 	private int waterId;
-	private boolean debugState = false;
 	private long timestampLastUpdate = 0;
 
 
@@ -51,7 +50,7 @@ public class HEDam {
 
 	public void readFromNBTFull(NBTTagCompound compound) {
 		waterLevel = compound.getFloat(Tags.waterLevel);
-		drainState = compound.getBoolean(Tags.drainState);
+		boolean drainState = compound.getBoolean(Tags.drainState);
 		isPlaced = compound.getBoolean(Tags.isPlaced);
 		limitUp = compound.getInteger(Tags.limitUp);
 		limitDown = compound.getInteger(Tags.limitDown);
@@ -63,11 +62,18 @@ public class HEDam {
 		blockX = compound.getInteger(Tags.blockX);
 		blockY = compound.getInteger(Tags.blockY);
 		blockZ = compound.getInteger(Tags.blockZ);
+
+		if(!isPlaced || drainState) {
+			mode = HE.DamMode.DRAIN;
+		}
+		else {
+			mode = HE.DamMode.SPREAD;
+		}
 	}
 	
 	public void writeToNBTFull(NBTTagCompound compound)	{
 		compound.setFloat(Tags.waterLevel, waterLevel);
-		compound.setBoolean(Tags.drainState, drainState);
+		compound.setBoolean(Tags.drainState, mode == HE.DamMode.DRAIN);
 		compound.setBoolean(Tags.isPlaced, isPlaced);
 		compound.setInteger(Tags.limitUp, limitUp);
 		compound.setInteger(Tags.limitDown, limitDown);
@@ -81,15 +87,15 @@ public class HEDam {
 		compound.setInteger(Tags.blockZ, blockZ);
 	}
 
-	public void setDebugState(boolean debugState) {
-		if(debugState != this.debugState) {
-			this.debugState = debugState;
+	public void setMode(HE.DamMode mode) {
+		if(mode != this.mode) {
+			this.mode = mode;
 			sendConfigUpdate();
 		}
 	}
 
-	public boolean getDebugState() {
-		return debugState || !isPlaced;
+	public HE.DamMode getMode() {
+		return mode;
 	}
 	
 	public boolean setWaterLevel(float waterLevel) {
@@ -187,7 +193,7 @@ public class HEDam {
 
 	public void sendConfigUpdate() {
 		HEPacketConfigUpdate message = new HEPacketConfigUpdate(waterId, blockX, blockY, blockZ,
-				!isPlaced || debugState || drainState, drainState, limitWest, limitDown, limitNorth,
+				mode, limitWest, limitDown, limitNorth,
 				limitEast, limitUp, limitSouth);
 		HE.network.sendToAll(message);
 	}
@@ -199,8 +205,7 @@ public class HEDam {
 	
 	public void placeController(int blockX, int blockY, int blockZ) {
 		isPlaced = true;
-		debugState = true;
-		drainState = false;
+		mode = HE.DamMode.DRAIN;
 		limitEast = blockX + 200;
 		limitWest = blockX - 200;
 		limitUp = blockY+32;
@@ -252,7 +257,7 @@ public class HEDam {
 		return blockZ;
 	}
 
-	public void onConfigRequest(boolean debugState, boolean drainState, int limitWest, int limitDown, int limitNorth, int limitEast, int limitUp, int limitSouth) {
+	public void onConfigRequest(HE.DamMode mode, int limitWest, int limitDown, int limitNorth, int limitEast, int limitUp, int limitSouth) {
 		// Clap change requests to server limits before processing
 		limitWest = blockX - HEUtil.clamp(blockX - limitWest, 0, HE.maxWaterSpreadWest);
 		limitDown = blockY - HEUtil.clamp(blockY - limitDown, 0, HE.maxWaterSpreadDown);
@@ -261,11 +266,9 @@ public class HEDam {
 		limitUp = blockY + HEUtil.clamp(limitUp - blockY, 0, HE.maxWaterSpreadUp);
 		limitSouth = blockZ + HEUtil.clamp(limitSouth - blockZ, 0, HE.maxWaterSpreadSouth);
 
-		if(this.debugState != debugState || this.drainState != drainState
-				|| this.limitWest != limitWest || this.limitDown != limitDown || this.limitNorth != limitNorth
+		if(this.mode != mode || this.limitWest != limitWest || this.limitDown != limitDown || this.limitNorth != limitNorth
 				|| this.limitEast != limitEast || this.limitUp != limitUp || this.limitSouth != limitSouth) {
-			this.debugState = debugState;
-			this.drainState = drainState;
+			this.mode = mode;
 			this.limitWest = limitWest;
 			this.limitDown = limitDown;
 			this.limitNorth = limitNorth;
@@ -274,5 +277,9 @@ public class HEDam {
 			this.limitSouth = limitSouth;
 			sendConfigUpdate();
 		}
+	}
+
+	public boolean canSpread() {
+		return mode != HE.DamMode.DRAIN;
 	}
 }

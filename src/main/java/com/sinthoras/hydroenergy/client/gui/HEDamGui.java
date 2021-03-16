@@ -3,6 +3,7 @@ package com.sinthoras.hydroenergy.client.gui;
 import com.sinthoras.hydroenergy.HE;
 import com.sinthoras.hydroenergy.blocks.HEControllerTileEntity;
 import com.sinthoras.hydroenergy.client.HEClient;
+import com.sinthoras.hydroenergy.client.HEDam;
 import com.sinthoras.hydroenergy.client.gui.widgets.HEWidgetModes;
 import com.sinthoras.hydroenergy.client.gui.widgets.HEWidgetPowerInfo;
 import cpw.mods.fml.relauncher.Side;
@@ -23,6 +24,8 @@ public class HEDamGui extends GuiContainer {
 
     public static final ResourceLocation backgroundTextureLocation = new ResourceLocation(HE.MODID, HE.damBackgroundLocation);
 
+    private HEDam dam;
+
     private HEWidgetModes widgetModes;
     private HEWidgetPowerInfo widgetPowerInfo;
 
@@ -39,7 +42,6 @@ public class HEDamGui extends GuiContainer {
     private int centerX = 0;
     private int centerY = 0;
 
-    private int waterId;
     private HEControllerTileEntity controllerTileEntity;
 
     private static final Color lineGrey = new Color(155, 155, 155);
@@ -49,7 +51,7 @@ public class HEDamGui extends GuiContainer {
         super(new HEDamContainer(inventoryPlayer, controllerTileEntity));
         xSize = 256;
         ySize = 176;
-        this.waterId = controllerTileEntity.getWaterId();
+        dam = HEClient.getDam(controllerTileEntity.getWaterId());
         this.controllerTileEntity = controllerTileEntity;
     }
 
@@ -82,35 +84,35 @@ public class HEDamGui extends GuiContainer {
         height = 20;
         changeWest = new GuiButton(id, pixelX, pixelY, width, height, "Change");
         buttonList.add(changeWest);
-        limitGuis[0] = new HELimitGui("Western limit (-X)", popupLeft, popupTop, HEClient.limitsWest[waterId]);
+        limitGuis[0] = new HELimitGui("Western limit (-X)", popupLeft, popupTop, dam.getLimitWest());
 
         pixelY += 30;
         changeDown = new GuiButton(id, pixelX, pixelY, width, height, "Change");
         buttonList.add(changeDown);
-        limitGuis[1] = new HELimitGui("Lower limit (-Y)", popupLeft, popupTop, HEClient.limitsDown[waterId]);
+        limitGuis[1] = new HELimitGui("Lower limit (-Y)", popupLeft, popupTop, dam.getLimitDown());
 
         pixelY += 30;
         changeNorth = new GuiButton(id, pixelX, pixelY, width, height, "Change");
         buttonList.add(changeNorth);
-        limitGuis[2] = new HELimitGui("Northern limit (-Z)", popupLeft, popupTop, HEClient.limitsNorth[waterId]);
+        limitGuis[2] = new HELimitGui("Northern limit (-Z)", popupLeft, popupTop, dam.getLimitNorth());
 
         pixelX = guiLeft + xSize - width - 10;
         pixelY = guiTop + 86;
         changeEast = new GuiButton(id, pixelX, pixelY, width, height, "Change");
         buttonList.add(changeEast);
-        limitGuis[3] = new HELimitGui("Eastern limit (+X)", popupLeft, popupTop, HEClient.limitsEast[waterId]);
+        limitGuis[3] = new HELimitGui("Eastern limit (+X)", popupLeft, popupTop, dam.getLimitEast());
 
         pixelY += 30;
         changeUp = new GuiButton(id, pixelX, pixelY, width, height, "Change");
         buttonList.add(changeUp);
-        limitGuis[4] = new HELimitGui("Upper limit (+Y)", popupLeft, popupTop, HEClient.limitsUp[waterId]);
+        limitGuis[4] = new HELimitGui("Upper limit (+Y)", popupLeft, popupTop, dam.getLimitUp());
 
         pixelY += 30;
         changeSouth = new GuiButton(id, pixelX, pixelY, width, height, "Change");
         buttonList.add(changeSouth);
-        limitGuis[5] = new HELimitGui("Southern limit (+Z)", popupLeft, popupTop, HEClient.limitsSouth[waterId]);
+        limitGuis[5] = new HELimitGui("Southern limit (+Z)", popupLeft, popupTop, dam.getLimitSouth());
 
-        widgetModes = new HEWidgetModes(waterId, guiLeft + xSize - 75, guiTop + 5);
+        widgetModes = new HEWidgetModes(dam, guiLeft + xSize - 75, guiTop + 5);
         widgetModes.init(buttonList);
 
         widgetPowerInfo = new HEWidgetPowerInfo(controllerTileEntity, guiLeft + 20, guiTop + 30, xSize - 40);
@@ -155,29 +157,36 @@ public class HEDamGui extends GuiContainer {
 
     private void updateValues() {
         if(limitGuis[0].getValueChangedAndReset()) {
-            HEClient.limitsWest[waterId] = limitGuis[0].getValue();
-            HEClient.configRequest(waterId);
+            dam.setLimitWest(limitGuis[0].getValue());
+            dam.applyChanges();
         }
         if(limitGuis[1].getValueChangedAndReset()) {
-            HEClient.limitsDown[waterId] = limitGuis[1].getValue();
-            HEClient.configRequest(waterId);
+            dam.setLimitDown(limitGuis[1].getValue());
+            dam.applyChanges();
         }
         if(limitGuis[2].getValueChangedAndReset()) {
-            HEClient.limitsNorth[waterId] = limitGuis[2].getValue();
-            HEClient.configRequest(waterId);
+            dam.setLimitNorth(limitGuis[2].getValue());
+            dam.applyChanges();
         }
         if(limitGuis[3].getValueChangedAndReset()) {
-            HEClient.limitsEast[waterId] = limitGuis[3].getValue();
-            HEClient.configRequest(waterId);
+            dam.setLimitEast(limitGuis[3].getValue());
+            dam.applyChanges();
         }
         if(limitGuis[4].getValueChangedAndReset()) {
-            HEClient.limitsUp[waterId] = limitGuis[4].getValue();
-            HEClient.configRequest(waterId);
+            dam.setLimitUp(limitGuis[4].getValue());
+            dam.applyChanges();
         }
         if(limitGuis[5].getValueChangedAndReset()) {
-            HEClient.limitsSouth[waterId] = limitGuis[5].getValue();
-            HEClient.configRequest(waterId);
+            dam.setLimitSouth(limitGuis[5].getValue());
+            dam.applyChanges();
         }
+
+        limitGuis[0].updateOriginalValue(dam.getLimitWest());
+        limitGuis[1].updateOriginalValue(dam.getLimitDown());
+        limitGuis[2].updateOriginalValue(dam.getLimitNorth());
+        limitGuis[3].updateOriginalValue(dam.getLimitEast());
+        limitGuis[4].updateOriginalValue(dam.getLimitUp());
+        limitGuis[5].updateOriginalValue(dam.getLimitSouth());
     }
 
     @Override
@@ -243,12 +252,12 @@ public class HEDamGui extends GuiContainer {
             // Spread Limits
             fontRenderer.drawString("Spread Limits", guiLeft + 20, guiTop + 75, textGrey.getRGB());
 
-            String limitWest = "" + HEClient.limitsWest[waterId];
-            String limitDown = "" + HEClient.limitsDown[waterId];
-            String limitNorth = "" + HEClient.limitsNorth[waterId];
-            String limitEast = "" + HEClient.limitsEast[waterId];
-            String limitUp = "" + HEClient.limitsUp[waterId];
-            String limitSouth = "" + HEClient.limitsSouth[waterId];
+            String limitWest = "" + dam.getLimitWest();
+            String limitDown = "" + dam.getLimitDown();
+            String limitNorth = "" + dam.getLimitNorth();
+            String limitEast = "" + dam.getLimitEast();
+            String limitUp = "" + dam.getLimitUp();
+            String limitSouth = "" + dam.getLimitSouth();
 
             int constStringWidthHalf = fontRenderer.getStringWidth(" < X < ") / 2;
             fontRenderer.drawString(" < X < ", centerX - constStringWidthHalf, guiTop + 92, Color.BLACK.getRGB());

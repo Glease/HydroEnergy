@@ -103,8 +103,8 @@ public class HEServer extends WorldSavedData {
 		}
 	}
 
-	public void setDebugState(int waterId, boolean debugState) {
-		dams[waterId].setDebugState(debugState);
+	public void setMode(int waterId, HE.DamMode mode) {
+		dams[waterId].setMode(mode);
 	}
 
 	public int getWaterLimitWest(int waterId) {
@@ -177,22 +177,8 @@ public class HEServer extends WorldSavedData {
 		}
 	}
 
-	public void spreadWater(int waterId) {
-		if(dams[waterId].drainState) {
-			dams[waterId].drainState = false;
-			markDirty();
-		}
-	}
-
-	public void drainWater(int waterId) {
-		if(!dams[waterId].drainState) {
-			dams[waterId].drainState = true;
-			markDirty();
-		}
-	}
-
 	public boolean canSpread(int waterId) {
-		return dams[waterId].isPlaced() && !dams[waterId].drainState;
+		return dams[waterId].canSpread();
 	}
 
 	public void synchronizeClient(PlayerLoggedInEvent event) {
@@ -202,8 +188,7 @@ public class HEServer extends WorldSavedData {
 			message.blocksY[waterId] = dams[waterId].getBlockY();
 			message.blocksZ[waterId] = dams[waterId].getBlockZ();
 			message.waterLevels[waterId] = dams[waterId].getWaterLevel();
-			message.debugStates[waterId] = dams[waterId].getDebugState();
-			message.drainStates[waterId] = dams[waterId].drainState;
+			message.modes[waterId] = dams[waterId].getMode();
 			message.limitsWest[waterId] = dams[waterId].limitWest;
 			message.limitsDown[waterId] = dams[waterId].limitDown;
 			message.limitsNorth[waterId] = dams[waterId].limitNorth;
@@ -214,11 +199,11 @@ public class HEServer extends WorldSavedData {
 		HE.network.sendTo(message, (EntityPlayerMP) event.player);
 	}
 
-	public void onConfigRequest(int waterId, boolean debugState, boolean drainState, int limitWest, int limitDown, int limitNorth, int limitEast, int limitUp, int limitSouth) {
+	public void onConfigRequest(int waterId, HE.DamMode mode, int limitWest, int limitDown, int limitNorth, int limitEast, int limitUp, int limitSouth) {
 		if(waterId < 0 || waterId >= HE.maxControllers) {
 			return;
 		}
-		dams[waterId].onConfigRequest(debugState, drainState, limitWest, limitDown, limitNorth, limitEast, limitUp, limitSouth);
+		dams[waterId].onConfigRequest(mode, limitWest, limitDown, limitNorth, limitEast, limitUp, limitSouth);
 	}
 
 	public int getWaterId(int blockX, int blockY, int blockZ) {

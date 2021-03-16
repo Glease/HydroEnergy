@@ -1,5 +1,6 @@
 package com.sinthoras.hydroenergy.network;
 
+import com.sinthoras.hydroenergy.HE;
 import com.sinthoras.hydroenergy.client.HEClient;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
@@ -12,8 +13,7 @@ public class HEPacketConfigUpdate implements IMessage {
     public int blockX;
     public int blockY;
     public int blockZ;
-    public boolean debugState;
-    public boolean drainState;
+    public HE.DamMode mode;
     public int limitWest;
     public int limitDown;
     public int limitNorth;
@@ -21,13 +21,12 @@ public class HEPacketConfigUpdate implements IMessage {
     public int limitUp;
     public int limitSouth;
 
-    public HEPacketConfigUpdate(int waterId, int blockX, int blockY, int blockZ, boolean debugState, boolean drainState, int limitWest, int limitDown, int limitNorth, int limitEast, int limitUp, int limitSouth) {
+    public HEPacketConfigUpdate(int waterId, int blockX, int blockY, int blockZ, HE.DamMode mode, int limitWest, int limitDown, int limitNorth, int limitEast, int limitUp, int limitSouth) {
         this.waterId = waterId;
         this.blockX = blockX;
         this.blockY = blockY;
         this.blockZ = blockZ;
-        this.debugState = debugState;
-        this.drainState = drainState;
+        this.mode = mode;
         this.limitWest = limitWest;
         this.limitDown = limitDown;
         this.limitNorth = limitNorth;
@@ -46,8 +45,7 @@ public class HEPacketConfigUpdate implements IMessage {
         blockX = buf.readInt();
         blockY = buf.readInt();
         blockZ = buf.readInt();
-        debugState = buf.readBoolean();
-        drainState = buf.readBoolean();
+        mode = HE.DamMode.getMode(buf.readInt());
         limitWest = buf.readInt();
         limitDown = buf.readInt();
         limitNorth = buf.readInt();
@@ -62,8 +60,7 @@ public class HEPacketConfigUpdate implements IMessage {
         buf.writeInt(blockX);
         buf.writeInt(blockY);
         buf.writeInt(blockZ);
-        buf.writeBoolean(debugState);
-        buf.writeBoolean(drainState);
+        buf.writeInt(mode.getValue());
         buf.writeInt(limitWest);
         buf.writeInt(limitDown);
         buf.writeInt(limitNorth);
@@ -80,8 +77,7 @@ public class HEPacketConfigUpdate implements IMessage {
                     message.blockX,
                     message.blockY,
                     message.blockZ,
-                    message.debugState,
-                    message.drainState,
+                    message.mode,
                     message.limitWest,
                     message.limitDown,
                     message.limitNorth,

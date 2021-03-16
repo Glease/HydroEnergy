@@ -127,6 +127,10 @@ public class HELimitGui extends Gui {
         return tmp;
     }
 
+    public void updateOriginalValue(int value) {
+        originalValue = value;
+    }
+
     public int getValue() {
         return currentValue;
     }
@@ -143,8 +147,8 @@ public class HELimitGui extends Gui {
     }
 
     private void cancel() {
-        setVisibility(false);
         currentValue = originalValue;
+        setVisibility(false);
     }
 
     private void setVisibility(boolean value) {

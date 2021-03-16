@@ -51,4 +51,34 @@ public class HE {
     public static String damTextureName = "he_dam";
     // To silence the water missing texture error. Points to a random but valid texture
     public static String dummyTexture = damTextureName;
+
+    public enum DamMode {
+        DRAIN,
+        DEBUG,
+        SPREAD;
+
+        public int getValue() {
+            switch(this) {
+                default:
+                case DRAIN:
+                    return 1;
+                case DEBUG:
+                    return 2;
+                case SPREAD:
+                    return 3;
+            }
+        }
+
+        public static DamMode getMode(int mode) {
+            switch(mode) {
+                default:
+                case 1:
+                    return DRAIN;
+                case 2:
+                    return DEBUG;
+                case 3:
+                    return SPREAD;
+            }
+        }
+    }
 }

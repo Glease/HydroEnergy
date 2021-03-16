@@ -14,8 +14,7 @@ public class HEPacketSynchronize implements IMessage {
 	public int[] blocksY = new int[HE.maxControllers];
 	public int[] blocksZ = new int[HE.maxControllers];
 	public float[] waterLevels = new float[HE.maxControllers];
-	public boolean[] debugStates = new boolean[HE.maxControllers];
-	public boolean[] drainStates = new boolean[HE.maxControllers];
+	public HE.DamMode[] modes = new HE.DamMode[HE.maxControllers];
 	public int[] limitsWest = new int[HE.maxControllers];
 	public int[] limitsDown = new int[HE.maxControllers];
 	public int[] limitsNorth = new int[HE.maxControllers];
@@ -30,8 +29,7 @@ public class HEPacketSynchronize implements IMessage {
 		blocksY = new int[length];
 		blocksZ = new int[length];
 		waterLevels = new float[length];
-		debugStates = new boolean[length];
-		drainStates = new boolean[length];
+		modes = new HE.DamMode[length];
 		limitsWest = new int[length];
 		limitsDown = new int[length];
 		limitsNorth = new int[length];
@@ -43,8 +41,7 @@ public class HEPacketSynchronize implements IMessage {
 			blocksY[waterId] = buf.readInt();
 			blocksZ[waterId] = buf.readInt();
 			waterLevels[waterId] = buf.readFloat();
-			debugStates[waterId] = buf.readBoolean();
-			drainStates[waterId] = buf.readBoolean();
+			modes[waterId] = HE.DamMode.getMode(buf.readInt());
 			limitsWest[waterId] = buf.readInt();
 			limitsDown[waterId] = buf.readInt();
 			limitsNorth[waterId] = buf.readInt();
@@ -62,8 +59,7 @@ public class HEPacketSynchronize implements IMessage {
 			buf.writeInt(blocksY[waterId]);
 			buf.writeInt(blocksZ[waterId]);
 			buf.writeFloat(waterLevels[waterId]);
-			buf.writeBoolean(debugStates[waterId]);
-			buf.writeBoolean(drainStates[waterId]);
+			buf.writeInt(modes[waterId].getValue());
 			buf.writeInt(limitsWest[waterId]);
 			buf.writeInt(limitsDown[waterId]);
 			buf.writeInt(limitsNorth[waterId]);
@@ -81,8 +77,7 @@ public class HEPacketSynchronize implements IMessage {
 					message.blocksY,
 					message.blocksZ,
 					message.waterLevels,
-					message.drainStates,
-					message.debugStates,
+					message.modes,
 					message.limitsWest,
 					message.limitsDown,
 					message.limitsNorth,
