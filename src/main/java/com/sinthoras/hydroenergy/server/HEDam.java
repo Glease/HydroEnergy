@@ -257,7 +257,7 @@ public class HEDam {
 		return blockZ;
 	}
 
-	public void onConfigRequest(HE.DamMode mode, int limitWest, int limitDown, int limitNorth, int limitEast, int limitUp, int limitSouth) {
+	public boolean onConfigRequest(HE.DamMode mode, int limitWest, int limitDown, int limitNorth, int limitEast, int limitUp, int limitSouth) {
 		// Clap change requests to server limits before processing
 		limitWest = blockX - HEUtil.clamp(blockX - limitWest, 0, HE.maxWaterSpreadWest);
 		limitDown = blockY - HEUtil.clamp(blockY - limitDown, 0, HE.maxWaterSpreadDown);
@@ -276,7 +276,9 @@ public class HEDam {
 			this.limitUp = limitUp;
 			this.limitSouth = limitSouth;
 			sendConfigUpdate();
+			return true;
 		}
+		return false;
 	}
 
 	public boolean canSpread() {
