@@ -9,6 +9,9 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldSavedData;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class HEServer extends WorldSavedData {
 	
 	private HEDam[] dams;
@@ -215,5 +218,15 @@ public class HEServer extends WorldSavedData {
 			}
 		}
 		return -1;
+	}
+
+	public List<String> getControllerCoordinates() {
+		List<String> list = new ArrayList<String>();
+		for(HEDam dam : dams) {
+			if(dam.isPlaced()) {
+				list.add(dam.getShortDescription());
+			}
+		}
+		return list;
 	}
 }

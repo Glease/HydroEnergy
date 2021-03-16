@@ -284,4 +284,8 @@ public class HEDam {
 	public boolean canSpread() {
 		return mode != HE.DamMode.DRAIN;
 	}
+
+	public String getShortDescription() {
+		return "HEController @(" + blockX + ", " + blockY + ", " + blockZ + ")";
+	}
 }

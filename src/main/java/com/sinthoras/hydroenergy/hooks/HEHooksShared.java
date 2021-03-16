@@ -4,6 +4,7 @@ import com.sinthoras.hydroenergy.HE;
 import com.sinthoras.hydroenergy.network.HEPacketConfigRequest;
 import com.sinthoras.hydroenergy.network.HEPacketConfigUpdate;
 import com.sinthoras.hydroenergy.server.commands.HECommandDebug;
+import com.sinthoras.hydroenergy.server.commands.HECommandListControllers;
 import com.sinthoras.hydroenergy.server.commands.HECommandSetWater;
 import com.sinthoras.hydroenergy.blocks.HEControllerBlock;
 import com.sinthoras.hydroenergy.blocks.HEControllerTileEntity;
@@ -70,6 +71,7 @@ public class HEHooksShared {
 	public void fmlLifeCycleEvent(FMLServerStartingEvent event) {
 		event.registerServerCommand(new HECommandSetWater());
 		event.registerServerCommand(new HECommandDebug());
+		event.registerServerCommand(new HECommandListControllers());
 		if(event.getSide() == Side.SERVER || event.getServer().isSinglePlayer()) {
 			HEServer.instance = HEServer.load(event.getServer().worldServers[0]);
 		}
