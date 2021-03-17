@@ -36,22 +36,25 @@ public class HELightManager {
         }
     }
 
-    public static void onChunkDataLoad(Chunk chunk, int subChunkHasDataFlags) {
-        HELightChunk lightChunk = null;
-        if(availableBuffers.empty()) {
-            lightChunk = new HELightChunk();
-        }
-        else {
-            lightChunk = availableBuffers.pop();
-        }
-
-        lightChunk.parseChunk(chunk, subChunkHasDataFlags);
-
+    public static void onChunkDataLoad(Chunk chunk) {
         int chunkX = chunk.xPosition;
         int chunkZ = chunk.zPosition;
         long key = HEUtil.chunkCoordsToKey(chunkX, chunkZ);
-        chunks.put(key, lightChunk);
 
+        HELightChunk lightChunk = chunks.get(key);
+        if(lightChunk == null) {
+            if (availableBuffers.empty()) {
+                lightChunk = new HELightChunk();
+            } else {
+                lightChunk = availableBuffers.pop();
+            }
+        }
+        lightChunk.reset();
+
+        lightChunk.parseChunk(chunk);
+
+
+        chunks.put(key, lightChunk);
         for(int chunkY=0;chunkY<16;chunkY++) {
             lightChunk.patch(chunk, chunkY);
         }
@@ -186,11 +189,11 @@ class HELightChunk {
     // This method checks for each block in the chunk what block it is
     // with the logic from ExtendedBlockStorage.getBlockByExtId(blockX, blockY, blockZ)
     // and a waterId LUT (getWaterIdFromBlockId)
-    public void parseChunk(Chunk chunk, int subChunkHasDataFlags) {
+    public void parseChunk(Chunk chunk) {
         ExtendedBlockStorage[] chunkStorage = chunk.getBlockStorageArray();
         for(int chunkY=0;chunkY<16;chunkY++) {
-            if((subChunkHasDataFlags & (1 << chunkY)) != 0) {
-                ExtendedBlockStorage subChunkStorage = chunkStorage[chunkY];
+            ExtendedBlockStorage subChunkStorage = chunkStorage[chunkY];
+            if(subChunkStorage != null) {
                 BitSet flags = lightFlags[chunkY];
                 byte[] LSB = subChunkStorage.getBlockLSBArray();
                 NibbleArray MSB = subChunkStorage.getBlockMSBArray();

@@ -2,6 +2,7 @@ package com.sinthoras.hydroenergy.client.light;
 
 import net.minecraft.block.Block;
 import net.minecraft.world.World;
+import net.minecraft.world.chunk.Chunk;
 
 public class HELightSMPHooks {
 
@@ -10,5 +11,9 @@ public class HELightSMPHooks {
         if(world.isRemote && oldBlock != null) {
             HELightManager.onSetBlock(blockX, blockY, blockZ, block, oldBlock);
         }
+    }
+
+    public static void onChunkDataLoad(Chunk chunk) {
+        HELightManager.onChunkDataLoad(chunk);
     }
 }

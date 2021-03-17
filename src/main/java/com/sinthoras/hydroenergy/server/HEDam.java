@@ -28,7 +28,7 @@ public class HEDam {
 	// NBT variables
 	private float waterLevel;
 	private boolean isPlaced;
-	private HE.DamMode mode;
+	private HE.DamMode mode = HE.DamMode.DRAIN;
 	public int limitUp;
 	public int limitDown;
 	public int limitEast;

@@ -328,14 +328,13 @@ public class HETransformer implements IClassTransformer {
 		final String METHOD_fillChunk_DESC = "([BIIZ)V";
 
 		final String METHOD_onChunkDataLoad = "onChunkDataLoad";
-		final String METHOD_onChunkDataLoad_DESC = "(L" + CLASS_Chunk + ";I)V";
+		final String METHOD_onChunkDataLoad_DESC = "(L" + CLASS_Chunk + ")V";
 
 		final String METHOD_generateHeightMap = isObfuscated ? "a" : "generateHeightMap";
 		final String METHOD_generateHeightMap_DESC = "()V";
 
 		InsnList instructionToInsert = new InsnList();
 		instructionToInsert.add(new VarInsnNode(ALOAD, 0));
-		instructionToInsert.add(new VarInsnNode(ILOAD, 2));
 		instructionToInsert.add(new MethodInsnNode(INVOKESTATIC,
 				CLASS_HELightManager,
 				METHOD_onChunkDataLoad,
