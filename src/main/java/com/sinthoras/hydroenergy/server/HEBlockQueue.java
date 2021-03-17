@@ -19,10 +19,13 @@ public class HEBlockQueue {
 	
 	private static HashMap<Long, HEQueueChunk> chunks = new HashMap<Long, HEQueueChunk>();
 
-	private static int counter = 0;
+	private static long timestamp = 0;
 	public static void onTick() {
-		counter++;
-		if(counter < 100) return;
+		long currentTime = System.currentTimeMillis();
+		if(currentTime - timestamp < HE.spreadingDelayBetweenChunks) {
+			return;
+		}
+		timestamp = currentTime;
 
 		Iterator<Map.Entry<Long, HEQueueChunk>> it = chunks.entrySet().iterator();
 		while(it.hasNext()) {

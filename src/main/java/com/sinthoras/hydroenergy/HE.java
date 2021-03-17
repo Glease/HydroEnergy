@@ -20,7 +20,7 @@ public class HE {
     public static Logger LOG;
     public static final int maxRenderDist = 16;
     public static final float minimalUpdateInterval = 0.001f; // in seconds
-    public static final int queueActionsPerTick = 10;
+    public static final int spreadingDelayBetweenChunks = 1000; // in milliseconds
     public static final float clippingOffset = 0.05f;  // This value must match the server or physics are off. TODO: add to sync packet
 
     static {
