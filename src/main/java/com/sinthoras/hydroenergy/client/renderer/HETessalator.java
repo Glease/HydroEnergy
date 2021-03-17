@@ -5,10 +5,12 @@ import com.sinthoras.hydroenergy.client.HEReflection;
 import com.sinthoras.hydroenergy.HEUtil;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.client.renderer.culling.ICamera;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.World;
+import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.client.MinecraftForgeClient;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL15;
@@ -141,15 +143,18 @@ public class HETessalator {
                     HEUtil.coordBlockToChunk((int)cameraBlockY),
                     HEUtil.coordBlockToChunk((int)cameraBlockZ));
 
+            World world = Minecraft.getMinecraft().theWorld;
             for (long key : chunks.keySet()) {
                 int chunkX = (int) (key >> 32);
                 int chunkZ = (int) key;
+                Chunk chunk = world.getChunkFromChunkCoords(chunkX, chunkZ);
                 for (int chunkY = 0; chunkY < 16; chunkY++) {
                     int blockX = HEUtil.coordChunkToBlock(chunkX);
                     int blockY = HEUtil.coordChunkToBlock(chunkY);
                     int blockZ = HEUtil.coordChunkToBlock(chunkZ);
-                    if (frustrum.isBoundingBoxInFrustum(AxisAlignedBB.getBoundingBox(blockX, blockY, blockZ, blockX + 16, blockY + 16, blockZ + 16))) {
-                        HERenderSubChunk subChunk = chunks.get(key).subChunks[chunkY];
+                    HERenderSubChunk subChunk = chunks.get(key).subChunks[chunkY];
+                    AxisAlignedBB chunkBB = AxisAlignedBB.getBoundingBox(blockX, blockY, blockZ, blockX + 16, blockY + 16, blockZ + 16);
+                    if (subChunk.vaoId != -1 && !chunk.getAreLevelsEmpty(blockY, blockY + 15) && frustrum.isBoundingBoxInFrustum(chunkBB)) {
                         HESortedRenderList.add(subChunk.vaoId, subChunk.numWaterBlocks, chunkX, chunkY, chunkZ);
                     }
                 }

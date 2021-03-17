@@ -25,12 +25,10 @@ public class HESortedRenderList {
     }
 
     public static void add(int vaoId, int numWaterBlocks, int chunkX, int chunkY, int chunkZ) {
-        if(vaoId != -1) {
-            int distance = Math.abs(chunkX - centerX) + Math.abs(chunkY - centerY) + Math.abs(chunkZ - centerZ);
-            bucketsVaoIds[distance][bucketsIds[distance]] = vaoId;
-            bucketsNumWaterBlocks[distance][bucketsIds[distance]] = numWaterBlocks;
-            bucketsIds[distance]++;
-        }
+        int distance = Math.abs(chunkX - centerX) + Math.abs(chunkY - centerY) + Math.abs(chunkZ - centerZ);
+        bucketsVaoIds[distance][bucketsIds[distance]] = vaoId;
+        bucketsNumWaterBlocks[distance][bucketsIds[distance]] = numWaterBlocks;
+        bucketsIds[distance]++;
     }
 
     public static void render() {
