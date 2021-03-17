@@ -49,6 +49,9 @@ public class HEPacketChunkUpdate implements IMessage {
 
                 byte[] metadata = subChunk.getMetadataArray().data;
                 transmissionBuffer.writeBytes(metadata);
+
+                byte[] skylight = subChunk.getSkylightArray().data;
+                transmissionBuffer.writeBytes(skylight);
             }
         }
     }
@@ -80,6 +83,9 @@ public class HEPacketChunkUpdate implements IMessage {
                 byte[] metadata = buf.readBytes(2048).array();
                 subChunk.setBlockMetadataArray(new NibbleArray(metadata, 4));
 
+                byte[] skylight = buf.readBytes(2048).array();
+                subChunk.setSkylightArray(new NibbleArray(skylight, 4));
+
                 receivedChunk[chunkY] = subChunk;
             }
         }
@@ -99,6 +105,7 @@ public class HEPacketChunkUpdate implements IMessage {
                     chunkStorage[chunkY].setBlockLSBArray(message.receivedChunk[chunkY].getBlockLSBArray());
                     chunkStorage[chunkY].setBlockMSBArray(message.receivedChunk[chunkY].getBlockMSBArray());
                     chunkStorage[chunkY].setBlockMetadataArray(message.receivedChunk[chunkY].getMetadataArray());
+                    chunkStorage[chunkY].setSkylightArray(message.receivedChunk[chunkY].getSkylightArray());
                 }
             }
             HELightSMPHooks.onChunkDataLoad(chunk);

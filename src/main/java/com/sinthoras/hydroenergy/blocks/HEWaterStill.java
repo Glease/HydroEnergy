@@ -10,8 +10,8 @@ import net.minecraft.world.World;
 
 public class HEWaterStill extends HEWater {
 
-	public HEWaterStill(int id) {
-		super(id);
+	public HEWaterStill(int waterId) {
+		super(waterId);
 		setTickRandomly(false);
 	}
 	
@@ -36,38 +36,37 @@ public class HEWaterStill extends HEWater {
 
 	@Override
 	public void onBlockAdded(World world, int blockX, int blockY, int blockZ) {
-		spread(world, blockX, blockY, blockZ);
+
 	}
 
 	private void spread(World world, int blockX, int blockY, int blockZ) {
 		final int waterId = getWaterId();
-		if(HEServer.instance.canSpread(waterId)) {
-			if (blockY < HEServer.instance.getWaterLimitUp(waterId)) {
-				HEBlockQueue.enqueueBlock(world, blockX, blockY + 1, blockZ, waterId);
-			}
-
-			if(blockY > HEServer.instance.getWaterLimitDown(waterId)) {
-				HEBlockQueue.enqueueBlock(world, blockX, blockY - 1, blockZ, waterId);
-			}
-
-			if(blockX < HEServer.instance.getWaterLimitEast(waterId)) {
-				HEBlockQueue.enqueueBlock(world, blockX + 1, blockY, blockZ, waterId);
-			}
-
-			if(blockX > HEServer.instance.getWaterLimitWest(waterId)) {
-				HEBlockQueue.enqueueBlock(world, blockX - 1, blockY, blockZ, waterId);
-			}
-
-			if(blockZ < HEServer.instance.getWaterLimitSouth(waterId)) {
-				HEBlockQueue.enqueueBlock(world, blockX, blockY, blockZ + 1, waterId);
-			}
-
-			if(blockZ > HEServer.instance.getWaterLimitNorth(waterId)) {
-				HEBlockQueue.enqueueBlock(world, blockX, blockY, blockZ - 1, waterId);
-			}
+		boolean canSpread = HEServer.instance.canSpread(waterId);
+		if (canSpread && blockY < HEServer.instance.getWaterLimitUp(waterId)) {
+			HEBlockQueue.enqueueBlock(world, blockX, blockY + 1, blockZ, waterId);
 		}
-		else if(!HEServer.instance.canSpread(waterId)
-					|| HEServer.instance.isBlockOutOfBounds(waterId, blockX, blockY, blockZ)) {
+
+		if(canSpread && blockY > HEServer.instance.getWaterLimitDown(waterId)) {
+			HEBlockQueue.enqueueBlock(world, blockX, blockY - 1, blockZ, waterId);
+		}
+
+		if(canSpread && blockX < HEServer.instance.getWaterLimitEast(waterId)) {
+			HEBlockQueue.enqueueBlock(world, blockX + 1, blockY, blockZ, waterId);
+		}
+
+		if(canSpread && blockX > HEServer.instance.getWaterLimitWest(waterId)) {
+			HEBlockQueue.enqueueBlock(world, blockX - 1, blockY, blockZ, waterId);
+		}
+
+		if(canSpread && blockZ < HEServer.instance.getWaterLimitSouth(waterId)) {
+			HEBlockQueue.enqueueBlock(world, blockX, blockY, blockZ + 1, waterId);
+		}
+
+		if(canSpread && blockZ > HEServer.instance.getWaterLimitNorth(waterId)) {
+			HEBlockQueue.enqueueBlock(world, blockX, blockY, blockZ - 1, waterId);
+		}
+
+		if(!canSpread || HEServer.instance.isBlockOutOfBounds(waterId, blockX, blockY, blockZ)) {
 			HEBlockQueue.enqueueBlock(world, blockX, blockY, blockZ, waterId);
 		}
 	}

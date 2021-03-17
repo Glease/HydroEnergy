@@ -8,6 +8,7 @@ import com.sinthoras.hydroenergy.HEUtil;
 import com.sinthoras.hydroenergy.blocks.HEWater;
 import com.sinthoras.hydroenergy.network.HEPacketChunkUpdate;
 import net.minecraft.block.Block;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.server.MinecraftServer;
@@ -123,6 +124,17 @@ class HEQueueChunk {
 						chunkStorage[chunkY] = new ExtendedBlockStorage(chunkY << 4, !chunk.worldObj.provider.hasNoSky);
 					}
 					chunkStorage[chunkY].func_150818_a(entry.blockX & 15, entry.blockY & 15, entry.blockZ & 15, entry.waterBlock);
+					// If the block is over all opague blocks aka can see the sky simply set light to 15.
+					// Else to the value of the first non HEWater block directly below
+					if(chunk.canBlockSeeTheSky(entry.blockX & 15, entry.blockY, entry.blockZ & 15)) {
+						chunkStorage[chunkY].getSkylightArray().set(entry.blockX & 15, entry.blockY & 15, entry.blockZ & 15, 15);
+					}
+					else {
+						int highestOpaqueBlockY = chunk.heightMap[(entry.blockZ & 15) << 4 | (entry.blockX & 15)];
+						int highestOpaqueChunkY = HEUtil.coordBlockToChunk(highestOpaqueBlockY);
+						int lightValue = chunkStorage[highestOpaqueChunkY].getSkylightArray().get(entry.blockZ & 15, highestOpaqueBlockY & 15, entry.blockX & 15);
+						chunkStorage[chunkY].getSkylightArray().set(entry.blockX & 15, entry.blockY & 15, entry.blockZ & 15, lightValue);
+					}
 					HEServer.instance.onBlockPlaced(waterId, entry.blockY);
 					subChunksHaveChanges |= HEUtil.chunkYToFlag(chunkY);
 
@@ -140,11 +152,9 @@ class HEQueueChunk {
 
 			chunk.setChunkModified();
 
-			// TODO: Send to clients in range
-			// TODO: Singleplayer is renderUpdate instead
 			HEPacketChunkUpdate message = new HEPacketChunkUpdate(chunk, subChunksHaveChanges);
-			for(EntityPlayerMP player : (List<EntityPlayerMP>)MinecraftServer.getServer().getConfigurationManager().playerEntityList) {
-				if(player.getServerForPlayer().getPlayerManager().isPlayerWatchingChunk(player, chunk.xPosition, chunk.zPosition)) {
+			for (EntityPlayerMP player : (List<EntityPlayerMP>) MinecraftServer.getServer().getConfigurationManager().playerEntityList) {
+				if (player.getServerForPlayer().getPlayerManager().isPlayerWatchingChunk(player, chunk.xPosition, chunk.zPosition)) {
 					HE.network.sendTo(message, player);
 				}
 			}
@@ -156,6 +166,7 @@ class HEQueueChunk {
 		final QueueEntry entry = new QueueEntry(blockX, blockY, blockZ, waterBlock);
 		int chunkX = HEUtil.coordBlockToChunk(blockX);
 		int chunkZ = HEUtil.coordBlockToChunk(blockZ);
+		Block block = chunk.getBlock(blockX & 15, blockY, blockZ & 15);
 		if (chunkX < chunk.xPosition) {
 			neighborChunkWest.push(entry);
 		} else if (chunkZ < chunk.zPosition) {
@@ -164,7 +175,7 @@ class HEQueueChunk {
 			neighborChunkEast.push(entry);
 		} else if (chunkZ > chunk.zPosition) {
 			neighborChunkSouth.push(entry);
-		} else if(chunk.getBlock(blockX & 15, blockY, blockZ & 15) == Blocks.air) {
+		} else if(block == Blocks.air || block == waterBlock) {
 			this.blockStack.push(entry);
 		}
 	}
