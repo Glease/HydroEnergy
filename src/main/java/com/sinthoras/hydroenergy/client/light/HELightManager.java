@@ -44,6 +44,7 @@ public class HELightManager {
         HELightChunk lightChunk = chunks.get(key);
         if(lightChunk == null) {
             if (availableBuffers.empty()) {
+
                 lightChunk = new HELightChunk();
             } else {
                 lightChunk = availableBuffers.pop();
@@ -52,7 +53,6 @@ public class HELightManager {
         lightChunk.reset();
 
         lightChunk.parseChunk(chunk);
-
 
         chunks.put(key, lightChunk);
         for(int chunkY=0;chunkY<16;chunkY++) {

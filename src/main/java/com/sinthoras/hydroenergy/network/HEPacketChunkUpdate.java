@@ -2,20 +2,20 @@ package com.sinthoras.hydroenergy.network;
 
 import com.sinthoras.hydroenergy.HEUtil;
 import com.sinthoras.hydroenergy.client.light.HELightSMPHooks;
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import net.minecraft.client.Minecraft;
-import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.NibbleArray;
 import net.minecraft.world.chunk.storage.ExtendedBlockStorage;
 
 public class HEPacketChunkUpdate implements IMessage {
 
-    ByteBuf transmissionBuffer;
+    private ByteBuf transmissionBuffer;
     private short flagsChunkY;
     private int chunkX;
     private int chunkZ;
@@ -89,21 +89,19 @@ public class HEPacketChunkUpdate implements IMessage {
 
         @Override
         public IMessage onMessage(HEPacketChunkUpdate message, MessageContext ctx) {
-            World world = Minecraft.getMinecraft().theWorld;
-            Chunk chunk = world.getChunkFromChunkCoords(message.chunkX, message.chunkZ);
+            Chunk chunk = Minecraft.getMinecraft().theWorld.getChunkFromChunkCoords(message.chunkX, message.chunkZ);
             ExtendedBlockStorage[] chunkStorage = chunk.getBlockStorageArray();
-            for(int chunkY=0;chunkY<16;chunkY++) {
-                if((message.flagsChunkY & HEUtil.chunkYToFlag(chunkY)) > 0) {
-                    if(chunkStorage[chunkY] == null) {
-                        chunkStorage[chunkY] = new ExtendedBlockStorage(chunkY << 4, !world.provider.hasNoSky);
+            for (int chunkY = 0; chunkY < 16; chunkY++) {
+                if ((message.flagsChunkY & HEUtil.chunkYToFlag(chunkY)) > 0) {
+                    if (chunkStorage[chunkY] == null) {
+                        chunkStorage[chunkY] = new ExtendedBlockStorage(chunkY << 4, !chunk.worldObj.provider.hasNoSky);
                     }
                     chunkStorage[chunkY].setBlockLSBArray(message.receivedChunk[chunkY].getBlockLSBArray());
                     chunkStorage[chunkY].setBlockMSBArray(message.receivedChunk[chunkY].getBlockMSBArray());
                     chunkStorage[chunkY].setBlockMetadataArray(message.receivedChunk[chunkY].getMetadataArray());
-
-                    HELightSMPHooks.onChunkDataLoad(chunk);
                 }
             }
+            HELightSMPHooks.onChunkDataLoad(chunk);
             return null;
         }
     }
