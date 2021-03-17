@@ -328,7 +328,7 @@ public class HETransformer implements IClassTransformer {
 		final String METHOD_fillChunk_DESC = "([BIIZ)V";
 
 		final String METHOD_onChunkDataLoad = "onChunkDataLoad";
-		final String METHOD_onChunkDataLoad_DESC = "(L" + CLASS_Chunk + ")V";
+		final String METHOD_onChunkDataLoad_DESC = "(L" + CLASS_Chunk + ";)V";
 
 		final String METHOD_generateHeightMap = isObfuscated ? "a" : "generateHeightMap";
 		final String METHOD_generateHeightMap_DESC = "()V";
