@@ -19,8 +19,11 @@ public class HE {
     public static SimpleNetworkWrapper network;
     public static Logger LOG;
     public static final int maxRenderDist = 16;
-    public static final float minimalUpdateInterval = 0.001f; // in seconds
-    public static final int spreadingDelayBetweenChunks = 1000; // in milliseconds
+    public static final int maxChunkY = 15;
+    public static final int waterOpacity = 3;
+    public static final int minimalWaterUpdateInterval = 1000; // in milliseconds
+    public static final int spreadingDelayBetweenPerChunks = 2000; // in milliseconds
+    public static final int minLightUpdateTimePerSubChunk = 10; // in milliseconds
     public static float clippingOffset = 0.05f;  // This value must match the server or physics are off
 
     static {
@@ -31,7 +34,7 @@ public class HE {
             "Please make sure your config \"maxControllers\" is at least as big as the server you are connecting to!";
     
     // TODO: Move to config
-	public static int maxControllers = 16;
+	public static final int maxControllers = 16;
     public static HEControllerBlock controller;
 	public static final HEWaterStill[] waterBlocks = new HEWaterStill[maxControllers];
 	public static final int[] waterBlockIds = new int[maxControllers];

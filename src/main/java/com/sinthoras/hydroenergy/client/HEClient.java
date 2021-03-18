@@ -22,7 +22,6 @@ public class HEClient {
 			return;
 		}
 		dams[waterId].onWaterUpdate(waterLevel);
-		HELightManager.onUpdateWaterLevels();
 	}
 
 	public static void onConfigUpdate(int waterId, int blockX, int blockY, int blockZ, HE.DamMode mode, int limitWest, int limitDown, int limitNorth, int limitEast, int limitUp, int limitSouth) {

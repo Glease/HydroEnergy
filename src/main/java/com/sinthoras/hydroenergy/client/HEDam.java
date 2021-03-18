@@ -84,7 +84,7 @@ public class HEDam {
         return mode != HE.DamMode.SPREAD;
     }
 
-    public float getWaterLevelForPhysics() {
+    public float getWaterLevelForPhysicsAndLighting() {
         if(mode == HE.DamMode.SPREAD) {
             return waterLevel;
         }

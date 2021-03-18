@@ -101,7 +101,8 @@ public class HEDam {
 	public boolean setWaterLevel(float waterLevel) {
 		this.waterLevel = waterLevel;
 		long timestamp = System.currentTimeMillis();
-		if(timestamp - timestampLastUpdate >= HE.minimalUpdateInterval * 1000) {
+		if(timestamp - timestampLastUpdate >= HE.minimalWaterUpdateInterval) {
+			timestampLastUpdate = timestamp;
 			sendWaterUpdate();
 			return true;
 		}

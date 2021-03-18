@@ -55,7 +55,7 @@ public class HEWater extends BlockFluidBase {
 	@Override
 	public int getLightOpacity() {
 		if(FMLCommonHandler.instance().getSide() == Side.CLIENT) {
-			return 3;
+			return HE.waterOpacity;
 		}
 		else {
 			return 0;
@@ -69,7 +69,7 @@ public class HEWater extends BlockFluidBase {
 
 	public float getWaterLevel() {
 		if(HE.logicalClientLoaded) {
-			return HEClient.getDam(waterId).getWaterLevelForPhysics();
+			return HEClient.getDam(waterId).getWaterLevelForPhysicsAndLighting();
 		}
 		else {
 			return HEServer.instance.getWaterLevel(getWaterId());

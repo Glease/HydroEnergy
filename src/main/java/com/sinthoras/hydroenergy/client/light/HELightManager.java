@@ -21,7 +21,8 @@ import java.util.Stack;
 @SideOnly(Side.CLIENT)
 public class HELightManager {
 
-    private static float[] renderedWaterLevel = new float[HE.maxControllers];
+    private static final float[] waterLevelOfLastUpdate = new float[HE.maxControllers];
+    private static final long[] timestampsNextUpdate = new long[HE.maxControllers];
 
     private static final HashMap<Long, HELightChunk> chunks = new HashMap<Long, HELightChunk>();
     private static final Stack<HELightChunk> availableBuffers = new Stack<HELightChunk>();
@@ -85,55 +86,70 @@ public class HELightManager {
         lightChunk.patch(world.getChunkFromChunkCoords(chunkX, chunkZ), chunkY);
     }
 
-    public static void onUpdateWaterLevels() {
+    // If any waterLevel changed enough and the last update was long enough ago chunks will be redrawn.
+    public static void onTick() {
+        final long currentTime = System.currentTimeMillis();
+        for(int waterId = 0; waterId< waterLevelOfLastUpdate.length; waterId++) {
+            final float currentWaterLevel = HEClient.getDam(waterId).getWaterLevelForPhysicsAndLighting();
+            if(Math.abs(waterLevelOfLastUpdate[waterId] - currentWaterLevel) > (0.5f / HE.waterOpacity)
+                    && currentTime - timestampsNextUpdate[waterId] >= 0) {
+                timestampsNextUpdate[waterId] = currentTime;
+                waterLevelOfLastUpdate[waterId] = currentWaterLevel;
+
+                updateLighting(waterId, currentWaterLevel);
+            }
+        }
+    }
+
+    // Checks
+    public static void updateLighting(int waterId, float waterLevel) {
         RenderGlobal renderGlobal = Minecraft.getMinecraft().renderGlobal;
-        float[] newWaterLevels = HEClient.getAllWaterLevelsForRendering();
-        for(int id=0;id<renderedWaterLevel.length;id++) {
-            if(Math.abs(renderedWaterLevel[id] - newWaterLevels[id]) > (0.5f / HE.waterBlocks[0].getLightOpacity())) {
-                renderedWaterLevel = newWaterLevels;
-                for(long key : chunks.keySet()) {
-                    HELightChunk chunk = chunks.get(key);
-                    int chunkX = (int)(key >> 32);
-                    int chunkZ = (int)key;
+        for(long key : chunks.keySet()) {
+            HELightChunk chunk = chunks.get(key);
+            if (chunk.hasUpdateForDam(waterId)) {
+                int chunkX = (int) (key >> 32);
+                int chunkZ = (int) key;
 
-                    long keyWest = HEUtil.chunkCoordsToKey(chunkX - 1, chunkZ);
-                    long keyNorth = HEUtil.chunkCoordsToKey(chunkX, chunkZ - 1);
-                    long keyEast = HEUtil.chunkCoordsToKey(chunkX + 1, chunkZ);
-                    long keySouth = HEUtil.chunkCoordsToKey(chunkX, chunkZ + 1);
-                    HELightChunk neighborChunkWest = chunks.get(keyWest);
-                    HELightChunk neighborChunkNorth = chunks.get(keyNorth);
-                    HELightChunk neighborChunkEast = chunks.get(keyEast);
-                    HELightChunk neighborChunkSouth = chunks.get(keySouth);
+                long keyWest = HEUtil.chunkCoordsToKey(chunkX - 1, chunkZ);
+                long keyNorth = HEUtil.chunkCoordsToKey(chunkX, chunkZ - 1);
+                long keyEast = HEUtil.chunkCoordsToKey(chunkX + 1, chunkZ);
+                long keySouth = HEUtil.chunkCoordsToKey(chunkX, chunkZ + 1);
+                HELightChunk neighborChunkWest = chunks.get(keyWest);
+                HELightChunk neighborChunkNorth = chunks.get(keyNorth);
+                HELightChunk neighborChunkEast = chunks.get(keyEast);
+                HELightChunk neighborChunkSouth = chunks.get(keySouth);
 
-                    for(int chunkY=0;chunkY<16;chunkY++) {
-                        short flagChunkY = HEUtil.chunkYToFlag(chunkY);
-                        if((chunk.subChunkHasWaterFlags & flagChunkY) > 0) {
-                            chunk.requiresPatching |= flagChunkY;
-                            int blockX = HEUtil.coordChunkToBlock(chunkX);
-                            int blockY = HEUtil.coordChunkToBlock(chunkY);
-                            int blockZ = HEUtil.coordChunkToBlock(chunkZ);
-                            renderGlobal.markBlocksForUpdate(blockX, blockY, blockZ, blockX + 15, blockY + 15, blockZ + 15);
+                for (int chunkY = 0; chunkY <= HE.maxChunkY; chunkY++) {
+                    short flagChunkY = HEUtil.chunkYToFlag(chunkY);
+                    if (chunk.hasUpdateForSubChunk(flagChunkY)) {
+                        chunk.requiresPatching |= flagChunkY;
+                        int blockX = HEUtil.coordChunkToBlock(chunkX);
+                        int blockY = HEUtil.coordChunkToBlock(chunkY);
+                        int blockZ = HEUtil.coordChunkToBlock(chunkZ);
+                        renderGlobal.markBlocksForUpdate(blockX, blockY, blockZ, blockX + 15, blockY + 15, blockZ + 15);
+                        timestampsNextUpdate[waterId] += HE.minLightUpdateTimePerSubChunk;
 
-                            // Handle neighbors that don't have water, but touch it
-                            // Technically, a chunk like this could be surrounded by chunks with water and receive multiple
-                            // updates, but this scenario is rather unlikely and therefore, not worth checking for.
-                            if((neighborChunkWest == null || (neighborChunkWest.subChunkHasWaterFlags & flagChunkY) > 0) && (chunk.neighborRequiresPatchingWest & flagChunkY) > 0) {
-                                renderGlobal.markBlocksForUpdate(blockX - 16, blockY, blockZ, blockX - 1, blockY + 15, blockZ + 15);
-                            }
-                            if((neighborChunkNorth == null || (neighborChunkNorth.subChunkHasWaterFlags & flagChunkY) > 0) && (chunk.neighborRequiresPatchingWest & flagChunkY) > 0) {
-                                renderGlobal.markBlocksForUpdate(blockX, blockY, blockZ - 16, blockX + 15, blockY + 15, blockZ - 1);
-                            }
-                            if((neighborChunkEast == null || (neighborChunkEast.subChunkHasWaterFlags & flagChunkY) > 0) && (chunk.neighborRequiresPatchingWest & flagChunkY) > 0) {
-                                renderGlobal.markBlocksForUpdate(blockX + 16, blockY, blockZ, blockX + 31, blockY + 15, blockZ + 15);
-                            }
-                            if((neighborChunkSouth == null || (neighborChunkSouth.subChunkHasWaterFlags & flagChunkY) > 0) && (chunk.neighborRequiresPatchingWest & flagChunkY) > 0) {
-                                renderGlobal.markBlocksForUpdate(blockX, blockY, blockZ + 16, blockX + 15, blockY + 15, blockZ + 31);
-                            }
+                        // Handle neighbors that don't have water, but touch it
+                        // Technically, a chunk like this could be surrounded by chunks with water and receive multiple
+                        // updates, but this scenario is rather unlikely and therefore, not worth checking for.
+                        if ((neighborChunkWest == null || !neighborChunkWest.hasUpdateForSubChunk(flagChunkY)) && chunk.requiresPatchingWest(flagChunkY)) {
+                            renderGlobal.markBlocksForUpdate(blockX - 16, blockY, blockZ, blockX - 1, blockY + 15, blockZ + 15);
+                            timestampsNextUpdate[waterId] += HE.minLightUpdateTimePerSubChunk;
+                        }
+                        if ((neighborChunkNorth == null || !neighborChunkNorth.hasUpdateForSubChunk(flagChunkY)) && chunk.requiresPatchingNorth(flagChunkY)) {
+                            renderGlobal.markBlocksForUpdate(blockX, blockY, blockZ - 16, blockX + 15, blockY + 15, blockZ - 1);
+                            timestampsNextUpdate[waterId] += HE.minLightUpdateTimePerSubChunk;
+                        }
+                        if ((neighborChunkEast == null || !neighborChunkEast.hasUpdateForSubChunk(flagChunkY)) && chunk.requiresPatchingEast(flagChunkY)) {
+                            renderGlobal.markBlocksForUpdate(blockX + 16, blockY, blockZ, blockX + 31, blockY + 15, blockZ + 15);
+                            timestampsNextUpdate[waterId] += HE.minLightUpdateTimePerSubChunk;
+                        }
+                        if ((neighborChunkSouth == null || !neighborChunkSouth.hasUpdateForSubChunk(flagChunkY)) && chunk.requiresPatchingSouth(flagChunkY)) {
+                            renderGlobal.markBlocksForUpdate(blockX, blockY, blockZ + 16, blockX + 15, blockY + 15, blockZ + 31);
+                            timestampsNextUpdate[waterId] += HE.minLightUpdateTimePerSubChunk;
                         }
                     }
-
                 }
-                return;
             }
         }
     }
@@ -251,7 +267,7 @@ class HELightChunk {
 
     public void patch(Chunk chunk, int chunkY) {
         short flagChunkY = HEUtil.chunkYToFlag(chunkY);
-        if((subChunkHasWaterFlags & requiresPatching & flagChunkY) > 0)  {
+        if(hasUpdateForSubChunk(flagChunkY))  {
             float[] waterLevels = HEClient.getAllWaterLevelsForRendering();
             BitSet flags = lightFlags[chunkY];
             NibbleArray skyLightArray = chunk.getBlockStorageArray()[chunkY].getSkylightArray();
@@ -261,12 +277,43 @@ class HELightChunk {
                 int blockZ = linearCoord & 15;
                 int waterId = waterIds[blockX][blockZ];
                 float diff = Math.min((chunkY << 4) - waterLevels[waterId] + blockY, 0);
-                int lightVal = (int)(15 + diff * HE.waterBlocks[0].getLightOpacity());
+                int lightVal = (int)(15 + diff * HE.waterOpacity);
                 lightVal = Math.max(lightVal, 0);
                 skyLightArray.set(blockX, blockY, blockZ, lightVal);
             }
             requiresPatching &= ~flagChunkY;
         }
+    }
+
+    public boolean hasUpdateForSubChunk(int flagChunkY) {
+        return (subChunkHasWaterFlags & flagChunkY) > 0;
+    }
+
+    public boolean hasUpdateForDam(int waterId) {
+        for(int blockX=0;blockX<16;blockX++) {
+            for(int blockZ=0;blockZ<16;blockZ++) {
+                if(waterIds[blockX][blockZ] == waterId) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public boolean requiresPatchingWest(int flagChunkY) {
+        return (neighborRequiresPatchingWest & flagChunkY) > 0;
+    }
+
+    public boolean requiresPatchingNorth(int flagChunkY) {
+        return (neighborRequiresPatchingNorth & flagChunkY) > 0;
+    }
+
+    public boolean requiresPatchingEast(int flagChunkY) {
+        return (neighborRequiresPatchingEast & flagChunkY) > 0;
+    }
+
+    public boolean requiresPatchingSouth(int flagChunkY) {
+        return (neighborRequiresPatchingSouth & flagChunkY) > 0;
     }
 
     private static int getWaterIdFromBlockId(int blockId) {
