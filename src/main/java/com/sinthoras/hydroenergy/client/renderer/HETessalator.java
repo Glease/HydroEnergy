@@ -12,10 +12,7 @@ import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.client.MinecraftForgeClient;
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL15;
-import org.lwjgl.opengl.GL20;
-import org.lwjgl.opengl.GL30;
+import org.lwjgl.opengl.*;
 
 import java.nio.FloatBuffer;
 import java.util.HashMap;
@@ -26,7 +23,7 @@ public class HETessalator {
 
     private static final HashMap<Long, HERenderChunk> chunks = new HashMap<Long, HERenderChunk>();
     private static final Stack<HEBufferIds> availableBuffers = new Stack<HEBufferIds>();
-    private static final FloatBuffer vboBuffer = GLAllocation.createDirectFloatBuffer(7 * (16 * 16 * 16));
+    private static final FloatBuffer vboBuffer = GLAllocation.createDirectFloatBuffer(7 * HE.blockPerSubChunk);
     private static int numWaterBlocks = 0;
 
 
@@ -38,7 +35,7 @@ public class HETessalator {
         HERenderSubChunk subChunk = chunks.get(key).subChunks[chunkY];
 
         if(numWaterBlocks != 0) {
-            if (subChunk.vaoId == -1) {
+            if (subChunk.vaoId == GL31.GL_INVALID_INDEX) {
                 if(availableBuffers.empty()) {
                     subChunk.vaoId = GL30.glGenVertexArrays();
                     subChunk.vboId = GL15.glGenBuffers();
@@ -83,13 +80,13 @@ public class HETessalator {
             vboBuffer.clear();
             numWaterBlocks = 0;
         }
-        else if(subChunk.vaoId != -1) {
+        else if(subChunk.vaoId != GL31.GL_INVALID_INDEX) {
             HEBufferIds ids = new HEBufferIds();
             ids.vaoId = subChunk.vaoId;
             ids.vboId = subChunk.vboId;
             availableBuffers.push(ids);
-            subChunk.vaoId = -1;
-            subChunk.vboId = -1;
+            subChunk.vaoId = GL31.GL_INVALID_INDEX;
+            subChunk.vboId = GL31.GL_INVALID_INDEX;
             subChunk.numWaterBlocks = 0;
         }
     }
@@ -148,13 +145,13 @@ public class HETessalator {
                 int chunkX = (int) (key >> 32);
                 int chunkZ = (int) key;
                 Chunk chunk = world.getChunkFromChunkCoords(chunkX, chunkZ);
-                for (int chunkY = 0; chunkY < 16; chunkY++) {
+                for (int chunkY = 0; chunkY < HE.chunkHeight; chunkY++) {
                     int blockX = HEUtil.coordChunkToBlock(chunkX);
                     int blockY = HEUtil.coordChunkToBlock(chunkY);
                     int blockZ = HEUtil.coordChunkToBlock(chunkZ);
                     HERenderSubChunk subChunk = chunks.get(key).subChunks[chunkY];
-                    AxisAlignedBB chunkBB = AxisAlignedBB.getBoundingBox(blockX, blockY, blockZ, blockX + 16, blockY + 16, blockZ + 16);
-                    if (subChunk.vaoId != -1 && !chunk.getAreLevelsEmpty(blockY, blockY + 15) && frustrum.isBoundingBoxInFrustum(chunkBB)) {
+                    AxisAlignedBB chunkBB = AxisAlignedBB.getBoundingBox(blockX, blockY, blockZ, blockX + HE.chunkWidth, blockY + HE.chunkHeight, blockZ + HE.chunkDepth);
+                    if (subChunk.vaoId != GL31.GL_INVALID_INDEX && !chunk.getAreLevelsEmpty(blockY, blockY + 15) && frustrum.isBoundingBoxInFrustum(chunkBB)) {
                         HESortedRenderList.add(subChunk.vaoId, subChunk.numWaterBlocks, chunkX, chunkY, chunkZ);
                     }
                 }
@@ -183,13 +180,13 @@ public class HETessalator {
             if(chunks.containsKey(oldKey)) {
                 renderChunk = chunks.get(oldKey);
                 for (HERenderSubChunk subChunk : renderChunk.subChunks) {
-                    if (subChunk.vaoId != -1) {
+                    if (subChunk.vaoId != GL31.GL_INVALID_INDEX) {
                         HEBufferIds ids = new HEBufferIds();
                         ids.vaoId = subChunk.vaoId;
                         ids.vboId = subChunk.vboId;
                         availableBuffers.push(ids);
-                        subChunk.vaoId = -1;
-                        subChunk.vboId = -1;
+                        subChunk.vaoId = GL31.GL_INVALID_INDEX;
+                        subChunk.vboId = GL31.GL_INVALID_INDEX;
                         subChunk.numWaterBlocks = 0;
                     }
                 }
@@ -209,7 +206,7 @@ public class HETessalator {
         int subChunkCounter = 0;
         for(HERenderChunk chunk : chunks.values()) {
             for(HERenderSubChunk subChunk : chunk.subChunks) {
-                if(subChunk.vaoId != -1) {
+                if(subChunk.vaoId != GL31.GL_INVALID_INDEX) {
                     subChunkCounter++;
                 }
             }
@@ -229,8 +226,8 @@ class HERenderChunk {
     public HERenderSubChunk[] subChunks;
 
     public HERenderChunk() {
-        subChunks = new HERenderSubChunk[16];
-        for(int i=0;i<subChunks.length;i++) {
+        subChunks = new HERenderSubChunk[HE.numChunksY];
+        for(int i=0;i<HE.numChunksY;i++) {
             subChunks[i] = new HERenderSubChunk();
         }
     }
@@ -238,7 +235,7 @@ class HERenderChunk {
 
 @SideOnly(Side.CLIENT)
 class HERenderSubChunk {
-    public int vaoId = -1;
-    public int vboId = -1;
+    public int vaoId = GL31.GL_INVALID_INDEX;
+    public int vboId = GL31.GL_INVALID_INDEX;
     public int numWaterBlocks = 0;
 }

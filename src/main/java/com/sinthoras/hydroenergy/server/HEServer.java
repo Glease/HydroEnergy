@@ -23,7 +23,7 @@ public class HEServer extends WorldSavedData {
 	public HEServer(String name) {
 		super(name);
 		dams = new HEDam[HE.maxControllers];
-		for(int waterId = 0; waterId< dams.length; waterId++) {
+		for(int waterId = 0; waterId< HE.maxControllers; waterId++) {
 			dams[waterId] = new HEDam(waterId);
 		}
 	}
@@ -55,7 +55,7 @@ public class HEServer extends WorldSavedData {
 
 	@Override
 	public void writeToNBT(NBTTagCompound compound) {
-		for(int waterId = 0; waterId< dams.length; waterId++) {
+		for(int waterId = 0; waterId< HE.maxControllers; waterId++) {
 			NBTTagCompound damCompound = new NBTTagCompound();
 			dams[waterId].writeToNBTFull(damCompound);
 			compound.setTag(Tags.dam + waterId, damCompound);
@@ -78,7 +78,7 @@ public class HEServer extends WorldSavedData {
 	}
 	
 	public int onPlacecontroller(int blockX, int blockY, int blockZ) {
-		for(int waterId = 0; waterId< dams.length; waterId++) {
+		for(int waterId = 0; waterId< HE.maxControllers; waterId++) {
 			if (!dams[waterId].isPlaced()) {
 				dams[waterId].placeController(blockX, blockY, blockZ);
 				markDirty();
@@ -186,7 +186,7 @@ public class HEServer extends WorldSavedData {
 
 	public void synchronizeClient(PlayerLoggedInEvent event) {
 		HEPacketSynchronize message = new HEPacketSynchronize();
-		for(int waterId = 0; waterId< dams.length; waterId++) {
+		for(int waterId = 0; waterId< HE.maxControllers; waterId++) {
 			message.blocksX[waterId] = dams[waterId].getBlockX();
 			message.blocksY[waterId] = dams[waterId].getBlockY();
 			message.blocksZ[waterId] = dams[waterId].getBlockZ();

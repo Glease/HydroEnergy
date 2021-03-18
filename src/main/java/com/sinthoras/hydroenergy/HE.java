@@ -19,8 +19,12 @@ public class HE {
     public static SimpleNetworkWrapper network;
     public static Logger LOG;
     public static final int maxRenderDist = 16;
-    public static final int maxChunkY = 15;
+    public static final int numChunksY = 16;
     public static final int waterOpacity = 3;
+    public static final int chunkWidth = 16;
+    public static final int chunkHeight = 16;
+    public static final int chunkDepth = 16;
+    public static final int blockPerSubChunk = chunkWidth * chunkHeight * chunkDepth;
     public static final int underWaterSkylightDepth = (int)Math.ceil(16f / waterOpacity);
     public static final int minimalWaterUpdateInterval = 1000; // in milliseconds
     public static final int spreadingDelayBetweenPerChunks = 2000; // in milliseconds

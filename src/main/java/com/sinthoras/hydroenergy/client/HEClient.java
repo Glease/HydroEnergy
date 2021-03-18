@@ -1,7 +1,6 @@
 package com.sinthoras.hydroenergy.client;
 
 import com.sinthoras.hydroenergy.HE;
-import com.sinthoras.hydroenergy.client.light.HELightManager;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -10,7 +9,7 @@ public class HEClient {
 
 	private static HEDam[] dams = new HEDam[HE.maxControllers];
 	static {
-		for(int waterId=0;waterId<dams.length;waterId++) {
+		for(int waterId=0;waterId<HE.maxControllers;waterId++) {
 			dams[waterId] = new HEDam(waterId);
 		}
 	}
@@ -34,26 +33,26 @@ public class HEClient {
 	}
 
 	public static float[] getDebugStatesAsFactors() {
-		float[] debugFactors = new float[dams.length];
-		for(int waterId = 0; waterId< debugFactors.length; waterId++) {
+		float[] debugFactors = new float[HE.maxControllers];
+		for(int waterId = 0; waterId< HE.maxControllers; waterId++) {
 			debugFactors[waterId] = dams[waterId].renderAsDebug() ? 1.0f : 0.0f;
 		}
 		return debugFactors;
 	}
 
 	public static float[] getAllWaterLevelsForRendering() {
-		float[] waterLevels = new float[HEClient.dams.length];
-		for(int waterId = 0; waterId< waterLevels.length; waterId++) {
+		float[] waterLevels = new float[HE.maxControllers];
+		for(int waterId = 0; waterId< HE.maxControllers; waterId++) {
 			waterLevels[waterId] = dams[waterId].getWaterLevelForRendering();
 		}
 		return waterLevels;
 	}
 
 	public static void onSynchronize(int[] blocksX, int[] blocksY, int[] blocksZ, float[] waterLevels, HE.DamMode[] modes, int[] limitsWest, int[] limitsDown, int[] limitsNorth, int[] limitsEast, int[] limitsUp, int[] limitsSouth) {
-		if(dams.length < waterLevels.length) {
+		if(HE.maxControllers < waterLevels.length) {
 			HE.LOG.error(HE.ERROR_serverIdsOutOfBounds);
 		}
-		for(int waterId=0;waterId<dams.length;waterId++) {
+		for(int waterId=0;waterId<HE.maxControllers;waterId++) {
 			dams[waterId].onConfigUpdate(blocksX[waterId], blocksY[waterId], blocksZ[waterId], modes[waterId],
 					limitsWest[waterId], limitsDown[waterId], limitsNorth[waterId], limitsEast[waterId], limitsUp[waterId], limitsSouth[waterId]);
 			dams[waterId].onWaterUpdate(waterLevels[waterId]);
@@ -75,7 +74,7 @@ public class HEClient {
 
 	public static void onDisconnect() {
 		dams = new HEDam[HE.maxControllers];
-		for(int waterId=0;waterId<dams.length;waterId++) {
+		for(int waterId=0;waterId<HE.maxControllers;waterId++) {
 			dams[waterId] = new HEDam(waterId);
 		}
 	}

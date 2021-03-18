@@ -71,7 +71,7 @@ public class HEProgram {
         if(GL20.glGetProgrami(programId, GL20.GL_LINK_STATUS) == 0) {
             String s = StringUtils.trim(GL20.glGetProgramInfoLog(programId, 32768));
             HE.LOG.error("Shader program linking failed: " + s);
-            programId = -1;
+            programId = GL31.GL_INVALID_INDEX;
             return;
         }
 
@@ -112,14 +112,14 @@ public class HEProgram {
             {
                 String s = StringUtils.trim(GL20.glGetShaderInfoLog(shaderID, 32768));  //Const good?
                 HE.LOG.error("Couldn't compile shader: " + s);
-                return -1;
+                return GL31.GL_INVALID_INDEX;
             }
             GL20.glUseProgram(programId);
             return shaderID;
         }
         catch(Exception e) {
             e.printStackTrace();
-            return -1;
+            return GL31.GL_INVALID_INDEX;
         }
     }
 

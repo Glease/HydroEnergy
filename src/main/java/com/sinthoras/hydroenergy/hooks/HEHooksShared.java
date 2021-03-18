@@ -40,10 +40,10 @@ public class HEHooksShared {
 
 		HE.LOG.info("The subsequent " + HE.maxControllers + " liquid errors are intendend. Please ignore...");
 
-		for(int id=0;id<HE.waterBlocks.length;id++) {
-			HE.waterBlocks[id] = new HEWaterStill(id);
-			GameRegistry.registerBlock(HE.waterBlocks[id], HE.waterBlocks[id].getUnlocalizedName());
-			HE.waterBlockIds[id] = Block.blockRegistry.getIDForObject(HE.waterBlocks[id]);
+		for(int waterId=0;waterId<HE.maxControllers;waterId++) {
+			HE.waterBlocks[waterId] = new HEWaterStill(waterId);
+			GameRegistry.registerBlock(HE.waterBlocks[waterId], HE.waterBlocks[waterId].getUnlocalizedName());
+			HE.waterBlockIds[waterId] = Block.blockRegistry.getIDForObject(HE.waterBlocks[waterId]);
 		}
     	HE.controller = new HEControllerBlock();
 		GameRegistry.registerBlock(HE.controller, HE.controller.getUnlocalizedName());

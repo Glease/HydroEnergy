@@ -1,9 +1,9 @@
 package com.sinthoras.hydroenergy.network;
 
+import com.sinthoras.hydroenergy.HE;
 import com.sinthoras.hydroenergy.HEReflection;
 import com.sinthoras.hydroenergy.HEUtil;
 import com.sinthoras.hydroenergy.client.light.HELightSMPHooks;
-import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
@@ -32,7 +32,7 @@ public class HEPacketChunkUpdate implements IMessage {
         transmissionBuffer.writeInt(chunk.xPosition);
         transmissionBuffer.writeInt(chunk.zPosition);
         ExtendedBlockStorage[] blockStorages = chunk.getBlockStorageArray();
-        for(int chunkY=0;chunkY<blockStorages.length;chunkY++) {
+        for(int chunkY=0;chunkY<HE.numChunksY;chunkY++) {
             if((flagsChunkY & HEUtil.chunkYToFlag(chunkY)) > 0) {
                 ExtendedBlockStorage subChunk = blockStorages[chunkY];
 
@@ -43,8 +43,8 @@ public class HEPacketChunkUpdate implements IMessage {
                 transmissionBuffer.writeBytes(lsb);
 
                 NibbleArray msbArray = subChunk.getBlockMSBArray();
+                transmissionBuffer.writeBoolean(msbArray == null);
                 if(msbArray != null) {
-                    transmissionBuffer.writeInt(msbArray.data.length);
                     transmissionBuffer.writeBytes(msbArray.data);
                 }
                 else {
@@ -70,32 +70,35 @@ public class HEPacketChunkUpdate implements IMessage {
         flagsChunkY = buf.readShort();
         chunkX = buf.readInt();
         chunkZ = buf.readInt();
-        receivedChunk = new ExtendedBlockStorage[16];
-        for(int chunkY=0;chunkY<16;chunkY++) {
+        receivedChunk = new ExtendedBlockStorage[HE.numChunksY];
+        for(int chunkY=0;chunkY<HE.numChunksY;chunkY++) {
             if((flagsChunkY & HEUtil.chunkYToFlag(chunkY)) > 0) {
                 ExtendedBlockStorage subChunk = new ExtendedBlockStorage(chunkY << 4, false);
 
                 HEReflection.setBlockRefCount(subChunk, buf.readInt());
                 HEReflection.setTickRefCount(subChunk, buf.readInt());
 
-                byte[] lsb = buf.readBytes(4096).array();
+                byte[] lsb = buf.readBytes(HE.blockPerSubChunk).array();
                 subChunk.setBlockLSBArray(lsb);
 
-                int msbLength = buf.readInt();
-                if(msbLength != 0) {
-                    byte[] msb = buf.readBytes(msbLength).array();
+                if(!buf.readBoolean()) {
+                    byte[] msb = buf.readBytes(HE.blockPerSubChunk / 2).array();
                     subChunk.setBlockMSBArray(new NibbleArray(msb, 4));
                 }
 
-                byte[] metadata = buf.readBytes(2048).array();
+                byte[] metadata = buf.readBytes(HE.blockPerSubChunk / 2).array();
                 subChunk.setBlockMetadataArray(new NibbleArray(metadata, 4));
 
-                byte[] skylight = buf.readBytes(2048).array();
+                byte[] skylight = buf.readBytes(HE.blockPerSubChunk / 2).array();
                 subChunk.setSkylightArray(new NibbleArray(skylight, 4));
 
                 receivedChunk[chunkY] = subChunk;
             }
         }
+    }
+
+    public boolean hasDataForSubChunk(int chunkY) {
+        return (flagsChunkY & HEUtil.chunkYToFlag(chunkY)) > 0;
     }
 
     public static class Handler implements IMessageHandler<HEPacketChunkUpdate, IMessage> {
@@ -104,8 +107,8 @@ public class HEPacketChunkUpdate implements IMessage {
         public IMessage onMessage(HEPacketChunkUpdate message, MessageContext ctx) {
             Chunk chunk = Minecraft.getMinecraft().theWorld.getChunkFromChunkCoords(message.chunkX, message.chunkZ);
             ExtendedBlockStorage[] chunkStorage = chunk.getBlockStorageArray();
-            for (int chunkY = 0; chunkY < 16; chunkY++) {
-                if ((message.flagsChunkY & HEUtil.chunkYToFlag(chunkY)) > 0) {
+            for (int chunkY = 0; chunkY < HE.numChunksY; chunkY++) {
+                if (message.hasDataForSubChunk(chunkY)) {
                     if (chunkStorage[chunkY] == null) {
                         chunkStorage[chunkY] = new ExtendedBlockStorage(chunkY << 4, !chunk.worldObj.provider.hasNoSky);
                     }

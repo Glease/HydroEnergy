@@ -56,7 +56,7 @@ public class HELightManager {
         lightChunk.parseChunk(chunk);
 
         chunks.put(key, lightChunk);
-        for(int chunkY=0;chunkY<16;chunkY++) {
+        for(int chunkY=0;chunkY<HE.numChunksY;chunkY++) {
             lightChunk.patch(chunk, chunkY);
         }
     }
@@ -89,7 +89,7 @@ public class HELightManager {
     // If any waterLevel changed enough and the last update was long enough ago chunks will be redrawn.
     public static void onTick() {
         final long currentTime = System.currentTimeMillis();
-        for(int waterId = 0; waterId< waterLevelOfLastUpdate.length; waterId++) {
+        for(int waterId = 0; waterId< HE.maxControllers; waterId++) {
             final float currentWaterLevel = HEClient.getDam(waterId).getWaterLevelForPhysicsAndLighting();
             if(Math.abs(waterLevelOfLastUpdate[waterId] - currentWaterLevel) > (0.5f / HE.waterOpacity)
                     && currentTime - timestampsNextUpdate[waterId] >= 0) {
@@ -120,9 +120,9 @@ public class HELightManager {
                 HELightChunk neighborChunkEast = chunks.get(keyEast);
                 HELightChunk neighborChunkSouth = chunks.get(keySouth);
 
-                for (int chunkY = 0; chunkY <= HE.maxChunkY; chunkY++) {
+                for (int chunkY = 0; chunkY < HE.numChunksY; chunkY++) {
                     int blockY = HEUtil.coordChunkToBlock(chunkY);
-                    boolean chunkTooLow = blockY + 16 + HE.underWaterSkylightDepth < waterLevel && blockY + 16 + HE.underWaterSkylightDepth < oldWaterLevel;
+                    boolean chunkTooLow = blockY + HE.chunkHeight + HE.underWaterSkylightDepth < waterLevel && blockY + HE.chunkHeight + HE.underWaterSkylightDepth < oldWaterLevel;
                     boolean chunkTooHigh = blockY > waterLevel && blockY > oldWaterLevel;
                     if(!chunkTooLow && !chunkTooHigh) {
                         short flagChunkY = HEUtil.chunkYToFlag(chunkY);
@@ -137,19 +137,19 @@ public class HELightManager {
                             // Technically, a chunk like this could be surrounded by chunks with water and receive multiple
                             // updates, but this scenario is rather unlikely and therefore, not worth checking for.
                             if ((neighborChunkWest == null || !neighborChunkWest.hasUpdateForSubChunk(flagChunkY)) && chunk.requiresPatchingWest(flagChunkY)) {
-                                renderGlobal.markBlocksForUpdate(blockX - 16, blockY, blockZ, blockX - 1, blockY + 15, blockZ + 15);
+                                markChunkForRerender(renderGlobal, chunkX - 1, chunkY, chunkZ);
                                 timestampsNextUpdate[waterId] += HE.minLightUpdateTimePerSubChunk;
                             }
                             if ((neighborChunkNorth == null || !neighborChunkNorth.hasUpdateForSubChunk(flagChunkY)) && chunk.requiresPatchingNorth(flagChunkY)) {
-                                renderGlobal.markBlocksForUpdate(blockX, blockY, blockZ - 16, blockX + 15, blockY + 15, blockZ - 1);
+                                markChunkForRerender(renderGlobal, chunkX, chunkY, chunkZ - 1);
                                 timestampsNextUpdate[waterId] += HE.minLightUpdateTimePerSubChunk;
                             }
                             if ((neighborChunkEast == null || !neighborChunkEast.hasUpdateForSubChunk(flagChunkY)) && chunk.requiresPatchingEast(flagChunkY)) {
-                                renderGlobal.markBlocksForUpdate(blockX + 16, blockY, blockZ, blockX + 31, blockY + 15, blockZ + 15);
+                                markChunkForRerender(renderGlobal, chunkX + 1, chunkY, chunkZ);
                                 timestampsNextUpdate[waterId] += HE.minLightUpdateTimePerSubChunk;
                             }
                             if ((neighborChunkSouth == null || !neighborChunkSouth.hasUpdateForSubChunk(flagChunkY)) && chunk.requiresPatchingSouth(flagChunkY)) {
-                                renderGlobal.markBlocksForUpdate(blockX, blockY, blockZ + 16, blockX + 15, blockY + 15, blockZ + 31);
+                                markChunkForRerender(renderGlobal, chunkX, chunkY, chunkZ + 1);
                                 timestampsNextUpdate[waterId] += HE.minLightUpdateTimePerSubChunk;
                             }
                         }
@@ -157,6 +157,13 @@ public class HELightManager {
                 }
             }
         }
+    }
+
+    private static void markChunkForRerender(RenderGlobal renderGlobal, int chunkX, int chunkY, int chunkZ) {
+        int blockX = HEUtil.coordChunkToBlock(chunkX);
+        int blockY = HEUtil.coordChunkToBlock(chunkY);
+        int blockZ = HEUtil.coordChunkToBlock(chunkZ);
+        renderGlobal.markBlocksForUpdate(blockX, blockY, blockZ, blockX + HE.chunkWidth - 1, blockY + HE.chunkHeight - 1, blockZ + HE.chunkDepth - 1);
     }
 }
 
@@ -177,12 +184,12 @@ class HELightChunk {
 
 
     public HELightChunk() {
-        lightFlags = new BitSet[16];
-        for(int chunkY=0;chunkY<lightFlags.length;chunkY++) {
-            lightFlags[chunkY] = new BitSet(16 * 16 * 16);
+        lightFlags = new BitSet[HE.numChunksY];
+        for(int chunkY=0;chunkY<HE.numChunksY;chunkY++) {
+            lightFlags[chunkY] = new BitSet(HE.blockPerSubChunk);
         }
 
-        waterIds = new int[16][16];
+        waterIds = new int[HE.chunkWidth][HE.chunkDepth];
         subChunkHasWaterFlags = 0;
         requiresPatching = 0;
 
@@ -194,7 +201,7 @@ class HELightChunk {
     }
 
     public void reset() {
-        for(int chunkY=0;chunkY<16;chunkY++) {
+        for(int chunkY=0;chunkY<HE.numChunksY;chunkY++) {
             lightFlags[chunkY].clear();
         }
         subChunkHasWaterFlags = 0;
@@ -212,20 +219,20 @@ class HELightChunk {
     // and a waterId LUT (getWaterIdFromBlockId)
     public void parseChunk(Chunk chunk) {
         ExtendedBlockStorage[] chunkStorage = chunk.getBlockStorageArray();
-        for(int chunkY=0;chunkY<16;chunkY++) {
+        for(int chunkY=0;chunkY<HE.numChunksY;chunkY++) {
             ExtendedBlockStorage subChunkStorage = chunkStorage[chunkY];
             if(subChunkStorage != null) {
                 BitSet flags = lightFlags[chunkY];
                 byte[] LSB = subChunkStorage.getBlockLSBArray();
                 NibbleArray MSB = subChunkStorage.getBlockMSBArray();
 
-                int[] bucketsBlockX = new int[16];
-                int[] bucketsBlockZ = new int[16];
+                int[] bucketsBlockX = new int[HE.chunkWidth];
+                int[] bucketsBlockZ = new int[HE.chunkDepth];
                 short flagChunkY = HEUtil.chunkYToFlag(chunkY);
 
-                for (int blockX = 0; blockX < 16; blockX++) {
-                    for (int blockY = 0; blockY < 16; blockY++) {
-                        for (int blockZ = 0; blockZ < 16; blockZ++) {
+                for (int blockX = 0; blockX < HE.chunkWidth; blockX++) {
+                    for (int blockY = 0; blockY < HE.chunkHeight; blockY++) {
+                        for (int blockZ = 0; blockZ < HE.chunkDepth; blockZ++) {
                             int blockId = LSB[blockY << 8 | blockZ << 4 | blockX] & 255;
                             if (MSB != null) {
                                 blockId |= MSB.get(blockX, blockY, blockZ) << 8;
@@ -281,8 +288,8 @@ class HELightChunk {
                 int blockY = (linearCoord >> 4) & 15;
                 int blockZ = linearCoord & 15;
                 int waterId = waterIds[blockX][blockZ];
-                float diff = Math.min((chunkY << 4) - waterLevels[waterId] + blockY, 0);
-                int lightVal = (int)(15 + diff * HE.waterOpacity);
+                float blockDiff = Math.min(HEUtil.coordChunkToBlock(chunkY) + blockY - waterLevels[waterId], 0);
+                int lightVal = (int)(15 + blockDiff * HE.waterOpacity);
                 lightVal = Math.max(lightVal, 0);
                 skyLightArray.set(blockX, blockY, blockZ, lightVal);
             }
@@ -307,8 +314,8 @@ class HELightChunk {
     }
 
     public boolean hasUpdateForDam(int waterId) {
-        for(int blockX=0;blockX<16;blockX++) {
-            for(int blockZ=0;blockZ<16;blockZ++) {
+        for(int blockX=0;blockX<HE.chunkWidth;blockX++) {
+            for(int blockZ=0;blockZ<HE.chunkDepth;blockZ++) {
                 if(waterIds[blockX][blockZ] == waterId) {
                     return true;
                 }
@@ -334,9 +341,9 @@ class HELightChunk {
     }
 
     private static int getWaterIdFromBlockId(int blockId) {
-        for(int i=0;i<HE.waterBlockIds.length;i++) {
-            if(HE.waterBlockIds[i] == blockId) {
-                return i;
+        for(int waterId=0;waterId<HE.maxControllers;waterId++) {
+            if(HE.waterBlockIds[waterId] == blockId) {
+                return waterId;
             }
         }
         return -1;

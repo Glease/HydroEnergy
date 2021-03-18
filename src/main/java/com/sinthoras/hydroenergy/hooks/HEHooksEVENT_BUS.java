@@ -3,7 +3,6 @@ package com.sinthoras.hydroenergy.hooks;
 import com.sinthoras.hydroenergy.client.light.HELightManager;
 import com.sinthoras.hydroenergy.client.renderer.HETessalator;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;
