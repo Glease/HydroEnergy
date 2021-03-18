@@ -267,7 +267,7 @@ class HELightChunk {
 
     public void patch(Chunk chunk, int chunkY) {
         short flagChunkY = HEUtil.chunkYToFlag(chunkY);
-        if(hasUpdateForSubChunk(flagChunkY))  {
+        if(hasUpdateForSubChunk(flagChunkY) && subChunkRequiresPatching(flagChunkY))  {
             float[] waterLevels = HEClient.getAllWaterLevelsForRendering();
             BitSet flags = lightFlags[chunkY];
             NibbleArray skyLightArray = chunk.getBlockStorageArray()[chunkY].getSkylightArray();
@@ -283,6 +283,10 @@ class HELightChunk {
             }
             requiresPatching &= ~flagChunkY;
         }
+    }
+
+    private boolean subChunkRequiresPatching(int flagChunkY) {
+        return (requiresPatching & flagChunkY) > 0;
     }
 
     public boolean hasUpdateForSubChunk(int flagChunkY) {
