@@ -21,6 +21,7 @@ public class HE {
     public static final int maxRenderDist = 16;
     public static final int maxChunkY = 15;
     public static final int waterOpacity = 3;
+    public static final int underWaterSkylightDepth = (int)Math.ceil(16f / waterOpacity);
     public static final int minimalWaterUpdateInterval = 1000; // in milliseconds
     public static final int spreadingDelayBetweenPerChunks = 2000; // in milliseconds
     public static final int minLightUpdateTimePerSubChunk = 10; // in milliseconds
