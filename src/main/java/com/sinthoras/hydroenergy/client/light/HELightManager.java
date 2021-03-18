@@ -127,7 +127,7 @@ public class HELightManager {
                     if(!chunkTooLow && !chunkTooHigh) {
                         short flagChunkY = HEUtil.chunkYToFlag(chunkY);
                         if (chunk.hasUpdateForSubChunk(flagChunkY)) {
-                            chunk.requiresPatching |= flagChunkY;
+                            chunk.subChunkMustBePatched(flagChunkY);
                             int blockX = HEUtil.coordChunkToBlock(chunkX);
                             int blockZ = HEUtil.coordChunkToBlock(chunkZ);
                             renderGlobal.markBlocksForUpdate(blockX, blockY, blockZ, blockX + 15, blockY + 15, blockZ + 15);
@@ -286,8 +286,16 @@ class HELightChunk {
                 lightVal = Math.max(lightVal, 0);
                 skyLightArray.set(blockX, blockY, blockZ, lightVal);
             }
-            requiresPatching &= ~flagChunkY;
+            subChunkWasPatched(flagChunkY);
         }
+    }
+
+    private void subChunkWasPatched(int flagChunkY) {
+        requiresPatching &= ~flagChunkY;
+    }
+
+    public void subChunkMustBePatched(int flagChunkY) {
+        requiresPatching |= flagChunkY;
     }
 
     private boolean subChunkRequiresPatching(int flagChunkY) {
