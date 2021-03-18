@@ -29,6 +29,7 @@ public class HEWaterRenderer extends RenderBlockFluid {
         return renderID;
     }
 
+    // Static instances to save time on memory allocation
     private static final Block[] neighbors = new Block[6];
 	private static final boolean[] shouldSidesBeRendered = new boolean[6];
 	
