@@ -21,13 +21,14 @@ public class HE {
     public static final int maxRenderDist = 16;
     public static final float minimalUpdateInterval = 0.001f; // in seconds
     public static final int spreadingDelayBetweenChunks = 1000; // in milliseconds
-    public static final float clippingOffset = 0.05f;  // This value must match the server or physics are off. TODO: add to sync packet
+    public static float clippingOffset = 0.05f;  // This value must match the server or physics are off
 
     static {
         LOG = LogManager.getLogger(MODID);
     }
     public static boolean logicalClientLoaded = false;
-    public static final String ERROR_serverIdsOutOfBounds = "Server uses invalid waterIds! Server message ignored.";
+    public static final String ERROR_serverIdsOutOfBounds = "Server uses invalid waterIds! Server message ignored. " +
+            "Please make sure your config \"maxControllers\" is at least as big as the server you are connecting to!";
     
     // TODO: Move to config
 	public static int maxControllers = 16;

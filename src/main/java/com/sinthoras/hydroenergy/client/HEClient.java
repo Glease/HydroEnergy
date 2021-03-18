@@ -51,12 +51,8 @@ public class HEClient {
 	}
 
 	public static void onSynchronize(int[] blocksX, int[] blocksY, int[] blocksZ, float[] waterLevels, HE.DamMode[] modes, int[] limitsWest, int[] limitsDown, int[] limitsNorth, int[] limitsEast, int[] limitsUp, int[] limitsSouth) {
-		if(dams.length != waterLevels.length) {
-			HE.maxControllers = waterLevels.length;
-			dams = new HEDam[waterLevels.length];
-			for(int waterId=0;waterId<dams.length;waterId++) {
-				dams[waterId] = new HEDam(waterId);
-			}
+		if(dams.length < waterLevels.length) {
+			HE.LOG.error(HE.ERROR_serverIdsOutOfBounds);
 		}
 		for(int waterId=0;waterId<dams.length;waterId++) {
 			dams[waterId].onConfigUpdate(blocksX[waterId], blocksY[waterId], blocksZ[waterId], modes[waterId],

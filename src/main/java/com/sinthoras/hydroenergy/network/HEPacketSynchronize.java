@@ -49,6 +49,7 @@ public class HEPacketSynchronize implements IMessage {
 			limitsUp[waterId] = buf.readInt();
 			limitsSouth[waterId] = buf.readInt();
 		}
+		HE.clippingOffset = buf.readFloat();
 	}
 
 	@Override
@@ -67,6 +68,7 @@ public class HEPacketSynchronize implements IMessage {
 			buf.writeInt(limitsUp[waterId]);
 			buf.writeInt(limitsSouth[waterId]);
 		}
+		buf.writeFloat(HE.clippingOffset);
 	}
 
 	public static class Handler implements IMessageHandler<HEPacketSynchronize, IMessage> {
