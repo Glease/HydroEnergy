@@ -2,6 +2,7 @@ package com.sinthoras.hydroenergy.client;
 
 import com.sinthoras.hydroenergy.HE;
 import com.sinthoras.hydroenergy.HEUtil;
+import com.sinthoras.hydroenergy.config.HEConfig;
 import com.sinthoras.hydroenergy.network.HEPacketConfigRequest;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -68,12 +69,12 @@ public class HEDam {
 
     // Clap change requests to config limits
     private void verifyChanges() {
-        pendingLimitWest = blockX - HEUtil.clamp(blockX - pendingLimitWest, 0, HE.maxWaterSpreadWest);
-        pendingLimitDown = blockY - HEUtil.clamp(blockY - pendingLimitDown, 0, HE.maxWaterSpreadDown);
-        pendingLimitNorth = blockZ - HEUtil.clamp(blockZ - pendingLimitNorth, 0, HE.maxWaterSpreadNorth);
-        pendingLimitEast = blockX + HEUtil.clamp(pendingLimitEast - blockX, 0, HE.maxWaterSpreadEast);
-        pendingLimitUp = blockY + HEUtil.clamp(pendingLimitUp - blockY, 0, HE.maxWaterSpreadUp);
-        pendingLimitSouth = blockZ + HEUtil.clamp(pendingLimitSouth - blockZ, 0, HE.maxWaterSpreadSouth);
+        pendingLimitWest = blockX - HEUtil.clamp(blockX - pendingLimitWest, 0, HEConfig.maxWaterSpreadWest);
+        pendingLimitDown = blockY - HEUtil.clamp(blockY - pendingLimitDown, 0, HEConfig.maxWaterSpreadDown);
+        pendingLimitNorth = blockZ - HEUtil.clamp(blockZ - pendingLimitNorth, 0, HEConfig.maxWaterSpreadNorth);
+        pendingLimitEast = blockX + HEUtil.clamp(pendingLimitEast - blockX, 0, HEConfig.maxWaterSpreadEast);
+        pendingLimitUp = blockY + HEUtil.clamp(pendingLimitUp - blockY, 0, HEConfig.maxWaterSpreadUp);
+        pendingLimitSouth = blockZ + HEUtil.clamp(pendingLimitSouth - blockZ, 0, HEConfig.maxWaterSpreadSouth);
     }
 
     public void onWaterUpdate(float waterLevel) {

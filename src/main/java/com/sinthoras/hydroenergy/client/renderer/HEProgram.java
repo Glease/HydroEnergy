@@ -5,6 +5,7 @@ import com.sinthoras.hydroenergy.HE;
 
 import com.sinthoras.hydroenergy.client.HEReflection;
 import com.sinthoras.hydroenergy.client.HEClient;
+import com.sinthoras.hydroenergy.config.HEConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.client.renderer.texture.TextureMap;
@@ -50,14 +51,14 @@ public class HEProgram {
     private static final FloatBuffer modelview = GLAllocation.createDirectFloatBuffer(16);
     private static final FloatBuffer modelviewProjection = GLAllocation.createDirectFloatBuffer(16);
     private static final FloatBuffer fogColor = GLAllocation.createDirectFloatBuffer(16);
-    private static final FloatBuffer waterLevels = GLAllocation.createDirectFloatBuffer(HE.maxControllers);
-    private static final FloatBuffer debugStates = GLAllocation.createDirectFloatBuffer(HE.maxControllers);
+    private static final FloatBuffer waterLevels = GLAllocation.createDirectFloatBuffer(HEConfig.maxDams);
+    private static final FloatBuffer debugStates = GLAllocation.createDirectFloatBuffer(HEConfig.maxDams);
 
 
     public static void init() {
         final String defines = "#version 330 core\n"
-                + "#define NUM_CONTROLLERS " + HE.maxControllers + "\n"
-                + "#define CLIPPING_OFFSET " + HE.clippingOffset + "\n";
+                + "#define NUM_CONTROLLERS " + HEConfig.maxDams + "\n"
+                + "#define CLIPPING_OFFSET " + HEConfig.clippingOffset + "\n";
         final int vertexShader = loadShader(vertexShaderLocation, GL20.GL_VERTEX_SHADER, defines);
         final int geometryShader = loadShader(geometryShaderLocation, GL32.GL_GEOMETRY_SHADER, defines);
         final int fragmentShader = loadShader(fragmentShaderLocation, GL20.GL_FRAGMENT_SHADER, defines);

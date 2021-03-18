@@ -1,22 +1,23 @@
 package com.sinthoras.hydroenergy.client;
 
 import com.sinthoras.hydroenergy.HE;
+import com.sinthoras.hydroenergy.config.HEConfig;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
 public class HEClient {
 
-	private static HEDam[] dams = new HEDam[HE.maxControllers];
+	private static HEDam[] dams = new HEDam[HEConfig.maxDams];
 	static {
-		for(int waterId=0;waterId<HE.maxControllers;waterId++) {
+		for(int waterId = 0; waterId<HEConfig.maxDams; waterId++) {
 			dams[waterId] = new HEDam(waterId);
 		}
 	}
 
 	
 	public static void onWaterUpdate(int waterId, float waterLevel) {
-		if(waterId < 0 || waterId >= HE.maxControllers) {
+		if(waterId < 0 || waterId >= HEConfig.maxDams) {
 			HE.LOG.error(HE.ERROR_serverIdsOutOfBounds);
 			return;
 		}
@@ -24,7 +25,7 @@ public class HEClient {
 	}
 
 	public static void onConfigUpdate(int waterId, int blockX, int blockY, int blockZ, HE.DamMode mode, int limitWest, int limitDown, int limitNorth, int limitEast, int limitUp, int limitSouth) {
-		if(waterId < 0 || waterId >= HE.maxControllers) {
+		if(waterId < 0 || waterId >= HEConfig.maxDams) {
 			HE.LOG.error(HE.ERROR_serverIdsOutOfBounds);
 			return;
 		}
@@ -33,26 +34,26 @@ public class HEClient {
 	}
 
 	public static float[] getDebugStatesAsFactors() {
-		float[] debugFactors = new float[HE.maxControllers];
-		for(int waterId = 0; waterId< HE.maxControllers; waterId++) {
+		float[] debugFactors = new float[HEConfig.maxDams];
+		for(int waterId = 0; waterId< HEConfig.maxDams; waterId++) {
 			debugFactors[waterId] = dams[waterId].renderAsDebug() ? 1.0f : 0.0f;
 		}
 		return debugFactors;
 	}
 
 	public static float[] getAllWaterLevelsForRendering() {
-		float[] waterLevels = new float[HE.maxControllers];
-		for(int waterId = 0; waterId< HE.maxControllers; waterId++) {
+		float[] waterLevels = new float[HEConfig.maxDams];
+		for(int waterId = 0; waterId< HEConfig.maxDams; waterId++) {
 			waterLevels[waterId] = dams[waterId].getWaterLevelForRendering();
 		}
 		return waterLevels;
 	}
 
 	public static void onSynchronize(int[] blocksX, int[] blocksY, int[] blocksZ, float[] waterLevels, HE.DamMode[] modes, int[] limitsWest, int[] limitsDown, int[] limitsNorth, int[] limitsEast, int[] limitsUp, int[] limitsSouth) {
-		if(HE.maxControllers < waterLevels.length) {
+		if(HEConfig.maxDams < waterLevels.length) {
 			HE.LOG.error(HE.ERROR_serverIdsOutOfBounds);
 		}
-		for(int waterId=0;waterId<HE.maxControllers;waterId++) {
+		for(int waterId = 0; waterId<HEConfig.maxDams; waterId++) {
 			dams[waterId].onConfigUpdate(blocksX[waterId], blocksY[waterId], blocksZ[waterId], modes[waterId],
 					limitsWest[waterId], limitsDown[waterId], limitsNorth[waterId], limitsEast[waterId], limitsUp[waterId], limitsSouth[waterId]);
 			dams[waterId].onWaterUpdate(waterLevels[waterId]);
@@ -60,7 +61,7 @@ public class HEClient {
 	}
 
 	public static int getWaterId(int blockX, int blockY, int blockZ) {
-		for(int waterId=0;waterId<HE.maxControllers;waterId++) {
+		for(int waterId = 0; waterId<HEConfig.maxDams; waterId++) {
 			if(dams[waterId].belongsToController(blockX, blockY, blockZ)) {
 				return waterId;
 			}
@@ -73,8 +74,8 @@ public class HEClient {
 	}
 
 	public static void onDisconnect() {
-		dams = new HEDam[HE.maxControllers];
-		for(int waterId=0;waterId<HE.maxControllers;waterId++) {
+		dams = new HEDam[HEConfig.maxDams];
+		for(int waterId = 0; waterId<HEConfig.maxDams; waterId++) {
 			dams[waterId] = new HEDam(waterId);
 		}
 	}

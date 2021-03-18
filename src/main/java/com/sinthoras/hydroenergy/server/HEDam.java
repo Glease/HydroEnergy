@@ -2,6 +2,7 @@ package com.sinthoras.hydroenergy.server;
 
 import com.sinthoras.hydroenergy.HE;
 import com.sinthoras.hydroenergy.HEUtil;
+import com.sinthoras.hydroenergy.config.HEConfig;
 import com.sinthoras.hydroenergy.network.HEPacketConfigUpdate;
 import com.sinthoras.hydroenergy.network.HEPacketWaterUpdate;
 
@@ -101,7 +102,7 @@ public class HEDam {
 	public boolean setWaterLevel(float waterLevel) {
 		this.waterLevel = waterLevel;
 		long timestamp = System.currentTimeMillis();
-		if(timestamp - timestampLastUpdate >= HE.minimalWaterUpdateInterval) {
+		if(timestamp - timestampLastUpdate >= HEConfig.minimalWaterUpdateInterval) {
 			timestampLastUpdate = timestamp;
 			sendWaterUpdate();
 			return true;
@@ -260,12 +261,12 @@ public class HEDam {
 
 	public boolean onConfigRequest(HE.DamMode mode, int limitWest, int limitDown, int limitNorth, int limitEast, int limitUp, int limitSouth) {
 		// Clap change requests to server limits before processing
-		limitWest = blockX - HEUtil.clamp(blockX - limitWest, 0, HE.maxWaterSpreadWest);
-		limitDown = blockY - HEUtil.clamp(blockY - limitDown, 0, HE.maxWaterSpreadDown);
-		limitNorth = blockZ - HEUtil.clamp(blockZ - limitNorth, 0, HE.maxWaterSpreadNorth);
-		limitEast = blockX + HEUtil.clamp(limitEast - blockX, 0, HE.maxWaterSpreadEast);
-		limitUp = blockY + HEUtil.clamp(limitUp - blockY, 0, HE.maxWaterSpreadUp);
-		limitSouth = blockZ + HEUtil.clamp(limitSouth - blockZ, 0, HE.maxWaterSpreadSouth);
+		limitWest = blockX - HEUtil.clamp(blockX - limitWest, 0, HEConfig.maxWaterSpreadWest);
+		limitDown = blockY - HEUtil.clamp(blockY - limitDown, 0, HEConfig.maxWaterSpreadDown);
+		limitNorth = blockZ - HEUtil.clamp(blockZ - limitNorth, 0, HEConfig.maxWaterSpreadNorth);
+		limitEast = blockX + HEUtil.clamp(limitEast - blockX, 0, HEConfig.maxWaterSpreadEast);
+		limitUp = blockY + HEUtil.clamp(limitUp - blockY, 0, HEConfig.maxWaterSpreadUp);
+		limitSouth = blockZ + HEUtil.clamp(limitSouth - blockZ, 0, HEConfig.maxWaterSpreadSouth);
 
 		if(this.mode != mode || this.limitWest != limitWest || this.limitDown != limitDown || this.limitNorth != limitNorth
 				|| this.limitEast != limitEast || this.limitUp != limitUp || this.limitSouth != limitSouth) {

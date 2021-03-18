@@ -1,6 +1,7 @@
 package com.sinthoras.hydroenergy.hooks;
 
 import com.sinthoras.hydroenergy.HE;
+import com.sinthoras.hydroenergy.config.HEConfig;
 import com.sinthoras.hydroenergy.network.*;
 import com.sinthoras.hydroenergy.server.commands.HECommandDebug;
 import com.sinthoras.hydroenergy.server.commands.HECommandListControllers;
@@ -38,9 +39,9 @@ public class HEHooksShared {
 		HE.network.registerMessage(HEPacketChunkUpdate.Handler.class, HEPacketChunkUpdate.class, 4, Side.CLIENT);
 
 
-		HE.LOG.info("The subsequent " + HE.maxControllers + " liquid errors are intendend. Please ignore...");
+		HE.LOG.info("The subsequent " + HEConfig.maxDams + " liquid errors are intendend. Please ignore...");
 
-		for(int waterId=0;waterId<HE.maxControllers;waterId++) {
+		for(int waterId = 0; waterId<HEConfig.maxDams; waterId++) {
 			HE.waterBlocks[waterId] = new HEWaterStill(waterId);
 			GameRegistry.registerBlock(HE.waterBlocks[waterId], HE.waterBlocks[waterId].getUnlocalizedName());
 			HE.waterBlockIds[waterId] = Block.blockRegistry.getIDForObject(HE.waterBlocks[waterId]);

@@ -3,6 +3,7 @@ package com.sinthoras.hydroenergy;
 import com.sinthoras.hydroenergy.blocks.HEControllerBlock;
 import com.sinthoras.hydroenergy.blocks.HEWaterStill;
 import com.sinthoras.hydroenergy.client.gui.HEGuiHandler;
+import com.sinthoras.hydroenergy.config.HEConfig;
 import cpw.mods.fml.common.network.IGuiHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -26,11 +27,6 @@ public class HE {
     public static final int chunkDepth = 16;
     public static final int blockPerSubChunk = chunkWidth * chunkHeight * chunkDepth;
     public static final int underWaterSkylightDepth = (int)Math.ceil(16f / waterOpacity);
-    public static final int minimalWaterUpdateInterval = 1000; // in milliseconds
-    public static final int spreadingDelayBetweenPerChunks = 2000; // in milliseconds
-    // Number of redrawn subChunks per update is usually in the low hundreds -> 1sec per 100 subChunks
-    public static final int minLightUpdateTimePerSubChunk = 10; // in milliseconds
-    public static float clippingOffset = 0.05f;  // This value must match the server or physics are off
 
     static {
         LOG = LogManager.getLogger(MODID);
@@ -38,19 +34,10 @@ public class HE {
     public static boolean logicalClientLoaded = false;
     public static final String ERROR_serverIdsOutOfBounds = "Server uses invalid waterIds! Server message ignored. " +
             "Please make sure your config \"maxControllers\" is at least as big as the server you are connecting to!";
-    
-    // TODO: Move to config
-	public static final int maxControllers = 16;
-    public static HEControllerBlock controller;
-	public static final HEWaterStill[] waterBlocks = new HEWaterStill[maxControllers];
-	public static final int[] waterBlockIds = new int[maxControllers];
 
-	public static final int maxWaterSpreadWest = Integer.MAX_VALUE;
-    public static final int maxWaterSpreadDown = Integer.MAX_VALUE;
-    public static final int maxWaterSpreadNorth = Integer.MAX_VALUE;
-    public static final int maxWaterSpreadEast = Integer.MAX_VALUE;
-    public static final int maxWaterSpreadUp = Integer.MAX_VALUE;
-    public static final int maxWaterSpreadSouth = Integer.MAX_VALUE;
+    public static HEControllerBlock controller;
+	public static final HEWaterStill[] waterBlocks = new HEWaterStill[HEConfig.maxDams];
+	public static final int[] waterBlockIds = new int[HEConfig.maxDams];
 	
 	public static boolean DEBUGslowFill = false;
 	public static final IGuiHandler guiHandler = new HEGuiHandler();

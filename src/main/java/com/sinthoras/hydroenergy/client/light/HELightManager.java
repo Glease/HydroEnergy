@@ -4,6 +4,7 @@ import com.sinthoras.hydroenergy.HE;
 import com.sinthoras.hydroenergy.HEUtil;
 import com.sinthoras.hydroenergy.client.HEClient;
 import com.sinthoras.hydroenergy.blocks.HEWater;
+import com.sinthoras.hydroenergy.config.HEConfig;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
@@ -21,8 +22,8 @@ import java.util.Stack;
 @SideOnly(Side.CLIENT)
 public class HELightManager {
 
-    private static final float[] waterLevelOfLastUpdate = new float[HE.maxControllers];
-    private static final long[] timestampsNextUpdate = new long[HE.maxControllers];
+    private static final float[] waterLevelOfLastUpdate = new float[HEConfig.maxDams];
+    private static final long[] timestampsNextUpdate = new long[HEConfig.maxDams];
 
     private static final HashMap<Long, HELightChunk> chunks = new HashMap<Long, HELightChunk>();
     private static final Stack<HELightChunk> availableBuffers = new Stack<HELightChunk>();
@@ -89,7 +90,7 @@ public class HELightManager {
     // If any waterLevel changed enough and the last update was long enough ago chunks will be redrawn.
     public static void onTick() {
         final long currentTime = System.currentTimeMillis();
-        for(int waterId = 0; waterId< HE.maxControllers; waterId++) {
+        for(int waterId = 0; waterId< HEConfig.maxDams; waterId++) {
             final float currentWaterLevel = HEClient.getDam(waterId).getWaterLevelForPhysicsAndLighting();
             if(Math.abs(waterLevelOfLastUpdate[waterId] - currentWaterLevel) > (0.5f / HE.waterOpacity)
                     && currentTime - timestampsNextUpdate[waterId] >= 0) {
@@ -131,26 +132,26 @@ public class HELightManager {
                             int blockX = HEUtil.coordChunkToBlock(chunkX);
                             int blockZ = HEUtil.coordChunkToBlock(chunkZ);
                             renderGlobal.markBlocksForUpdate(blockX, blockY, blockZ, blockX + 15, blockY + 15, blockZ + 15);
-                            timestampsNextUpdate[waterId] += HE.minLightUpdateTimePerSubChunk;
+                            timestampsNextUpdate[waterId] += HEConfig.minLightUpdateTimePerSubChunk;
 
                             // Handle neighbors that don't have water, but touch it
                             // Technically, a chunk like this could be surrounded by chunks with water and receive multiple
                             // updates, but this scenario is rather unlikely and therefore, not worth checking for.
                             if ((neighborChunkWest == null || !neighborChunkWest.hasUpdateForSubChunk(flagChunkY)) && chunk.requiresPatchingWest(flagChunkY)) {
                                 markChunkForRerender(renderGlobal, chunkX - 1, chunkY, chunkZ);
-                                timestampsNextUpdate[waterId] += HE.minLightUpdateTimePerSubChunk;
+                                timestampsNextUpdate[waterId] += HEConfig.minLightUpdateTimePerSubChunk;
                             }
                             if ((neighborChunkNorth == null || !neighborChunkNorth.hasUpdateForSubChunk(flagChunkY)) && chunk.requiresPatchingNorth(flagChunkY)) {
                                 markChunkForRerender(renderGlobal, chunkX, chunkY, chunkZ - 1);
-                                timestampsNextUpdate[waterId] += HE.minLightUpdateTimePerSubChunk;
+                                timestampsNextUpdate[waterId] += HEConfig.minLightUpdateTimePerSubChunk;
                             }
                             if ((neighborChunkEast == null || !neighborChunkEast.hasUpdateForSubChunk(flagChunkY)) && chunk.requiresPatchingEast(flagChunkY)) {
                                 markChunkForRerender(renderGlobal, chunkX + 1, chunkY, chunkZ);
-                                timestampsNextUpdate[waterId] += HE.minLightUpdateTimePerSubChunk;
+                                timestampsNextUpdate[waterId] += HEConfig.minLightUpdateTimePerSubChunk;
                             }
                             if ((neighborChunkSouth == null || !neighborChunkSouth.hasUpdateForSubChunk(flagChunkY)) && chunk.requiresPatchingSouth(flagChunkY)) {
                                 markChunkForRerender(renderGlobal, chunkX, chunkY, chunkZ + 1);
-                                timestampsNextUpdate[waterId] += HE.minLightUpdateTimePerSubChunk;
+                                timestampsNextUpdate[waterId] += HEConfig.minLightUpdateTimePerSubChunk;
                             }
                         }
                     }
@@ -341,7 +342,7 @@ class HELightChunk {
     }
 
     private static int getWaterIdFromBlockId(int blockId) {
-        for(int waterId=0;waterId<HE.maxControllers;waterId++) {
+        for(int waterId = 0; waterId<HEConfig.maxDams; waterId++) {
             if(HE.waterBlockIds[waterId] == blockId) {
                 return waterId;
             }

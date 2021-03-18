@@ -3,6 +3,7 @@ package com.sinthoras.hydroenergy.blocks;
 import com.sinthoras.hydroenergy.HE;
 import com.sinthoras.hydroenergy.HEUtil;
 import com.sinthoras.hydroenergy.client.HEClient;
+import com.sinthoras.hydroenergy.config.HEConfig;
 import com.sinthoras.hydroenergy.server.HEServer;
 
 import cpw.mods.fml.common.FMLCommonHandler;
@@ -96,7 +97,7 @@ public class HEWater extends BlockFluidBase {
 
 	// For World.handleMaterialAcceleration
 	public Material getMaterial(int blockY) {
-		return (Math.floor(getWaterLevel() - HE.clippingOffset)) < blockY ? Material.air : Material.water;
+		return (Math.floor(getWaterLevel() - HEConfig.clippingOffset)) < blockY ? Material.air : Material.water;
 	}
 
 	// For Block.isInsideOfMaterial

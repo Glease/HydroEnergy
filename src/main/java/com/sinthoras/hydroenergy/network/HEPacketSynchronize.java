@@ -3,6 +3,7 @@ package com.sinthoras.hydroenergy.network;
 import com.sinthoras.hydroenergy.HE;
 import com.sinthoras.hydroenergy.client.HEClient;
 
+import com.sinthoras.hydroenergy.config.HEConfig;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
@@ -10,17 +11,17 @@ import io.netty.buffer.ByteBuf;
 
 public class HEPacketSynchronize implements IMessage {
 
-	public int[] blocksX = new int[HE.maxControllers];
-	public int[] blocksY = new int[HE.maxControllers];
-	public int[] blocksZ = new int[HE.maxControllers];
-	public float[] waterLevels = new float[HE.maxControllers];
-	public HE.DamMode[] modes = new HE.DamMode[HE.maxControllers];
-	public int[] limitsWest = new int[HE.maxControllers];
-	public int[] limitsDown = new int[HE.maxControllers];
-	public int[] limitsNorth = new int[HE.maxControllers];
-	public int[] limitsEast = new int[HE.maxControllers];
-	public int[] limitsUp = new int[HE.maxControllers];
-	public int[] limitsSouth = new int[HE.maxControllers];
+	public int[] blocksX = new int[HEConfig.maxDams];
+	public int[] blocksY = new int[HEConfig.maxDams];
+	public int[] blocksZ = new int[HEConfig.maxDams];
+	public float[] waterLevels = new float[HEConfig.maxDams];
+	public HE.DamMode[] modes = new HE.DamMode[HEConfig.maxDams];
+	public int[] limitsWest = new int[HEConfig.maxDams];
+	public int[] limitsDown = new int[HEConfig.maxDams];
+	public int[] limitsNorth = new int[HEConfig.maxDams];
+	public int[] limitsEast = new int[HEConfig.maxDams];
+	public int[] limitsUp = new int[HEConfig.maxDams];
+	public int[] limitsSouth = new int[HEConfig.maxDams];
 
 	@Override
 	public void fromBytes(ByteBuf buf) {
@@ -49,13 +50,13 @@ public class HEPacketSynchronize implements IMessage {
 			limitsUp[waterId] = buf.readInt();
 			limitsSouth[waterId] = buf.readInt();
 		}
-		HE.clippingOffset = buf.readFloat();
+		HEConfig.clippingOffset = buf.readFloat();
 	}
 
 	@Override
 	public void toBytes(ByteBuf buf) {
-		buf.writeInt(HE.maxControllers);
-		for(int waterId = 0; waterId< HE.maxControllers; waterId++) {
+		buf.writeInt(HEConfig.maxDams);
+		for(int waterId = 0; waterId< HEConfig.maxDams; waterId++) {
 			buf.writeInt(blocksX[waterId]);
 			buf.writeInt(blocksY[waterId]);
 			buf.writeInt(blocksZ[waterId]);
@@ -68,7 +69,7 @@ public class HEPacketSynchronize implements IMessage {
 			buf.writeInt(limitsUp[waterId]);
 			buf.writeInt(limitsSouth[waterId]);
 		}
-		buf.writeFloat(HE.clippingOffset);
+		buf.writeFloat(HEConfig.clippingOffset);
 	}
 
 	public static class Handler implements IMessageHandler<HEPacketSynchronize, IMessage> {

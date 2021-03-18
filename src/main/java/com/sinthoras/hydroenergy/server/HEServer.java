@@ -1,6 +1,7 @@
 package com.sinthoras.hydroenergy.server;
 
 import com.sinthoras.hydroenergy.HE;
+import com.sinthoras.hydroenergy.config.HEConfig;
 import com.sinthoras.hydroenergy.network.HEPacketSynchronize;
 
 import cpw.mods.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
@@ -27,8 +28,8 @@ public class HEServer extends WorldSavedData {
 
 	public HEServer(String name) {
 		super(name);
-		dams = new HEDam[HE.maxControllers];
-		for(int waterId = 0; waterId< HE.maxControllers; waterId++) {
+		dams = new HEDam[HEConfig.maxDams];
+		for(int waterId = 0; waterId< HEConfig.maxDams; waterId++) {
 			dams[waterId] = new HEDam(waterId);
 		}
 	}
@@ -46,8 +47,8 @@ public class HEServer extends WorldSavedData {
 
 	@Override
 	public void readFromNBT(NBTTagCompound compound) {
-		dams = new HEDam[HE.maxControllers];
-		for(int waterId = 0; waterId<HE.maxControllers; waterId++) {
+		dams = new HEDam[HEConfig.maxDams];
+		for(int waterId = 0; waterId<HEConfig.maxDams; waterId++) {
 			dams[waterId] = new HEDam(waterId);
 			dams[waterId].readFromNBTFull(compound.getCompoundTag(Tags.dam + waterId));
 		}
@@ -55,7 +56,7 @@ public class HEServer extends WorldSavedData {
 
 	@Override
 	public void writeToNBT(NBTTagCompound compound) {
-		for(int waterId = 0; waterId< HE.maxControllers; waterId++) {
+		for(int waterId = 0; waterId< HEConfig.maxDams; waterId++) {
 			NBTTagCompound damCompound = new NBTTagCompound();
 			dams[waterId].writeToNBTFull(damCompound);
 			compound.setTag(Tags.dam + waterId, damCompound);
@@ -78,7 +79,7 @@ public class HEServer extends WorldSavedData {
 	}
 	
 	public int onPlacecontroller(int blockX, int blockY, int blockZ) {
-		for(int waterId = 0; waterId< HE.maxControllers; waterId++) {
+		for(int waterId = 0; waterId< HEConfig.maxDams; waterId++) {
 			if (!dams[waterId].isPlaced()) {
 				dams[waterId].placeController(blockX, blockY, blockZ);
 				markDirty();
@@ -186,7 +187,7 @@ public class HEServer extends WorldSavedData {
 
 	public void synchronizeClient(PlayerLoggedInEvent event) {
 		HEPacketSynchronize message = new HEPacketSynchronize();
-		for(int waterId = 0; waterId< HE.maxControllers; waterId++) {
+		for(int waterId = 0; waterId< HEConfig.maxDams; waterId++) {
 			message.blocksX[waterId] = dams[waterId].getBlockX();
 			message.blocksY[waterId] = dams[waterId].getBlockY();
 			message.blocksZ[waterId] = dams[waterId].getBlockZ();
@@ -203,7 +204,7 @@ public class HEServer extends WorldSavedData {
 	}
 
 	public void onConfigRequest(int waterId, HE.DamMode mode, int limitWest, int limitDown, int limitNorth, int limitEast, int limitUp, int limitSouth) {
-		if(waterId < 0 || waterId >= HE.maxControllers) {
+		if(waterId < 0 || waterId >= HEConfig.maxDams) {
 			return;
 		}
 		if(dams[waterId].onConfigRequest(mode, limitWest, limitDown, limitNorth, limitEast, limitUp, limitSouth)) {
@@ -212,7 +213,7 @@ public class HEServer extends WorldSavedData {
 	}
 
 	public int getWaterId(int blockX, int blockY, int blockZ) {
-		for(int waterId=0;waterId<HE.maxControllers;waterId++) {
+		for(int waterId = 0; waterId<HEConfig.maxDams; waterId++) {
 			if(blockX == dams[waterId].getBlockX() && blockY == dams[waterId].getBlockY() && blockZ == dams[waterId].getBlockZ()) {
 				return waterId;
 			}

@@ -6,6 +6,7 @@ import com.sinthoras.hydroenergy.HE;
 
 import com.sinthoras.hydroenergy.HEUtil;
 import com.sinthoras.hydroenergy.blocks.HEWater;
+import com.sinthoras.hydroenergy.config.HEConfig;
 import com.sinthoras.hydroenergy.network.HEPacketChunkUpdate;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -22,7 +23,7 @@ public class HEBlockQueue {
 	private static long timestampLastQueueTick = 0;
 	public static void onTick() {
 		long currentTime = System.currentTimeMillis();
-		if(currentTime - timestampLastQueueTick < HE.spreadingDelayBetweenPerChunks) {
+		if(currentTime - timestampLastQueueTick < HEConfig.spreadingDelayBetweenPerChunks) {
 			return;
 		}
 		timestampLastQueueTick = currentTime;
