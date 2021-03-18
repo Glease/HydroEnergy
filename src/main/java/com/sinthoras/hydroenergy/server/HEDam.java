@@ -208,12 +208,12 @@ public class HEDam {
 	public void placeController(int blockX, int blockY, int blockZ) {
 		isPlaced = true;
 		mode = HE.DamMode.DRAIN;
-		limitEast = blockX + 200;
-		limitWest = blockX - 200;
-		limitUp = blockY+32;
+		limitEast = blockX + 20;
+		limitWest = blockX - 20;
+		limitUp = blockY+10;
 		limitDown = blockY;
-		limitSouth = blockZ + 200;
-		limitNorth = blockZ - 200;
+		limitSouth = blockZ + 20;
+		limitNorth = blockZ - 20;
 		waterLevel = blockY;
 		blocksPerY = new int[256];
 		this.blockX = blockX;
