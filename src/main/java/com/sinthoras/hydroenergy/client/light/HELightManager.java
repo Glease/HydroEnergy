@@ -100,6 +100,9 @@ public class HELightManager {
         }
     }
 
+    // Crawls through all chunks and if the chunk has water from the right dam and is impacted by the waterLevel change
+    // it queues them up for redrawing. It also redraws neighboring non-water chunks if they touch a waterBlock and
+    // therefore are impaced by the light value change.
     public static void triggerLightingUpdate(int waterId, float waterLevel, float oldWaterLevel) {
         RenderGlobal renderGlobal = Minecraft.getMinecraft().renderGlobal;
         for(long key : chunks.keySet()) {
