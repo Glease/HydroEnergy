@@ -23,8 +23,6 @@ public class HEDam {
     private int blockY;
     private int blockZ;
 
-    private boolean initialized = false;
-
     private HE.DamMode pendingMode;
     private int pendingLimitWest;
     private int pendingLimitDown;
@@ -51,18 +49,14 @@ public class HEDam {
         this.limitUp = limitUp;
         this.limitSouth = limitSouth;
 
-        if(!initialized) {
-            pendingMode = mode;
+        pendingMode = mode;
 
-            pendingLimitWest = limitWest;
-            pendingLimitDown = limitDown;
-            pendingLimitNorth = limitNorth;
-            pendingLimitEast = limitEast;
-            pendingLimitUp = limitUp;
-            pendingLimitSouth = limitSouth;
-
-            initialized = true;
-        }
+        pendingLimitWest = limitWest;
+        pendingLimitDown = limitDown;
+        pendingLimitNorth = limitNorth;
+        pendingLimitEast = limitEast;
+        pendingLimitUp = limitUp;
+        pendingLimitSouth = limitSouth;
 
         verifyChanges();
     }
