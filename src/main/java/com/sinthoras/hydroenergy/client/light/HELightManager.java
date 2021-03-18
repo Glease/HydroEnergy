@@ -58,7 +58,7 @@ public class HELightManager {
 
         chunks.put(key, lightChunk);
         for(int chunkY=0;chunkY<HE.numChunksY;chunkY++) {
-            lightChunk.patch(chunk, chunkY);
+            lightChunk.patchSubChunk(chunk, chunkY);
         }
     }
 
@@ -78,13 +78,20 @@ public class HELightManager {
         }
     }
 
+    public static void onLightUpdate(Chunk chunk, int blockX, int blockY, int blockZ) {
+        if(chunk.getBlock(blockX, blockY, blockZ) instanceof HEWater) {
+            long key = HEUtil.chunkCoordsToKey(chunk.xPosition, chunk.zPosition);
+            chunks.get(key).patchBlock(chunk, blockX, blockY, blockZ);
+        }
+    }
+
     public static void onPreRender(World world, int blockX, int blockY, int blockZ) {
         int chunkX = HEUtil.coordBlockToChunk(blockX);
         int chunkY = HEUtil.coordBlockToChunk(blockY);
         int chunkZ = HEUtil.coordBlockToChunk(blockZ);
         long key = HEUtil.chunkCoordsToKey(chunkX, chunkZ);
         HELightChunk lightChunk = chunks.get(key);
-        lightChunk.patch(world.getChunkFromChunkCoords(chunkX, chunkZ), chunkY);
+        lightChunk.patchSubChunk(world.getChunkFromChunkCoords(chunkX, chunkZ), chunkY);
     }
 
     // If any waterLevel changed enough and the last update was long enough ago chunks will be redrawn.
@@ -278,7 +285,15 @@ class HELightChunk {
         waterIds[blockX][blockZ] = waterId;
     }
 
-    public void patch(Chunk chunk, int chunkY) {
+    public void patchBlock(Chunk chunk, int blockX, int blockY, int blockZ) {
+        int chunkY = HEUtil.coordBlockToChunk(blockY);
+        int waterId = waterIds[blockX][blockZ];
+        float blockDiff = Math.min(blockY - HEClient.getWaterLevelForRendering(waterId), 0);
+        int lightVal = (int) (15 + blockDiff * HE.waterOpacity);
+        chunk.getBlockStorageArray()[chunkY].getSkylightArray().set(blockX, blockY & 15, blockZ, lightVal);
+    }
+
+    public void patchSubChunk(Chunk chunk, int chunkY) {
         short flagChunkY = HEUtil.chunkYToFlag(chunkY);
         if(hasUpdateForSubChunk(flagChunkY) && subChunkRequiresPatching(flagChunkY))  {
             float[] waterLevels = HEClient.getAllWaterLevelsForRendering();

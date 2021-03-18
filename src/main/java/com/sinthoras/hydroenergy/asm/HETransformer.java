@@ -105,7 +105,7 @@ public class HETransformer implements IClassTransformer {
 				false));
 
 		basicClass = injectAfterInvokeVirtual(METHOD_setBlock, METHOD_setBlock_DESC,
-				CLASS_Chunk, METHOD_func_150807_a, METHOD_func_150807_a_DESC, instructionToInsert, basicClass);
+				CLASS_Chunk, METHOD_func_150807_a, METHOD_func_150807_a_DESC, instructionToInsert, basicClass, 0);
 
 		HE.LOG.info("Injected net/minecraft/world/World.setBlock");
 
@@ -268,7 +268,7 @@ public class HETransformer implements IClassTransformer {
 				false));
 
 		basicClass = injectAfterInvokeVirtual(METHOD_renderEntities, METHOD_renderEntities_DESC,
-				CLASS_Profiler, METHOD_endSection, METHOD_endSection_DESC, instructionToInsert, basicClass);
+				CLASS_Profiler, METHOD_endSection, METHOD_endSection_DESC, instructionToInsert, basicClass, 0);
 
 		HE.LOG.info("Injected net/minecraft/client/renderer/RenderGlobal.renderEntities");
 
@@ -313,7 +313,7 @@ public class HETransformer implements IClassTransformer {
 
 		basicClass = injectAfterInvokeVirtual(METHOD_setPosition, METHOD_setPosition_DESC,
 				CLASS_WorldRenderer, METHOD_setDontDraw, METHOD_setDontDraw_DESC,
-				instructionToInsert, basicClass);
+				instructionToInsert, basicClass, 0);
 
 		HE.LOG.info("Injected net/minecraft/client/renderer/WorldRenderer.setPosition");
 
@@ -323,15 +323,28 @@ public class HETransformer implements IClassTransformer {
 	private static byte[] transformChunk(byte[] basicClass, boolean isObfuscated) {
 		final String CLASS_Chunk = isObfuscated ? "apx" : "net/minecraft/world/chunk/Chunk";
 		final String CLASS_HELightManager = "com/sinthoras/hydroenergy/client/light/HELightManager";
+		final String CLASS_HELightSMPHooks = "com/sinthoras/hydroenergy/client/light/HELightSMPHooks";
+		final String CLASS_EnumSkyBlock = isObfuscated ? "ahn" : "net/minecraft/world/EnumSkyBlock";
+		final String CLASS_ExtendedBlockStorage = isObfuscated ? "apz" : "net/minecraft/world/chunk/storage/ExtendedBlockStorage";
 
 		final String METHOD_fillChunk = isObfuscated ? "a" : "fillChunk";
 		final String METHOD_fillChunk_DESC = "([BIIZ)V";
+		final String METHOD_generateSkylightMap = isObfuscated ? "b" : "generateSkylightMap";
+		final String METHOD_generateSkylightMap_DESC = "()V";
+		final String METHOD_relightBlock = isObfuscated ? "h" : "relightBlock";
+		final String METHOD_relightBlock_DESC = "(III)V";
+		final String METHOD_setLightValue = isObfuscated ? "a" : "setLightValue";
+		final String METHOD_setLightValue_DESC = "(L" + CLASS_EnumSkyBlock + ";IIII)V";
 
 		final String METHOD_onChunkDataLoad = "onChunkDataLoad";
 		final String METHOD_onChunkDataLoad_DESC = "(L" + CLASS_Chunk + ";)V";
+		final String METHOD_onLightUpdate = "onLightUpdate";
+		final String METHOD_onLightUpdate_DESC = "(L" + CLASS_Chunk + ";III)V";
 
 		final String METHOD_generateHeightMap = isObfuscated ? "a" : "generateHeightMap";
 		final String METHOD_generateHeightMap_DESC = "()V";
+		final String METHOD_setExtSkylightValue = isObfuscated ? "b" : "setExtSkylightValue";
+		final String METHOD_setExtSkylightValue_DESC = "(IIII)V";
 
 		InsnList instructionToInsert = new InsnList();
 		instructionToInsert.add(new VarInsnNode(ALOAD, 0));
@@ -343,9 +356,98 @@ public class HETransformer implements IClassTransformer {
 
 		basicClass = injectAfterInvokeVirtual(METHOD_fillChunk, METHOD_fillChunk_DESC,
 				CLASS_Chunk, METHOD_generateHeightMap, METHOD_generateHeightMap_DESC,
-				instructionToInsert, basicClass);
+				instructionToInsert, basicClass, 0);
 
 		HE.LOG.info("Injected net/minecraft/world/chunk/Chunk.fillChunk");
+
+
+		instructionToInsert = new InsnList();
+		instructionToInsert.add(new VarInsnNode(ALOAD, 0));
+		instructionToInsert.add(new VarInsnNode(ILOAD, 2));
+		instructionToInsert.add(new VarInsnNode(ILOAD, 5));
+		instructionToInsert.add(new VarInsnNode(ILOAD, 3));
+		instructionToInsert.add(new MethodInsnNode(INVOKESTATIC,
+				CLASS_HELightSMPHooks,
+				METHOD_onLightUpdate,
+				METHOD_onLightUpdate_DESC,
+				false));
+
+		basicClass = injectAfterInvokeVirtual(METHOD_generateSkylightMap, METHOD_generateSkylightMap_DESC,
+				CLASS_ExtendedBlockStorage, METHOD_setExtSkylightValue, METHOD_setExtSkylightValue_DESC,
+				instructionToInsert, basicClass, 0);
+
+		HE.LOG.info("Injected net/minecraft/world/chunk/Chunk.generateSkylightMap");
+
+
+		instructionToInsert = new InsnList();
+		instructionToInsert.add(new VarInsnNode(ALOAD, 0));
+		instructionToInsert.add(new VarInsnNode(ILOAD, 1));
+		instructionToInsert.add(new VarInsnNode(ILOAD, 8));
+		instructionToInsert.add(new VarInsnNode(ILOAD, 3));
+		instructionToInsert.add(new MethodInsnNode(INVOKESTATIC,
+				CLASS_HELightSMPHooks,
+				METHOD_onLightUpdate,
+				METHOD_onLightUpdate_DESC,
+				false));
+
+		basicClass = injectAfterInvokeVirtual(METHOD_relightBlock, METHOD_relightBlock_DESC,
+				CLASS_ExtendedBlockStorage, METHOD_setExtSkylightValue, METHOD_setExtSkylightValue_DESC,
+				instructionToInsert, basicClass, 0);
+
+		HE.LOG.info("Injected net/minecraft/world/chunk/Chunk.relightBlock#1");
+
+
+		instructionToInsert = new InsnList();
+		instructionToInsert.add(new VarInsnNode(ALOAD, 0));
+		instructionToInsert.add(new VarInsnNode(ILOAD, 1));
+		instructionToInsert.add(new VarInsnNode(ILOAD, 8));
+		instructionToInsert.add(new VarInsnNode(ILOAD, 3));
+		instructionToInsert.add(new MethodInsnNode(INVOKESTATIC,
+				CLASS_HELightSMPHooks,
+				METHOD_onLightUpdate,
+				METHOD_onLightUpdate_DESC,
+				false));
+
+		basicClass = injectAfterInvokeVirtual(METHOD_relightBlock, METHOD_relightBlock_DESC,
+				CLASS_ExtendedBlockStorage, METHOD_setExtSkylightValue, METHOD_setExtSkylightValue_DESC,
+				instructionToInsert, basicClass, 1);
+
+		HE.LOG.info("Injected net/minecraft/world/chunk/Chunk.relightBlock#2");
+
+		instructionToInsert = new InsnList();
+		instructionToInsert.add(new VarInsnNode(ALOAD, 0));
+		instructionToInsert.add(new VarInsnNode(ILOAD, 1));
+		instructionToInsert.add(new VarInsnNode(ILOAD, 5));
+		instructionToInsert.add(new VarInsnNode(ILOAD, 3));
+		instructionToInsert.add(new MethodInsnNode(INVOKESTATIC,
+				CLASS_HELightSMPHooks,
+				METHOD_onLightUpdate,
+				METHOD_onLightUpdate_DESC,
+				false));
+
+		basicClass = injectAfterInvokeVirtual(METHOD_relightBlock, METHOD_relightBlock_DESC,
+				CLASS_ExtendedBlockStorage, METHOD_setExtSkylightValue, METHOD_setExtSkylightValue_DESC,
+				instructionToInsert, basicClass, 2);
+
+		HE.LOG.info("Injected net/minecraft/world/chunk/Chunk.relightBlock#3");
+
+
+		instructionToInsert = new InsnList();
+		instructionToInsert.add(new VarInsnNode(ALOAD, 0));
+		instructionToInsert.add(new VarInsnNode(ILOAD, 2));
+		instructionToInsert.add(new VarInsnNode(ILOAD, 3));
+		instructionToInsert.add(new VarInsnNode(ILOAD, 4));
+		instructionToInsert.add(new MethodInsnNode(INVOKESTATIC,
+				CLASS_HELightSMPHooks,
+				METHOD_onLightUpdate,
+				METHOD_onLightUpdate_DESC,
+				false));
+
+		basicClass = injectAfterInvokeVirtual(METHOD_setLightValue, METHOD_setLightValue_DESC,
+				CLASS_ExtendedBlockStorage, METHOD_setExtSkylightValue, METHOD_setExtSkylightValue_DESC,
+				instructionToInsert, basicClass, 0);
+
+		HE.LOG.info("Injected net/minecraft/world/chunk/Chunk.setLightValue");
 
 		return basicClass;
 	}
@@ -371,7 +473,7 @@ public class HETransformer implements IClassTransformer {
 				false));
 
 		basicClass = injectAfterInvokeVirtual(METHOD_unloadChunk, METHOD_unloadChunk_DESC,
-				CLASS_LongHashMap, METHOD_remove, METHOD_remove_DESC, instructionToInsert, basicClass);
+				CLASS_LongHashMap, METHOD_remove, METHOD_remove_DESC, instructionToInsert, basicClass, 0);
 
 		HE.LOG.info("Injected net/minecraft/client/multiplayer/ChunkProviderClient.unloadChunk");
 
@@ -380,7 +482,7 @@ public class HETransformer implements IClassTransformer {
 
 	private static byte[] injectAfterInvokeVirtual(String METHOD_target, String METHOD_target_DESC,
 												   String CLASS_marker, String METHOD_marker, String METHOD_marker_DESC,
-												   InsnList instructionToInsert, byte[] basicClass) {
+												   InsnList instructionToInsert, byte[] basicClass, int skip) {
 		// Transform to human readable byte code
 		ClassNode classNode = new ClassNode();
 		ClassReader classReader = new ClassReader(basicClass);
@@ -393,8 +495,13 @@ public class HETransformer implements IClassTransformer {
 							&& ((MethodInsnNode) instruction).owner.equals(CLASS_marker)
 							&& ((MethodInsnNode) instruction).name.equals(METHOD_marker)
 							&& ((MethodInsnNode) instruction).desc.equals(METHOD_marker_DESC)) {
-						method.instructions.insert(instruction, instructionToInsert);
-						break;
+						if(skip <= 0) {
+							method.instructions.insert(instruction, instructionToInsert);
+							break;
+						}
+						else {
+							skip--;
+						}
 					}
 				}
 			}
@@ -424,7 +531,6 @@ public class HETransformer implements IClassTransformer {
 						AbstractInsnNode insertAfter = instruction.getPrevious();
 						method.instructions.remove(instruction);
 						method.instructions.insert(insertAfter, instructionToInsert);
-						break;
 					}
 				}
 			}

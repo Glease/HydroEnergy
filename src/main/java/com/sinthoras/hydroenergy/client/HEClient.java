@@ -49,6 +49,10 @@ public class HEClient {
 		return waterLevels;
 	}
 
+	public static float getWaterLevelForRendering(int waterId) {
+		return dams[waterId].getWaterLevelForRendering();
+	}
+
 	public static void onSynchronize(int[] blocksX, int[] blocksY, int[] blocksZ, float[] waterLevels, HE.DamMode[] modes, int[] limitsWest, int[] limitsDown, int[] limitsNorth, int[] limitsEast, int[] limitsUp, int[] limitsSouth) {
 		if(HEConfig.maxDams < waterLevels.length) {
 			HE.LOG.error(HE.ERROR_serverIdsOutOfBounds);

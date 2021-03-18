@@ -13,6 +13,12 @@ public class HELightSMPHooks {
         }
     }
 
+    public static void onLightUpdate(Chunk chunk, int blockX, int blockY, int blockZ) {
+        if(chunk.worldObj.isRemote) {
+            HELightManager.onLightUpdate(chunk, blockX, blockY, blockZ);
+        }
+    }
+
     public static void onChunkDataLoad(Chunk chunk) {
         HELightManager.onChunkDataLoad(chunk);
     }
