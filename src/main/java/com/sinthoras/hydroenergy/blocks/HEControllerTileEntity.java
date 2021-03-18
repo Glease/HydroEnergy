@@ -8,11 +8,11 @@ import net.minecraft.tileentity.TileEntity;
 
 public class HEControllerTileEntity extends TileEntity {
 
-	public static final int guiId = 0;
-
-	public static class Tags {
+	private static class Tags {
 		public static final String waterId = "waId";
 	}
+
+	public static final int guiId = 0;
 
 	private int waterId = -1;
 	

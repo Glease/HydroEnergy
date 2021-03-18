@@ -13,6 +13,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class HEServer extends WorldSavedData {
+
+	private class Tags {
+		public static final String hydroenergy = "hydroenergy";
+		public static final String dam = "dam";
+	}
 	
 	private HEDam[] dams;
 
@@ -37,11 +42,6 @@ public class HEServer extends WorldSavedData {
 			 world.mapStorage.setData(Tags.hydroenergy, instance);
 		}
 		return instance;
-	}
-	
-	public class Tags {
-		public static final String hydroenergy = "hydroenergy";
-		public static final String dam = "dam";
 	}
 
 	@Override

@@ -9,7 +9,7 @@ import net.minecraft.nbt.NBTTagCompound;
 
 public class HEDam {
 	
-	public class Tags {
+	private class Tags {
 		public static final String waterLevel = "walv";
 		public static final String drainState = "drai";
 		public static final String isPlaced = "isPl";
