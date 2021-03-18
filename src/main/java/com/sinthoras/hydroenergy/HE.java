@@ -24,6 +24,7 @@ public class HE {
     public static final int underWaterSkylightDepth = (int)Math.ceil(16f / waterOpacity);
     public static final int minimalWaterUpdateInterval = 1000; // in milliseconds
     public static final int spreadingDelayBetweenPerChunks = 2000; // in milliseconds
+    // Number of redrawn subChunks per update is usually in the low hundreds -> 1sec per 100 subChunks
     public static final int minLightUpdateTimePerSubChunk = 10; // in milliseconds
     public static float clippingOffset = 0.05f;  // This value must match the server or physics are off
 
