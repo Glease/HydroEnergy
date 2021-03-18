@@ -175,7 +175,7 @@ class HEQueueChunk {
 			neighborChunkEast.push(entry);
 		} else if (chunkZ > chunk.zPosition) {
 			neighborChunkSouth.push(entry);
-		} else if(block == Blocks.air || block == waterBlock) {
+		} else if(block == waterBlock || waterBlock.canFlowInto(chunk.worldObj, blockX, blockY, blockZ)) {
 			this.blockStack.push(entry);
 		}
 	}
