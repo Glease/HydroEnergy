@@ -154,7 +154,7 @@ class HEQueueChunk {
 
 			HEPacketChunkUpdate message = new HEPacketChunkUpdate(chunk, subChunksHaveChanges);
 			for (EntityPlayerMP player : (List<EntityPlayerMP>) MinecraftServer.getServer().getConfigurationManager().playerEntityList) {
-				if(HEConfig.dimensionIdWhitelist.contains(player.worldObj.provider.dimensionId)
+				if(chunk.worldObj.provider.dimensionId == player.worldObj.provider.dimensionId
 						&& player.getServerForPlayer().getPlayerManager().isPlayerWatchingChunk(player, chunk.xPosition, chunk.zPosition)) {
 					HE.network.sendTo(message, player);
 				}
