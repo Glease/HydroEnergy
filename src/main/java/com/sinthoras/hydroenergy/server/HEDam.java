@@ -284,7 +284,7 @@ public class HEDam {
 	}
 
 	public boolean canSpread() {
-		return mode != HE.DamMode.DRAIN;
+		return mode != HE.DamMode.DRAIN && isPlaced;
 	}
 
 	public String getShortDescription() {
