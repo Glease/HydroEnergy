@@ -33,8 +33,8 @@ public class HEWidgetPowerInfo extends Gui {
     public void draw(Minecraft minecraft) {
         FontRenderer fontRenderer = minecraft.fontRenderer;
 
-        int euStored = controllerTileEntity.getEnergyStored();
-        int euCapacity = controllerTileEntity.getEnergyCapacity();
+        long euStored = controllerTileEntity.getEnergyStored();
+        long euCapacity = controllerTileEntity.getEnergyCapacity();
         float euRelative = ((float)euStored) / ((float)euCapacity);
 
         minecraft.getTextureManager().bindTexture(TextureMap.locationBlocksTexture);
@@ -51,8 +51,8 @@ public class HEWidgetPowerInfo extends Gui {
         int relativeInfoWidth = fontRenderer.getStringWidth(relativeInfo);
         fontRenderer.drawString(relativeInfo, centerX - relativeInfoWidth / 2, pixelY + 12, Color.WHITE.getRGB());
 
-        int euPerTickIn = controllerTileEntity.getEnergyPerTickIn();
-        int euPerTickOut = controllerTileEntity.getEnergyPerTickOut();
+        long euPerTickIn = controllerTileEntity.getEnergyPerTickIn();
+        long euPerTickOut = controllerTileEntity.getEnergyPerTickOut();
         String in = "IN: " + euPerTickIn + " EU/t";
         String out = "OUT: " + euPerTickOut + " EU/t";
         fontRenderer.drawString(in, pixelX, pixelY + 23, Color.BLACK.getRGB());
