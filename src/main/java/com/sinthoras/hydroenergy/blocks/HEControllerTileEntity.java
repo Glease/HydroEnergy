@@ -54,7 +54,7 @@ public class HEControllerTileEntity extends TileEntity implements IEnergyConnect
 	@Override
 	public long injectEnergyUnits(byte side, long voltage, long amperage) {
 		if(voltage <= this.voltage) {
-			long usedAmperage = (energyCapacity - energyStored) / voltage;
+			long usedAmperage = Math.min((energyCapacity - energyStored) / voltage, amperage);
 			// TODO: Reset energyPerTickIn each tick
 			energyPerTickIn = usedAmperage * voltage;
 			energyStored += energyPerTickIn;
