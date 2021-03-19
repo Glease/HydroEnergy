@@ -3,6 +3,9 @@ package com.sinthoras.hydroenergy.config;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class HEConfig {
     private class Defaults {
         public static final int maxDams = 16;
@@ -16,6 +19,7 @@ public class HEConfig {
         public static final int maxWaterSpreadEast = 1000; // in blocks
         public static final int maxWaterSpreadUp = 1000; // in blocks
         public static final int maxWaterSpreadSouth = 1000; // in blocks
+        public static final int overworldId = 0;
     }
 
     private class Categories {
@@ -34,6 +38,7 @@ public class HEConfig {
     public static int maxWaterSpreadEast = Defaults.maxWaterSpreadEast;
     public static int maxWaterSpreadUp = Defaults.maxWaterSpreadUp;
     public static int maxWaterSpreadSouth = Defaults.maxWaterSpreadSouth;
+    public static List<Integer> dimensionIdWhitelist = new ArrayList<Integer>();
 
     private static Configuration configuration;
 
@@ -73,6 +78,12 @@ public class HEConfig {
                         "waterLevel that sits lower then the specified value over a block. This value is also used for " +
                         "physics calculation and is synced from the server all clients.");
         clippingOffset = (float)clippingOffsetProperty.getDouble();
+
+        Property dimensionIdWhitelistProperties = configuration.get(Categories.general, "dimensionIdWhitelist", new int[] {Defaults.overworldId}, "List of dimension a player is allowed to place a controller");
+        dimensionIdWhitelist.clear();
+        for(int id : dimensionIdWhitelistProperties.getIntList()) {
+            dimensionIdWhitelist.add(id);
+        }
 
         configuration.addCustomCategoryComment(Categories.spreading, "Water spreading will quickly get out of " +
                 "controll if somebody missclicks their limits on their controllers. Here are game wide limits for " +

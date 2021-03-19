@@ -2,6 +2,7 @@ package com.sinthoras.hydroenergy.blocks;
 
 import com.sinthoras.hydroenergy.HE;
 
+import com.sinthoras.hydroenergy.config.HEConfig;
 import com.sinthoras.hydroenergy.server.HEBlockQueue;
 import com.sinthoras.hydroenergy.server.HEServer;
 import cpw.mods.fml.common.network.internal.FMLNetworkHandler;
@@ -33,12 +34,16 @@ public class HEControllerBlock extends BlockContainer {
 	
 	@Override
 	public boolean canPlaceBlockAt(World world, int blockX, int blockY, int blockZ) {
-		if(!world.isRemote) {
-			return HEServer.instance.canControllerBePlaced() && super.canPlaceBlockAt(world, blockX, blockY, blockZ);
+		if(HEConfig.dimensionIdWhitelist.contains(world.provider.dimensionId)) {
+			if (!world.isRemote) {
+				return HEServer.instance.canControllerBePlaced() && super.canPlaceBlockAt(world, blockX, blockY, blockZ);
+			} else {
+				// Is be overruled by server. The block appears briefly for the client and then vanishes
+				return true;
+			}
 		}
 		else {
-			// Is be overruled by server. The block appears briefly for the client and then vanishes
-			return true;
+			return false;
 		}
     }
 
