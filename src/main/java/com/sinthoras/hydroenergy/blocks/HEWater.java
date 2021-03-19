@@ -9,6 +9,7 @@ import com.sinthoras.hydroenergy.server.HEServer;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.ActiveRenderInfo;
 import net.minecraft.entity.EntityLivingBase;
@@ -80,9 +81,8 @@ public class HEWater extends BlockFluidBase {
 	public boolean canFlowInto(IBlockAccess world, int blockX, int blockY, int blockZ) {
 		Block block = world.getBlock(blockX, blockY, blockZ);
 		return block.getMaterial() == Material.air
-				|| canDisplace(world, blockX, blockY, blockZ)
-				|| (block.getMaterial() == Material.water
-					&& !(block instanceof HEWater));
+				|| (canDisplace(world, blockX, blockY, blockZ) && !(block instanceof BlockLiquid))
+				|| (block.getMaterial() == Material.water && !(block instanceof HEWater));
 	}
 
 	// For Block.setupFog, Block.updateFogColor and Block.getFOVModifier
