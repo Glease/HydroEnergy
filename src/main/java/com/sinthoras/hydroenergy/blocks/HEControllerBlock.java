@@ -21,8 +21,8 @@ public class HEControllerBlock extends BlockContainer {
 		super(Material.iron);
 		setHardness(100.0F);
 		setLightOpacity(15);
-		setBlockName("controller");
-		setBlockTextureName(HE.MODID + ":" + HE.damTextureName);
+		this.textureName = HE.MODID + ":" + HE.damTextureName;
+		setUnlocalizedName("controller");
 		setTickRandomly(false);
 		setCreativeTab(CreativeTabs.tabBlock);
 	}
@@ -54,7 +54,7 @@ public class HEControllerBlock extends BlockContainer {
 			HEControllerTileEntity controllerTileEntity = (HEControllerTileEntity) tileEntity;
 			if(!player.isSneaking()) {
 				if (!world.isRemote) {
-					FMLNetworkHandler.openGui(player, HE.MODID, HEControllerTileEntity.guiId, controllerTileEntity.getWorldObj(), controllerTileEntity.xCoord, controllerTileEntity.yCoord, controllerTileEntity.zCoord);
+					FMLNetworkHandler.openGui(player, HE.MODID, HEControllerTileEntity.guiId, controllerTileEntity.getWorld(), controllerTileEntity.xCoord, controllerTileEntity.yCoord, controllerTileEntity.zCoord);
 				}
 			}
 		}

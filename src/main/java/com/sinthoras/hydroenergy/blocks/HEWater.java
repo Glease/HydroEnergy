@@ -26,10 +26,10 @@ public class HEWater extends BlockFluidBase {
 	public HEWater(int waterId) {
 		super(FluidRegistry.WATER, Material.water);
 		this.waterId = waterId;
-		setBlockTextureName(HE.MODID + ":" + HE.dummyTexture);
+		this.textureName = HE.MODID + ":" + HE.dummyTexture;
 		setHardness(100.0F);
 		setLightOpacity(0);
-		setBlockName("water");
+		setUnlocalizedName("water");
 	}
 
 	@Override
@@ -50,7 +50,7 @@ public class HEWater extends BlockFluidBase {
 	}
 
 	@Override
-	public boolean canCollideCheck(int meta, boolean fullHit) {
+	public boolean canStopRayTrace(int meta, boolean fullHit) {
 		return false;
 	}
 

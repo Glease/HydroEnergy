@@ -67,7 +67,7 @@ public class HEControllerGui extends GuiContainer {
         int pixelY = guiTop + 50;
         int width = 100;
         int height = 30;
-        textField = new GuiTextField(Minecraft.getMinecraft().fontRenderer, pixelX, pixelY, width, height);
+        textField = new GuiTextField(Minecraft.getMinecraft().fontRendererObj, pixelX, pixelY, width, height);
         textField.setEnableBackgroundDrawing(true);
         textField.setMaxStringLength(10);
         textField.setTextColor(Color.BLACK.getRGB());
@@ -192,7 +192,7 @@ public class HEControllerGui extends GuiContainer {
         updateValues();
 
         Minecraft minecraft = Minecraft.getMinecraft();
-        FontRenderer fontRenderer = minecraft.fontRenderer;
+        FontRenderer fontRenderer = minecraft.fontRendererObj;
 
         GL11.glColor4f(1F, 1F, 1F, 1F);
         minecraft.getTextureManager().bindTexture(backgroundTextureLocation);
@@ -297,7 +297,7 @@ public class HEControllerGui extends GuiContainer {
 
     @Override
     protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
-        widgetModes.drawTooltip(Minecraft.getMinecraft().fontRenderer, mouseX - guiLeft, mouseY - guiTop, mouseX, mouseY, width - guiLeft);
+        widgetModes.drawTooltip(Minecraft.getMinecraft().fontRendererObj, mouseX - guiLeft, mouseY - guiTop, mouseX, mouseY, width - guiLeft);
     }
 
     @Override

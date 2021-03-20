@@ -31,7 +31,7 @@ public class HEWidgetPowerInfo extends Gui {
     }
 
     public void draw(Minecraft minecraft) {
-        FontRenderer fontRenderer = minecraft.fontRenderer;
+        FontRenderer fontRenderer = minecraft.fontRendererObj;
 
         long euStored = controllerContainer.getEnergyStored();
         long euCapacity = controllerContainer.getEnergyCapacity();
