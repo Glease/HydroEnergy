@@ -16,9 +16,9 @@ apply plugin: 'idea'
 
 sourceCompatibility = targetCompatibility = 1.8
 
-version = mod_version
-group= mod_group
-archivesBaseName = mod_id
+version = modVersion
+group= modGroup
+archivesBaseName = modId
 
 minecraft {
     version = "1.7.10-10.13.4.1614-1.7.10"
@@ -42,13 +42,13 @@ repositories {
 }
 
 dependencies {
-    compile("net.industrial-craft:industrialcraft-2:2.2.828-experimental:dev")
+    compile "net.industrial-craft:industrialcraft-2:$ic2Version:dev"
     compile("com.github.GTNewHorizons:GT5-Unofficial:experimental-SNAPSHOT:dev")
 
     // NEI
-    compile("codechicken:CodeChickenLib:1.7.10-1.1.3.140:dev")
-    compile("codechicken:CodeChickenCore:1.7.10-1.0.7.47:dev")
-    compile("codechicken:NotEnoughItems:1.7.10-1.0.5.120:dev")
+    compile "codechicken:CodeChickenLib:${minecraftVersion}-${codechickenlibVersion}:dev"
+    compile "codechicken:CodeChickenCore:${minecraftVersion}-${codechickencoreVersion}:dev"
+    compile "codechicken:NotEnoughItems:${minecraftVersion}-${neiVersion}:dev"
 }
 
 jar {
