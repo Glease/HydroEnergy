@@ -35,7 +35,7 @@ public class HEWidgetPowerInfo extends Gui {
 
         long euStored = controllerContainer.getEnergyStored();
         long euCapacity = controllerContainer.getEnergyCapacity();
-        float euRelative = ((float)euStored) / ((float)euCapacity);
+        float euRelative = euCapacity == 0 ? 0.0f : ((float)euStored) / ((float)euCapacity);
 
         minecraft.getTextureManager().bindTexture(TextureMap.locationBlocksTexture);
         IIcon iconStill = FluidRegistry.WATER.getStillIcon();

@@ -290,4 +290,13 @@ public class HEDam {
 	public String getShortDescription() {
 		return "HEController @(" + blockX + ", " + blockY + ", " + blockZ + ")";
 	}
+
+	public long getEnergyCapacity() {
+		long energyCapacity = 0;
+		for(int blockY=this.blockY;blockY<HE.numChunksY*HE.chunkHeight;blockY++) {
+			long heightCoefficient = blockY - this.blockY + 1;
+			energyCapacity += heightCoefficient * blocksPerY[blockY];
+		}
+		return energyCapacity;
+	}
 }

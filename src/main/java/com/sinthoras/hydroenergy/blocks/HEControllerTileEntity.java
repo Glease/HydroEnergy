@@ -22,12 +22,13 @@ import net.minecraftforge.fluids.IFluidHandler;
 public class HEControllerTileEntity extends TileEntity implements IEnergyConnected {
 
 	private long energyStored = 0;
-	private long energyCapacity = 10000000;
+	private long energyCapacity = 0;
 	private long voltage = 512;
 	private int ouputAmperage = 1;
 	private long energyPerTickIn = 0;
 	private long energyPerTickOut = 0;
 
+	private long timestamp = 0;
 	private int energyPerTickInValid = 0;
 
 	public void onRemoveTileEntity() {
@@ -144,6 +145,14 @@ public class HEControllerTileEntity extends TileEntity implements IEnergyConnect
 
 	@Override
 	public void updateEntity() {
+		if(!worldObj.isRemote) {
+			long currentTime = System.currentTimeMillis();
+			if (timestamp + HE.damCapacityRecalculationDelay <= currentTime) {
+				timestamp = currentTime;
+				energyCapacity = HEServer.instance.getEnergyCapacity(getWaterId());
+			}
+		}
+
 		provideEnergy();
 		energyPerTickInValid++;
 	}

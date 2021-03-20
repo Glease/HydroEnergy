@@ -18,7 +18,8 @@ public class HEConfig {
         public static final int maxWaterSpreadNorth = 1000; // in blocks
         public static final int maxWaterSpreadEast = 1000; // in blocks
         public static final int maxWaterSpreadUp = 1000; // in blocks
-        public static final int maxWaterSpreadSouth = 1000; // in blocks
+        public static final int maxWaterSpreadSouth = 10000; // in blocks
+        public static final int energyPerWaterBlock = 10000; // in GregTech EU
         public static final int overworldId = 0;
     }
 
@@ -32,13 +33,14 @@ public class HEConfig {
     public static int spreadingDelayBetweenPerChunks = Defaults.spreadingDelayBetweenPerChunks;
     public static int minLightUpdateTimePerSubChunk = Defaults.minLightUpdateTimePerSubChunk;
     public static float clippingOffset = Defaults.clippingOffset;
+    public static List<Integer> dimensionIdWhitelist = new ArrayList<Integer>();
+    public static float energyPerWaterBlock = Defaults.energyPerWaterBlock;
     public static int maxWaterSpreadWest = Defaults.maxWaterSpreadWest;
     public static int maxWaterSpreadDown = Defaults.maxWaterSpreadDown;
     public static int maxWaterSpreadNorth = Defaults.maxWaterSpreadNorth;
     public static int maxWaterSpreadEast = Defaults.maxWaterSpreadEast;
     public static int maxWaterSpreadUp = Defaults.maxWaterSpreadUp;
     public static int maxWaterSpreadSouth = Defaults.maxWaterSpreadSouth;
-    public static List<Integer> dimensionIdWhitelist = new ArrayList<Integer>();
 
     private static Configuration configuration;
 
@@ -79,11 +81,15 @@ public class HEConfig {
                         "physics calculation and is synced from the server all clients.");
         clippingOffset = (float)clippingOffsetProperty.getDouble();
 
-        Property dimensionIdWhitelistProperties = configuration.get(Categories.general, "dimensionIdWhitelist", new int[] {Defaults.overworldId}, "List of dimension a player is allowed to place a controller");
+        Property dimensionIdWhitelistProperties = configuration.get(Categories.general, "dimensionIdWhitelist",
+                new int[] {Defaults.overworldId}, "List of dimension a player is allowed to place a controller");
         dimensionIdWhitelist.clear();
         for(int id : dimensionIdWhitelistProperties.getIntList()) {
             dimensionIdWhitelist.add(id);
         }
+
+        Property energyPerWaterBlockProperty = configuration.get(Categories.general, "energyPerWaterBlock",
+                Defaults.energyPerWaterBlock, "The energy storage value of a water block at base height.");
 
         configuration.addCustomCategoryComment(Categories.spreading, "Water spreading will quickly get out of " +
                 "controll if somebody missclicks their limits on their controllers. Here are game wide limits for " +

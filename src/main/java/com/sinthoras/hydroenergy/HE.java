@@ -29,6 +29,7 @@ public class HE {
     public static final int blockPerSubChunk = chunkWidth * chunkHeight * chunkDepth;
     public static final int underWaterSkylightDepth = (int)Math.ceil(16f / waterOpacity);
     public static final int controllerGuiUpdateDelay = 200;
+    public static final int damCapacityRecalculationDelay = 2000;  // in milliseconds
 
     static {
         LOG = LogManager.getLogger(MODID);
