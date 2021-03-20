@@ -17,6 +17,7 @@ public class HE {
     public static final String NAME = "HydroEnergy";
     public static final String COM_SINTHORAS_HYDROENERGY = "com.sinthoras.hydroenergy";
     public static final int FLOAT_SIZE = 4;
+    public static final int LONG_SIZE = 8;
     public static SimpleNetworkWrapper network;
     public static Logger LOG;
     public static final int maxRenderDist = 16;
@@ -27,6 +28,7 @@ public class HE {
     public static final int chunkDepth = 16;
     public static final int blockPerSubChunk = chunkWidth * chunkHeight * chunkDepth;
     public static final int underWaterSkylightDepth = (int)Math.ceil(16f / waterOpacity);
+    public static final int controllerGuiUpdateDelay = 200;
 
     static {
         LOG = LogManager.getLogger(MODID);

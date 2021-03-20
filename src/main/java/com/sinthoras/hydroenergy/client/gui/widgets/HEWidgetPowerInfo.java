@@ -1,6 +1,6 @@
 package com.sinthoras.hydroenergy.client.gui.widgets;
 
-import com.sinthoras.hydroenergy.blocks.HEControllerTileEntity;
+import com.sinthoras.hydroenergy.client.gui.HEControllerContainer;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;
@@ -16,14 +16,14 @@ import java.awt.*;
 @SideOnly(Side.CLIENT)
 public class HEWidgetPowerInfo extends Gui {
 
-    private HEControllerTileEntity controllerTileEntity;
+    private HEControllerContainer controllerContainer;
     private int pixelX;
     private int pixelY;
     private int width;
     private int centerX;
 
-    public HEWidgetPowerInfo(HEControllerTileEntity controllerTileEntity, int pixelX, int pixelY, int width) {
-        this.controllerTileEntity = controllerTileEntity;
+    public HEWidgetPowerInfo(HEControllerContainer controllerContainer, int pixelX, int pixelY, int width) {
+        this.controllerContainer = controllerContainer;
         this.pixelX = pixelX;
         this.pixelY = pixelY;
         this.width = width;
@@ -33,8 +33,8 @@ public class HEWidgetPowerInfo extends Gui {
     public void draw(Minecraft minecraft) {
         FontRenderer fontRenderer = minecraft.fontRenderer;
 
-        long euStored = controllerTileEntity.getEnergyStored();
-        long euCapacity = controllerTileEntity.getEnergyCapacity();
+        long euStored = controllerContainer.getEnergyStored();
+        long euCapacity = controllerContainer.getEnergyCapacity();
         float euRelative = ((float)euStored) / ((float)euCapacity);
 
         minecraft.getTextureManager().bindTexture(TextureMap.locationBlocksTexture);
@@ -51,8 +51,8 @@ public class HEWidgetPowerInfo extends Gui {
         int relativeInfoWidth = fontRenderer.getStringWidth(relativeInfo);
         fontRenderer.drawString(relativeInfo, centerX - relativeInfoWidth / 2, pixelY + 12, Color.WHITE.getRGB());
 
-        long euPerTickIn = controllerTileEntity.getEnergyPerTickIn();
-        long euPerTickOut = controllerTileEntity.getEnergyPerTickOut();
+        long euPerTickIn = controllerContainer.getEnergyPerTickIn();
+        long euPerTickOut = controllerContainer.getEnergyPerTickOut();
         String in = "IN: " + euPerTickIn + " EU/t";
         String out = "OUT: " + euPerTickOut + " EU/t";
         fontRenderer.drawString(in, pixelX, pixelY + 23, Color.BLACK.getRGB());

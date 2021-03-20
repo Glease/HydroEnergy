@@ -1,7 +1,6 @@
 package com.sinthoras.hydroenergy.client.gui;
 
 import com.sinthoras.hydroenergy.HE;
-import com.sinthoras.hydroenergy.blocks.HEControllerTileEntity;
 import com.sinthoras.hydroenergy.client.HEClient;
 import com.sinthoras.hydroenergy.client.HEDam;
 import com.sinthoras.hydroenergy.client.gui.widgets.HEWidgetModes;
@@ -13,14 +12,13 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.gui.inventory.GuiContainer;
-import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
 
 @SideOnly(Side.CLIENT)
-public class HEDamGui extends GuiContainer {
+public class HEControllerGui extends GuiContainer {
 
     public static final ResourceLocation backgroundTextureLocation = new ResourceLocation(HE.MODID, HE.damBackgroundLocation);
 
@@ -42,17 +40,17 @@ public class HEDamGui extends GuiContainer {
     private int centerX = 0;
     private int centerY = 0;
 
-    private HEControllerTileEntity controllerTileEntity;
+    private HEControllerContainer controllerContainer;
 
     private static final Color lineGrey = new Color(155, 155, 155);
     private static final Color textGrey = new Color(104, 104, 104);
 
-    public HEDamGui(InventoryPlayer inventoryPlayer, HEControllerTileEntity controllerTileEntity) {
-        super(new HEDamContainer(inventoryPlayer, controllerTileEntity));
+    public HEControllerGui(HEControllerContainer controllerContainer) {
+        super(controllerContainer);
         xSize = 256;
         ySize = 176;
-        dam = HEClient.getDam(controllerTileEntity.getWaterId());
-        this.controllerTileEntity = controllerTileEntity;
+        dam = HEClient.getDam(controllerContainer.getWaterId());
+        this.controllerContainer = controllerContainer;
     }
 
     @Override
@@ -115,7 +113,7 @@ public class HEDamGui extends GuiContainer {
         widgetModes = new HEWidgetModes(dam, guiLeft + xSize - 75, guiTop + 5);
         widgetModes.init(buttonList);
 
-        widgetPowerInfo = new HEWidgetPowerInfo(controllerTileEntity, guiLeft + 20, guiTop + 30, xSize - 40);
+        widgetPowerInfo = new HEWidgetPowerInfo(controllerContainer, guiLeft + 20, guiTop + 30, xSize - 40);
 
         for(HELimitGui limitGui : limitGuis) {
             limitGui.init(0, buttonList);

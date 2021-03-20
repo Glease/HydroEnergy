@@ -28,6 +28,7 @@ public class HEControllerTileEntity extends TileEntity implements IEnergyConnect
 	private long energyPerTickIn = 0;
 	private long energyPerTickOut = 0;
 
+	private int energyPerTickInValid = 0;
 
 	public void onRemoveTileEntity() {
 		if(!this.worldObj.isRemote) {
@@ -44,7 +45,12 @@ public class HEControllerTileEntity extends TileEntity implements IEnergyConnect
 	}
 
 	public long getEnergyPerTickIn() {
-		return energyPerTickIn;
+		if(energyPerTickInValid < 2) {
+			return energyPerTickIn;
+		}
+		else {
+			return 0;
+		}
 	}
 
 	public long getEnergyPerTickOut() {
@@ -55,8 +61,8 @@ public class HEControllerTileEntity extends TileEntity implements IEnergyConnect
 	public long injectEnergyUnits(byte side, long voltage, long amperage) {
 		if(voltage <= this.voltage) {
 			long usedAmperage = Math.min((energyCapacity - energyStored) / voltage, amperage);
-			// TODO: Reset energyPerTickIn each tick
 			energyPerTickIn = usedAmperage * voltage;
+			energyPerTickInValid = 0;
 			energyStored += energyPerTickIn;
 			return usedAmperage;
 		}
@@ -75,7 +81,7 @@ public class HEControllerTileEntity extends TileEntity implements IEnergyConnect
 		return true;
 	}
 
-	public void dischargeEnergy() {
+	public void provideEnergy() {
 		if (!this.worldObj.isRemote && gtTileEntitiesAround() && energyStored >= voltage * ouputAmperage) {
 			long usedAmperage = IEnergyConnected.Util.emitEnergyToNetwork(voltage, ouputAmperage, this);
 			energyPerTickOut = voltage * usedAmperage;
@@ -138,7 +144,8 @@ public class HEControllerTileEntity extends TileEntity implements IEnergyConnect
 
 	@Override
 	public void updateEntity() {
-
+		provideEnergy();
+		energyPerTickInValid++;
 	}
 
 	@Override

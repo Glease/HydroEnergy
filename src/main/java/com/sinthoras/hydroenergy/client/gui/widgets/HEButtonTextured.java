@@ -1,6 +1,6 @@
 package com.sinthoras.hydroenergy.client.gui.widgets;
 
-import com.sinthoras.hydroenergy.client.gui.HEDamGui;
+import com.sinthoras.hydroenergy.client.gui.HEControllerGui;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;
@@ -38,7 +38,7 @@ public class HEButtonTextured extends GuiButton {
 
     public void drawButton(Minecraft minecraft, int mouseX, int mouseY) {
         if (this.visible) {
-            minecraft.getTextureManager().bindTexture(HEDamGui.backgroundTextureLocation);
+            minecraft.getTextureManager().bindTexture(HEControllerGui.backgroundTextureLocation);
             GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 
             if (enabled) {
