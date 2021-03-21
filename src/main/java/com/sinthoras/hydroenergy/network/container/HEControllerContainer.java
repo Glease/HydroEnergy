@@ -1,4 +1,4 @@
-package com.sinthoras.hydroenergy.client.gui;
+package com.sinthoras.hydroenergy.network.container;
 
 import com.sinthoras.hydroenergy.HE;
 import com.sinthoras.hydroenergy.blocks.HEControllerTileEntity;

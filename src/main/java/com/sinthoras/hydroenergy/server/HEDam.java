@@ -3,8 +3,8 @@ package com.sinthoras.hydroenergy.server;
 import com.sinthoras.hydroenergy.HE;
 import com.sinthoras.hydroenergy.HEUtil;
 import com.sinthoras.hydroenergy.config.HEConfig;
-import com.sinthoras.hydroenergy.network.HEPacketConfigUpdate;
-import com.sinthoras.hydroenergy.network.HEPacketWaterUpdate;
+import com.sinthoras.hydroenergy.network.packet.HEPacketConfigUpdate;
+import com.sinthoras.hydroenergy.network.packet.HEPacketWaterUpdate;
 
 import net.minecraft.nbt.NBTTagCompound;
 

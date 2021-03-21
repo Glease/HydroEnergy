@@ -7,7 +7,7 @@ import com.sinthoras.hydroenergy.HE;
 import com.sinthoras.hydroenergy.HEUtil;
 import com.sinthoras.hydroenergy.blocks.HEWater;
 import com.sinthoras.hydroenergy.config.HEConfig;
-import com.sinthoras.hydroenergy.network.HEPacketChunkUpdate;
+import com.sinthoras.hydroenergy.network.packet.HEPacketChunkUpdate;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;

@@ -5,6 +5,7 @@ import com.sinthoras.hydroenergy.client.HEClient;
 import com.sinthoras.hydroenergy.client.HEDam;
 import com.sinthoras.hydroenergy.client.gui.widgets.HEWidgetModes;
 import com.sinthoras.hydroenergy.client.gui.widgets.HEWidgetPowerInfo;
+import com.sinthoras.hydroenergy.network.container.HEControllerContainer;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;

@@ -1,4 +1,4 @@
-package com.sinthoras.hydroenergy.network;
+package com.sinthoras.hydroenergy.network.packet;
 
 import com.sinthoras.hydroenergy.HE;
 import com.sinthoras.hydroenergy.HEReflection;

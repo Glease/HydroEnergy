@@ -2,7 +2,7 @@ package com.sinthoras.hydroenergy.server;
 
 import com.sinthoras.hydroenergy.HE;
 import com.sinthoras.hydroenergy.config.HEConfig;
-import com.sinthoras.hydroenergy.network.HEPacketSynchronize;
+import com.sinthoras.hydroenergy.network.packet.HEPacketSynchronize;
 
 import cpw.mods.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
 import net.minecraft.entity.player.EntityPlayerMP;

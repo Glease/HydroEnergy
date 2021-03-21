@@ -1,6 +1,6 @@
 package com.sinthoras.hydroenergy.client.gui.widgets;
 
-import com.sinthoras.hydroenergy.client.gui.HEControllerContainer;
+import com.sinthoras.hydroenergy.network.container.HEControllerContainer;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;

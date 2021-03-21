@@ -1,15 +1,18 @@
-package com.sinthoras.hydroenergy.network;
+package com.sinthoras.hydroenergy.network.packet;
 
 import com.sinthoras.hydroenergy.HE;
-import com.sinthoras.hydroenergy.server.HEServer;
+import com.sinthoras.hydroenergy.client.HEClient;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 import io.netty.buffer.ByteBuf;
 
-public class HEPacketConfigRequest implements IMessage {
+public class HEPacketConfigUpdate implements IMessage {
 
     public int waterId;
+    public int blockX;
+    public int blockY;
+    public int blockZ;
     public HE.DamMode mode;
     public int limitWest;
     public int limitDown;
@@ -18,8 +21,11 @@ public class HEPacketConfigRequest implements IMessage {
     public int limitUp;
     public int limitSouth;
 
-    public HEPacketConfigRequest(int waterId, HE.DamMode mode, int limitWest, int limitDown, int limitNorth, int limitEast, int limitUp, int limitSouth) {
+    public HEPacketConfigUpdate(int waterId, int blockX, int blockY, int blockZ, HE.DamMode mode, int limitWest, int limitDown, int limitNorth, int limitEast, int limitUp, int limitSouth) {
         this.waterId = waterId;
+        this.blockX = blockX;
+        this.blockY = blockY;
+        this.blockZ = blockZ;
         this.mode = mode;
         this.limitWest = limitWest;
         this.limitDown = limitDown;
@@ -29,13 +35,16 @@ public class HEPacketConfigRequest implements IMessage {
         this.limitSouth = limitSouth;
     }
 
-    public HEPacketConfigRequest() {
+    public HEPacketConfigUpdate() {
 
     }
 
     @Override
     public void fromBytes(ByteBuf buf) {
         waterId = buf.readInt();
+        blockX = buf.readInt();
+        blockY = buf.readInt();
+        blockZ = buf.readInt();
         mode = HE.DamMode.getMode(buf.readInt());
         limitWest = buf.readInt();
         limitDown = buf.readInt();
@@ -48,6 +57,9 @@ public class HEPacketConfigRequest implements IMessage {
     @Override
     public void toBytes(ByteBuf buf) {
         buf.writeInt(waterId);
+        buf.writeInt(blockX);
+        buf.writeInt(blockY);
+        buf.writeInt(blockZ);
         buf.writeInt(mode.getValue());
         buf.writeInt(limitWest);
         buf.writeInt(limitDown);
@@ -57,11 +69,14 @@ public class HEPacketConfigRequest implements IMessage {
         buf.writeInt(limitSouth);
     }
 
-    public static class Handler implements IMessageHandler<HEPacketConfigRequest, IMessage> {
+    public static class Handler implements IMessageHandler<HEPacketConfigUpdate, IMessage> {
 
         @Override
-        public IMessage onMessage(HEPacketConfigRequest message, MessageContext ctx) {
-            HEServer.instance.onConfigRequest(message.waterId,
+        public IMessage onMessage(HEPacketConfigUpdate message, MessageContext ctx) {
+            HEClient.onConfigUpdate(message.waterId,
+                    message.blockX,
+                    message.blockY,
+                    message.blockZ,
                     message.mode,
                     message.limitWest,
                     message.limitDown,

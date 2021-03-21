@@ -3,7 +3,7 @@ package com.sinthoras.hydroenergy.client;
 import com.sinthoras.hydroenergy.HE;
 import com.sinthoras.hydroenergy.HEUtil;
 import com.sinthoras.hydroenergy.config.HEConfig;
-import com.sinthoras.hydroenergy.network.HEPacketConfigRequest;
+import com.sinthoras.hydroenergy.network.packet.HEPacketConfigRequest;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
