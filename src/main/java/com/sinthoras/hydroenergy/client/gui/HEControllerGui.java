@@ -298,7 +298,10 @@ public class HEControllerGui extends GuiContainer {
 
     @Override
     protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
-        widgetModes.drawTooltip(Minecraft.getMinecraft().fontRenderer, mouseX - guiLeft, mouseY - guiTop, mouseX, mouseY, width - guiLeft);
+        // There is a translation in GL before this call. Revert it for the duration of this method
+        GL11.glTranslatef((float)-this.guiLeft, (float)-this.guiTop, 0.0f);
+        widgetModes.drawTooltip(Minecraft.getMinecraft().fontRenderer, mouseX, mouseY, width);
+        GL11.glTranslatef((float)this.guiLeft, (float)this.guiTop, 0.0f);
     }
 
     @Override

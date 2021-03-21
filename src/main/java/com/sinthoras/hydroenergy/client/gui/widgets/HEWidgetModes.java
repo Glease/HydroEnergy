@@ -100,21 +100,21 @@ public class HEWidgetModes extends Gui {
         }
     }
 
-    public void drawTooltip(FontRenderer fontRenderer, int mouseX, int mouseY, int buttonX, int buttonY, int screenWidth) {
+    public void drawTooltip(FontRenderer fontRenderer, int mouseX, int mouseY, int screenWidth) {
         if(isEnabled) {
-            if(buttonDrain.isOverButton(buttonX, buttonY)) {
+            if(buttonDrain.isOverButton(mouseX, mouseY)) {
                 drawTooltip("Remove water from world", mouseX, mouseY, fontRenderer, screenWidth);
             }
-            if(buttonDebug.isOverButton(buttonX, buttonY)) {
+            if(buttonDebug.isOverButton(mouseX, mouseY)) {
                 drawTooltip("Spread and show all water", mouseX, mouseY, fontRenderer, screenWidth);
             }
-            if(buttonWater.isOverButton(buttonX, buttonY)) {
+            if(buttonWater.isOverButton(mouseX, mouseY)) {
                 drawTooltip("Spread and show water", mouseX, mouseY, fontRenderer, screenWidth);
             }
         }
     }
 
-    private void drawTooltip(String s, int mouseX, int mouseY, FontRenderer fontRenderer, int rightMostPosition) {
+    private void drawTooltip(String s, int mouseX, int mouseY, FontRenderer fontRenderer, int screenWidth) {
         GL11.glDisable(GL12.GL_RESCALE_NORMAL);
         RenderHelper.disableStandardItemLighting();
         GL11.glDisable(GL11.GL_LIGHTING);
@@ -125,7 +125,7 @@ public class HEWidgetModes extends Gui {
         int stringWidth = fontRenderer.getStringWidth(s);
 
         // Make sure the end does not leave the image
-        mouseX -= Math.max(0, mouseX + stringWidth + 3 - rightMostPosition);
+        mouseX -= Math.max(0, mouseX + stringWidth + 3 - screenWidth);
 
         this.drawGradientRect(mouseX - 3, mouseY - 4, mouseX + stringWidth + 3, mouseY - 3, nearBlack.getRGB(), nearBlack.getRGB());
         this.drawGradientRect(mouseX - 3, mouseY + 11, mouseX + stringWidth + 3, mouseY + 12, nearBlack.getRGB(), nearBlack.getRGB());
