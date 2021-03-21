@@ -288,15 +288,16 @@ class HELightChunk {
     public void patchBlock(Chunk chunk, int blockX, int blockY, int blockZ) {
         int chunkY = HEUtil.coordBlockToChunk(blockY);
         int waterId = waterIds[blockX][blockZ];
-        float blockDiff = Math.min(blockY - HEClient.getWaterLevelForRendering(waterId), 0);
+        float blockDiff = Math.min(blockY - HEClient.getDam(waterId).getWaterLevelForPhysicsAndLighting(), 0);
         int lightVal = (int) (15 + blockDiff * HE.waterOpacity);
+        lightVal = Math.max(lightVal, 0);
         chunk.getBlockStorageArray()[chunkY].getSkylightArray().set(blockX, blockY & 15, blockZ, lightVal);
     }
 
     public void patchSubChunk(Chunk chunk, int chunkY) {
         short flagChunkY = HEUtil.chunkYToFlag(chunkY);
         if(hasUpdateForSubChunk(flagChunkY) && subChunkRequiresPatching(flagChunkY))  {
-            float[] waterLevels = HEClient.getAllWaterLevelsForRendering();
+            float[] waterLevels = HEClient.getAllWaterLevelForPhysicsAndLighting();
             BitSet flags = lightFlags[chunkY];
             NibbleArray skyLightArray = chunk.getBlockStorageArray()[chunkY].getSkylightArray();
             for (int linearCoord = flags.nextSetBit(0); linearCoord != -1; linearCoord = flags.nextSetBit(linearCoord + 1)) {

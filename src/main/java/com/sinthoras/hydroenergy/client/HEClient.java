@@ -49,8 +49,12 @@ public class HEClient {
 		return waterLevels;
 	}
 
-	public static float getWaterLevelForRendering(int waterId) {
-		return dams[waterId].getWaterLevelForRendering();
+	public static float[] getAllWaterLevelForPhysicsAndLighting() {
+		float[] waterLevels = new float[HEConfig.maxDams];
+		for(int waterId = 0; waterId< HEConfig.maxDams; waterId++) {
+			waterLevels[waterId] = dams[waterId].getWaterLevelForPhysicsAndLighting();
+		}
+		return waterLevels;
 	}
 
 	public static void onSynchronize(int[] blocksX, int[] blocksY, int[] blocksZ, float[] waterLevels, HE.DamMode[] modes, int[] limitsWest, int[] limitsDown, int[] limitsNorth, int[] limitsEast, int[] limitsUp, int[] limitsSouth) {
