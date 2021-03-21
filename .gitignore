@@ -1,5 +1,7 @@
 .gradle
 .settings
+/.idea/
+/run/
 /build/
 /eclipse/
 .classpath
