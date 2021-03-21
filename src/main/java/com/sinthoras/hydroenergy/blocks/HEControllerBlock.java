@@ -21,8 +21,8 @@ public class HEControllerBlock extends BlockContainer {
 		super(Material.iron);
 		setHardness(100.0F);
 		setLightOpacity(15);
-		this.textureName = HE.MODID + ":" + HE.damTextureName;
-		setUnlocalizedName("controller");
+		setBlockName("controller");
+		setBlockTextureName(HE.MODID + ":" + HE.damTextureName);
 		setTickRandomly(false);
 		setCreativeTab(CreativeTabs.tabBlock);
 	}

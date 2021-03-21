@@ -26,10 +26,10 @@ public class HEWater extends BlockFluidBase {
 	public HEWater(int waterId) {
 		super(FluidRegistry.WATER, Material.water);
 		this.waterId = waterId;
-		this.textureName = HE.MODID + ":" + HE.dummyTexture;
 		setHardness(100.0F);
 		setLightOpacity(0);
-		setUnlocalizedName("water");
+		setBlockName("water");
+		setBlockTextureName(HE.MODID + ":" + HE.dummyTexture);
 	}
 
 	@Override
