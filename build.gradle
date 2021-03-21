@@ -82,27 +82,9 @@ repositories {
 }
 
 dependencies {
-    compile "net.industrial-craft:industrialcraft-2:${ic2Version}:dev"
     compile("com.github.GTNewHorizons:GT5-Unofficial:experimental-SNAPSHOT:dev") {
         setChanging(true)
     }
-    compile ":Railcraft:1.7.10-9.12.2.0:dev"
-    compileOnly("li.cil.oc:OpenComputers:MC1.7.10-1.5.+:api")
-
-    compileOnly("com.github.GTNewHorizons:Applied-Energistics-2-Unofficial:rv3-1.7.10-SNAPSHOT:dev") {
-        exclude module: "*"
-    }
-
-    compileOnly("applecore:AppleCore:${applecoreVersion}:api")
-    compileOnly("com.enderio.core:EnderCore:${enderCoreVersion}:dev")
-    compileOnly("com.enderio:EnderIO:${enderioVersion}:dev") {
-        exclude group: "mcp.mobius.waila"
-    }
-
-    // NEI
-    compile "codechicken:CodeChickenLib:${minecraftVersion}-${codechickenlibVersion}:dev"
-    compile "codechicken:CodeChickenCore:${minecraftVersion}-${codechickencoreVersion}:dev"
-    compile "codechicken:NotEnoughItems:${minecraftVersion}-${neiVersion}:dev"
 }
 
 jar {
