@@ -1,12 +1,11 @@
 .gradle
 .settings
+/.idea/
+/run/
 /build/
 /eclipse/
-/gradle/
 .classpath
 .project
-gradlew
-gradlew.bat
 /bin/
 /config/
 /crash-reports/

@@ -72,7 +72,7 @@ public class HETransformer implements IClassTransformer {
 
 		final String METHOD_setBlock = isObfuscated ? "d" : "setBlock";
 		final String METHOD_setBlock_DESC = "(IIIL" + CLASS_Block + ";II)Z";
-		final String METHOD_func_150807_a = isObfuscated ? "" : "func_150807_a";
+		final String METHOD_func_150807_a = isObfuscated ? "a" : "func_150807_a";
 		final String METHOD_func_150807_a_DESC = "(IIIL" + CLASS_Block + ";I)Z";
 		final String METHOD_onSetBlock = "onSetBlock";
 		final String METHOD_onSetBlock_DESC = "(L" + CLASS_World + ";IIIL" + CLASS_Block + ";L" + CLASS_Block + ";)V";

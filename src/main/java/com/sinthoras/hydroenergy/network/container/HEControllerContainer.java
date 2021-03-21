@@ -44,11 +44,8 @@ public class HEControllerContainer extends Container {
     }
 
     @Override
-    // addClientHandleToList
     public void addCraftingToCrafters(ICrafting clientHandle)
     {
-        super.addCraftingToCrafters(clientHandle);
-
         buffer.putLong(Buffer.energyStoredOffset, energyStored);
         sendStateUpdate(clientHandle, Buffer.energyStoredOffset);
 
@@ -60,6 +57,8 @@ public class HEControllerContainer extends Container {
 
         buffer.putLong(Buffer.getEnergyPerTickOutOffset, energyPerTickOut);
         sendStateUpdate(clientHandle, Buffer.getEnergyPerTickOutOffset);
+
+        super.addCraftingToCrafters(clientHandle);
     }
 
     @Override
