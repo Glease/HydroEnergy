@@ -2,11 +2,8 @@
 .settings
 /build/
 /eclipse/
-/gradle/
 .classpath
 .project
-gradlew
-gradlew.bat
 /bin/
 /config/
 /crash-reports/
