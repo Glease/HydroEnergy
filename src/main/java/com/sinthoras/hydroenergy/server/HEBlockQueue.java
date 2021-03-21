@@ -105,7 +105,7 @@ class HEQueueChunk {
 			if(removeBlock) {
 				if(block == entry.waterBlock) {
 					int chunkY = entry.blockY >> 4;
-					chunkStorage[chunkY].setExtBlockID(entry.blockX & 15, entry.blockY & 15, entry.blockZ & 15, Blocks.air);
+					chunkStorage[chunkY].func_150818_a(entry.blockX & 15, entry.blockY & 15, entry.blockZ & 15, Blocks.air);
 					HEServer.instance.onBlockRemoved(waterId, entry.blockY);
 					subChunksHaveChanges |= HEUtil.chunkYToFlag(chunkY);
 
@@ -123,7 +123,7 @@ class HEQueueChunk {
 					if(chunkStorage[chunkY] == null) {
 						chunkStorage[chunkY] = new ExtendedBlockStorage(chunkY << 4, !chunk.worldObj.provider.hasNoSky);
 					}
-					chunkStorage[chunkY].setExtBlockID(entry.blockX & 15, entry.blockY & 15, entry.blockZ & 15, entry.waterBlock);
+					chunkStorage[chunkY].func_150818_a(entry.blockX & 15, entry.blockY & 15, entry.blockZ & 15, entry.waterBlock);
 					// If the block is over all opague blocks aka can see the sky simply set light to 15.
 					// Else to the value of the first non HEWater block directly below
 					if(chunk.canBlockSeeTheSky(entry.blockX & 15, entry.blockY, entry.blockZ & 15)) {

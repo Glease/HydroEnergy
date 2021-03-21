@@ -110,7 +110,7 @@ public class HELimitGui extends Gui {
         pixelX = guiLeft + 10;
         pixelY = guiTop + 2 * height + 10;
         width = xSize - 20;
-        textField = new HENumberInput(Minecraft.getMinecraft().fontRendererObj, pixelX, pixelY, width, height);
+        textField = new HENumberInput(Minecraft.getMinecraft().fontRenderer, pixelX, pixelY, width, height);
         textField.setEnableBackgroundDrawing(true);
         textField.setMaxStringLength(16);
         textField.setTextColor(0xFFFFFFFF);
@@ -235,8 +235,8 @@ public class HELimitGui extends Gui {
             minecraft.getTextureManager().bindTexture(limitBackgroundTextureLocation);
             drawTexturedModalRect(this.guiLeft, this.guiTop, 0, 0, xSize, ySize);
 
-            int width = minecraft.fontRendererObj.getStringWidth(title);
-            minecraft.fontRendererObj.drawString(title, guiLeft + xSize / 2 - width / 2, guiTop + 6, 0x000000);
+            int width = minecraft.fontRenderer.getStringWidth(title);
+            minecraft.fontRenderer.drawString(title, guiLeft + xSize / 2 - width / 2, guiTop + 6, 0x000000);
 
             textField.drawTextBox();
         }

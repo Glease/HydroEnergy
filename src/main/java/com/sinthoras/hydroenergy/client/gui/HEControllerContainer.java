@@ -44,7 +44,7 @@ public class HEControllerContainer extends Container {
     }
 
     @Override
-    public void onCraftGuiOpened(ICrafting clientHandle)
+    public void addCraftingToCrafters(ICrafting clientHandle)
     {
         buffer.putLong(Buffer.energyStoredOffset, energyStored);
         sendStateUpdate(clientHandle, Buffer.energyStoredOffset);
@@ -58,13 +58,13 @@ public class HEControllerContainer extends Container {
         buffer.putLong(Buffer.getEnergyPerTickOutOffset, energyPerTickOut);
         sendStateUpdate(clientHandle, Buffer.getEnergyPerTickOutOffset);
 
-        super.onCraftGuiOpened(clientHandle);
+        super.addCraftingToCrafters(clientHandle);
     }
 
     @Override
     public void detectAndSendChanges() {
         long currentTime = System.currentTimeMillis();
-        if(!controllerTileEntity.getWorld().isRemote && currentTime > HE.controllerGuiUpdateDelay + timestamp) {
+        if(!controllerTileEntity.getWorldObj().isRemote && currentTime > HE.controllerGuiUpdateDelay + timestamp) {
             boolean updateEnergyCapacity = false;
             long currentEnergyCapacity = controllerTileEntity.getEnergyCapacity();
             if (energyCapacity != currentEnergyCapacity) {

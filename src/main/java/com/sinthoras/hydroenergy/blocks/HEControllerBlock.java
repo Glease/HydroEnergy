@@ -54,7 +54,7 @@ public class HEControllerBlock extends BlockContainer {
 			HEControllerTileEntity controllerTileEntity = (HEControllerTileEntity) tileEntity;
 			if(!player.isSneaking()) {
 				if (!world.isRemote) {
-					FMLNetworkHandler.openGui(player, HE.MODID, HEControllerTileEntity.guiId, controllerTileEntity.getWorld(), controllerTileEntity.xCoord, controllerTileEntity.yCoord, controllerTileEntity.zCoord);
+					FMLNetworkHandler.openGui(player, HE.MODID, HEControllerTileEntity.guiId, controllerTileEntity.getWorldObj(), controllerTileEntity.xCoord, controllerTileEntity.yCoord, controllerTileEntity.zCoord);
 				}
 			}
 		}

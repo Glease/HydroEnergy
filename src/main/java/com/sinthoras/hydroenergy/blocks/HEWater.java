@@ -50,7 +50,7 @@ public class HEWater extends BlockFluidBase {
 	}
 
 	@Override
-	public boolean canStopRayTrace(int meta, boolean fullHit) {
+	public boolean canCollideCheck(int meta, boolean fullHit) {
 		return false;
 	}
 

@@ -44,7 +44,6 @@ archivesBaseName = modId
 minecraft {
     version = "1.7.10-10.13.4.1614-1.7.10"
     runDir = "run"
-    mappings = 'stable_12'
 }
 
 repositories {
@@ -109,7 +108,7 @@ dependencies {
 jar {
     archiveName = archivesBaseName + "-" + version + ".jar"
     manifest {
-        attributes 'FMLCorePlugin': 'com.sinthoras.hydroenergy.asm.HETransformer'
+        attributes 'FMLCorePlugin': 'com.sinthoras.hydroenergy.asm.HEPlugin'
         attributes 'FMLCorePluginContainsFMLMod': 'true'
     }
 
