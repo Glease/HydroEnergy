@@ -13,6 +13,7 @@ import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.ActiveRenderInfo;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.util.Vec3;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.BlockFluidBase;
@@ -47,6 +48,11 @@ public class HEWater extends BlockFluidBase {
 		float waterLevelInBlock = getWaterLevel() - blockY;
 		waterLevelInBlock = HEUtil.clamp(waterLevelInBlock, 0.0f, 1.0f);
 		return Math.round(waterLevelInBlock * 8);
+	}
+
+	@Override
+	public Vec3 getFlowVector(IBlockAccess world, int x, int y, int z) {
+		return Vec3.createVectorHelper(0.0D, 0.0D, 0.0D);
 	}
 
 	@Override
