@@ -20,14 +20,14 @@ public class HEControllerContainer extends Container {
     private HEControllerTileEntity controllerTileEntity;
 
     private long timestamp = 0;
-    private ByteBuffer buffer = ByteBuffer.allocate(4 * HE.LONG_SIZE);
+    private ByteBuffer buffer = ByteBuffer.allocate(4 * Long.BYTES);
 
     private class Buffer {
 
-        public static final int energyStoredOffset = 0 * HE.LONG_SIZE;
-        public static final int energyCapacityOffset = 1 * HE.LONG_SIZE;
-        public static final int energyPerTickInOffset = 2 * HE.LONG_SIZE;
-        public static final int getEnergyPerTickOutOffset = 3 * HE.LONG_SIZE;
+        public static final int energyStoredOffset = 0 * Long.BYTES;
+        public static final int energyCapacityOffset = 1 * Long.BYTES;
+        public static final int energyPerTickInOffset = 2 * Long.BYTES;
+        public static final int getEnergyPerTickOutOffset = 3 * Long.BYTES;
     }
 
     public HEControllerContainer(HEControllerTileEntity controllerTileEntity) {
@@ -122,7 +122,7 @@ public class HEControllerContainer extends Container {
     }
 
     private void sendStateUpdate(ICrafting clientHandle, int bufferOffset) {
-        for(int i=0;i<HE.LONG_SIZE;i++) {
+        for(int i=0;i<Long.BYTES;i++) {
             int index = bufferOffset + i;
             clientHandle.sendProgressBarUpdate(this, index, buffer.get(index));
         }

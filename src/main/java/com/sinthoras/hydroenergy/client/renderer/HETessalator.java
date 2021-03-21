@@ -43,21 +43,21 @@ public class HETessalator {
                     GL30.glBindVertexArray(subChunk.vaoId);
 
                     GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, subChunk.vboId);
-                    GL15.glBufferData(GL15.GL_ARRAY_BUFFER, vboBuffer.capacity() * HE.FLOAT_SIZE, GL15.GL_STATIC_DRAW);
+                    GL15.glBufferData(GL15.GL_ARRAY_BUFFER, vboBuffer.capacity() * Float.BYTES, GL15.GL_STATIC_DRAW);
 
-                    GL20.glVertexAttribPointer(0, 3, GL11.GL_FLOAT, false, 7 * HE.FLOAT_SIZE, 0 * HE.FLOAT_SIZE);
+                    GL20.glVertexAttribPointer(0, 3, GL11.GL_FLOAT, false, 7 * Float.BYTES, 0 * Float.BYTES);
                     GL20.glEnableVertexAttribArray(0);
 
-                    GL20.glVertexAttribPointer(1, 1, GL11.GL_FLOAT, false, 7 * HE.FLOAT_SIZE, 3 * HE.FLOAT_SIZE);
+                    GL20.glVertexAttribPointer(1, 1, GL11.GL_FLOAT, false, 7 * Float.BYTES, 3 * Float.BYTES);
                     GL20.glEnableVertexAttribArray(1);
 
-                    GL20.glVertexAttribPointer(2, 1, GL11.GL_FLOAT, false, 7 * HE.FLOAT_SIZE, 4 * HE.FLOAT_SIZE);
+                    GL20.glVertexAttribPointer(2, 1, GL11.GL_FLOAT, false, 7 * Float.BYTES, 4 * Float.BYTES);
                     GL20.glEnableVertexAttribArray(2);
 
-                    GL20.glVertexAttribPointer(3, 1, GL11.GL_FLOAT, false, 7 * HE.FLOAT_SIZE, 5 * HE.FLOAT_SIZE);
+                    GL20.glVertexAttribPointer(3, 1, GL11.GL_FLOAT, false, 7 * Float.BYTES, 5 * Float.BYTES);
                     GL20.glEnableVertexAttribArray(3);
 
-                    GL20.glVertexAttribPointer(4, 1, GL11.GL_FLOAT, false, 7 * HE.FLOAT_SIZE, 6 * HE.FLOAT_SIZE);
+                    GL20.glVertexAttribPointer(4, 1, GL11.GL_FLOAT, false, 7 * Float.BYTES, 6 * Float.BYTES);
                     GL20.glEnableVertexAttribArray(4);
 
                     GL30.glBindVertexArray(0);

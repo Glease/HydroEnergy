@@ -16,8 +16,6 @@ public class HE {
     public static final String MC_VERSION = "1.7.10";
     public static final String NAME = "HydroEnergy";
     public static final String COM_SINTHORAS_HYDROENERGY = "com.sinthoras.hydroenergy";
-    public static final int FLOAT_SIZE = 4;
-    public static final int LONG_SIZE = 8;
     public static SimpleNetworkWrapper network;
     public static Logger LOG;
     public static final int maxRenderDist = 16;
