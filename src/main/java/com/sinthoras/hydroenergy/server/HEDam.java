@@ -295,7 +295,7 @@ public class HEDam {
 		long energyCapacity = 0;
 		for(int blockY=this.blockY;blockY<HE.numChunksY*HE.chunkHeight;blockY++) {
 			long heightCoefficient = blockY - this.blockY + 1;
-			energyCapacity += heightCoefficient * blocksPerY[blockY];
+			energyCapacity += heightCoefficient * blocksPerY[blockY] * HEConfig.energyPerWaterBlock;
 		}
 		return energyCapacity;
 	}
