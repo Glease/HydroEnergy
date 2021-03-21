@@ -77,6 +77,9 @@ public class HETransformer implements IClassTransformer {
 		final String METHOD_onSetBlock = "onSetBlock";
 		final String METHOD_onSetBlock_DESC = "(L" + CLASS_World + ";IIIL" + CLASS_Block + ";L" + CLASS_Block + ";)V";
 
+		final String METHOD_isAnyLiquid = isObfuscated ? "d" : "isAnyLiquid";
+		final String METHOD_isAnyLiquid_DESC = "(L" + CLASS_AxisAlignedBB + ";)Z";
+
 		InsnList instructionToInsert = new InsnList();
 		instructionToInsert.add(new VarInsnNode(ILOAD, 13));
 		instructionToInsert.add(new MethodInsnNode(INVOKEVIRTUAL,
@@ -108,6 +111,20 @@ public class HETransformer implements IClassTransformer {
 				CLASS_Chunk, METHOD_func_150807_a, METHOD_func_150807_a_DESC, instructionToInsert, basicClass, 0);
 
 		HE.LOG.info("Injected net/minecraft/world/World.setBlock");
+
+
+		instructionToInsert = new InsnList();
+		instructionToInsert.add(new VarInsnNode(ILOAD, 9));
+		instructionToInsert.add(new MethodInsnNode(INVOKEVIRTUAL,
+				CLASS_Block,
+				METHOD_getMaterial,
+				METHOD_getMaterial_DESC_NEW,
+				false));
+
+		basicClass = injectReplaceInvokeVirtual(METHOD_isAnyLiquid, METHOD_isAnyLiquid_DESC,
+				CLASS_Block, METHOD_getMaterial, METHOD_getMaterial_DESC, instructionToInsert, basicClass);
+
+		HE.LOG.info("Injected net/minecraft/world/World.isAnyLiquid");
 
 		return basicClass;
 	}
