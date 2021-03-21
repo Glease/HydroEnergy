@@ -1,3 +1,0 @@
-License should be a GNU v3, but i did not found any license where i got this WGET
-source: https://eternallybored.org/misc/wget/
-OpenSSL is included as well (shaded) so i include that license as well?

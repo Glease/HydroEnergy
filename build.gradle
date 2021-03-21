@@ -42,7 +42,7 @@ repositories {
 }
 
 dependencies {
-    compile "net.industrial-craft:industrialcraft-2:$ic2Version:dev"
+    compile "net.industrial-craft:industrialcraft-2:${ic2Version}:dev"
     compile("com.github.GTNewHorizons:GT5-Unofficial:experimental-SNAPSHOT:dev")
 
     // NEI
