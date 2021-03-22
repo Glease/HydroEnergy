@@ -57,13 +57,13 @@ public class HETransformer implements IClassTransformer {
 	}
 	
 	private static byte[] transformWorld(byte[] basicClass, boolean isObfuscated) {
-		final String CLASS_AxisAlignedBB = isObfuscated ? "azt" : "net/minecraft/util/AxisAlignedBB";
-		final String CLASS_Material = isObfuscated ? "awt" : "net/minecraft/block/material/Material";
-		final String CLASS_Entity = isObfuscated ? "sa" : "net/minecraft/entity/Entity";
-		final String CLASS_Block = isObfuscated ? "aji" : "net/minecraft/block/Block";
+		final String CLASS_AxisAlignedBB = "net/minecraft/util/AxisAlignedBB";
+		final String CLASS_Material = "net/minecraft/block/material/Material";
+		final String CLASS_Entity = "net/minecraft/entity/Entity";
+		final String CLASS_Block = "net/minecraft/block/Block";
 		final String CLASS_HELightSMPHooks = "com/sinthoras/hydroenergy/client/light/HELightSMPHooks";
-		final String CLASS_Chunk = isObfuscated ? "apx" : "net/minecraft/world/chunk/Chunk";
-		final String CLASS_World = isObfuscated ? "ahb" : "net/minecraft/world/World";
+		final String CLASS_Chunk = "net/minecraft/world/chunk/Chunk";
+		final String CLASS_World = "net/minecraft/world/World";
 
 		final String METHOD_handleMaterialAcceleration = isObfuscated ? "a" : "handleMaterialAcceleration";
 		final String METHOD_handleMaterialAcceleration_DESC = "(L" + CLASS_AxisAlignedBB + ";L" + CLASS_Material + ";L" + CLASS_Entity + ";)Z";
@@ -131,9 +131,9 @@ public class HETransformer implements IClassTransformer {
 	}
 
 	private static byte[] transformBlock(byte[] basicClass, boolean isObfuscated) {
-		final String CLASS_Block = isObfuscated ? "aji" : "net/minecraft/block/Block";
-		final String CLASS_Material = isObfuscated ? "awt" : "net/minecraft/block/material/Material";
-		final String CLASS_EntityLivingBase = isObfuscated ? "sv" : "net/minecraft/entity/EntityLivingBase";
+		final String CLASS_Block = "net/minecraft/block/Block";
+		final String CLASS_Material = "net/minecraft/block/material/Material";
+		final String CLASS_EntityLivingBase = "net/minecraft/entity/EntityLivingBase";
 
 		final String METHOD_getMaterial = isObfuscated ? "o" : "getMaterial";
 		final String METHOD_getMaterial_DESC = "()L" + CLASS_Material + ";";
@@ -177,9 +177,9 @@ public class HETransformer implements IClassTransformer {
 	}
 
 	private static byte[] transformEntityRenderer(byte[] basicClass, boolean isObfuscated) {
-		final String CLASS_Block = isObfuscated ? "aji" : "net/minecraft/block/Block";
-		final String CLASS_Material = isObfuscated ? "awt" : "net/minecraft/block/material/Material";
-		final String CLASS_EntityLivingBase = isObfuscated ? "sv" : "net/minecraft/entity/EntityLivingBase";
+		final String CLASS_Block = "net/minecraft/block/Block";
+		final String CLASS_Material = "net/minecraft/block/material/Material";
+		final String CLASS_EntityLivingBase = "net/minecraft/entity/EntityLivingBase";
 
 		final String METHOD_setupFog = isObfuscated ? "a" : "setupFog";
 		final String METHOD_setupFog_DESC = "(IF)V";
@@ -237,8 +237,8 @@ public class HETransformer implements IClassTransformer {
 	}
 
 	private static byte[] transformEntity(byte[] basicClass, boolean isObfuscated) {
-		final String CLASS_Block = isObfuscated ? "aji" : "net/minecraft/block/Block";
-		final String CLASS_Material = isObfuscated ? "awt" : "net/minecraft/block/material/Material";
+		final String CLASS_Block = "net/minecraft/block/Block";
+		final String CLASS_Material = "net/minecraft/block/material/Material";
 
 		final String METHOD_isInsideOfMaterial = isObfuscated ? "a" : "isInsideOfMaterial";
 		final String METHOD_isInsideOfMaterial_DESC = "(L" + CLASS_Material + ";)Z";
@@ -263,9 +263,9 @@ public class HETransformer implements IClassTransformer {
 	}
 
 	private static byte[] transformRenderGlobal(byte[] basicClass, boolean isObfuscated) {
-		final String CLASS_ICamera = isObfuscated ? "bmv" : "net/minecraft/client/renderer/culling/ICamera";
-		final String CLASS_EntityLivingBase = isObfuscated ? "sv" : "net/minecraft/entity/EntityLivingBase";
-		final String CLASS_Profiler = isObfuscated ? "qi" : "net/minecraft/profiler/Profiler";
+		final String CLASS_ICamera = "net/minecraft/client/renderer/culling/ICamera";
+		final String CLASS_EntityLivingBase = "net/minecraft/entity/EntityLivingBase";
+		final String CLASS_Profiler = "net/minecraft/profiler/Profiler";
 		final String CLASS_HETessalator = "com/sinthoras/hydroenergy/client/renderer/HETessalator";
 
 		final String METHOD_renderEntities = isObfuscated ? "a" : "renderEntities";
@@ -294,7 +294,7 @@ public class HETransformer implements IClassTransformer {
 	}
 
 	private static byte[] transformWorldRenderer(byte[] basicClass, boolean isObfuscated) {
-		final String CLASS_WorldRenderer = isObfuscated ? "blo" : "net/minecraft/client/renderer/WorldRenderer";
+		final String CLASS_WorldRenderer = "net/minecraft/client/renderer/WorldRenderer";
 		final String CLASS_HETessalator = "com/sinthoras/hydroenergy/client/renderer/HETessalator";
 
 		final String METHOD_setPosition = isObfuscated ? "a" : "setPosition";
@@ -339,11 +339,11 @@ public class HETransformer implements IClassTransformer {
 	}
 
 	private static byte[] transformChunk(byte[] basicClass, boolean isObfuscated) {
-		final String CLASS_Chunk = isObfuscated ? "apx" : "net/minecraft/world/chunk/Chunk";
+		final String CLASS_Chunk = "net/minecraft/world/chunk/Chunk";
 		final String CLASS_HELightManager = "com/sinthoras/hydroenergy/client/light/HELightManager";
 		final String CLASS_HELightSMPHooks = "com/sinthoras/hydroenergy/client/light/HELightSMPHooks";
-		final String CLASS_EnumSkyBlock = isObfuscated ? "ahn" : "net/minecraft/world/EnumSkyBlock";
-		final String CLASS_ExtendedBlockStorage = isObfuscated ? "apz" : "net/minecraft/world/chunk/storage/ExtendedBlockStorage";
+		final String CLASS_EnumSkyBlock = "net/minecraft/world/EnumSkyBlock";
+		final String CLASS_ExtendedBlockStorage = "net/minecraft/world/chunk/storage/ExtendedBlockStorage";
 
 		final String METHOD_fillChunk = isObfuscated ? "a" : "fillChunk";
 		final String METHOD_fillChunk_DESC = "([BIIZ)V";
@@ -472,7 +472,7 @@ public class HETransformer implements IClassTransformer {
 
 	private static byte [] transformChunkProviderClient(byte[] basicClass, boolean isObfuscated) {
 		final String CLASS_HELightManager = "com/sinthoras/hydroenergy/client/light/HELightManager";
-		final String CLASS_LongHashMap = isObfuscated ? "qd" : "net/minecraft/util/LongHashMap";
+		final String CLASS_LongHashMap = "net/minecraft/util/LongHashMap";
 
 		final String METHOD_unloadChunk = isObfuscated ? "b" : "unloadChunk";
 		final String METHOD_unloadChunk_DESC = "(II)V";
