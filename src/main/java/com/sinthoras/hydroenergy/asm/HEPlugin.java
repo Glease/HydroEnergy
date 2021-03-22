@@ -8,9 +8,10 @@ import java.util.Map;
 @IFMLLoadingPlugin.MCVersion(HE.MC_VERSION)
 @IFMLLoadingPlugin.TransformerExclusions(HE.COM_SINTHORAS_HYDROENERGY + ".asm.HETransformer")
 public class HEPlugin  implements IFMLLoadingPlugin {
+
     @Override
     public String[] getASMTransformerClass() {
-        return new String[] {HE.COM_SINTHORAS_HYDROENERGY + ".asm.HETransformer"};
+        return null;
     }
 
     @Override
@@ -30,6 +31,6 @@ public class HEPlugin  implements IFMLLoadingPlugin {
 
     @Override
     public String getAccessTransformerClass() {
-        return null;
+        return HE.COM_SINTHORAS_HYDROENERGY + ".asm.HETransformer";
     }
 }
