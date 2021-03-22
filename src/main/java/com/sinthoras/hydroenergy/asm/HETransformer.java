@@ -1,6 +1,7 @@
 package com.sinthoras.hydroenergy.asm;
 
 import com.sinthoras.hydroenergy.HE;
+import net.minecraft.launchwrapper.Launch;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
@@ -28,9 +29,9 @@ public class HETransformer implements IClassTransformer {
 
 	@Override
 	public byte[] transform(String name, String transformedName, byte[] basicClass) {
-		boolean isObfuscated = !name.equals(transformedName);
+		boolean isDeobfuscated = (boolean)Launch.blackboard.get("fml.deobfuscatedEnvironment");
 		int index = targetClasses.indexOf(transformedName);
-		return index != -1 ? transform(index, basicClass, isObfuscated) : basicClass;
+		return index != -1 ? transform(index, basicClass, !isDeobfuscated) : basicClass;
 	}
 	
 	private static byte[] transform(int index, byte[] basicClass, boolean isObfuscated) {
@@ -65,20 +66,20 @@ public class HETransformer implements IClassTransformer {
 		final String CLASS_Chunk = "net/minecraft/world/chunk/Chunk";
 		final String CLASS_World = "net/minecraft/world/World";
 
-		final String METHOD_handleMaterialAcceleration = isObfuscated ? "a" : "handleMaterialAcceleration";
+		final String METHOD_handleMaterialAcceleration = isObfuscated ? "func_72918_a" : "handleMaterialAcceleration";
 		final String METHOD_handleMaterialAcceleration_DESC = "(L" + CLASS_AxisAlignedBB + ";L" + CLASS_Material + ";L" + CLASS_Entity + ";)Z";
-		final String METHOD_getMaterial = isObfuscated ? "o" : "getMaterial";
+		final String METHOD_getMaterial = isObfuscated ? "func_149688_o" : "getMaterial";
 		final String METHOD_getMaterial_DESC = "()L" + CLASS_Material + ";";
 		final String METHOD_getMaterial_DESC_NEW = "(I)L" + CLASS_Material + ";";
 
-		final String METHOD_setBlock = isObfuscated ? "d" : "setBlock";
+		final String METHOD_setBlock = isObfuscated ? "func_147465_d" : "setBlock";
 		final String METHOD_setBlock_DESC = "(IIIL" + CLASS_Block + ";II)Z";
-		final String METHOD_func_150807_a = isObfuscated ? "a" : "func_150807_a";
+		final String METHOD_func_150807_a = "func_150807_a";
 		final String METHOD_func_150807_a_DESC = "(IIIL" + CLASS_Block + ";I)Z";
 		final String METHOD_onSetBlock = "onSetBlock";
 		final String METHOD_onSetBlock_DESC = "(L" + CLASS_World + ";IIIL" + CLASS_Block + ";L" + CLASS_Block + ";)V";
 
-		final String METHOD_isAnyLiquid = isObfuscated ? "d" : "isAnyLiquid";
+		final String METHOD_isAnyLiquid = isObfuscated ? "func_72953_d" : "isAnyLiquid";
 		final String METHOD_isAnyLiquid_DESC = "(L" + CLASS_AxisAlignedBB + ";)Z";
 
 		InsnList instructionToInsert = new InsnList();
@@ -135,7 +136,7 @@ public class HETransformer implements IClassTransformer {
 		final String CLASS_Material = "net/minecraft/block/material/Material";
 		final String CLASS_EntityLivingBase = "net/minecraft/entity/EntityLivingBase";
 
-		final String METHOD_getMaterial = isObfuscated ? "o" : "getMaterial";
+		final String METHOD_getMaterial = isObfuscated ? "func_149688_o" : "getMaterial";
 		final String METHOD_getMaterial_DESC = "()L" + CLASS_Material + ";";
 		final String METHOD_getMaterial_DESC_NEW_I = "(I)L" + CLASS_Material + ";";
 		final String METHOD_getMaterial_DESC_NEW_ELB = "(L" + CLASS_EntityLivingBase + ";)L" + CLASS_Material + ";";
@@ -181,14 +182,14 @@ public class HETransformer implements IClassTransformer {
 		final String CLASS_Material = "net/minecraft/block/material/Material";
 		final String CLASS_EntityLivingBase = "net/minecraft/entity/EntityLivingBase";
 
-		final String METHOD_setupFog = isObfuscated ? "a" : "setupFog";
+		final String METHOD_setupFog = isObfuscated ? "func_78468_a" : "setupFog";
 		final String METHOD_setupFog_DESC = "(IF)V";
-		final String METHOD_updateFogColor = isObfuscated ? "j" : "updateFogColor";
+		final String METHOD_updateFogColor = isObfuscated ? "func_78466_h" : "updateFogColor";
 		final String METHOD_updateFogColor_DESC = "(F)V";
-		final String METHOD_getFOVModifier = isObfuscated ? "a" : "getFOVModifier";
+		final String METHOD_getFOVModifier = isObfuscated ? "func_78481_a" : "getFOVModifier";
 		final String METHOD_getFOVModifier_DESC = "(FZ)F";
 
-		final String METHOD_getMaterial = isObfuscated ? "o" : "getMaterial";
+		final String METHOD_getMaterial = isObfuscated ? "func_149688_o" : "getMaterial";
 		final String METHOD_getMaterial_DESC = "()L" + CLASS_Material + ";";
 		final String METHOD_getMaterial_DESC_NEW = "(L" + CLASS_EntityLivingBase + ";)L" + CLASS_Material + ";";
 
@@ -214,10 +215,10 @@ public class HETransformer implements IClassTransformer {
 				METHOD_getMaterial_DESC_NEW,
 				false));
 
-		HE.LOG.info("Injected net/minecraft/client/renderer/EntityRenderer.updateFogColor");
-
 		basicClass = injectReplaceInvokeVirtual(METHOD_updateFogColor, METHOD_updateFogColor_DESC,
 				CLASS_Block, METHOD_getMaterial, METHOD_getMaterial_DESC, instructionToInsert, basicClass);
+
+		HE.LOG.info("Injected net/minecraft/client/renderer/EntityRenderer.updateFogColor");
 
 
 		instructionToInsert = new InsnList();
@@ -240,9 +241,9 @@ public class HETransformer implements IClassTransformer {
 		final String CLASS_Block = "net/minecraft/block/Block";
 		final String CLASS_Material = "net/minecraft/block/material/Material";
 
-		final String METHOD_isInsideOfMaterial = isObfuscated ? "a" : "isInsideOfMaterial";
+		final String METHOD_isInsideOfMaterial = isObfuscated ? "func_70055_a" : "isInsideOfMaterial";
 		final String METHOD_isInsideOfMaterial_DESC = "(L" + CLASS_Material + ";)Z";
-		final String METHOD_getMaterial = isObfuscated ? "o" : "getMaterial";
+		final String METHOD_getMaterial = isObfuscated ? "func_149688_o" : "getMaterial";
 		final String METHOD_getMaterial_DESC = "()L" + CLASS_Material + ";";
 		final String METHOD_getMaterial_DESC_NEW = "(D)L" + CLASS_Material + ";";
 
@@ -257,7 +258,7 @@ public class HETransformer implements IClassTransformer {
 		basicClass = injectReplaceInvokeVirtual(METHOD_isInsideOfMaterial, METHOD_isInsideOfMaterial_DESC,
 				CLASS_Block, METHOD_getMaterial, METHOD_getMaterial_DESC, instructionToInsert, basicClass);
 
-		HE.LOG.info("Injected net/minecraft/client/entity/Entity.isInsideOfMaterial");
+		HE.LOG.info("Injected net/minecraft/entity/Entity.isInsideOfMaterial");
 
 		return basicClass;
 	}
@@ -268,10 +269,10 @@ public class HETransformer implements IClassTransformer {
 		final String CLASS_Profiler = "net/minecraft/profiler/Profiler";
 		final String CLASS_HETessalator = "com/sinthoras/hydroenergy/client/renderer/HETessalator";
 
-		final String METHOD_renderEntities = isObfuscated ? "a" : "renderEntities";
+		final String METHOD_renderEntities = isObfuscated ? "func_147589_a" : "renderEntities";
 		final String METHOD_renderEntities_DESC = "(L" + CLASS_EntityLivingBase + ";L" + CLASS_ICamera + ";F)V";
 
-		final String METHOD_endSection = isObfuscated ? "b" : "endSection";
+		final String METHOD_endSection = isObfuscated ? "func_76319_b" : "endSection";
 		final String METHOD_endSection_DESC = "()V";
 
 		final String METHOD_render = "render";
@@ -297,20 +298,20 @@ public class HETransformer implements IClassTransformer {
 		final String CLASS_WorldRenderer = "net/minecraft/client/renderer/WorldRenderer";
 		final String CLASS_HETessalator = "com/sinthoras/hydroenergy/client/renderer/HETessalator";
 
-		final String METHOD_setPosition = isObfuscated ? "a" : "setPosition";
+		final String METHOD_setPosition = isObfuscated ? "func_78913_a" : "setPosition";
 		final String METHOD_setPosition_DESC = "(III)V";
 
-		final String METHOD_setDontDraw = isObfuscated ? "a" : "setDontDraw";
+		final String METHOD_setDontDraw = isObfuscated ? "func_78910_b" : "setDontDraw";
 		final String METHOD_setDontDraw_DESC = "()V";
 
 		final String METHOD_onRenderChunkUpdate = "onRenderChunkUpdate";
 		final String METHOD_onRenderChunkUpdate_DESC = "(IIIIII)V";
 
-		final String FIELD_posX = isObfuscated ? "c" : "posX";
+		final String FIELD_posX = isObfuscated ? "field_78923_c" : "posX";
 		final String FIELD_posX_DESC = "I";
-		final String FIELD_posY = isObfuscated ? "d" : "posY";
+		final String FIELD_posY = isObfuscated ? "field_78920_d" : "posY";
 		final String FIELD_posY_DESC = "I";
-		final String FIELD_posZ = isObfuscated ? "e" : "posZ";
+		final String FIELD_posZ = isObfuscated ? "field_78921_e" : "posZ";
 		final String FIELD_posZ_DESC = "I";
 
 		InsnList instructionToInsert = new InsnList();
@@ -345,13 +346,13 @@ public class HETransformer implements IClassTransformer {
 		final String CLASS_EnumSkyBlock = "net/minecraft/world/EnumSkyBlock";
 		final String CLASS_ExtendedBlockStorage = "net/minecraft/world/chunk/storage/ExtendedBlockStorage";
 
-		final String METHOD_fillChunk = isObfuscated ? "a" : "fillChunk";
+		final String METHOD_fillChunk = isObfuscated ? "func_76607_a" : "fillChunk";
 		final String METHOD_fillChunk_DESC = "([BIIZ)V";
-		final String METHOD_generateSkylightMap = isObfuscated ? "b" : "generateSkylightMap";
+		final String METHOD_generateSkylightMap = isObfuscated ? "func_76603_b" : "generateSkylightMap";
 		final String METHOD_generateSkylightMap_DESC = "()V";
-		final String METHOD_relightBlock = isObfuscated ? "h" : "relightBlock";
+		final String METHOD_relightBlock = isObfuscated ? "func_76615_h" : "relightBlock";
 		final String METHOD_relightBlock_DESC = "(III)V";
-		final String METHOD_setLightValue = isObfuscated ? "a" : "setLightValue";
+		final String METHOD_setLightValue = isObfuscated ? "func_76633_a" : "setLightValue";
 		final String METHOD_setLightValue_DESC = "(L" + CLASS_EnumSkyBlock + ";IIII)V";
 
 		final String METHOD_onChunkDataLoad = "onChunkDataLoad";
@@ -359,9 +360,9 @@ public class HETransformer implements IClassTransformer {
 		final String METHOD_onLightUpdate = "onLightUpdate";
 		final String METHOD_onLightUpdate_DESC = "(L" + CLASS_Chunk + ";III)V";
 
-		final String METHOD_generateHeightMap = isObfuscated ? "a" : "generateHeightMap";
+		final String METHOD_generateHeightMap = isObfuscated ? "func_76590_a" : "generateHeightMap";
 		final String METHOD_generateHeightMap_DESC = "()V";
-		final String METHOD_setExtSkylightValue = isObfuscated ? "b" : "setExtSkylightValue";
+		final String METHOD_setExtSkylightValue = isObfuscated ? "func_76657_c" : "setExtSkylightValue";
 		final String METHOD_setExtSkylightValue_DESC = "(IIII)V";
 
 		InsnList instructionToInsert = new InsnList();
@@ -474,9 +475,9 @@ public class HETransformer implements IClassTransformer {
 		final String CLASS_HELightManager = "com/sinthoras/hydroenergy/client/light/HELightManager";
 		final String CLASS_LongHashMap = "net/minecraft/util/LongHashMap";
 
-		final String METHOD_unloadChunk = isObfuscated ? "b" : "unloadChunk";
+		final String METHOD_unloadChunk = isObfuscated ? "func_73234_b" : "unloadChunk";
 		final String METHOD_unloadChunk_DESC = "(II)V";
-		final String METHOD_remove = isObfuscated ? "d" : "remove";
+		final String METHOD_remove = isObfuscated ? "func_76159_d" : "remove";
 		final String METHOD_remove_DESC = "(J)Ljava/lang/Object;";
 		final String METHOD_onChunkUnload = "onChunkUnload";
 		final String METHOD_onChunkUnload_DESC = "(II)V";
