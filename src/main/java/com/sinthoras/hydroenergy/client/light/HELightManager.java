@@ -136,9 +136,7 @@ public class HELightManager {
                         short flagChunkY = HEUtil.chunkYToFlag(chunkY);
                         if (chunk.hasUpdateForSubChunk(flagChunkY)) {
                             chunk.subChunkMustBePatched(flagChunkY);
-                            int blockX = HEUtil.coordChunkToBlock(chunkX);
-                            int blockZ = HEUtil.coordChunkToBlock(chunkZ);
-                            renderGlobal.markBlocksForUpdate(blockX, blockY, blockZ, blockX + 15, blockY + 15, blockZ + 15);
+                            markChunkForRerender(renderGlobal, chunkX, chunkY, chunkZ);
                             timestampsNextUpdate[waterId] += HEConfig.minLightUpdateTimePerSubChunk;
 
                             // Handle neighbors that don't have water, but touch it
