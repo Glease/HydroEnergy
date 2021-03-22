@@ -9,21 +9,22 @@ import org.objectweb.asm.tree.*;
 import static org.objectweb.asm.Opcodes.*;
 
 import net.minecraft.launchwrapper.IClassTransformer;
-import scala.actors.threadpool.Arrays;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class HETransformer implements IClassTransformer {
 	
-	private static final List targetClasses = Arrays.asList(new String[] {
-			"net.minecraft.world.World",
-			"net.minecraft.block.Block",
-			"net.minecraft.client.renderer.EntityRenderer",
-			"net.minecraft.entity.Entity",
-			"net.minecraft.client.renderer.RenderGlobal",
-			"net.minecraft.client.renderer.WorldRenderer",
-			"net.minecraft.world.chunk.Chunk",
-			"net.minecraft.client.multiplayer.ChunkProviderClient"});
+	private static final List targetClasses = new ArrayList() {{
+		add("net.minecraft.world.World");
+		add("net.minecraft.block.Block");
+		add("net.minecraft.client.renderer.EntityRenderer");
+		add("net.minecraft.entity.Entity");
+		add("net.minecraft.client.renderer.RenderGlobal");
+		add("net.minecraft.client.renderer.WorldRenderer");
+		add("net.minecraft.world.chunk.Chunk");
+		add("net.minecraft.client.multiplayer.ChunkProviderClient");
+	}};
 
 	@Override
 	public byte[] transform(String name, String transformedName, byte[] basicClass) {
@@ -132,7 +133,7 @@ public class HETransformer implements IClassTransformer {
 	private static byte[] transformBlock(byte[] basicClass, boolean isObfuscated) {
 		final String CLASS_Block = isObfuscated ? "aji" : "net/minecraft/block/Block";
 		final String CLASS_Material = isObfuscated ? "awt" : "net/minecraft/block/material/Material";
-		final String CLASS_EntityLivingBase = isObfuscated ? "sa" : "net/minecraft/entity/EntityLivingBase";
+		final String CLASS_EntityLivingBase = isObfuscated ? "sv" : "net/minecraft/entity/EntityLivingBase";
 
 		final String METHOD_getMaterial = isObfuscated ? "o" : "getMaterial";
 		final String METHOD_getMaterial_DESC = "()L" + CLASS_Material + ";";
@@ -178,7 +179,7 @@ public class HETransformer implements IClassTransformer {
 	private static byte[] transformEntityRenderer(byte[] basicClass, boolean isObfuscated) {
 		final String CLASS_Block = isObfuscated ? "aji" : "net/minecraft/block/Block";
 		final String CLASS_Material = isObfuscated ? "awt" : "net/minecraft/block/material/Material";
-		final String CLASS_EntityLivingBase = isObfuscated ? "sa" : "net/minecraft/entity/EntityLivingBase";
+		final String CLASS_EntityLivingBase = isObfuscated ? "sv" : "net/minecraft/entity/EntityLivingBase";
 
 		final String METHOD_setupFog = isObfuscated ? "a" : "setupFog";
 		final String METHOD_setupFog_DESC = "(IF)V";
