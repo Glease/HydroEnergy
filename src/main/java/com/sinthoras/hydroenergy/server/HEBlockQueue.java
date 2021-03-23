@@ -14,6 +14,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
+import net.minecraft.world.chunk.NibbleArray;
 import net.minecraft.world.chunk.storage.ExtendedBlockStorage;
 
 public class HEBlockQueue {
@@ -132,8 +133,13 @@ class HEQueueChunk {
 					else {
 						int highestOpaqueBlockY = chunk.heightMap[(entry.blockZ & 15) << 4 | (entry.blockX & 15)];
 						int highestOpaqueChunkY = HEUtil.coordBlockToChunk(highestOpaqueBlockY);
-						int lightValue = chunkStorage[highestOpaqueChunkY].getSkylightArray().get(entry.blockZ & 15, highestOpaqueBlockY & 15, entry.blockX & 15);
-						chunkStorage[chunkY].getSkylightArray().set(entry.blockX & 15, entry.blockY & 15, entry.blockZ & 15, lightValue);
+						NibbleArray skylightArray = chunkStorage[highestOpaqueChunkY].getSkylightArray();
+						if(skylightArray == null) {
+							skylightArray = new NibbleArray(HE.blockPerSubChunk, 4);
+							chunkStorage[highestOpaqueChunkY].setSkylightArray(skylightArray);
+						}
+						int lightValue = skylightArray.get(entry.blockZ & 15, highestOpaqueBlockY & 15, entry.blockX & 15);
+						skylightArray.set(entry.blockX & 15, entry.blockY & 15, entry.blockZ & 15, lightValue);
 					}
 					HEServer.instance.onBlockPlaced(waterId, entry.blockY);
 					subChunksHaveChanges |= HEUtil.chunkYToFlag(chunkY);
