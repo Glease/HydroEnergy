@@ -1,13 +1,19 @@
 package com.sinthoras.hydroenergy.asm;
 
-import com.sinthoras.hydroenergy.HE;
 import cpw.mods.fml.relauncher.IFMLLoadingPlugin;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.Map;
 
-@IFMLLoadingPlugin.MCVersion(HE.MC_VERSION)
-@IFMLLoadingPlugin.TransformerExclusions(HE.COM_SINTHORAS_HYDROENERGY + ".asm.HETransformer")
+//@IFMLLoadingPlugin.SortingIndex(1001)  // Run after remapper. Thanks @mitchej123
+@IFMLLoadingPlugin.MCVersion("1.7.10")
+@IFMLLoadingPlugin.TransformerExclusions("com.sinthoras.hydroenergy.asm")
+@IFMLLoadingPlugin.Name(HEPlugin.HydroEnergyCore)
 public class HEPlugin  implements IFMLLoadingPlugin {
+
+    public static final String HydroEnergyCore = "HydroEnergyCore";
+    public static Logger LOG = LogManager.getLogger(HydroEnergyCore);
 
     @Override
     public String[] getASMTransformerClass() {
@@ -16,7 +22,7 @@ public class HEPlugin  implements IFMLLoadingPlugin {
 
     @Override
     public String getModContainerClass() {
-        return HE.COM_SINTHORAS_HYDROENERGY + ".asm.HEModContainer";
+        return "com.sinthoras.hydroenergy.asm.HEModContainer";
     }
 
     @Override
@@ -31,6 +37,6 @@ public class HEPlugin  implements IFMLLoadingPlugin {
 
     @Override
     public String getAccessTransformerClass() {
-        return HE.COM_SINTHORAS_HYDROENERGY + ".asm.HETransformer";
+        return "com.sinthoras.hydroenergy.asm.HETransformer";
     }
 }

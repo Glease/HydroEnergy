@@ -91,26 +91,15 @@ public class HEWater extends BlockFluidBase {
 				|| (block.getMaterial() == Material.water && !(block instanceof HEWater));
 	}
 
-	// For Block.setupFog, Block.updateFogColor and Block.getFOVModifier
-	public Material getMaterial(EntityLivingBase entity) {
-		return getMaterial(ActiveRenderInfo.projectViewFromEntity(entity, 0).yCoord);
-	}
-
-
-	/*public Material getMaterial(Entity entity) {
-		return getMaterial(entity.posY);
-	}*/
-
 	// For World.handleMaterialAcceleration
 	public Material getMaterial(int blockY) {
 		return (Math.floor(getWaterLevel() - HEConfig.clippingOffset)) < blockY ? Material.air : Material.water;
 	}
 
-	// For Block.isInsideOfMaterial
+	// For Block.isInsideOfMaterial, Block.setupFog, Block.updateFogColor and Block.getFOVModifier
 	public Material getMaterial(double blockY) {
 		// This constant is so magic i'm gonna die!
 		// Without this constant there is a gap between rendered water and all under water effects
-		// and the player cannot exit water without half slabs. Not sure where this comes from...yet
 		return (getWaterLevel() + 0.120f) < blockY ? Material.air : Material.water;
 	}
 	

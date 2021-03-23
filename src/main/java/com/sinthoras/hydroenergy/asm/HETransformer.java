@@ -1,6 +1,5 @@
 package com.sinthoras.hydroenergy.asm;
 
-import com.sinthoras.hydroenergy.HE;
 import net.minecraft.launchwrapper.Launch;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
@@ -93,7 +92,7 @@ public class HETransformer implements IClassTransformer {
 		basicClass = injectReplaceInvokeVirtual(METHOD_handleMaterialAcceleration, METHOD_handleMaterialAcceleration_DESC,
 				CLASS_Block, METHOD_getMaterial, METHOD_getMaterial_DESC, instructionToInsert, basicClass);
 
-		HE.LOG.info("Injected net/minecraft/world/World.handleMaterialAcceleration");
+		HEPlugin.LOG.info("Injected net/minecraft/world/World.handleMaterialAcceleration");
 
 
 		instructionToInsert = new InsnList();
@@ -112,7 +111,7 @@ public class HETransformer implements IClassTransformer {
 		basicClass = injectAfterInvokeVirtual(METHOD_setBlock, METHOD_setBlock_DESC,
 				CLASS_Chunk, METHOD_func_150807_a, METHOD_func_150807_a_DESC, instructionToInsert, basicClass, 0);
 
-		HE.LOG.info("Injected net/minecraft/world/World.setBlock");
+		HEPlugin.LOG.info("Injected net/minecraft/world/World.setBlock");
 
 
 		instructionToInsert = new InsnList();
@@ -126,7 +125,7 @@ public class HETransformer implements IClassTransformer {
 		basicClass = injectReplaceInvokeVirtual(METHOD_isAnyLiquid, METHOD_isAnyLiquid_DESC,
 				CLASS_Block, METHOD_getMaterial, METHOD_getMaterial_DESC, instructionToInsert, basicClass);
 
-		HE.LOG.info("Injected net/minecraft/world/World.isAnyLiquid");
+		HEPlugin.LOG.info("Injected net/minecraft/world/World.isAnyLiquid");
 
 		return basicClass;
 	}
@@ -134,12 +133,10 @@ public class HETransformer implements IClassTransformer {
 	private static byte[] transformBlock(byte[] basicClass, boolean isObfuscated) {
 		final String CLASS_Block = "net/minecraft/block/Block";
 		final String CLASS_Material = "net/minecraft/block/material/Material";
-		final String CLASS_EntityLivingBase = "net/minecraft/entity/EntityLivingBase";
 
 		final String METHOD_getMaterial = isObfuscated ? "func_149688_o" : "getMaterial";
 		final String METHOD_getMaterial_DESC = "()L" + CLASS_Material + ";";
 		final String METHOD_getMaterial_DESC_NEW_I = "(I)L" + CLASS_Material + ";";
-		final String METHOD_getMaterial_DESC_NEW_ELB = "(L" + CLASS_EntityLivingBase + ";)L" + CLASS_Material + ";";
 		final String METHOD_getMaterial_DESC_NEW_D = "(D)L" + CLASS_Material + ";";
 
 		ClassNode classNode = new ClassNode();
@@ -148,7 +145,7 @@ public class HETransformer implements IClassTransformer {
 		ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);
 		classNode.accept(classWriter);
 
-		// public Material getMaterial(Entity entity)
+		// public Material getMaterial(int blockY)
 		MethodVisitor mv = classWriter.visitMethod(ACC_PUBLIC, METHOD_getMaterial, METHOD_getMaterial_DESC_NEW_I, null, null);
 		mv.visitVarInsn(ALOAD, 0); // load this
 		mv.visitMethodInsn(INVOKEVIRTUAL, CLASS_Block, METHOD_getMaterial, METHOD_getMaterial_DESC, false);
@@ -156,15 +153,7 @@ public class HETransformer implements IClassTransformer {
 		mv.visitMaxs(1, 1);
 		mv.visitEnd();
 
-		// public Material getMaterial(EntityLivingBase entitylivingbase)
-		mv = classWriter.visitMethod(ACC_PUBLIC, METHOD_getMaterial, METHOD_getMaterial_DESC_NEW_ELB, null, null);
-		mv.visitVarInsn(ALOAD, 0); // load this
-		mv.visitMethodInsn(INVOKEVIRTUAL, CLASS_Block, METHOD_getMaterial, METHOD_getMaterial_DESC, false);
-		mv.visitInsn(ARETURN);
-		mv.visitMaxs(1, 1);
-		mv.visitEnd();
-
-		// public Material getMaterial(double y)
+		// public Material getMaterial(double blockY)
 		mv = classWriter.visitMethod(ACC_PUBLIC, METHOD_getMaterial, METHOD_getMaterial_DESC_NEW_D, null, null);
 		mv.visitVarInsn(ALOAD, 0); // load this
 		mv.visitMethodInsn(INVOKEVIRTUAL, CLASS_Block, METHOD_getMaterial, METHOD_getMaterial_DESC, false);
@@ -172,7 +161,7 @@ public class HETransformer implements IClassTransformer {
 		mv.visitMaxs(1, 1);
 		mv.visitEnd();
 
-		HE.LOG.info("Injected net/minecraft/client/block/Block");
+		HEPlugin.LOG.info("Injected net/minecraft/client/block/Block");
 
 		return classWriter.toByteArray();
 	}
@@ -191,24 +180,54 @@ public class HETransformer implements IClassTransformer {
 
 		final String METHOD_getMaterial = isObfuscated ? "func_149688_o" : "getMaterial";
 		final String METHOD_getMaterial_DESC = "()L" + CLASS_Material + ";";
-		final String METHOD_getMaterial_DESC_NEW = "(L" + CLASS_EntityLivingBase + ";)L" + CLASS_Material + ";";
+		final String METHOD_getMaterial_DESC_NEW = "(D)L" + CLASS_Material + ";";
+
+		final String METHOD_getEyeHeight = isObfuscated ? "func_70047_e" : "getEyeHeight";
+		final String METHOD_getEyeHeight_DESC = "()F";
+
+		final String FIELD_prevPosY = isObfuscated ? "field_70167_r" : "prevPosY";
+		final String FIELD_prevPosY_DESC = "D";
 
 		InsnList instructionToInsert = new InsnList();
 		instructionToInsert.add(new VarInsnNode(ALOAD, 3));
 		instructionToInsert.add(new MethodInsnNode(INVOKEVIRTUAL,
-				CLASS_Block,
-				METHOD_getMaterial,
-				METHOD_getMaterial_DESC_NEW,
+				CLASS_EntityLivingBase,
+				METHOD_getEyeHeight,
+				METHOD_getEyeHeight_DESC,
 				false));
+		instructionToInsert.add(new InsnNode(F2D));
+		instructionToInsert.add(new VarInsnNode(ALOAD, 3));
+		instructionToInsert.add(new FieldInsnNode(GETFIELD,
+						CLASS_EntityLivingBase,
+						FIELD_prevPosY,
+						FIELD_prevPosY_DESC));
+		instructionToInsert.add(new InsnNode(DADD));
+		instructionToInsert.add(new MethodInsnNode(INVOKEVIRTUAL,
+		CLASS_Block,
+		METHOD_getMaterial,
+		METHOD_getMaterial_DESC_NEW,
+		false));
 
 		basicClass = injectReplaceInvokeVirtual(METHOD_setupFog, METHOD_setupFog_DESC,
 				CLASS_Block, METHOD_getMaterial, METHOD_getMaterial_DESC, instructionToInsert, basicClass);
 
-		HE.LOG.info("Injected net/minecraft/client/renderer/EntityRenderer.setupFog");
+		HEPlugin.LOG.info("Injected net/minecraft/client/renderer/EntityRenderer.setupFog");
 
 
 		instructionToInsert = new InsnList();
 		instructionToInsert.add(new VarInsnNode(ALOAD, 3));
+		instructionToInsert.add(new MethodInsnNode(INVOKEVIRTUAL,
+				CLASS_EntityLivingBase,
+				METHOD_getEyeHeight,
+				METHOD_getEyeHeight_DESC,
+				false));
+		instructionToInsert.add(new InsnNode(F2D));
+		instructionToInsert.add(new VarInsnNode(ALOAD, 3));
+		instructionToInsert.add(new FieldInsnNode(GETFIELD,
+				CLASS_EntityLivingBase,
+				FIELD_prevPosY,
+				FIELD_prevPosY_DESC));
+		instructionToInsert.add(new InsnNode(DADD));
 		instructionToInsert.add(new MethodInsnNode(INVOKEVIRTUAL,
 				CLASS_Block,
 				METHOD_getMaterial,
@@ -218,11 +237,23 @@ public class HETransformer implements IClassTransformer {
 		basicClass = injectReplaceInvokeVirtual(METHOD_updateFogColor, METHOD_updateFogColor_DESC,
 				CLASS_Block, METHOD_getMaterial, METHOD_getMaterial_DESC, instructionToInsert, basicClass);
 
-		HE.LOG.info("Injected net/minecraft/client/renderer/EntityRenderer.updateFogColor");
+		HEPlugin.LOG.info("Injected net/minecraft/client/renderer/EntityRenderer.updateFogColor");
 
 
 		instructionToInsert = new InsnList();
 		instructionToInsert.add(new VarInsnNode(ALOAD, 3));
+		instructionToInsert.add(new MethodInsnNode(INVOKEVIRTUAL,
+				CLASS_EntityLivingBase,
+				METHOD_getEyeHeight,
+				METHOD_getEyeHeight_DESC,
+				false));
+		instructionToInsert.add(new InsnNode(F2D));
+		instructionToInsert.add(new VarInsnNode(ALOAD, 3));
+		instructionToInsert.add(new FieldInsnNode(GETFIELD,
+				CLASS_EntityLivingBase,
+				FIELD_prevPosY,
+				FIELD_prevPosY_DESC));
+		instructionToInsert.add(new InsnNode(DADD));
 		instructionToInsert.add(new MethodInsnNode(INVOKEVIRTUAL,
 				CLASS_Block,
 				METHOD_getMaterial,
@@ -232,7 +263,7 @@ public class HETransformer implements IClassTransformer {
 		basicClass = injectReplaceInvokeVirtual(METHOD_getFOVModifier, METHOD_getFOVModifier_DESC,
 				CLASS_Block, METHOD_getMaterial, METHOD_getMaterial_DESC, instructionToInsert, basicClass);
 
-		HE.LOG.info("Injected net/minecraft/client/renderer/EntityRenderer.getFOVModifier");
+		HEPlugin.LOG.info("Injected net/minecraft/client/renderer/EntityRenderer.getFOVModifier");
 
 		return basicClass;
 	}
@@ -258,7 +289,7 @@ public class HETransformer implements IClassTransformer {
 		basicClass = injectReplaceInvokeVirtual(METHOD_isInsideOfMaterial, METHOD_isInsideOfMaterial_DESC,
 				CLASS_Block, METHOD_getMaterial, METHOD_getMaterial_DESC, instructionToInsert, basicClass);
 
-		HE.LOG.info("Injected net/minecraft/entity/Entity.isInsideOfMaterial");
+		HEPlugin.LOG.info("Injected net/minecraft/entity/Entity.isInsideOfMaterial");
 
 		return basicClass;
 	}
@@ -289,7 +320,7 @@ public class HETransformer implements IClassTransformer {
 		basicClass = injectAfterInvokeVirtual(METHOD_renderEntities, METHOD_renderEntities_DESC,
 				CLASS_Profiler, METHOD_endSection, METHOD_endSection_DESC, instructionToInsert, basicClass, 0);
 
-		HE.LOG.info("Injected net/minecraft/client/renderer/RenderGlobal.renderEntities");
+		HEPlugin.LOG.info("Injected net/minecraft/client/renderer/RenderGlobal.renderEntities");
 
 		return basicClass;
 	}
@@ -334,7 +365,7 @@ public class HETransformer implements IClassTransformer {
 				CLASS_WorldRenderer, METHOD_setDontDraw, METHOD_setDontDraw_DESC,
 				instructionToInsert, basicClass, 0);
 
-		HE.LOG.info("Injected net/minecraft/client/renderer/WorldRenderer.setPosition");
+		HEPlugin.LOG.info("Injected net/minecraft/client/renderer/WorldRenderer.setPosition");
 
 		return basicClass;
 	}
@@ -377,7 +408,7 @@ public class HETransformer implements IClassTransformer {
 				CLASS_Chunk, METHOD_generateHeightMap, METHOD_generateHeightMap_DESC,
 				instructionToInsert, basicClass, 0);
 
-		HE.LOG.info("Injected net/minecraft/world/chunk/Chunk.fillChunk");
+		HEPlugin.LOG.info("Injected net/minecraft/world/chunk/Chunk.fillChunk");
 
 
 		instructionToInsert = new InsnList();
@@ -395,7 +426,7 @@ public class HETransformer implements IClassTransformer {
 				CLASS_ExtendedBlockStorage, METHOD_setExtSkylightValue, METHOD_setExtSkylightValue_DESC,
 				instructionToInsert, basicClass, 0);
 
-		HE.LOG.info("Injected net/minecraft/world/chunk/Chunk.generateSkylightMap");
+		HEPlugin.LOG.info("Injected net/minecraft/world/chunk/Chunk.generateSkylightMap");
 
 
 		instructionToInsert = new InsnList();
@@ -413,7 +444,7 @@ public class HETransformer implements IClassTransformer {
 				CLASS_ExtendedBlockStorage, METHOD_setExtSkylightValue, METHOD_setExtSkylightValue_DESC,
 				instructionToInsert, basicClass, 0);
 
-		HE.LOG.info("Injected net/minecraft/world/chunk/Chunk.relightBlock#1");
+		HEPlugin.LOG.info("Injected net/minecraft/world/chunk/Chunk.relightBlock#1");
 
 
 		instructionToInsert = new InsnList();
@@ -431,7 +462,7 @@ public class HETransformer implements IClassTransformer {
 				CLASS_ExtendedBlockStorage, METHOD_setExtSkylightValue, METHOD_setExtSkylightValue_DESC,
 				instructionToInsert, basicClass, 1);
 
-		HE.LOG.info("Injected net/minecraft/world/chunk/Chunk.relightBlock#2");
+		HEPlugin.LOG.info("Injected net/minecraft/world/chunk/Chunk.relightBlock#2");
 
 		instructionToInsert = new InsnList();
 		instructionToInsert.add(new VarInsnNode(ALOAD, 0));
@@ -448,7 +479,7 @@ public class HETransformer implements IClassTransformer {
 				CLASS_ExtendedBlockStorage, METHOD_setExtSkylightValue, METHOD_setExtSkylightValue_DESC,
 				instructionToInsert, basicClass, 2);
 
-		HE.LOG.info("Injected net/minecraft/world/chunk/Chunk.relightBlock#3");
+		HEPlugin.LOG.info("Injected net/minecraft/world/chunk/Chunk.relightBlock#3");
 
 
 		instructionToInsert = new InsnList();
@@ -466,7 +497,7 @@ public class HETransformer implements IClassTransformer {
 				CLASS_ExtendedBlockStorage, METHOD_setExtSkylightValue, METHOD_setExtSkylightValue_DESC,
 				instructionToInsert, basicClass, 0);
 
-		HE.LOG.info("Injected net/minecraft/world/chunk/Chunk.setLightValue");
+		HEPlugin.LOG.info("Injected net/minecraft/world/chunk/Chunk.setLightValue");
 
 		return basicClass;
 	}
@@ -494,7 +525,7 @@ public class HETransformer implements IClassTransformer {
 		basicClass = injectAfterInvokeVirtual(METHOD_unloadChunk, METHOD_unloadChunk_DESC,
 				CLASS_LongHashMap, METHOD_remove, METHOD_remove_DESC, instructionToInsert, basicClass, 0);
 
-		HE.LOG.info("Injected net/minecraft/client/multiplayer/ChunkProviderClient.unloadChunk");
+		HEPlugin.LOG.info("Injected net/minecraft/client/multiplayer/ChunkProviderClient.unloadChunk");
 
 		return basicClass;
 	}
