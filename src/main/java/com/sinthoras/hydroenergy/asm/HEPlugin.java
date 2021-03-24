@@ -7,13 +7,15 @@ import org.apache.logging.log4j.Logger;
 import java.util.Map;
 
 //@IFMLLoadingPlugin.SortingIndex(1001)  // Run after remapper. Thanks @mitchej123
-@IFMLLoadingPlugin.MCVersion("1.7.10")
+@IFMLLoadingPlugin.MCVersion(HEPlugin.MC_VERSION)
 @IFMLLoadingPlugin.TransformerExclusions("com.sinthoras.hydroenergy.asm")
-@IFMLLoadingPlugin.Name(HEPlugin.HydroEnergyCore)
+@IFMLLoadingPlugin.Name(HEPlugin.HYDROENERGYCORE)
 public class HEPlugin  implements IFMLLoadingPlugin {
 
-    public static final String HydroEnergyCore = "HydroEnergyCore";
-    public static Logger LOG = LogManager.getLogger(HydroEnergyCore);
+    public static final String HYDROENERGYCORE = "HydroEnergyCore";
+    public static final String MC_VERSION = "1.7.10";
+
+    private static Logger LOG = LogManager.getLogger(HYDROENERGYCORE);
 
     @Override
     public String[] getASMTransformerClass() {
@@ -22,7 +24,7 @@ public class HEPlugin  implements IFMLLoadingPlugin {
 
     @Override
     public String getModContainerClass() {
-        return "com.sinthoras.hydroenergy.asm.HEModContainer";
+        return HEModContainer.class.getName();
     }
 
     @Override
@@ -37,6 +39,26 @@ public class HEPlugin  implements IFMLLoadingPlugin {
 
     @Override
     public String getAccessTransformerClass() {
-        return "com.sinthoras.hydroenergy.asm.HETransformer";
+        return HETransformer.class.getName();
+    }
+
+    public static void debug(String message) {
+        LOG.debug(formatMessage(message));
+    }
+
+    public static void info(String message) {
+        LOG.info(formatMessage(message));
+    }
+
+    public static void warn(String message) {
+        LOG.warn(formatMessage(message));
+    }
+
+    public static void error(String message) {
+        LOG.error(formatMessage(message));
+    }
+
+    private static String formatMessage(String message) {
+        return "[" + HYDROENERGYCORE + "]" + message;
     }
 }

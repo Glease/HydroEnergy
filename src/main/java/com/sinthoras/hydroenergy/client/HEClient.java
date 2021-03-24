@@ -18,15 +18,16 @@ public class HEClient {
 	
 	public static void onWaterUpdate(int waterId, float waterLevel) {
 		if(waterId < 0 || waterId >= HEConfig.maxDams) {
-			HE.LOG.error(HE.ERROR_serverIdsOutOfBounds);
+			HE.error(HE.ERROR_serverIdsOutOfBounds);
 			return;
 		}
 		dams[waterId].onWaterUpdate(waterLevel);
 	}
 
 	public static void onConfigUpdate(int waterId, int blockX, int blockY, int blockZ, HE.DamMode mode, int limitWest, int limitDown, int limitNorth, int limitEast, int limitUp, int limitSouth) {
+		HE.debug("Received dam config update");
 		if(waterId < 0 || waterId >= HEConfig.maxDams) {
-			HE.LOG.error(HE.ERROR_serverIdsOutOfBounds);
+			HE.error(HE.ERROR_serverIdsOutOfBounds);
 			return;
 		}
 		dams[waterId].onConfigUpdate(blockX, blockY, blockZ, mode,
@@ -59,13 +60,14 @@ public class HEClient {
 
 	public static void onSynchronize(int[] blocksX, int[] blocksY, int[] blocksZ, float[] waterLevels, HE.DamMode[] modes, int[] limitsWest, int[] limitsDown, int[] limitsNorth, int[] limitsEast, int[] limitsUp, int[] limitsSouth) {
 		if(HEConfig.maxDams < waterLevels.length) {
-			HE.LOG.error(HE.ERROR_serverIdsOutOfBounds);
+			HE.error(HE.ERROR_serverIdsOutOfBounds);
 		}
 		for(int waterId = 0; waterId<HEConfig.maxDams; waterId++) {
 			dams[waterId].onConfigUpdate(blocksX[waterId], blocksY[waterId], blocksZ[waterId], modes[waterId],
 					limitsWest[waterId], limitsDown[waterId], limitsNorth[waterId], limitsEast[waterId], limitsUp[waterId], limitsSouth[waterId]);
 			dams[waterId].onWaterUpdate(waterLevels[waterId]);
 		}
+		HE.debug("Received synchronize packet from server");
 	}
 
 	public static int getWaterId(int blockX, int blockY, int blockZ) {

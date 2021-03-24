@@ -31,6 +31,8 @@ public class HEHooksShared {
 	// preInit "Run before anything else. Read your config, create blocks, items, 
 	// etc, and register them with the GameRegistry."
 	public void fmlLifeCycleEvent(FMLPreInitializationEvent event) 	{
+		HEConfig.syncronizeConfiguration(event.getSuggestedConfigurationFile());
+
     	HE.network = NetworkRegistry.INSTANCE.newSimpleChannel("hydroenergy");
     	HE.network.registerMessage(HEPacketWaterUpdate.Handler.class, HEPacketWaterUpdate.class, 0, Side.CLIENT);
     	HE.network.registerMessage(HEPacketSynchronize.Handler.class, HEPacketSynchronize.class, 1, Side.CLIENT);
@@ -39,7 +41,7 @@ public class HEHooksShared {
 		HE.network.registerMessage(HEPacketChunkUpdate.Handler.class, HEPacketChunkUpdate.class, 4, Side.CLIENT);
 
 
-		HE.LOG.info("The subsequent " + HEConfig.maxDams + " liquid errors are intendend. Please ignore...");
+		HE.info("The subsequent " + HEConfig.maxDams + " liquid errors are intendend. Please ignore...");
 
 		for(int waterId = 0; waterId<HEConfig.maxDams; waterId++) {
 			HE.waterBlocks[waterId] = new HEWaterStill(waterId);

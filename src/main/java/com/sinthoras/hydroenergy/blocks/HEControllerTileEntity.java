@@ -528,7 +528,7 @@ public class HEControllerTileEntity extends TileEntity implements IEnergyConnect
 
 	@Override
 	public void setLightValue(byte lightValue) {
-		HE.LOG.info("Why does anyone wants to set a light value here?");
+		HE.info("Why does anyone wants to set a light value here?");
 	}
 
 	@Override

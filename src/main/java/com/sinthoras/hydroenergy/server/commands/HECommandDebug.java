@@ -41,7 +41,7 @@ public class HECommandDebug extends CommandBase {
 				if (flag) {
 					HEServer.instance.setMode(controllerId, debugState ? HE.DamMode.DEBUG : HE.DamMode.SPREAD);
 					sender.addChatMessage(new ChatComponentText("Set controller " + controllerId + " to debug mode " + params[1].toUpperCase()));
-					HE.LOG.info(sender.getCommandSenderName() + " set controller " + controllerId + " to debug mode " + params[1].toUpperCase());
+					HE.info(sender.getCommandSenderName() + " set controller " + controllerId + " to debug mode " + params[1].toUpperCase());
 				}
 			}
 			catch(Exception ex) {

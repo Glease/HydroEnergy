@@ -71,7 +71,7 @@ public class HEProgram {
 
         if(GL20.glGetProgrami(programId, GL20.GL_LINK_STATUS) == 0) {
             String s = StringUtils.trim(GL20.glGetProgramInfoLog(programId, 32768));
-            HE.LOG.error("Shader program linking failed: " + s);
+            HE.error("Shader program linking failed: " + s);
             programId = GL31.GL_INVALID_INDEX;
             return;
         }
@@ -94,6 +94,8 @@ public class HEProgram {
         renderOffsetId = GL20.glGetUniformLocation(programId, "g_renderOffset");
 
         GL20.glUseProgram(0);
+
+        HE.info("Render pipeline initialized.");
     }
 
     private static int loadShader(ResourceLocation shaderLocation, int type, String defines) {
@@ -112,7 +114,7 @@ public class HEProgram {
             if (GL20.glGetShaderi(shaderID, GL20.GL_COMPILE_STATUS) == 0)
             {
                 String s = StringUtils.trim(GL20.glGetShaderInfoLog(shaderID, 32768));  //Const good?
-                HE.LOG.error("Couldn't compile shader: " + s);
+                HE.error("Couldn't compile shader: " + s);
                 return GL31.GL_INVALID_INDEX;
             }
             GL20.glUseProgram(programId);

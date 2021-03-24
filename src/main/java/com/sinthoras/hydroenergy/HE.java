@@ -13,11 +13,10 @@ import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 public class HE {
 	public static final String MODID = "hydroenergy";
     public static final String VERSION = "0.1.0";
-    public static final String MC_VERSION = "1.7.10";
-    public static final String NAME = "HydroEnergy";
+    public static final String HYDROENERGY = "HydroEnergy";
     public static final String COM_SINTHORAS_HYDROENERGY = "com.sinthoras.hydroenergy";
     public static SimpleNetworkWrapper network;
-    public static Logger LOG;
+    private static Logger LOG;
     public static final int maxRenderDist = 16;
     public static final int numChunksY = 16;
     public static final int waterOpacity = 3;
@@ -49,6 +48,26 @@ public class HE {
     public static String damTextureName = "he_dam";
     // To silence the water missing texture error. Points to a random but valid texture
     public static String dummyTexture = damTextureName;
+
+    public static void debug(String message) {
+        HE.LOG.debug(formatMessage(message));
+    }
+
+    public static void info(String message) {
+        HE.LOG.info(formatMessage(message));
+    }
+
+    public static void warn(String message) {
+        HE.LOG.warn(formatMessage(message));
+    }
+
+    public static void error(String message) {
+        HE.LOG.error(formatMessage(message));
+    }
+
+    private static String formatMessage(String message) {
+        return "[" + HYDROENERGY + "]" + message;
+    }
 
     public enum DamMode {
         DRAIN,

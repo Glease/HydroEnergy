@@ -41,6 +41,10 @@ public class HEServer extends WorldSavedData {
 		if (instance == null) {
 			instance = new HEServer(Tags.hydroenergy);
 			 world.mapStorage.setData(Tags.hydroenergy, instance);
+			HE.info("Initializing dam data");
+		}
+		else {
+			HE.info("Dam data loaded");
 		}
 		return instance;
 	}
@@ -201,9 +205,11 @@ public class HEServer extends WorldSavedData {
 			message.limitsSouth[waterId] = dams[waterId].limitSouth;
 		}
 		HE.network.sendTo(message, (EntityPlayerMP) event.player);
+		HE.debug("Sent synchronize packet to player " + event.player.getDisplayName());
 	}
 
 	public void onConfigRequest(int waterId, HE.DamMode mode, int limitWest, int limitDown, int limitNorth, int limitEast, int limitUp, int limitSouth) {
+		HE.debug("Received dam config change request");
 		if(waterId < 0 || waterId >= HEConfig.maxDams) {
 			return;
 		}
