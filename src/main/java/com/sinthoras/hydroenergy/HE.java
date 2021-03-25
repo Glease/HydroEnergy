@@ -16,7 +16,7 @@ public class HE {
     public static final String HYDROENERGY = "HydroEnergy";
     public static final String COM_SINTHORAS_HYDROENERGY = "com.sinthoras.hydroenergy";
     public static SimpleNetworkWrapper network;
-    private static Logger LOG;
+    private static Logger LOG = LogManager.getLogger(MODID);
     public static final int maxRenderDist = 16;
     public static final int numChunksY = 16;
     public static final int waterOpacity = 3;
@@ -28,9 +28,6 @@ public class HE {
     public static final int controllerGuiUpdateDelay = 200;
     public static final int damCapacityRecalculationDelay = 2000;  // in milliseconds
 
-    static {
-        LOG = LogManager.getLogger(MODID);
-    }
     public static boolean logicalClientLoaded = false;
     public static final String ERROR_serverIdsOutOfBounds = "Server uses invalid waterIds! Server message ignored. " +
             "Please make sure your config \"maxControllers\" is at least as big as the server you are connecting to!";
