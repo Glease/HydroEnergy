@@ -1,6 +1,5 @@
 package com.sinthoras.hydroenergy.asm;
 
-import com.sinthoras.hydroenergy.config.HECoreConfig;
 import net.minecraft.launchwrapper.Launch;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
@@ -21,7 +20,6 @@ public class HETransformer implements IClassTransformer {
 		add("net.minecraft.block.Block");
 		add("net.minecraft.client.renderer.EntityRenderer");
 		add("net.minecraft.entity.Entity");
-		add("net.minecraft.client.renderer.RenderGlobal");
 		add("net.minecraft.client.renderer.WorldRenderer");
 		add("net.minecraft.world.chunk.Chunk");
 		add("net.minecraft.client.multiplayer.ChunkProviderClient");
@@ -45,12 +43,10 @@ public class HETransformer implements IClassTransformer {
 			case 3:
 				return transformEntity(basicClass, isObfuscated);
 			case 4:
-				return transformRenderGlobal(basicClass, isObfuscated);
-			case 5:
 				return transformWorldRenderer(basicClass, isObfuscated);
-			case 6:
+			case 5:
 				return transformChunk(basicClass, isObfuscated);
-			case 7:
+			case 6:
 				return transformChunkProviderClient(basicClass, isObfuscated);
 			default:
 				return basicClass;
@@ -171,6 +167,9 @@ public class HETransformer implements IClassTransformer {
 		final String CLASS_Block = "net/minecraft/block/Block";
 		final String CLASS_Material = "net/minecraft/block/material/Material";
 		final String CLASS_EntityLivingBase = "net/minecraft/entity/EntityLivingBase";
+		final String CLASS_RenderGlobal = "net/minecraft/client/renderer/RenderGlobal";
+		final String CLASS_ICamera = "net/minecraft/client/renderer/culling/ICamera";
+		final String CLASS_HETessalator = "com/sinthoras/hydroenergy/client/renderer/HETessalator";
 
 		final String METHOD_setupFog = isObfuscated ? "func_78468_a" : "setupFog";
 		final String METHOD_setupFog_DESC = "(IF)V";
@@ -178,6 +177,8 @@ public class HETransformer implements IClassTransformer {
 		final String METHOD_updateFogColor_DESC = "(F)V";
 		final String METHOD_getFOVModifier = isObfuscated ? "func_78481_a" : "getFOVModifier";
 		final String METHOD_getFOVModifier_DESC = "(FZ)F";
+		final String METHOD_renderWorld = isObfuscated ? "func_78471_a" : "renderWorld";
+		final String METHOD_renderWorld_DESC = "(FJ)V";
 
 		final String METHOD_getMaterial = isObfuscated ? "func_149688_o" : "getMaterial";
 		final String METHOD_getMaterial_DESC = "()L" + CLASS_Material + ";";
@@ -188,6 +189,12 @@ public class HETransformer implements IClassTransformer {
 
 		final String FIELD_prevPosY = isObfuscated ? "field_70167_r" : "prevPosY";
 		final String FIELD_prevPosY_DESC = "D";
+
+		final String METHOD_renderEntities = isObfuscated ? "func_147589_a" : "renderEntities";
+		final String METHOD_renderEntities_DESC = "(L" + CLASS_EntityLivingBase + ";L" + CLASS_ICamera + ";F)V";
+
+		final String METHOD_render = "render";
+		final String METHOD_render_DESC = "(L" + CLASS_ICamera + ";)V";
 
 		InsnList instructionToInsert = new InsnList();
 		instructionToInsert.add(new VarInsnNode(ALOAD, 3));
@@ -266,6 +273,34 @@ public class HETransformer implements IClassTransformer {
 
 		HEPlugin.info("Injected net/minecraft/client/renderer/EntityRenderer.getFOVModifier");
 
+
+		instructionToInsert = new InsnList();
+		instructionToInsert.add(new VarInsnNode(ALOAD, 14));
+		instructionToInsert.add(new MethodInsnNode(INVOKESTATIC,
+				CLASS_HETessalator,
+				METHOD_render,
+				METHOD_render_DESC,
+				false));
+
+		basicClass = injectAfterInvokeVirtual(METHOD_renderWorld, METHOD_renderWorld_DESC,
+				CLASS_RenderGlobal, METHOD_renderEntities, METHOD_renderEntities_DESC, instructionToInsert, basicClass, 0);
+
+		HEPlugin.info("Injected net/minecraft/client/renderer/EntityRenderer.renderWorld#1");
+
+
+		instructionToInsert = new InsnList();
+		instructionToInsert.add(new VarInsnNode(ALOAD, 14));
+		instructionToInsert.add(new MethodInsnNode(INVOKESTATIC,
+				CLASS_HETessalator,
+				METHOD_render,
+				METHOD_render_DESC,
+				false));
+
+		basicClass = injectAfterInvokeVirtual(METHOD_renderWorld, METHOD_renderWorld_DESC,
+				CLASS_RenderGlobal, METHOD_renderEntities, METHOD_renderEntities_DESC, instructionToInsert, basicClass, 1);
+
+		HEPlugin.info("Injected net/minecraft/client/renderer/EntityRenderer.renderWorld#2");
+
 		return basicClass;
 	}
 
@@ -291,41 +326,6 @@ public class HETransformer implements IClassTransformer {
 				CLASS_Block, METHOD_getMaterial, METHOD_getMaterial_DESC, instructionToInsert, basicClass);
 
 		HEPlugin.info("Injected net/minecraft/entity/Entity.isInsideOfMaterial");
-
-		return basicClass;
-	}
-
-	private static byte[] transformRenderGlobal(byte[] basicClass, boolean isObfuscated) {
-		if(HECoreConfig.isFastcraftInstalled) {
-
-		}
-
-		final String CLASS_ICamera = "net/minecraft/client/renderer/culling/ICamera";
-		final String CLASS_EntityLivingBase = "net/minecraft/entity/EntityLivingBase";
-		final String CLASS_Profiler = "net/minecraft/profiler/Profiler";
-		final String CLASS_HETessalator = "com/sinthoras/hydroenergy/client/renderer/HETessalator";
-
-		final String METHOD_renderEntities = isObfuscated ? "func_147589_a" : "renderEntities";
-		final String METHOD_renderEntities_DESC = "(L" + CLASS_EntityLivingBase + ";L" + CLASS_ICamera + ";F)V";
-
-		final String METHOD_endSection = isObfuscated ? "func_76319_b" : "endSection";
-		final String METHOD_endSection_DESC = "()V";
-
-		final String METHOD_render = "render";
-		final String METHOD_render_DESC = "(L" + CLASS_ICamera + ";)V";
-
-		InsnList instructionToInsert = new InsnList();
-		instructionToInsert.add(new VarInsnNode(ALOAD, 2));
-		instructionToInsert.add(new MethodInsnNode(INVOKESTATIC,
-				CLASS_HETessalator,
-				METHOD_render,
-				METHOD_render_DESC,
-				false));
-
-		basicClass = injectAfterInvokeVirtual(METHOD_renderEntities, METHOD_renderEntities_DESC,
-				CLASS_Profiler, METHOD_endSection, METHOD_endSection_DESC, instructionToInsert, basicClass, 0);
-
-		HEPlugin.info("Injected net/minecraft/client/renderer/RenderGlobal.renderEntities");
 
 		return basicClass;
 	}
