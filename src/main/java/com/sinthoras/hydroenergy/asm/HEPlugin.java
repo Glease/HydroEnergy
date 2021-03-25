@@ -1,9 +1,11 @@
 package com.sinthoras.hydroenergy.asm;
 
+import com.sinthoras.hydroenergy.config.HECoreConfig;
 import cpw.mods.fml.relauncher.IFMLLoadingPlugin;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.File;
 import java.util.Map;
 
 //@IFMLLoadingPlugin.SortingIndex(1001)  // Run after remapper. Thanks @mitchej123
@@ -16,6 +18,10 @@ public class HEPlugin  implements IFMLLoadingPlugin {
     public static final String MC_VERSION = "1.7.10";
 
     private static Logger LOG = LogManager.getLogger(HYDROENERGYCORE);
+
+    static {
+        HECoreConfig.syncronizeConfiguration(new File("config/hydroenergycore.cfg"));
+    }
 
     @Override
     public String[] getASMTransformerClass() {

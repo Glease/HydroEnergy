@@ -1,5 +1,6 @@
 package com.sinthoras.hydroenergy.asm;
 
+import com.sinthoras.hydroenergy.config.HECoreConfig;
 import net.minecraft.launchwrapper.Launch;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
@@ -295,6 +296,10 @@ public class HETransformer implements IClassTransformer {
 	}
 
 	private static byte[] transformRenderGlobal(byte[] basicClass, boolean isObfuscated) {
+		if(HECoreConfig.isFastcraftInstalled) {
+
+		}
+
 		final String CLASS_ICamera = "net/minecraft/client/renderer/culling/ICamera";
 		final String CLASS_EntityLivingBase = "net/minecraft/entity/EntityLivingBase";
 		final String CLASS_Profiler = "net/minecraft/profiler/Profiler";
