@@ -3,7 +3,6 @@ package com.sinthoras.hydroenergy.asm;
 import net.minecraft.launchwrapper.Launch;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
-import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.tree.*;
 
 import static org.objectweb.asm.Opcodes.*;
@@ -17,7 +16,6 @@ public class HETransformer implements IClassTransformer {
 	
 	private static final List targetClasses = new ArrayList() {{
 		add("net.minecraft.world.World");
-		add("net.minecraft.block.Block");
 		add("net.minecraft.client.renderer.EntityRenderer");
 		add("net.minecraft.entity.Entity");
 		add("net.minecraft.client.renderer.WorldRenderer");
@@ -37,16 +35,14 @@ public class HETransformer implements IClassTransformer {
 			case 0:
 				return transformWorld(basicClass, isObfuscated);
 			case 1:
-				return transformBlock(basicClass, isObfuscated);
-			case 2:
 				return transformEntityRenderer(basicClass, isObfuscated);
-			case 3:
+			case 2:
 				return transformEntity(basicClass, isObfuscated);
-			case 4:
+			case 3:
 				return transformWorldRenderer(basicClass, isObfuscated);
-			case 5:
+			case 4:
 				return transformChunk(basicClass, isObfuscated);
-			case 6:
+			case 5:
 				return transformChunkProviderClient(basicClass, isObfuscated);
 			default:
 				return basicClass;
@@ -61,12 +57,14 @@ public class HETransformer implements IClassTransformer {
 		final String CLASS_HELightSMPHooks = "com/sinthoras/hydroenergy/client/light/HELightSMPHooks";
 		final String CLASS_Chunk = "net/minecraft/world/chunk/Chunk";
 		final String CLASS_World = "net/minecraft/world/World";
+		final String CLASS_HEInjectionHelper = "com/sinthoras/hydroenergy/hooks/HEInjectionHelper";
 
 		final String METHOD_handleMaterialAcceleration = isObfuscated ? "func_72918_a" : "handleMaterialAcceleration";
 		final String METHOD_handleMaterialAcceleration_DESC = "(L" + CLASS_AxisAlignedBB + ";L" + CLASS_Material + ";L" + CLASS_Entity + ";)Z";
 		final String METHOD_getMaterial = isObfuscated ? "func_149688_o" : "getMaterial";
 		final String METHOD_getMaterial_DESC = "()L" + CLASS_Material + ";";
-		final String METHOD_getMaterial_DESC_NEW = "(I)L" + CLASS_Material + ";";
+		final String METHOD_getMaterialWrapper = "getMaterialWrapper";
+		final String METHOD_getMaterialWrapper_DESC = "(L" + CLASS_Block + ";I)L" + CLASS_Material + ";";
 
 		final String METHOD_setBlock = isObfuscated ? "func_147465_d" : "setBlock";
 		final String METHOD_setBlock_DESC = "(IIIL" + CLASS_Block + ";II)Z";
@@ -80,10 +78,10 @@ public class HETransformer implements IClassTransformer {
 
 		InsnList instructionToInsert = new InsnList();
 		instructionToInsert.add(new VarInsnNode(ILOAD, 13));
-		instructionToInsert.add(new MethodInsnNode(INVOKEVIRTUAL,
-				CLASS_Block,
-				METHOD_getMaterial,
-				METHOD_getMaterial_DESC_NEW,
+		instructionToInsert.add(new MethodInsnNode(INVOKESTATIC,
+				CLASS_HEInjectionHelper,
+				METHOD_getMaterialWrapper,
+				METHOD_getMaterialWrapper_DESC,
 				false));
 
 		basicClass = injectReplaceInvokeVirtual(METHOD_handleMaterialAcceleration, METHOD_handleMaterialAcceleration_DESC,
@@ -113,10 +111,10 @@ public class HETransformer implements IClassTransformer {
 
 		instructionToInsert = new InsnList();
 		instructionToInsert.add(new VarInsnNode(ILOAD, 9));
-		instructionToInsert.add(new MethodInsnNode(INVOKEVIRTUAL,
-				CLASS_Block,
-				METHOD_getMaterial,
-				METHOD_getMaterial_DESC_NEW,
+		instructionToInsert.add(new MethodInsnNode(INVOKESTATIC,
+				CLASS_HEInjectionHelper,
+				METHOD_getMaterialWrapper,
+				METHOD_getMaterialWrapper_DESC,
 				false));
 
 		basicClass = injectReplaceInvokeVirtual(METHOD_isAnyLiquid, METHOD_isAnyLiquid_DESC,
@@ -127,42 +125,6 @@ public class HETransformer implements IClassTransformer {
 		return basicClass;
 	}
 
-	private static byte[] transformBlock(byte[] basicClass, boolean isObfuscated) {
-		final String CLASS_Block = "net/minecraft/block/Block";
-		final String CLASS_Material = "net/minecraft/block/material/Material";
-
-		final String METHOD_getMaterial = isObfuscated ? "func_149688_o" : "getMaterial";
-		final String METHOD_getMaterial_DESC = "()L" + CLASS_Material + ";";
-		final String METHOD_getMaterial_DESC_NEW_I = "(I)L" + CLASS_Material + ";";
-		final String METHOD_getMaterial_DESC_NEW_D = "(D)L" + CLASS_Material + ";";
-
-		ClassNode classNode = new ClassNode();
-		ClassReader classReader = new ClassReader(basicClass);
-		classReader.accept(classNode, 0);
-		ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);
-		classNode.accept(classWriter);
-
-		// public Material getMaterial(int blockY)
-		MethodVisitor mv = classWriter.visitMethod(ACC_PUBLIC, METHOD_getMaterial, METHOD_getMaterial_DESC_NEW_I, null, null);
-		mv.visitVarInsn(ALOAD, 0); // load this
-		mv.visitMethodInsn(INVOKEVIRTUAL, CLASS_Block, METHOD_getMaterial, METHOD_getMaterial_DESC, false);
-		mv.visitInsn(ARETURN);
-		mv.visitMaxs(1, 1);
-		mv.visitEnd();
-
-		// public Material getMaterial(double blockY)
-		mv = classWriter.visitMethod(ACC_PUBLIC, METHOD_getMaterial, METHOD_getMaterial_DESC_NEW_D, null, null);
-		mv.visitVarInsn(ALOAD, 0); // load this
-		mv.visitMethodInsn(INVOKEVIRTUAL, CLASS_Block, METHOD_getMaterial, METHOD_getMaterial_DESC, false);
-		mv.visitInsn(ARETURN);
-		mv.visitMaxs(1, 1);
-		mv.visitEnd();
-
-		HEPlugin.info("Injected net/minecraft/client/block/Block");
-
-		return classWriter.toByteArray();
-	}
-
 	private static byte[] transformEntityRenderer(byte[] basicClass, boolean isObfuscated) {
 		final String CLASS_Block = "net/minecraft/block/Block";
 		final String CLASS_Material = "net/minecraft/block/material/Material";
@@ -170,6 +132,7 @@ public class HETransformer implements IClassTransformer {
 		final String CLASS_RenderGlobal = "net/minecraft/client/renderer/RenderGlobal";
 		final String CLASS_ICamera = "net/minecraft/client/renderer/culling/ICamera";
 		final String CLASS_HETessalator = "com/sinthoras/hydroenergy/client/renderer/HETessalator";
+		final String CLASS_HEInjectionHelper = "com/sinthoras/hydroenergy/hooks/HEInjectionHelper";
 
 		final String METHOD_setupFog = isObfuscated ? "func_78468_a" : "setupFog";
 		final String METHOD_setupFog_DESC = "(IF)V";
@@ -180,9 +143,11 @@ public class HETransformer implements IClassTransformer {
 		final String METHOD_renderWorld = isObfuscated ? "func_78471_a" : "renderWorld";
 		final String METHOD_renderWorld_DESC = "(FJ)V";
 
+		final String METHOD_getMaterialWrapper = "getMaterialWrapper";
+		final String METHOD_getMaterialWrapper_DESC = "(L" + CLASS_Block + ";D)L" + CLASS_Material + ";";
+
 		final String METHOD_getMaterial = isObfuscated ? "func_149688_o" : "getMaterial";
 		final String METHOD_getMaterial_DESC = "()L" + CLASS_Material + ";";
-		final String METHOD_getMaterial_DESC_NEW = "(D)L" + CLASS_Material + ";";
 
 		final String METHOD_getEyeHeight = isObfuscated ? "func_70047_e" : "getEyeHeight";
 		final String METHOD_getEyeHeight_DESC = "()F";
@@ -210,11 +175,11 @@ public class HETransformer implements IClassTransformer {
 						FIELD_prevPosY,
 						FIELD_prevPosY_DESC));
 		instructionToInsert.add(new InsnNode(DADD));
-		instructionToInsert.add(new MethodInsnNode(INVOKEVIRTUAL,
-		CLASS_Block,
-		METHOD_getMaterial,
-		METHOD_getMaterial_DESC_NEW,
-		false));
+		instructionToInsert.add(new MethodInsnNode(INVOKESTATIC,
+				CLASS_HEInjectionHelper,
+				METHOD_getMaterialWrapper,
+				METHOD_getMaterialWrapper_DESC,
+				false));
 
 		basicClass = injectReplaceInvokeVirtual(METHOD_setupFog, METHOD_setupFog_DESC,
 				CLASS_Block, METHOD_getMaterial, METHOD_getMaterial_DESC, instructionToInsert, basicClass);
@@ -236,10 +201,10 @@ public class HETransformer implements IClassTransformer {
 				FIELD_prevPosY,
 				FIELD_prevPosY_DESC));
 		instructionToInsert.add(new InsnNode(DADD));
-		instructionToInsert.add(new MethodInsnNode(INVOKEVIRTUAL,
-				CLASS_Block,
-				METHOD_getMaterial,
-				METHOD_getMaterial_DESC_NEW,
+		instructionToInsert.add(new MethodInsnNode(INVOKESTATIC,
+				CLASS_HEInjectionHelper,
+				METHOD_getMaterialWrapper,
+				METHOD_getMaterialWrapper_DESC,
 				false));
 
 		basicClass = injectReplaceInvokeVirtual(METHOD_updateFogColor, METHOD_updateFogColor_DESC,
@@ -262,10 +227,10 @@ public class HETransformer implements IClassTransformer {
 				FIELD_prevPosY,
 				FIELD_prevPosY_DESC));
 		instructionToInsert.add(new InsnNode(DADD));
-		instructionToInsert.add(new MethodInsnNode(INVOKEVIRTUAL,
-				CLASS_Block,
-				METHOD_getMaterial,
-				METHOD_getMaterial_DESC_NEW,
+		instructionToInsert.add(new MethodInsnNode(INVOKESTATIC,
+				CLASS_HEInjectionHelper,
+				METHOD_getMaterialWrapper,
+				METHOD_getMaterialWrapper_DESC,
 				false));
 
 		basicClass = injectReplaceInvokeVirtual(METHOD_getFOVModifier, METHOD_getFOVModifier_DESC,
@@ -307,19 +272,21 @@ public class HETransformer implements IClassTransformer {
 	private static byte[] transformEntity(byte[] basicClass, boolean isObfuscated) {
 		final String CLASS_Block = "net/minecraft/block/Block";
 		final String CLASS_Material = "net/minecraft/block/material/Material";
+		final String CLASS_HEInjectionHelper = "com/sinthoras/hydroenergy/hooks/HEInjectionHelper";
 
 		final String METHOD_isInsideOfMaterial = isObfuscated ? "func_70055_a" : "isInsideOfMaterial";
 		final String METHOD_isInsideOfMaterial_DESC = "(L" + CLASS_Material + ";)Z";
 		final String METHOD_getMaterial = isObfuscated ? "func_149688_o" : "getMaterial";
 		final String METHOD_getMaterial_DESC = "()L" + CLASS_Material + ";";
-		final String METHOD_getMaterial_DESC_NEW = "(D)L" + CLASS_Material + ";";
+		final String METHOD_getMaterialWrapper = "getMaterialWrapper";
+		final String METHOD_getMaterialWrapper_DESC = "(L" + CLASS_Block + ";D)L" + CLASS_Material + ";";
 
 		InsnList instructionToInsert = new InsnList();
 		instructionToInsert.add(new VarInsnNode(DLOAD, 2));
-		instructionToInsert.add(new MethodInsnNode(INVOKEVIRTUAL,
-				CLASS_Block,
-				METHOD_getMaterial,
-				METHOD_getMaterial_DESC_NEW,
+		instructionToInsert.add(new MethodInsnNode(INVOKESTATIC,
+				CLASS_HEInjectionHelper,
+				METHOD_getMaterialWrapper,
+				METHOD_getMaterialWrapper_DESC,
 				false));
 
 		basicClass = injectReplaceInvokeVirtual(METHOD_isInsideOfMaterial, METHOD_isInsideOfMaterial_DESC,

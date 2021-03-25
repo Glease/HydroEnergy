@@ -89,23 +89,13 @@ public class HEWater extends BlockFluidBase {
 				|| (block.getMaterial() == Material.water && !(block instanceof HEWater));
 	}
 
-	// This method is only used in DEV due to MCP renaming
-	/*public Material getMaterial(int blockY) {
-		return func_149688_o(blockY);
-	}*/
-
 	// For World.handleMaterialAcceleration
-	public Material /*getMaterial*/func_149688_o(int blockY) {
+	public Material getMaterial(int blockY) {
 		return (Math.floor(getWaterLevel() - HEConfig.clippingOffset)) < blockY ? Material.air : Material.water;
 	}
 
-	// This method is only used in DEV due to MCP renaming
-	/*public Material getMaterial(double blockY) {
-		return func_149688_o(blockY);
-	}*/
-
 	// For Block.isInsideOfMaterial, Block.setupFog, Block.updateFogColor and Block.getFOVModifier
-	public Material /*getMaterial*/func_149688_o(double blockY) {
+	public Material getMaterial(double blockY) {
 		// This constant is so magic i'm gonna die!
 		// Without this constant there is a gap between rendered water and all under water effects
 		return (getWaterLevel() + 0.120f) < blockY ? Material.air : Material.water;
