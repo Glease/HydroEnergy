@@ -3,6 +3,7 @@ package com.sinthoras.hydroenergy.hooks;
 import com.sinthoras.hydroenergy.client.light.HELightManager;
 import com.sinthoras.hydroenergy.client.renderer.HEProgram;
 import com.sinthoras.hydroenergy.client.renderer.HETessalator;
+import cpw.mods.fml.common.eventhandler.EventPriority;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
