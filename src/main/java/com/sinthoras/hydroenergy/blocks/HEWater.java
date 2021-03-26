@@ -2,6 +2,7 @@ package com.sinthoras.hydroenergy.blocks;
 
 import com.sinthoras.hydroenergy.HE;
 import com.sinthoras.hydroenergy.HEUtil;
+import com.sinthoras.hydroenergy.api.IHEHasCustomMaterialCalculation;
 import com.sinthoras.hydroenergy.client.HEClient;
 import com.sinthoras.hydroenergy.config.HEConfig;
 import com.sinthoras.hydroenergy.server.HEServer;
@@ -18,7 +19,7 @@ import net.minecraftforge.fluids.BlockFluidBase;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 
-public class HEWater extends BlockFluidBase {
+public class HEWater extends BlockFluidBase implements IHEHasCustomMaterialCalculation {
 
 	private int waterId;
 

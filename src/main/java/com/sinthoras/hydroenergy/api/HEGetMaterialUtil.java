@@ -1,14 +1,13 @@
-package com.sinthoras.hydroenergy.hooks;
+package com.sinthoras.hydroenergy.api;
 
-import com.sinthoras.hydroenergy.blocks.HEWater;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 
-public class HEInjectionHelper {
+public class HEGetMaterialUtil {
 
     public static Material getMaterialWrapper(Block block, int blockY) {
-        if(block instanceof HEWater) {
-            return ((HEWater)block).getMaterial(blockY);
+        if(block instanceof IHEHasCustomMaterialCalculation) {
+            return ((IHEHasCustomMaterialCalculation)block).getMaterial(blockY);
         }
         else {
             return block.getMaterial();
@@ -16,8 +15,8 @@ public class HEInjectionHelper {
     }
 
     public static Material getMaterialWrapper(Block block, double blockY) {
-        if(block instanceof HEWater) {
-            return ((HEWater)block).getMaterial(blockY);
+        if(block instanceof IHEHasCustomMaterialCalculation) {
+            return ((IHEHasCustomMaterialCalculation)block).getMaterial(blockY);
         }
         else {
             return block.getMaterial();

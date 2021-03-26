@@ -57,7 +57,7 @@ public class HETransformer implements IClassTransformer {
 		final String CLASS_HELightSMPHooks = "com/sinthoras/hydroenergy/client/light/HELightSMPHooks";
 		final String CLASS_Chunk = "net/minecraft/world/chunk/Chunk";
 		final String CLASS_World = "net/minecraft/world/World";
-		final String CLASS_HEInjectionHelper = "com/sinthoras/hydroenergy/hooks/HEInjectionHelper";
+		final String CLASS_HEInjectionHelper = "com/sinthoras/hydroenergy/api/HEGetMaterialUtil";
 
 		final String METHOD_handleMaterialAcceleration = isObfuscated ? "func_72918_a" : "handleMaterialAcceleration";
 		final String METHOD_handleMaterialAcceleration_DESC = "(L" + CLASS_AxisAlignedBB + ";L" + CLASS_Material + ";L" + CLASS_Entity + ";)Z";
@@ -132,7 +132,7 @@ public class HETransformer implements IClassTransformer {
 		final String CLASS_RenderGlobal = "net/minecraft/client/renderer/RenderGlobal";
 		final String CLASS_ICamera = "net/minecraft/client/renderer/culling/ICamera";
 		final String CLASS_HETessalator = "com/sinthoras/hydroenergy/client/renderer/HETessalator";
-		final String CLASS_HEInjectionHelper = "com/sinthoras/hydroenergy/hooks/HEInjectionHelper";
+		final String CLASS_HEInjectionHelper = "com/sinthoras/hydroenergy/api/HEGetMaterialUtil";
 
 		final String METHOD_setupFog = isObfuscated ? "func_78468_a" : "setupFog";
 		final String METHOD_setupFog_DESC = "(IF)V";
@@ -272,7 +272,7 @@ public class HETransformer implements IClassTransformer {
 	private static byte[] transformEntity(byte[] basicClass, boolean isObfuscated) {
 		final String CLASS_Block = "net/minecraft/block/Block";
 		final String CLASS_Material = "net/minecraft/block/material/Material";
-		final String CLASS_HEInjectionHelper = "com/sinthoras/hydroenergy/hooks/HEInjectionHelper";
+		final String CLASS_HEInjectionHelper = "com/sinthoras/hydroenergy/api/HEGetMaterialUtil";
 
 		final String METHOD_isInsideOfMaterial = isObfuscated ? "func_70055_a" : "isInsideOfMaterial";
 		final String METHOD_isInsideOfMaterial_DESC = "(L" + CLASS_Material + ";)Z";
