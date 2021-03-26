@@ -1,3 +1,5 @@
+import java.util.concurrent.TimeUnit
+
 buildscript {
     repositories {
         mavenCentral()
@@ -33,6 +35,11 @@ idea {
         downloadJavadoc = true
         downloadSources = true
     }
+}
+
+configurations.all {
+    resolutionStrategy.cacheChangingModulesFor(0, TimeUnit.SECONDS)
+    setTransitive(false)
 }
 
 sourceCompatibility = targetCompatibility = 1.8
@@ -76,7 +83,7 @@ dependencies {
 }
 
 jar {
-    archiveName = archivesBaseName + "-" + version + ".jar"
+    getArchiveFileName().set(archivesBaseName + "-" + project.version + ".jar")
     manifest {
         attributes 'FMLCorePlugin': 'com.sinthoras.hydroenergy.asm.HEPlugin'
         attributes 'FMLCorePluginContainsFMLMod': 'true'
@@ -104,29 +111,32 @@ processResources
 }
 
 task sourcesJar(type: Jar) {
-    from sourceSets.main.allJava
-    from (sourceSets.main.output) {
-        include 'LICENSE.txt'
-    }
+    from (sourceSets.main.allJava)
+    from (file("$projectDir/LICENSE"))
 
-    classifier = 'sources'
+    getArchiveClassifier().set('sources')
 }
 
 task deobfJar(type: Jar) {
-    from sourceSets.main.output
-    classifier = 'deobf'
+    from (sourceSets.main.output)
+
+    getArchiveClassifier().set('dev')
 }
 
 task apiJar(type: Jar) {
-    from(sourceSets.main.allJava) {
-        include 'com/sinthoras/hydroenergy/api/**'
-    }
-    from (sourceSets.main.output) {
-        include 'LICENSE.txt'
+    from (sourceSets.main.allJava) {
         include 'com/sinthoras/hydroenergy/api/**'
     }
 
-    classifier = 'api'
+    from (sourceSets.main.output) {
+        include 'com/sinthoras/hydroenergy/api/**'
+    }
+
+    from (sourceSets.main.resources.srcDirs) {
+        include("LICENSE")
+    }
+
+    getArchiveClassifier().set('api')
 }
 
 artifacts {
