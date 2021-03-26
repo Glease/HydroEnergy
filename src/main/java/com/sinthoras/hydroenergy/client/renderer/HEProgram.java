@@ -50,9 +50,12 @@ public class HEProgram {
     private static final FloatBuffer projection = GLAllocation.createDirectFloatBuffer(16);
     private static final FloatBuffer modelview = GLAllocation.createDirectFloatBuffer(16);
     private static final FloatBuffer modelviewProjection = GLAllocation.createDirectFloatBuffer(16);
-    private static final FloatBuffer fogColor = GLAllocation.createDirectFloatBuffer(16);
     private static final FloatBuffer waterLevels = GLAllocation.createDirectFloatBuffer(HEConfig.maxDams);
     private static final FloatBuffer debugStates = GLAllocation.createDirectFloatBuffer(HEConfig.maxDams);
+
+    private static float fogColorRed = 0;
+    private static float fogColorGreen = 0;
+    private static float fogColorBlue = 0;
 
 
     public static void init() {
@@ -197,9 +200,13 @@ public class HEProgram {
 
         GL20.glUniform1f(fogModeLinearId, GL11.glGetFloat(GL11.GL_FOG_MODE) == GL11.GL_LINEAR ? 1.0f : 0.0f);
 
-        fogColor.clear();
-        GL11.glGetFloat(GL11.GL_FOG_COLOR, fogColor);
-        GL20.glUniform3f(fogColorId, fogColor.get(0), fogColor.get(1), fogColor.get(2));
+        GL20.glUniform3f(fogColorId, fogColorRed, fogColorGreen, fogColorBlue);
+    }
+
+    public static void setFogColor(float red, float green, float blue) {
+        fogColorRed = red;
+        fogColorGreen = green;
+        fogColorBlue = blue;
     }
 
     public static void bindLightLookupTable() {
