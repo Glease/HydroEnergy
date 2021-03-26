@@ -1,6 +1,5 @@
 package com.sinthoras.hydroenergy;
 
-import com.sinthoras.hydroenergy.config.HEConfig;
 import com.sinthoras.hydroenergy.hooks.HEHooksClient;
 import com.sinthoras.hydroenergy.hooks.HEHooksShared;
 import cpw.mods.fml.common.Mod;
