@@ -80,6 +80,7 @@ dependencies {
     compile("com.github.GTNewHorizons:GT5-Unofficial:experimental-SNAPSHOT:dev") {
         setChanging(true)
     }
+    compile files('libs/TecTech-1.7.10-4.10.4-local-b6491dd.jar')
 }
 
 jar {
