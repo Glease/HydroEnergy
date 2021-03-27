@@ -57,9 +57,15 @@ public class HELightManager {
         lightChunk.parseChunk(chunk);
 
         chunks.put(key, lightChunk);
+
         for(int chunkY=0;chunkY<HE.numChunksY;chunkY++) {
             lightChunk.patchSubChunk(chunk, chunkY);
+            if(lightChunk.hasUpdateForSubChunk(HEUtil.chunkYToFlag(chunkY))) {
+                markChunkForRerender(Minecraft.getMinecraft().renderGlobal, chunkX, chunkY, chunkZ);
+            }
         }
+
+
     }
 
     public static void onSetBlock(int blockX, int blockY, int blockZ, Block block, Block oldBlock) {
