@@ -2,7 +2,9 @@ package com.sinthoras.hydroenergy.blocks;
 
 import com.sinthoras.hydroenergy.HE;
 import com.sinthoras.hydroenergy.HEUtil;
+import com.sinthoras.hydroenergy.api.IHEHasCustomMaterialCalculation;
 import com.sinthoras.hydroenergy.client.HEClient;
+import com.sinthoras.hydroenergy.config.HEConfig;
 import com.sinthoras.hydroenergy.server.HEServer;
 
 import cpw.mods.fml.common.FMLCommonHandler;
@@ -17,7 +19,7 @@ import net.minecraftforge.fluids.BlockFluidBase;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 
-public class HEWater extends BlockFluidBase {
+public class HEWater extends BlockFluidBase implements IHEHasCustomMaterialCalculation {
 
 	private int waterId;
 
@@ -95,5 +97,15 @@ public class HEWater extends BlockFluidBase {
 	@Override
 	public String getUnlocalizedName() {
 		return super.getUnlocalizedName() + waterId;
+	}
+
+	public Material getMaterial(int blockY) {
+		return (Math.floor(getWaterLevel() - HEConfig.clippingOffset)) < blockY ? Material.air : Material.water;
+	}
+
+	public Material getMaterial(double blockY) {
+		// This constant is so magic i'm gonna die!
+		// Without this constant there is a gap between rendered water and all under water effects
+		return (getWaterLevel() + 0.120f) < blockY ? Material.air : Material.water;
 	}
 }

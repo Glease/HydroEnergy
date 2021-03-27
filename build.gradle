@@ -142,8 +142,25 @@ task deobfJar(type: Jar) {
     getArchiveClassifier().set('dev')
 }
 
+task apiJar(type: Jar) {
+    from (sourceSets.main.allJava) {
+        include 'com/sinthoras/hydroenergy/api/**'
+    }
+
+    from (sourceSets.main.output) {
+        include 'com/sinthoras/hydroenergy/api/**'
+    }
+
+    from (sourceSets.main.resources.srcDirs) {
+        include("LICENSE")
+    }
+
+    getArchiveClassifier().set('api')
+}
+
 artifacts {
     archives jar
     archives sourcesJar
     archives deobfJar
+    archives apiJar
 }
