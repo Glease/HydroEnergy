@@ -249,12 +249,12 @@ class HELightChunk {
                             if (MSB != null) {
                                 blockId |= MSB.get(blockX, blockY, blockZ) << 8;
                             }
-                            int waterId = getWaterIdFromBlockId(blockId);
-                            if (waterId >= 0) {
+                            Block block = subChunkStorage.getBlockByExtId(blockX, blockY, blockZ);
+                            if (block instanceof HEWater) {
                                 bucketsBlockX[blockX]++;
                                 bucketsBlockZ[blockZ]++;
                                 flags.set((blockX << 8) | (blockY << 4) | blockZ);
-                                waterIds[blockX][blockZ] = waterId;
+                                waterIds[blockX][blockZ] = ((HEWater)block).getWaterId();
                                 this.subChunkHasWaterFlags |= flagChunkY;
                             }
                         }
