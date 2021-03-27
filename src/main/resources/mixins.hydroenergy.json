@@ -1,0 +1,14 @@
+{
+  "required": true,
+  "package": "com.sinthoras.hydroenergy.mixins",
+  "mixins": [
+    "MixinWorld"
+  ],
+  "server": [],
+  "client": [],
+  "compatibilityLevel": "JAVA_8",
+  "minVersion": "0.7.11",
+  "target": "@env(DEFAULT)",
+  "refmap":"mixins.hydroenergy.json",
+  "verbose": true
+}

@@ -74,12 +74,22 @@ repositories {
         name = "gtnh_download_source"
         artifactPattern("http://downloads.gtnewhorizons.com/Mods_for_Jenkins/[module]-[revision].[ext]")
     }
+    maven {
+        name = 'spongepowered-repo'
+        url = 'https://repo.spongepowered.org/maven/'
+    }
 }
 
 dependencies {
     compile("com.github.GTNewHorizons:GT5-Unofficial:experimental-SNAPSHOT:dev") {
         setChanging(true)
     }
+    compile("org.spongepowered:mixin:0.7.11-SNAPSHOT")
+}
+
+ext {
+    mixinSrg = new File(project.buildDir, 'mixins/mixin.hydroenergy.srg')
+    mixinRefMap = new File(project.buildDir, "mixins/mixins.hydroenergy.json")
 }
 
 jar {
@@ -88,7 +98,30 @@ jar {
         attributes 'FMLCorePlugin': 'com.sinthoras.hydroenergy.asm.HEPlugin'
         attributes 'FMLCorePluginContainsFMLMod': 'true'
     }
+    from project.mixinRefMap
 }
+
+reobf {
+    addExtraSrgFile project.mixinSrg
+}
+
+compileJava {
+    options.compilerArgs += [
+            '-Xlint:-processing',
+            "-AoutSrgFile=${project.mixinSrg.canonicalPath}",
+            "-AoutRefMapFile=${project.mixinRefMap.canonicalPath}",
+            "-AreobfSrgFile=${project.file('build/srgs/mcp-srg.srg').canonicalPath}"
+    ]
+}
+
+task copySrgs(type: Copy, dependsOn: 'genSrgs') {
+    from plugins.getPlugin("forge").delayedFile('{SRG_DIR}')
+
+    include '**/*.srg'
+    into 'build/srgs'
+}
+
+compileJava.dependsOn copySrgs
 
 processResources
 {
