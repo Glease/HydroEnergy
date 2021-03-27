@@ -84,7 +84,7 @@ dependencies {
     compile("com.github.GTNewHorizons:GT5-Unofficial:experimental-SNAPSHOT:dev") {
         setChanging(true)
     }
-    compile("org.spongepowered:mixin:0.7.11-SNAPSHOT")
+    compileOnly("org.spongepowered:mixin:0.7.11-SNAPSHOT")
 }
 
 ext {
