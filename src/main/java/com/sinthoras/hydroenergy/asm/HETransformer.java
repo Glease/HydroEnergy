@@ -21,6 +21,7 @@ public class HETransformer implements IClassTransformer {
 		add("net.minecraft.client.renderer.WorldRenderer");
 		add("net.minecraft.world.chunk.Chunk");
 		add("net.minecraft.client.multiplayer.ChunkProviderClient");
+		add("net.minecraft.client.renderer.ActiveRenderInfo");
 	}};
 
 	@Override
@@ -44,6 +45,8 @@ public class HETransformer implements IClassTransformer {
 				return transformChunk(basicClass, isObfuscated);
 			case 5:
 				return transformChunkProviderClient(basicClass, isObfuscated);
+			case 6:
+				return transformActiveRenderInfo(basicClass, isObfuscated);
 			default:
 				return basicClass;
 		}
@@ -57,38 +60,51 @@ public class HETransformer implements IClassTransformer {
 		final String CLASS_HELightSMPHooks = "com/sinthoras/hydroenergy/client/light/HELightSMPHooks";
 		final String CLASS_Chunk = "net/minecraft/world/chunk/Chunk";
 		final String CLASS_World = "net/minecraft/world/World";
-		final String CLASS_HEInjectionHelper = "com/sinthoras/hydroenergy/api/HEGetMaterialUtil";
+		final String CLASS_HEHooksUtil = "com/sinthoras/hydroenergy/hooks/HEHooksUtil";
 
 		final String METHOD_handleMaterialAcceleration = isObfuscated ? "func_72918_a" : "handleMaterialAcceleration";
 		final String METHOD_handleMaterialAcceleration_DESC = "(L" + CLASS_AxisAlignedBB + ";L" + CLASS_Material + ";L" + CLASS_Entity + ";)Z";
-		final String METHOD_getMaterial = isObfuscated ? "func_149688_o" : "getMaterial";
-		final String METHOD_getMaterial_DESC = "()L" + CLASS_Material + ";";
-		final String METHOD_getMaterialWrapper = "getMaterialWrapper";
-		final String METHOD_getMaterialWrapper_DESC = "(L" + CLASS_Block + ";I)L" + CLASS_Material + ";";
-
+		final String METHOD_isAnyLiquid = isObfuscated ? "func_72953_d" : "isAnyLiquid";
+		final String METHOD_isAnyLiquid_DESC = "(L" + CLASS_AxisAlignedBB + ";)Z";
 		final String METHOD_setBlock = isObfuscated ? "func_147465_d" : "setBlock";
 		final String METHOD_setBlock_DESC = "(IIIL" + CLASS_Block + ";II)Z";
+
+		final String METHOD_getBlock = isObfuscated ? "func_147439_a" : "getBlock";
+		final String METHOD_getBlock_DESC = "(III)L" + CLASS_Block + ";";
 		final String METHOD_func_150807_a = "func_150807_a";
 		final String METHOD_func_150807_a_DESC = "(IIIL" + CLASS_Block + ";I)Z";
 		final String METHOD_onSetBlock = "onSetBlock";
 		final String METHOD_onSetBlock_DESC = "(L" + CLASS_World + ";IIIL" + CLASS_Block + ";L" + CLASS_Block + ";)V";
-
-		final String METHOD_isAnyLiquid = isObfuscated ? "func_72953_d" : "isAnyLiquid";
-		final String METHOD_isAnyLiquid_DESC = "(L" + CLASS_AxisAlignedBB + ";)Z";
+		final String METHOD_getBlockForWorldAndEntity = "getBlockForWorldAndEntity";
+		final String METHOD_getBlockForWorldAndEntity_DESC = "(L" + CLASS_Block + ";I)L" + CLASS_Block + ";";
 
 		InsnList instructionToInsert = new InsnList();
 		instructionToInsert.add(new VarInsnNode(ILOAD, 13));
 		instructionToInsert.add(new MethodInsnNode(INVOKESTATIC,
-				CLASS_HEInjectionHelper,
-				METHOD_getMaterialWrapper,
-				METHOD_getMaterialWrapper_DESC,
+				CLASS_HEHooksUtil,
+				METHOD_getBlockForWorldAndEntity,
+				METHOD_getBlockForWorldAndEntity_DESC,
 				false));
 
-		basicClass = injectReplaceInvokeVirtual(METHOD_handleMaterialAcceleration, METHOD_handleMaterialAcceleration_DESC,
-				CLASS_Block, METHOD_getMaterial, METHOD_getMaterial_DESC, instructionToInsert, basicClass);
+		basicClass = injectAfterInvokeVirtual(METHOD_handleMaterialAcceleration, METHOD_handleMaterialAcceleration_DESC,
+				CLASS_World, METHOD_getBlock, METHOD_getBlock_DESC, instructionToInsert, basicClass, 0);
 
 		HEPlugin.info("Injected net/minecraft/world/World.handleMaterialAcceleration");
 
+
+		instructionToInsert = new InsnList();
+		instructionToInsert.add(new VarInsnNode(ILOAD, 9));
+		instructionToInsert.add(new MethodInsnNode(INVOKESTATIC,
+				CLASS_HEHooksUtil,
+				METHOD_getBlockForWorldAndEntity,
+				METHOD_getBlockForWorldAndEntity_DESC,
+				false));
+
+		basicClass = injectAfterInvokeVirtual(METHOD_isAnyLiquid, METHOD_isAnyLiquid_DESC,
+				CLASS_World, METHOD_getBlock, METHOD_getBlock_DESC, instructionToInsert, basicClass, 0);
+
+
+		HEPlugin.info("Injected net/minecraft/world/World.isAnyLiquid");
 
 		instructionToInsert = new InsnList();
 		instructionToInsert.add(new VarInsnNode(ALOAD, 0));
@@ -108,52 +124,49 @@ public class HETransformer implements IClassTransformer {
 
 		HEPlugin.info("Injected net/minecraft/world/World.setBlock");
 
+		return basicClass;
+	}
 
-		instructionToInsert = new InsnList();
-		instructionToInsert.add(new VarInsnNode(ILOAD, 9));
+	private static byte[] transformActiveRenderInfo(byte[] basicClass, boolean isObfuscated) {
+		final String CLASS_Block = "net/minecraft/block/Block";
+		final String CLASS_World = "net/minecraft/world/World";
+		final String CLASS_EntityLivingBase = "net/minecraft/entity/EntityLivingBase";
+		final String CLASS_Vec3 = "net/minecraft/util/Vec3";
+		final String CLASS_HEHooksUtil = "com/sinthoras/hydroenergy/hooks/HEHooksUtil";
+
+		final String METHOD_getBlockAtEntityViewpoint = isObfuscated ? "" : "getBlockAtEntityViewpoint";
+		final String METHOD_getBlockAtEntityViewpoint_DESC = "(L" + CLASS_World + ";L" + CLASS_EntityLivingBase + ";F)L" + CLASS_Block + ";";
+
+		final String METHOD_getBlock = isObfuscated ? "func_147439_a" : "getBlock";
+		final String METHOD_getBlock_DESC = "(III)L" + CLASS_Block + ";";
+
+		final String METHOD_getBlockForActiveRenderInfo = "getBlockForActiveRenderInfo";
+		final String METHOD_getBlockForActiveRenderInfo_DESC = "(L" + CLASS_Block + ";L" + CLASS_Vec3 + ";)L" + CLASS_Block + ";";
+
+		InsnList instructionToInsert = new InsnList();
+		instructionToInsert.add(new VarInsnNode(ALOAD, 3));
 		instructionToInsert.add(new MethodInsnNode(INVOKESTATIC,
-				CLASS_HEInjectionHelper,
-				METHOD_getMaterialWrapper,
-				METHOD_getMaterialWrapper_DESC,
+				CLASS_HEHooksUtil,
+				METHOD_getBlockForActiveRenderInfo,
+				METHOD_getBlockForActiveRenderInfo_DESC,
 				false));
 
-		basicClass = injectReplaceInvokeVirtual(METHOD_isAnyLiquid, METHOD_isAnyLiquid_DESC,
-				CLASS_Block, METHOD_getMaterial, METHOD_getMaterial_DESC, instructionToInsert, basicClass);
+		basicClass = injectAfterInvokeVirtual(METHOD_getBlockAtEntityViewpoint, METHOD_getBlockAtEntityViewpoint_DESC,
+				CLASS_World, METHOD_getBlock, METHOD_getBlock_DESC, instructionToInsert, basicClass, 0);
 
-		HEPlugin.info("Injected net/minecraft/world/World.isAnyLiquid");
+		HEPlugin.info("Injected net/minecraft/client/renderer/ActiveRenderInfo.getBlockAtEntityViewpoint");
 
 		return basicClass;
 	}
 
 	private static byte[] transformEntityRenderer(byte[] basicClass, boolean isObfuscated) {
-		final String CLASS_Block = "net/minecraft/block/Block";
-		final String CLASS_Material = "net/minecraft/block/material/Material";
 		final String CLASS_EntityLivingBase = "net/minecraft/entity/EntityLivingBase";
 		final String CLASS_RenderGlobal = "net/minecraft/client/renderer/RenderGlobal";
 		final String CLASS_ICamera = "net/minecraft/client/renderer/culling/ICamera";
 		final String CLASS_HETessalator = "com/sinthoras/hydroenergy/client/renderer/HETessalator";
-		final String CLASS_HEInjectionHelper = "com/sinthoras/hydroenergy/api/HEGetMaterialUtil";
 
-		final String METHOD_setupFog = isObfuscated ? "func_78468_a" : "setupFog";
-		final String METHOD_setupFog_DESC = "(IF)V";
-		final String METHOD_updateFogColor = isObfuscated ? "func_78466_h" : "updateFogColor";
-		final String METHOD_updateFogColor_DESC = "(F)V";
-		final String METHOD_getFOVModifier = isObfuscated ? "func_78481_a" : "getFOVModifier";
-		final String METHOD_getFOVModifier_DESC = "(FZ)F";
 		final String METHOD_renderWorld = isObfuscated ? "func_78471_a" : "renderWorld";
 		final String METHOD_renderWorld_DESC = "(FJ)V";
-
-		final String METHOD_getMaterialWrapper = "getMaterialWrapper";
-		final String METHOD_getMaterialWrapper_DESC = "(L" + CLASS_Block + ";D)L" + CLASS_Material + ";";
-
-		final String METHOD_getMaterial = isObfuscated ? "func_149688_o" : "getMaterial";
-		final String METHOD_getMaterial_DESC = "()L" + CLASS_Material + ";";
-
-		final String METHOD_getEyeHeight = isObfuscated ? "func_70047_e" : "getEyeHeight";
-		final String METHOD_getEyeHeight_DESC = "()F";
-
-		final String FIELD_prevPosY = isObfuscated ? "field_70167_r" : "prevPosY";
-		final String FIELD_prevPosY_DESC = "D";
 
 		final String METHOD_renderEntities = isObfuscated ? "func_147589_a" : "renderEntities";
 		final String METHOD_renderEntities_DESC = "(L" + CLASS_EntityLivingBase + ";L" + CLASS_ICamera + ";F)V";
@@ -161,85 +174,8 @@ public class HETransformer implements IClassTransformer {
 		final String METHOD_render = "render";
 		final String METHOD_render_DESC = "(L" + CLASS_ICamera + ";)V";
 
+
 		InsnList instructionToInsert = new InsnList();
-		instructionToInsert.add(new VarInsnNode(ALOAD, 3));
-		instructionToInsert.add(new MethodInsnNode(INVOKEVIRTUAL,
-				CLASS_EntityLivingBase,
-				METHOD_getEyeHeight,
-				METHOD_getEyeHeight_DESC,
-				false));
-		instructionToInsert.add(new InsnNode(F2D));
-		instructionToInsert.add(new VarInsnNode(ALOAD, 3));
-		instructionToInsert.add(new FieldInsnNode(GETFIELD,
-						CLASS_EntityLivingBase,
-						FIELD_prevPosY,
-						FIELD_prevPosY_DESC));
-		instructionToInsert.add(new InsnNode(DADD));
-		instructionToInsert.add(new MethodInsnNode(INVOKESTATIC,
-				CLASS_HEInjectionHelper,
-				METHOD_getMaterialWrapper,
-				METHOD_getMaterialWrapper_DESC,
-				false));
-
-		basicClass = injectReplaceInvokeVirtual(METHOD_setupFog, METHOD_setupFog_DESC,
-				CLASS_Block, METHOD_getMaterial, METHOD_getMaterial_DESC, instructionToInsert, basicClass);
-
-		HEPlugin.info("Injected net/minecraft/client/renderer/EntityRenderer.setupFog");
-
-
-		instructionToInsert = new InsnList();
-		instructionToInsert.add(new VarInsnNode(ALOAD, 3));
-		instructionToInsert.add(new MethodInsnNode(INVOKEVIRTUAL,
-				CLASS_EntityLivingBase,
-				METHOD_getEyeHeight,
-				METHOD_getEyeHeight_DESC,
-				false));
-		instructionToInsert.add(new InsnNode(F2D));
-		instructionToInsert.add(new VarInsnNode(ALOAD, 3));
-		instructionToInsert.add(new FieldInsnNode(GETFIELD,
-				CLASS_EntityLivingBase,
-				FIELD_prevPosY,
-				FIELD_prevPosY_DESC));
-		instructionToInsert.add(new InsnNode(DADD));
-		instructionToInsert.add(new MethodInsnNode(INVOKESTATIC,
-				CLASS_HEInjectionHelper,
-				METHOD_getMaterialWrapper,
-				METHOD_getMaterialWrapper_DESC,
-				false));
-
-		basicClass = injectReplaceInvokeVirtual(METHOD_updateFogColor, METHOD_updateFogColor_DESC,
-				CLASS_Block, METHOD_getMaterial, METHOD_getMaterial_DESC, instructionToInsert, basicClass);
-
-		HEPlugin.info("Injected net/minecraft/client/renderer/EntityRenderer.updateFogColor");
-
-
-		instructionToInsert = new InsnList();
-		instructionToInsert.add(new VarInsnNode(ALOAD, 3));
-		instructionToInsert.add(new MethodInsnNode(INVOKEVIRTUAL,
-				CLASS_EntityLivingBase,
-				METHOD_getEyeHeight,
-				METHOD_getEyeHeight_DESC,
-				false));
-		instructionToInsert.add(new InsnNode(F2D));
-		instructionToInsert.add(new VarInsnNode(ALOAD, 3));
-		instructionToInsert.add(new FieldInsnNode(GETFIELD,
-				CLASS_EntityLivingBase,
-				FIELD_prevPosY,
-				FIELD_prevPosY_DESC));
-		instructionToInsert.add(new InsnNode(DADD));
-		instructionToInsert.add(new MethodInsnNode(INVOKESTATIC,
-				CLASS_HEInjectionHelper,
-				METHOD_getMaterialWrapper,
-				METHOD_getMaterialWrapper_DESC,
-				false));
-
-		basicClass = injectReplaceInvokeVirtual(METHOD_getFOVModifier, METHOD_getFOVModifier_DESC,
-				CLASS_Block, METHOD_getMaterial, METHOD_getMaterial_DESC, instructionToInsert, basicClass);
-
-		HEPlugin.info("Injected net/minecraft/client/renderer/EntityRenderer.getFOVModifier");
-
-
-		instructionToInsert = new InsnList();
 		instructionToInsert.add(new VarInsnNode(ALOAD, 14));
 		instructionToInsert.add(new MethodInsnNode(INVOKESTATIC,
 				CLASS_HETessalator,
@@ -272,25 +208,27 @@ public class HETransformer implements IClassTransformer {
 	private static byte[] transformEntity(byte[] basicClass, boolean isObfuscated) {
 		final String CLASS_Block = "net/minecraft/block/Block";
 		final String CLASS_Material = "net/minecraft/block/material/Material";
-		final String CLASS_HEInjectionHelper = "com/sinthoras/hydroenergy/api/HEGetMaterialUtil";
+		final String CLASS_HEHooksUtil = "com/sinthoras/hydroenergy/hooks/HEHooksUtil";
+		final String CLASS_World = "net/minecraft/world/World";
 
 		final String METHOD_isInsideOfMaterial = isObfuscated ? "func_70055_a" : "isInsideOfMaterial";
 		final String METHOD_isInsideOfMaterial_DESC = "(L" + CLASS_Material + ";)Z";
-		final String METHOD_getMaterial = isObfuscated ? "func_149688_o" : "getMaterial";
-		final String METHOD_getMaterial_DESC = "()L" + CLASS_Material + ";";
-		final String METHOD_getMaterialWrapper = "getMaterialWrapper";
-		final String METHOD_getMaterialWrapper_DESC = "(L" + CLASS_Block + ";D)L" + CLASS_Material + ";";
+
+		final String METHOD_getBlock = isObfuscated ? "func_147439_a" : "getBlock";
+		final String METHOD_getBlock_DESC = "(III)L" + CLASS_Block + ";";
+		final String METHOD_getBlockForWorldAndEntity = "getBlockForWorldAndEntity";
+		final String METHOD_getBlockForWorldAndEntity_DESC = "(L" + CLASS_Block + ";I)L" + CLASS_Block + ";";
 
 		InsnList instructionToInsert = new InsnList();
-		instructionToInsert.add(new VarInsnNode(DLOAD, 2));
+		instructionToInsert.add(new VarInsnNode(ILOAD, 5));
 		instructionToInsert.add(new MethodInsnNode(INVOKESTATIC,
-				CLASS_HEInjectionHelper,
-				METHOD_getMaterialWrapper,
-				METHOD_getMaterialWrapper_DESC,
+				CLASS_HEHooksUtil,
+				METHOD_getBlockForWorldAndEntity,
+				METHOD_getBlockForWorldAndEntity_DESC,
 				false));
 
-		basicClass = injectReplaceInvokeVirtual(METHOD_isInsideOfMaterial, METHOD_isInsideOfMaterial_DESC,
-				CLASS_Block, METHOD_getMaterial, METHOD_getMaterial_DESC, instructionToInsert, basicClass);
+		basicClass = injectAfterInvokeVirtual(METHOD_isInsideOfMaterial, METHOD_isInsideOfMaterial_DESC,
+				CLASS_World, METHOD_getBlock, METHOD_getBlock_DESC, instructionToInsert, basicClass, 0);
 
 		HEPlugin.info("Injected net/minecraft/entity/Entity.isInsideOfMaterial");
 
@@ -524,35 +462,6 @@ public class HETransformer implements IClassTransformer {
 						else {
 							skip--;
 						}
-					}
-				}
-			}
-		}
-
-		// Transform back into pure machine code
-		ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);
-		classNode.accept(classWriter);
-		return classWriter.toByteArray();
-	}
-
-	private static byte[] injectReplaceInvokeVirtual(String METHOD_target, String METHOD_target_DESC,
-												   String CLASS_marker, String METHOD_marker, String METHOD_marker_DESC,
-												   InsnList instructionToInsert, byte[] basicClass) {
-		// Transform to human readable byte code
-		ClassNode classNode = new ClassNode();
-		ClassReader classReader = new ClassReader(basicClass);
-		classReader.accept(classNode, 0);
-
-		for (MethodNode method : classNode.methods) {
-			if (method.name.equals(METHOD_target) && method.desc.equals(METHOD_target_DESC)) {
-				for (AbstractInsnNode instruction : method.instructions.toArray()) {
-					if (instruction.getOpcode() == INVOKEVIRTUAL
-							&& ((MethodInsnNode) instruction).owner.equals(CLASS_marker)
-							&& ((MethodInsnNode) instruction).name.equals(METHOD_marker)
-							&& ((MethodInsnNode) instruction).desc.equals(METHOD_marker_DESC)) {
-						AbstractInsnNode insertAfter = instruction.getPrevious();
-						method.instructions.remove(instruction);
-						method.instructions.insert(insertAfter, instructionToInsert);
 					}
 				}
 			}

@@ -74,12 +74,31 @@ repositories {
         name = "gtnh_download_source"
         artifactPattern("http://downloads.gtnewhorizons.com/Mods_for_Jenkins/[module]-[revision].[ext]")
     }
+    maven {
+        name = "gt"
+        url = "https://gregtech.overminddl1.com/"
+    }
 }
 
 dependencies {
     compile("com.github.GTNewHorizons:GT5-Unofficial:experimental-SNAPSHOT:dev") {
         setChanging(true)
     }
+
+    runtime("net.industrial-craft:industrialcraft-2:${ic2Version}:dev")
+    //runtime(":Railcraft:1.7.10-9.12.2.0:dev")
+    //runtime("li.cil.oc:OpenComputers:MC1.7.10-1.5.+:api")
+    runtime("com.github.GTNewHorizons:Applied-Energistics-2-Unofficial:rv3-1.7.10-SNAPSHOT:dev") {
+        exclude module: "*"
+    }
+    runtime("applecore:AppleCore:${applecoreVersion}:api")
+    runtime("com.enderio.core:EnderCore:${enderCoreVersion}:dev")
+    runtime("com.enderio:EnderIO:${enderioVersion}:dev") {
+        exclude group: "mcp.mobius.waila"
+    }
+    runtime("codechicken:CodeChickenLib:${minecraftVersion}-${codechickenlibVersion}:dev")
+    runtime("codechicken:CodeChickenCore:${minecraftVersion}-${codechickencoreVersion}:dev")
+    runtime("codechicken:NotEnoughItems:${minecraftVersion}-${neiVersion}:dev")
 }
 
 jar {
@@ -123,25 +142,8 @@ task deobfJar(type: Jar) {
     getArchiveClassifier().set('dev')
 }
 
-task apiJar(type: Jar) {
-    from (sourceSets.main.allJava) {
-        include 'com/sinthoras/hydroenergy/api/**'
-    }
-
-    from (sourceSets.main.output) {
-        include 'com/sinthoras/hydroenergy/api/**'
-    }
-
-    from (sourceSets.main.resources.srcDirs) {
-        include("LICENSE")
-    }
-
-    getArchiveClassifier().set('api')
-}
-
 artifacts {
     archives jar
     archives sourcesJar
     archives deobfJar
-    archives apiJar
 }
