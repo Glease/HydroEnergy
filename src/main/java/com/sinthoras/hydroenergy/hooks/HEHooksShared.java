@@ -1,15 +1,13 @@
 package com.sinthoras.hydroenergy.hooks;
 
 import com.sinthoras.hydroenergy.HE;
+import com.sinthoras.hydroenergy.blocks.*;
 import com.sinthoras.hydroenergy.config.HEConfig;
 import com.sinthoras.hydroenergy.network.packet.*;
 import com.sinthoras.hydroenergy.server.commands.HECommandDebug;
 import com.sinthoras.hydroenergy.server.commands.HECommandListControllers;
 import com.sinthoras.hydroenergy.server.commands.HECommandSetWater;
-import com.sinthoras.hydroenergy.blocks.HEControllerBlock;
-import com.sinthoras.hydroenergy.blocks.HEControllerTileEntity;
 import com.sinthoras.hydroenergy.server.HEServer;
-import com.sinthoras.hydroenergy.blocks.HEWaterStill;
 
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
@@ -57,6 +55,10 @@ public class HEHooksShared {
 	public void fmlLifeCycleEvent(FMLInitializationEvent event) {
 		FMLCommonHandler.instance().bus().register(new HEHooksFML());
 		MinecraftForge.EVENT_BUS.register(new HEHooksEVENT_BUS());
+
+		// TODO: move ID to config
+		new HEHydroDamTileEntity(17000, "Test", "test");
+		new HEHydroPowerUnitTileEntity(17001, "Hydro Energy Unit", "test2");
 	}
 	
 	// postInit "Handle interaction with other mods, complete your setup based on this."

@@ -39,7 +39,6 @@ idea {
 
 configurations.all {
     resolutionStrategy.cacheChangingModulesFor(0, TimeUnit.SECONDS)
-    setTransitive(false)
 }
 
 sourceCompatibility = targetCompatibility = 1.8
@@ -74,6 +73,10 @@ repositories {
         name = "gtnh_download_source"
         artifactPattern("http://downloads.gtnewhorizons.com/Mods_for_Jenkins/[module]-[revision].[ext]")
     }
+    maven {
+        name = "UsrvDE/GTNH"
+        url = "http://jenkins.usrv.eu:8081/nexus/content/repositories/releases/"
+    }
 }
 
 dependencies {
@@ -81,6 +84,7 @@ dependencies {
         setChanging(true)
     }
     compile files('libs/TecTech-1.7.10-4.10.4-local-b6491dd.jar')
+    runtime("eu.usrv:YAMCore:${minecraftVersion}-${yamcoreVersion}:deobf");
 }
 
 jar {
