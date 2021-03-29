@@ -4,7 +4,9 @@ import com.sinthoras.hydroenergy.blocks.HEControllerBlock;
 import com.sinthoras.hydroenergy.blocks.HEWaterStill;
 import com.sinthoras.hydroenergy.client.gui.HEGuiHandler;
 import com.sinthoras.hydroenergy.config.HEConfig;
+import com.sinthoras.hydroenergy.fluids.HEPressurizedWater;
 import cpw.mods.fml.common.network.IGuiHandler;
+import net.minecraftforge.fluids.Fluid;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -33,6 +35,7 @@ public class HE {
             "Please make sure your config \"maxControllers\" is at least as big as the server you are connecting to!";
 
     public static HEControllerBlock controller;
+    public static Fluid pressurizedWater = new HEPressurizedWater();;
 	public static final HEWaterStill[] waterBlocks = new HEWaterStill[HEConfig.maxDams];
 	public static final int[] waterBlockIds = new int[HEConfig.maxDams];
 	

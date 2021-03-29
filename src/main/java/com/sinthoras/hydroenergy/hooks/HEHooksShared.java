@@ -23,6 +23,7 @@ import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import net.minecraft.block.Block;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fluids.FluidRegistry;
 
 public class HEHooksShared {
 	
@@ -49,6 +50,8 @@ public class HEHooksShared {
     	HE.controller = new HEControllerBlock();
 		GameRegistry.registerBlock(HE.controller, HE.controller.getUnlocalizedName());
 		GameRegistry.registerTileEntity(HEControllerTileEntity.class, "he_controller_tile_entity");
+
+		FluidRegistry.registerFluid(HE.pressurizedWater);
 	}
 	
 	// load "Do your mod setup. Build whatever data structures you care about. Register recipes."
