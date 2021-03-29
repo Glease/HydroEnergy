@@ -60,6 +60,7 @@ public class HEHooksShared {
 		MinecraftForge.EVENT_BUS.register(new HEHooksEVENT_BUS());
 
 		new HEHydroDamTileEntity(HEConfig.blockIdOffset, "he_dam", "Hydro Dam");
+		new HEHydroPumpTileEntity(HEConfig.blockIdOffset + 1, "he_pump", "Hydro Pump");
 	}
 	
 	// postInit "Handle interaction with other mods, complete your setup based on this."

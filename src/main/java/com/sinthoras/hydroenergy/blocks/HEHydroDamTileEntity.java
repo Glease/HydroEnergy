@@ -32,9 +32,9 @@ public class HEHydroDamTileEntity extends GT_MetaTileEntity_MultiblockBase_EM im
     TODO:
         - Sync GUI elements
         - Clean up empty fluid stacks on input
-        - Fix block texture
         - Add GUI for spreading limits (Screwdriver)
         - If structure broken again -> GUI and stop processing   AKA how can i reuse the check from TecTech?
+        - Get tick method to be called
      */
 
     private static class Tags {
@@ -43,6 +43,7 @@ public class HEHydroDamTileEntity extends GT_MetaTileEntity_MultiblockBase_EM im
         public static final String waterCapacity = "wCap";
     }
 
+    private static Textures.BlockIcons.CustomIcon Screen;
     private final static int steelTextureIndex = 16;
     private final static int solidSteelCasingMeta = 0;
     private int waterId = -1;
@@ -89,17 +90,17 @@ public class HEHydroDamTileEntity extends GT_MetaTileEntity_MultiblockBase_EM im
         mCrowbar = true;
     }
 
-    public HEHydroDamTileEntity(int aID, String aName, String aNameRegional) {
-        super(aID, aName, aNameRegional);
+    public HEHydroDamTileEntity(int id, String name, String nameRegional) {
+        super(id, name, nameRegional);
     }
 
     @Override
-    public IMetaTileEntity newMetaEntity(IGregTechTileEntity aTileEntity) {
+    public IMetaTileEntity newMetaEntity(IGregTechTileEntity tileEntity) {
         return new HEHydroDamTileEntity(mName);
     }
 
     @Override
-    protected boolean checkMachine_EM(IGregTechTileEntity iGregTechTileEntity, ItemStack itemStack) {
+    protected boolean checkMachine_EM(IGregTechTileEntity gregTechTileEntity, ItemStack itemStack) {
         return structureCheck_EM("main", 2, 3, 0);
     }
 
@@ -109,22 +110,17 @@ public class HEHydroDamTileEntity extends GT_MetaTileEntity_MultiblockBase_EM im
     }
 
     @Override
-    public String[] getStructureDescription(ItemStack itemStack) {
-        return new String[] {"TEST"};
-    }
-
-    @Override
     public IStructureDefinition<HEHydroDamTileEntity> getStructure_EM() {
         return multiblockDefinition;
     }
 
     @Override
-    public boolean checkRecipe_EM(ItemStack aStack) {
+    public boolean checkRecipe_EM(ItemStack stack) {
         return true;
     }
 
     @Override
-    public boolean onRunningTick(ItemStack aStack) {
+    public boolean onRunningTick(ItemStack stack) {
         waterCapacity = HEServer.instance.getWaterCapacity(waterId);
         waterStored = Math.min(waterStored, waterCapacity);
 
@@ -141,7 +137,7 @@ public class HEHydroDamTileEntity extends GT_MetaTileEntity_MultiblockBase_EM im
             }
         });
 
-        int mBPerTickOut = (int)Math.min(HEConfig.damDrainPerSecond, waterStored);
+        int mBPerTickOut = (int)Math.min(HEConfig.damDrainPerSecond, waterStored) * getCurrentEfficiency(null);
         if(mBPerTickOut > 0) {
             if(HEReflection.invokeDumpFluid(this, new FluidStack(HE.pressurizedWater, mBPerTickOut))) {
                 waterStored -= mBPerTickOut;
@@ -156,25 +152,30 @@ public class HEHydroDamTileEntity extends GT_MetaTileEntity_MultiblockBase_EM im
     }
 
     @Override
-    public Object getServerGUI(int aID, InventoryPlayer aPlayerInventory, IGregTechTileEntity aBaseMetaTileEntity) {
-        return new HEHydroDamContainer(aPlayerInventory, aBaseMetaTileEntity);
+    public Object getServerGUI(int id, InventoryPlayer playerInventory, IGregTechTileEntity baseMetaTileEntity) {
+        return new HEHydroDamContainer(playerInventory, baseMetaTileEntity);
     }
 
     @Override
-    public Object getClientGUI(int aID, InventoryPlayer aPlayerInventory, IGregTechTileEntity aBaseMetaTileEntity) {
-        return new HEHydroDamGuiContainer(aPlayerInventory, aBaseMetaTileEntity, getLocalName(), "EMDisplay.png");
+    public Object getClientGUI(int id, InventoryPlayer playerInventory, IGregTechTileEntity baseMetaTileEntity) {
+        return new HEHydroDamGuiContainer(playerInventory, baseMetaTileEntity, getLocalName(), "EMDisplay.png");
     }
 
     @SideOnly(Side.CLIENT)
-    public void registerIcons(IIconRegister aBlockIconRegister) {
-        // TODO: Register custom icon (HE.MODID + ":" + HE.damTextureName). How to translate to TecTech?
-        ScreenOFF = new Textures.BlockIcons.CustomIcon("iconsets/he_dam");
-        ScreenON = ScreenOFF;
+    public void registerIcons(IIconRegister blockIconRegister) {
+        Screen = new Textures.BlockIcons.CustomIcon("iconsets/he_dam");
+        super.registerIcons(blockIconRegister);
     }
 
     @Override
-    public ITexture[] getTexture(IGregTechTileEntity aBaseMetaTileEntity, byte aSide, byte aFacing, byte aColorIndex, boolean aActive, boolean aRedstone) {
-        return aSide == aFacing ? new ITexture[]{Textures.BlockIcons.casingTexturePages[1][solidSteelCasingMeta], new TT_RenderedExtendedFacingTexture(ScreenOFF)} : new ITexture[]{Textures.BlockIcons.casingTexturePages[1][solidSteelCasingMeta]};
+    public ITexture[] getTexture(IGregTechTileEntity baseMetaTileEntity, byte side, byte facing, byte colorIndex, boolean isActive, boolean hasRedstoneSignal) {
+        if(side == facing) {
+            return new ITexture[]{Textures.BlockIcons.getCasingTextureForId(steelTextureIndex),
+                    new TT_RenderedExtendedFacingTexture(Screen)};
+        }
+        else {
+            return new ITexture[]{Textures.BlockIcons.getCasingTextureForId(steelTextureIndex)};
+        }
     }
 
     @Override
@@ -184,12 +185,12 @@ public class HEHydroDamTileEntity extends GT_MetaTileEntity_MultiblockBase_EM im
     }
 
     @Override
-    public void onFirstTick_EM(IGregTechTileEntity aBaseMetaTileEntity) {
+    public void onFirstTick_EM(IGregTechTileEntity baseMetaTileEntity) {
         if(waterId == -1) {
             waterId = HEServer.instance.onPlacecontroller(getBaseMetaTileEntity().getXCoord(), getBaseMetaTileEntity().getYCoord(), getBaseMetaTileEntity().getZCoord());
             markDirty();
         }
-        super.onFirstTick_EM(aBaseMetaTileEntity);
+        super.onFirstTick_EM(baseMetaTileEntity);
     }
 
     @Override
@@ -208,7 +209,7 @@ public class HEHydroDamTileEntity extends GT_MetaTileEntity_MultiblockBase_EM im
         waterCapacity = compound.getLong(Tags.waterCapacity);
     }
 
-    private final static String[] desc = new String[] {
+    private final static String[] mouseOverDescription = new String[] {
             "Hydro Dam Controller",
             "Controller Block for the Hydro Dam",
             "Input is pressurized water from Hydro Pumps",
@@ -218,6 +219,18 @@ public class HEHydroDamTileEntity extends GT_MetaTileEntity_MultiblockBase_EM im
     };
 
     public String[] getDescription() {
-        return desc;
+        return mouseOverDescription;
+    }
+
+    private static final String[] chatDescription = new String[] {
+            "1 Fluid Intput Hatch",
+            "1 Fluid Output Hatch",
+            "Fill the rest with Solid Steel Casings",
+            "No Maintenance Hatch required!"
+    };
+
+    @Override
+    public String[] getStructureDescription(ItemStack itemStack) {
+        return chatDescription;
     }
 }
