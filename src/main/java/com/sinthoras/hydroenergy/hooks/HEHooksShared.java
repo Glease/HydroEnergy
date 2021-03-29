@@ -59,9 +59,7 @@ public class HEHooksShared {
 		FMLCommonHandler.instance().bus().register(new HEHooksFML());
 		MinecraftForge.EVENT_BUS.register(new HEHooksEVENT_BUS());
 
-		// TODO: move ID to config
-		new HEHydroDamTileEntity(17000, "Test", "test");
-		new HEHydroPowerUnitTileEntity(17001, "Hydro Energy Unit", "test2");
+		new HEHydroDamTileEntity(HEConfig.blockIdOffset, "he_dam", "Hydro Dam");
 	}
 	
 	// postInit "Handle interaction with other mods, complete your setup based on this."

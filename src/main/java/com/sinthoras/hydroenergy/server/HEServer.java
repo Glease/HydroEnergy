@@ -240,4 +240,12 @@ public class HEServer extends WorldSavedData {
 	public long getEnergyCapacity(int waterId) {
 		return dams[waterId].getEnergyCapacity();
 	}
+
+	public long getWaterCapacity(int waterId) {
+		return dams[waterId].getWaterCapacity();
+	}
+
+	public int getRainedOnBlocks(int waterId) {
+		return dams[waterId].getRainedOnBlocks();
+	}
 }

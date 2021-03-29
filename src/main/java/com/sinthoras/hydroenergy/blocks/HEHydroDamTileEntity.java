@@ -4,71 +4,108 @@ import com.github.technus.tectech.mechanics.constructable.IConstructable;
 import com.github.technus.tectech.mechanics.structure.IStructureDefinition;
 import com.github.technus.tectech.mechanics.structure.StructureDefinition;
 import com.github.technus.tectech.thing.metaTileEntity.multi.base.GT_MetaTileEntity_MultiblockBase_EM;
-import com.sinthoras.hydroenergy.client.gui.HEControllerGui;
-import com.sinthoras.hydroenergy.network.container.HEControllerContainer;
+import com.github.technus.tectech.thing.metaTileEntity.multi.base.render.TT_RenderedExtendedFacingTexture;
+import com.sinthoras.hydroenergy.HE;
+import com.sinthoras.hydroenergy.client.gui.HEHydroDamGuiContainer;
+import com.sinthoras.hydroenergy.config.HEConfig;
+import com.sinthoras.hydroenergy.network.container.HEHydroDamContainer;
+import com.sinthoras.hydroenergy.server.HEReflection;
+import com.sinthoras.hydroenergy.server.HEServer;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import gregtech.api.GregTech_API;
+import gregtech.api.enums.Textures;
+import gregtech.api.interfaces.ITexture;
 import gregtech.api.interfaces.metatileentity.IMetaTileEntity;
 import gregtech.api.interfaces.tileentity.IGregTechTileEntity;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.fluids.FluidStack;
 
 import static com.github.technus.tectech.mechanics.structure.StructureUtility.*;
 
 public class HEHydroDamTileEntity extends GT_MetaTileEntity_MultiblockBase_EM implements IConstructable {
 
+    /*
+    TODO:
+        - Sync GUI elements
+        - Clean up empty fluid stacks on input
+        - Fix block texture
+        - Add GUI for spreading limits (Screwdriver)
+        - If structure broken again -> GUI and stop processing   AKA how can i reuse the check from TecTech?
+     */
+
+    private static class Tags {
+        public static final String waterId = "waId";
+        public static final String waterStored = "wSto";
+        public static final String waterCapacity = "wCap";
+    }
+
     private final static int steelTextureIndex = 16;
     private final static int solidSteelCasingMeta = 0;
+    private int waterId = -1;
+    private long waterStored = 0;
+    private long waterCapacity = 0;
 
-    private static final IStructureDefinition<HEHydroDamTileEntity> STRUCTURE_DEFINITION = StructureDefinition
-            .<HEHydroDamTileEntity>builder()
-            .addShape("main",
-                    transpose(new String[][]{
-                            {"HHHHH", "CCCCC", "CCCCC", "CCCCC", "CCCCC"},
-                            {"HHHHH", "C   C", "C   C", "C   C", "C   C"},
-                            {"HHHHH", "C   C", "C   C", "C   C", "C   C"},
-                            {"HH~HH", "C   C", "C   C", "C   C", "C   C"},
-                            {"HHHHH", "CCCCC", "CCCCC", "CCCCC", "CCCCC"}
-                    })
-            ).addElement(
-                    'H',
-                    ofChain(
-                            ofHatchAdder(
-                                    HEHydroDamTileEntity::addClassicToMachineList, steelTextureIndex,
-                                    GregTech_API.sBlockCasings2, solidSteelCasingMeta
-                            ),
-                            ofBlock(
-                                    GregTech_API.sBlockCasings2, solidSteelCasingMeta
-                            )
-                    )
-
-            ).addElement(
-                    'C',
-                    ofBlock(
-                            GregTech_API.sBlockCasings2, solidSteelCasingMeta
-                    )
-            ).build();
+    private static final IStructureDefinition<HEHydroDamTileEntity> multiblockDefinition = StructureDefinition
+        .<HEHydroDamTileEntity>builder()
+        .addShape("main",
+            transpose(new String[][]{
+                {"HHHHH", "CCCCC", "CCCCC", "CCCCC", "CCCCC"},
+                {"HHHHH", "C   C", "C   C", "C   C", "C   C"},
+                {"HHHHH", "C   C", "C   C", "C   C", "C   C"},
+                {"HH~HH", "C   C", "C   C", "C   C", "C   C"},
+                {"HHHHH", "CCCCC", "CCCCC", "CCCCC", "CCCCC"}
+            })
+        ).addElement(
+            'H',
+            ofChain(
+                ofHatchAdder(
+                    HEHydroDamTileEntity::addClassicToMachineList, steelTextureIndex,
+                    GregTech_API.sBlockCasings2, solidSteelCasingMeta
+                ),
+                ofBlock(
+                    GregTech_API.sBlockCasings2, solidSteelCasingMeta
+                )
+            )
+        ).addElement(
+            'C',
+            ofBlock(
+                GregTech_API.sBlockCasings2, solidSteelCasingMeta
+            )
+        ).build();
 
     public HEHydroDamTileEntity(String name) {
-            super(name);
-        }
+        super(name);
+
+        // Disable maintenance requirements at block placement
+        mWrench = true;
+        mScrewdriver = true;
+        mSoftHammer = true;
+        mHardHammer = true;
+        mSolderingTool = true;
+        mCrowbar = true;
+    }
 
     public HEHydroDamTileEntity(int aID, String aName, String aNameRegional) {
-            super(aID, aName, aNameRegional);
-        }
-
-        @Override
-        public IMetaTileEntity newMetaEntity(IGregTechTileEntity aTileEntity) {
-            return new HEHydroDamTileEntity(mName);
-        }
-
-        @Override
-        protected boolean checkMachine_EM(IGregTechTileEntity iGregTechTileEntity, ItemStack itemStack) {
-            return this.structureCheck_EM("main", 2, 3, 0);
+        super(aID, aName, aNameRegional);
     }
 
     @Override
-    public void construct(ItemStack itemStack, boolean b) {
-        this.structureBuild_EM("main", 2,3,0, b, itemStack);
+    public IMetaTileEntity newMetaEntity(IGregTechTileEntity aTileEntity) {
+        return new HEHydroDamTileEntity(mName);
+    }
+
+    @Override
+    protected boolean checkMachine_EM(IGregTechTileEntity iGregTechTileEntity, ItemStack itemStack) {
+        return structureCheck_EM("main", 2, 3, 0);
+    }
+
+    @Override
+    public void construct(ItemStack itemStack, boolean hintsOnly) {
+        structureBuild_EM("main", 2,3,0, hintsOnly, itemStack);
     }
 
     @Override
@@ -78,7 +115,7 @@ public class HEHydroDamTileEntity extends GT_MetaTileEntity_MultiblockBase_EM im
 
     @Override
     public IStructureDefinition<HEHydroDamTileEntity> getStructure_EM() {
-        return STRUCTURE_DEFINITION;
+        return multiblockDefinition;
     }
 
     @Override
@@ -88,35 +125,99 @@ public class HEHydroDamTileEntity extends GT_MetaTileEntity_MultiblockBase_EM im
 
     @Override
     public boolean onRunningTick(ItemStack aStack) {
-        // water in out logic
-        // this.getStoredFluids
-        // addOutput
+        waterCapacity = HEServer.instance.getWaterCapacity(waterId);
+        waterStored = Math.min(waterStored, waterCapacity);
+
+        int waterLevelOverController = (int) (HEServer.instance.getWaterLevel(waterId) - getBaseMetaTileEntity().getYCoord());
+        getStoredFluids().stream().forEach(fluidStack -> {
+            if(fluidStack.getFluidID() == HE.pressurizedWater.getID()
+                    && HE.pressurizedWater.getPressure(fluidStack) >= waterLevelOverController) {
+                long canStore = Math.min(waterCapacity - waterStored, fluidStack.amount);
+                fluidStack.amount -= canStore;
+                waterStored += canStore;
+                if(fluidStack.amount == 0) {
+                    // TODO: delete fluid stack from hatch? Or is this done automatically?
+                }
+            }
+        });
+
+        int mBPerTickOut = (int)Math.min(HEConfig.damDrainPerSecond, waterStored);
+        if(mBPerTickOut > 0) {
+            if(HEReflection.invokeDumpFluid(this, new FluidStack(HE.pressurizedWater, mBPerTickOut))) {
+                waterStored -= mBPerTickOut;
+            }
+        }
+
+        if(getBaseMetaTileEntity().getWorld().isRaining()) {
+            waterStored += (long)(HEServer.instance.getRainedOnBlocks(waterId) * HEConfig.waterBonusPerSurfaceBlockPerRainTick);
+            waterStored = Math.min(waterStored, waterCapacity);
+        }
         return true;
     }
 
     @Override
     public Object getServerGUI(int aID, InventoryPlayer aPlayerInventory, IGregTechTileEntity aBaseMetaTileEntity) {
-        return new HEControllerContainer(null);
+        return new HEHydroDamContainer(aPlayerInventory, aBaseMetaTileEntity);
     }
 
     @Override
     public Object getClientGUI(int aID, InventoryPlayer aPlayerInventory, IGregTechTileEntity aBaseMetaTileEntity) {
-        return new HEControllerGui(new HEControllerContainer(null));
+        return new HEHydroDamGuiContainer(aPlayerInventory, aBaseMetaTileEntity, getLocalName(), "EMDisplay.png");
     }
 
-    public long getEnergyStored() {
-        return 1000000;
+    @SideOnly(Side.CLIENT)
+    public void registerIcons(IIconRegister aBlockIconRegister) {
+        // TODO: Register custom icon (HE.MODID + ":" + HE.damTextureName). How to translate to TecTech?
+        ScreenOFF = new Textures.BlockIcons.CustomIcon("iconsets/he_dam");
+        ScreenON = ScreenOFF;
     }
 
-    public long getEnergyCapacity() {
-        return 5000000;
+    @Override
+    public ITexture[] getTexture(IGregTechTileEntity aBaseMetaTileEntity, byte aSide, byte aFacing, byte aColorIndex, boolean aActive, boolean aRedstone) {
+        return aSide == aFacing ? new ITexture[]{Textures.BlockIcons.casingTexturePages[1][solidSteelCasingMeta], new TT_RenderedExtendedFacingTexture(ScreenOFF)} : new ITexture[]{Textures.BlockIcons.casingTexturePages[1][solidSteelCasingMeta]};
     }
 
-    public long getEnergyPerTickIn() {
-        return 0;
+    @Override
+    public boolean doRandomMaintenanceDamage() {
+        // Disable maintenance events
+        return false;
     }
 
-    public long getEnergyPerTickOut() {
-        return 0;
+    @Override
+    public void onFirstTick_EM(IGregTechTileEntity aBaseMetaTileEntity) {
+        if(waterId == -1) {
+            waterId = HEServer.instance.onPlacecontroller(getBaseMetaTileEntity().getXCoord(), getBaseMetaTileEntity().getYCoord(), getBaseMetaTileEntity().getZCoord());
+            markDirty();
+        }
+        super.onFirstTick_EM(aBaseMetaTileEntity);
+    }
+
+    @Override
+    public void saveNBTData(NBTTagCompound compound) {
+        super.saveNBTData(compound);
+        compound.setInteger(Tags.waterId, waterId);
+        compound.setLong(Tags.waterStored, waterStored);
+        compound.setLong(Tags.waterCapacity, waterCapacity);
+    }
+
+    @Override
+    public void loadNBTData(NBTTagCompound compound) {
+        super.loadNBTData(compound);
+        waterId = compound.getInteger(Tags.waterId);
+        waterStored = compound.getLong(Tags.waterStored);
+        waterCapacity = compound.getLong(Tags.waterCapacity);
+    }
+
+    private final static String[] desc = new String[] {
+            "Hydro Dam Controller",
+            "Controller Block for the Hydro Dam",
+            "Input is pressurized water from Hydro Pumps",
+            "Output is pressurized water for Hydro Turbines",
+            "Requires an Input and Output Hatch on the front!",
+            HE.blueprintHintTecTech
+    };
+
+    public String[] getDescription() {
+        return desc;
     }
 }

@@ -21,11 +21,15 @@ public class HEConfig {
         public static final int maxWaterSpreadSouth = 10000; // in blocks
         public static final int energyPerWaterBlock = 10000; // in GregTech EU
         public static final int overworldId = 0;
+        public static final int damDrainPerSecond = 1000; // in mB
+        public static final float waterBonusPerSurfaceBlockPerRainTick = 1.0f; // in mB
+        public static final int blockIdOffset = 17000;
     }
 
     private class Categories {
-        public static final String general = "general";
-        public static final String spreading = "spreading";
+        public static final String general = "General";
+        public static final String spreading = "Spreading";
+        public static final String energyBalance = "Energy Balance";
     }
 
     public static int maxDams = Defaults.maxDams;
@@ -41,6 +45,9 @@ public class HEConfig {
     public static int maxWaterSpreadEast = Defaults.maxWaterSpreadEast;
     public static int maxWaterSpreadUp = Defaults.maxWaterSpreadUp;
     public static int maxWaterSpreadSouth = Defaults.maxWaterSpreadSouth;
+    public static int damDrainPerSecond = Defaults.damDrainPerSecond;
+    public static float waterBonusPerSurfaceBlockPerRainTick = Defaults.waterBonusPerSurfaceBlockPerRainTick;
+    public static int blockIdOffset = Defaults.blockIdOffset;
 
     private static Configuration configuration;
 
@@ -49,7 +56,7 @@ public class HEConfig {
         configuration.load();
 
         Property maxDamsProperty = configuration.get(Categories.general, "maxDams", Defaults.maxDams,
-                "How many dams should the client support. At least as many as the server you want to connect" +
+                "[SERVER] How many dams should the game support. At least as many as the server you want to connect" +
                         " to. Each dam will receive it's own water block and it will also have a minuscule performance" +
                         " impact. Keep it only as long as you need. You can always just rise, but not shorten the value.");
         maxDams = maxDamsProperty.getInt();
@@ -82,31 +89,47 @@ public class HEConfig {
         clippingOffset = (float)clippingOffsetProperty.getDouble();
 
         Property dimensionIdWhitelistProperties = configuration.get(Categories.general, "dimensionIdWhitelist",
-                new int[] {Defaults.overworldId}, "List of dimension a player is allowed to place a controller");
+                new int[] {Defaults.overworldId}, "[SERVER] List of dimension a player is allowed to place a controller");
         dimensionIdWhitelist.clear();
         for(int id : dimensionIdWhitelistProperties.getIntList()) {
             dimensionIdWhitelist.add(id);
         }
 
-        Property energyPerWaterBlockProperty = configuration.get(Categories.general, "energyPerWaterBlock",
-                Defaults.energyPerWaterBlock, "The energy storage value of a water block at base height.");
-
         configuration.addCustomCategoryComment(Categories.spreading, "Water spreading will quickly get out of " +
                 "controll if somebody missclicks their limits on their controllers. Here are game wide limits for " +
                 "spreading.");
 
-        Property maxWaterSpreadWestProperty = configuration.get(Categories.spreading, "maxWaterSpreadWest", Defaults.maxWaterSpreadWest, "");
+        Property maxWaterSpreadWestProperty = configuration.get(Categories.spreading, "maxWaterSpreadWest",
+                Defaults.maxWaterSpreadWest, "[SERVER]");
         maxWaterSpreadWest = maxWaterSpreadWestProperty.getInt();
-        Property maxWaterSpreadDownProperty = configuration.get(Categories.spreading, "maxWaterSpreadDown", Defaults.maxWaterSpreadDown, "");
+        Property maxWaterSpreadDownProperty = configuration.get(Categories.spreading, "maxWaterSpreadDown",
+                Defaults.maxWaterSpreadDown, "[SERVER]");
         maxWaterSpreadDown = maxWaterSpreadDownProperty.getInt();
-        Property maxWaterSpreadNorthProperty = configuration.get(Categories.spreading, "maxWaterSpreadNorth", Defaults.maxWaterSpreadNorth, "");
+        Property maxWaterSpreadNorthProperty = configuration.get(Categories.spreading, "maxWaterSpreadNorth",
+                Defaults.maxWaterSpreadNorth, "[SERVER]");
         maxWaterSpreadNorth = maxWaterSpreadNorthProperty.getInt();
-        Property maxWaterSpreadEastProperty = configuration.get(Categories.spreading, "maxWaterSpreadEast", Defaults.maxWaterSpreadEast, "");
+        Property maxWaterSpreadEastProperty = configuration.get(Categories.spreading, "maxWaterSpreadEast",
+                Defaults.maxWaterSpreadEast, "[SERVER]");
         maxWaterSpreadEast = maxWaterSpreadEastProperty.getInt();
-        Property maxWaterSpreadUpProperty = configuration.get(Categories.spreading, "maxWaterSpreadUp", Defaults.maxWaterSpreadUp, "");
+        Property maxWaterSpreadUpProperty = configuration.get(Categories.spreading, "maxWaterSpreadUp",
+                Defaults.maxWaterSpreadUp, "[SERVER]");
         maxWaterSpreadUp = maxWaterSpreadUpProperty.getInt();
-        Property maxWaterSpreadSouthProperty = configuration.get(Categories.spreading, "maxWaterSpreadSouth", Defaults.maxWaterSpreadSouth, "");
+        Property maxWaterSpreadSouthProperty = configuration.get(Categories.spreading, "maxWaterSpreadSouth",
+                Defaults.maxWaterSpreadSouth, "[SERVER]");
         maxWaterSpreadSouth = maxWaterSpreadSouthProperty.getInt();
+
+        Property damDrainPerSecondProperty = configuration.get(Categories.energyBalance, "damDrainPerSecond",
+                Defaults.damDrainPerSecond, "[SERVER] How many mB a dam will provide for turbines per tick.");
+        damDrainPerSecond = damDrainPerSecondProperty.getInt();
+
+        Property waterBonusPerSurfaceBlockPerRainTickProperty = configuration.get(Categories.energyBalance,
+                "waterBonusPerSurfaceBlockPerRainTick", Defaults.waterBonusPerSurfaceBlockPerRainTick,
+                "[SERVER] How many mb of water are added to a dam during rain for each water block on the" +
+                        " highest Y coordinate");
+
+        Property blockIdOffsetProperty = configuration.get(Categories.general, "blockIdOffset", Defaults.blockIdOffset,
+                "[SERVER + CLIENT] Offset of blockIds for GregTech block registration");
+        blockIdOffset = blockIdOffsetProperty.getInt();
 
         if(configuration.hasChanged()) {
             configuration.save();

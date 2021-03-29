@@ -299,4 +299,21 @@ public class HEDam {
 		}
 		return energyCapacity;
 	}
+
+	public long getWaterCapacity() {
+		long energyCapacity = 0;
+		for(int blockY=this.blockY;blockY<HE.numChunksY*HE.chunkHeight;blockY++) {
+			energyCapacity += blocksPerY[blockY];
+		}
+		return energyCapacity;
+	}
+
+	public int getRainedOnBlocks() {
+		for(int blockY=255;blockY>=0;blockY--) {
+			if(blocksPerY[blockY] > 0) {
+				return blocksPerY[blockY];
+			}
+		}
+		return 0;
+	}
 }
