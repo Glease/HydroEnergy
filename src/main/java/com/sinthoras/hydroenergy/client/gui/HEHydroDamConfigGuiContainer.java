@@ -43,12 +43,12 @@ public class HEHydroDamConfigGuiContainer extends GuiContainer {
     private static final Color lineGrey = new Color(155, 155, 155);
     private static final Color textGrey = new Color(104, 104, 104);
 
-    public HEHydroDamConfigGuiContainer(HEHydroDamConfigContainer controllerContainer) {
-        super(controllerContainer);
+    public HEHydroDamConfigGuiContainer(HEHydroDamConfigContainer hydroDamConfigContainer) {
+        super(hydroDamConfigContainer);
         xSize = 256;
         ySize = 176;
-        dam = HEClient.getDam(controllerContainer.getWaterId());
-        this.controllerContainer = controllerContainer;
+        dam = HEClient.getDam(hydroDamConfigContainer.getWaterId());
+        this.controllerContainer = hydroDamConfigContainer;
     }
 
     @Override
