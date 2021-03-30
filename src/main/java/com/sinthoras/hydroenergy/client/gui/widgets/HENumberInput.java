@@ -1,4 +1,4 @@
-package com.sinthoras.hydroenergy.client.gui;
+package com.sinthoras.hydroenergy.client.gui.widgets;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;

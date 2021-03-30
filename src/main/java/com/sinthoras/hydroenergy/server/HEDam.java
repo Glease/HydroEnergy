@@ -26,6 +26,9 @@ public class HEDam {
 		public static final String blockY = "bloY";
 		public static final String blockZ = "bloZ";
 		public static final String dimensionId = "dimI";
+		public static final String waterBlockX = "watX";
+		public static final String waterBlockY = "watY";
+		public static final String waterBlockZ = "watZ";
 	}
 
 	// NBT variables
@@ -43,6 +46,9 @@ public class HEDam {
 	private int blockY;
 	private int blockZ;
 	private int dimensionId;
+	private int waterBlockX;
+	private int waterBlockY;
+	private int waterBlockZ;
 
 	private int waterId;
 	private long timestampLastUpdate = 0;
@@ -67,6 +73,9 @@ public class HEDam {
 		blockY = compound.getInteger(Tags.blockY);
 		blockZ = compound.getInteger(Tags.blockZ);
 		dimensionId = compound.getInteger(Tags.dimensionId);
+		waterBlockX = compound.getInteger(Tags.waterBlockX);
+		waterBlockY = compound.getInteger(Tags.waterBlockY);
+		waterBlockZ = compound.getInteger(Tags.waterBlockZ);
 
 		if(!isPlaced || drainState) {
 			mode = HE.DamMode.DRAIN;
@@ -91,6 +100,9 @@ public class HEDam {
 		compound.setInteger(Tags.blockY, blockY);
 		compound.setInteger(Tags.blockZ, blockZ);
 		compound.setInteger(Tags.dimensionId, dimensionId);
+		compound.setInteger(Tags.waterBlockX, waterBlockX);
+		compound.setInteger(Tags.waterBlockY, waterBlockY);
+		compound.setInteger(Tags.waterBlockZ, waterBlockZ);
 	}
 
 	public void setMode(HE.DamMode mode) {
@@ -210,7 +222,8 @@ public class HEDam {
 		sendConfigUpdate();
 	}
 	
-	public void placeController(int dimensionId, int blockX, int blockY, int blockZ) {
+	public void placeController(int dimensionId, int blockX, int blockY, int blockZ,
+								int waterBlockX, int waterBlockY, int waterBlockZ) {
 		isPlaced = true;
 		mode = HE.DamMode.DRAIN;
 		limitEast = blockX + 20;
@@ -225,6 +238,9 @@ public class HEDam {
 		this.blockY = blockY;
 		this.blockZ = blockZ;
 		this.dimensionId = dimensionId;
+		this.waterBlockX = waterBlockX;
+		this.waterBlockY = waterBlockY;
+		this.waterBlockZ = waterBlockZ;
 
 		sendConfigUpdate();
 	}
@@ -284,7 +300,8 @@ public class HEDam {
 			this.limitUp = limitUp;
 			this.limitSouth = limitSouth;
 			sendConfigUpdate();
-			HEBlockQueue.enqueueBlock(MinecraftServer.getServer().worldServerForDimension(dimensionId).provider.worldObj, blockX, blockY, blockZ, waterId);
+			HEBlockQueue.enqueueBlock(MinecraftServer.getServer().worldServerForDimension(dimensionId).provider.worldObj,
+					waterBlockX, waterBlockY, waterBlockZ, waterId);
 			return true;
 		}
 		return false;
