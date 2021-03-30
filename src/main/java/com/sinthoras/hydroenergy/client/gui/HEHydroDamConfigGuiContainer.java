@@ -4,7 +4,7 @@ import com.sinthoras.hydroenergy.HE;
 import com.sinthoras.hydroenergy.client.HEClient;
 import com.sinthoras.hydroenergy.client.HEDam;
 import com.sinthoras.hydroenergy.client.gui.widgets.HEWidgetModes;
-import com.sinthoras.hydroenergy.network.container.HEControllerContainer;
+import com.sinthoras.hydroenergy.network.container.HEHydroDamConfigContainer;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;
@@ -18,7 +18,7 @@ import org.lwjgl.opengl.GL11;
 import java.awt.*;
 
 @SideOnly(Side.CLIENT)
-public class HEControllerGui extends GuiContainer {
+public class HEHydroDamConfigGuiContainer extends GuiContainer {
 
     public static final ResourceLocation backgroundTextureLocation = new ResourceLocation(HE.MODID, HE.damBackgroundLocation);
 
@@ -39,12 +39,12 @@ public class HEControllerGui extends GuiContainer {
     private int centerX = 0;
     private int centerY = 0;
 
-    private HEControllerContainer controllerContainer;
+    private HEHydroDamConfigContainer controllerContainer;
 
     private static final Color lineGrey = new Color(155, 155, 155);
     private static final Color textGrey = new Color(104, 104, 104);
 
-    public HEControllerGui(HEControllerContainer controllerContainer) {
+    public HEHydroDamConfigGuiContainer(HEHydroDamConfigContainer controllerContainer) {
         super(controllerContainer);
         xSize = 256;
         ySize = 176;

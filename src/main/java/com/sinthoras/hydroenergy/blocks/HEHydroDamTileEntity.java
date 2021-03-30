@@ -7,9 +7,9 @@ import com.github.technus.tectech.thing.metaTileEntity.multi.base.GT_MetaTileEnt
 import com.github.technus.tectech.thing.metaTileEntity.multi.base.render.TT_RenderedExtendedFacingTexture;
 import com.sinthoras.hydroenergy.HE;
 import com.sinthoras.hydroenergy.client.gui.HEGuiHandler;
-import com.sinthoras.hydroenergy.client.gui.HEHydroDamGuiContainer;
+import com.sinthoras.hydroenergy.client.gui.HEHydroDamWaterGuiContainer;
 import com.sinthoras.hydroenergy.config.HEConfig;
-import com.sinthoras.hydroenergy.network.container.HEHydroDamContainer;
+import com.sinthoras.hydroenergy.network.container.HEHydroDamWaterContainer;
 import com.sinthoras.hydroenergy.server.HEReflection;
 import com.sinthoras.hydroenergy.server.HEServer;
 import cpw.mods.fml.common.network.internal.FMLNetworkHandler;
@@ -172,12 +172,12 @@ public class HEHydroDamTileEntity extends GT_MetaTileEntity_MultiblockBase_EM im
 
     @Override
     public Object getServerGUI(int id, InventoryPlayer playerInventory, IGregTechTileEntity baseMetaTileEntity) {
-        return new HEHydroDamContainer(playerInventory, baseMetaTileEntity);
+        return new HEHydroDamWaterContainer(playerInventory, baseMetaTileEntity);
     }
 
     @Override
     public Object getClientGUI(int id, InventoryPlayer playerInventory, IGregTechTileEntity baseMetaTileEntity) {
-        return new HEHydroDamGuiContainer(playerInventory, baseMetaTileEntity, getLocalName(), "EMDisplay.png");
+        return new HEHydroDamWaterGuiContainer(playerInventory, baseMetaTileEntity, getLocalName(), "EMDisplay.png");
     }
 
     @Override

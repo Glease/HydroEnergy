@@ -1,8 +1,7 @@
 package com.sinthoras.hydroenergy.client.gui;
 
 import com.github.technus.tectech.thing.metaTileEntity.multi.base.GT_GUIContainer_MultiMachineEM;
-import com.sinthoras.hydroenergy.blocks.HEHydroDamTileEntity;
-import com.sinthoras.hydroenergy.network.container.HEHydroDamContainer;
+import com.sinthoras.hydroenergy.network.container.HEHydroDamWaterContainer;
 import gregtech.api.interfaces.tileentity.IGregTechTileEntity;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.TextureMap;
@@ -13,15 +12,15 @@ import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
 
-public class HEHydroDamGuiContainer extends GT_GUIContainer_MultiMachineEM {
+public class HEHydroDamWaterGuiContainer extends GT_GUIContainer_MultiMachineEM {
 
     private static final Color textColor = new Color(250, 250, 255);
 
-    private HEHydroDamContainer hydroDamContainer;
+    private HEHydroDamWaterContainer hydroDamContainer;
 
-    public HEHydroDamGuiContainer(InventoryPlayer inventoryPlayer, IGregTechTileEntity hydroDamMetaTileEntity, String aName, String textureFile) {
+    public HEHydroDamWaterGuiContainer(InventoryPlayer inventoryPlayer, IGregTechTileEntity hydroDamMetaTileEntity, String aName, String textureFile) {
         super(inventoryPlayer, hydroDamMetaTileEntity, aName, textureFile, false, false, false);
-        hydroDamContainer = new HEHydroDamContainer(inventoryPlayer, hydroDamMetaTileEntity);
+        hydroDamContainer = new HEHydroDamWaterContainer(inventoryPlayer, hydroDamMetaTileEntity);
     }
 
     @Override

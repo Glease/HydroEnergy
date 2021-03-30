@@ -1,7 +1,7 @@
 package com.sinthoras.hydroenergy.client.gui;
 
 import com.sinthoras.hydroenergy.blocks.HEHydroDamTileEntity;
-import com.sinthoras.hydroenergy.network.container.HEControllerContainer;
+import com.sinthoras.hydroenergy.network.container.HEHydroDamConfigContainer;
 import cpw.mods.fml.common.network.IGuiHandler;
 import gregtech.api.interfaces.metatileentity.IMetaTileEntity;
 import gregtech.api.interfaces.tileentity.IGregTechTileEntity;
@@ -20,7 +20,7 @@ public class HEGuiHandler implements IGuiHandler {
             if (tileEntity instanceof IGregTechTileEntity) {
                 IMetaTileEntity metaTileEntity = ((IGregTechTileEntity) tileEntity).getMetaTileEntity();
                 if(metaTileEntity instanceof HEHydroDamTileEntity) {
-                    return new HEControllerContainer((HEHydroDamTileEntity)metaTileEntity);
+                    return new HEHydroDamConfigContainer((HEHydroDamTileEntity)metaTileEntity);
                 }
             }
         }
@@ -35,7 +35,7 @@ public class HEGuiHandler implements IGuiHandler {
                 if (tileEntity instanceof IGregTechTileEntity) {
                     IMetaTileEntity metaTileEntity = ((IGregTechTileEntity) tileEntity).getMetaTileEntity();
                     if(metaTileEntity instanceof HEHydroDamTileEntity) {
-                        return new HEControllerGui(new HEControllerContainer((HEHydroDamTileEntity)metaTileEntity));
+                        return new HEHydroDamConfigGuiContainer(new HEHydroDamConfigContainer((HEHydroDamTileEntity)metaTileEntity));
                     }
                 }
             }

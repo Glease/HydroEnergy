@@ -12,7 +12,7 @@ import net.minecraft.inventory.ICrafting;
 import java.nio.ByteBuffer;
 import java.util.List;
 
-public class HEHydroDamContainer extends GT_Container_MultiMachineEM {
+public class HEHydroDamWaterContainer extends GT_Container_MultiMachineEM {
 
     private long waterStored;
     private long waterCapacity;
@@ -32,7 +32,7 @@ public class HEHydroDamContainer extends GT_Container_MultiMachineEM {
 
     private static final int parameterIdOffset = 21;
 
-    public HEHydroDamContainer(InventoryPlayer inventoryPlayer, IGregTechTileEntity hydroDamMetaTileEntity) {
+    public HEHydroDamWaterContainer(InventoryPlayer inventoryPlayer, IGregTechTileEntity hydroDamMetaTileEntity) {
         super(inventoryPlayer, hydroDamMetaTileEntity, false, false, false);
     }
 

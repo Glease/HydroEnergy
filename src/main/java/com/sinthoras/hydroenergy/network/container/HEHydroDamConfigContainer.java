@@ -11,7 +11,7 @@ import net.minecraft.inventory.ICrafting;
 import java.nio.ByteBuffer;
 import java.util.List;
 
-public class HEControllerContainer extends Container {
+public class HEHydroDamConfigContainer extends Container {
 
     private int waterId;
     private HEHydroDamTileEntity hydroDamTileEntity;
@@ -23,7 +23,7 @@ public class HEControllerContainer extends Container {
         public static final int waterIdOffset = 0 * Integer.BYTES;
     }
 
-    public HEControllerContainer(HEHydroDamTileEntity hydroDamTileEntity) {
+    public HEHydroDamConfigContainer(HEHydroDamTileEntity hydroDamTileEntity) {
         this.hydroDamTileEntity = hydroDamTileEntity;
         waterId = hydroDamTileEntity.getWaterId();
     }
