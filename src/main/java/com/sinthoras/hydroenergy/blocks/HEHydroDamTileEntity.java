@@ -6,6 +6,7 @@ import com.github.technus.tectech.mechanics.structure.StructureDefinition;
 import com.github.technus.tectech.thing.metaTileEntity.multi.base.GT_MetaTileEntity_MultiblockBase_EM;
 import com.github.technus.tectech.thing.metaTileEntity.multi.base.render.TT_RenderedExtendedFacingTexture;
 import com.sinthoras.hydroenergy.HE;
+import com.sinthoras.hydroenergy.HETags;
 import com.sinthoras.hydroenergy.client.gui.HEGuiHandler;
 import com.sinthoras.hydroenergy.client.gui.HEHydroDamWaterGuiContainer;
 import com.sinthoras.hydroenergy.config.HEConfig;
@@ -38,12 +39,6 @@ public class HEHydroDamTileEntity extends GT_MetaTileEntity_MultiblockBase_EM im
         - Not ticking
         - Screwdriver GUI has inventory overlap
      */
-
-    private static class Tags {
-        public static final String waterId = "waId";
-        public static final String waterStored = "wSto";
-        public static final String waterCapacity = "wCap";
-    }
 
     private static Textures.BlockIcons.CustomIcon Screen;
     private final static int steelTextureIndex = 16;
@@ -184,7 +179,7 @@ public class HEHydroDamTileEntity extends GT_MetaTileEntity_MultiblockBase_EM im
     public void onScrewdriverRightClick(byte side, EntityPlayer player, float blockX, float blockY, float blockZ) {
         if(!player.isSneaking()) {
             if (getBaseMetaTileEntity().isServerSide()) {
-                FMLNetworkHandler.openGui(player, HE.MODID, HEGuiHandler.HydroDamConfigurationGuiId, getBaseMetaTileEntity().getWorld(),
+                FMLNetworkHandler.openGui(player, HETags.MODID, HEGuiHandler.HydroDamConfigurationGuiId, getBaseMetaTileEntity().getWorld(),
                         getBaseMetaTileEntity().getXCoord(), getBaseMetaTileEntity().getYCoord(), getBaseMetaTileEntity().getZCoord());
             }
         }
@@ -259,17 +254,17 @@ public class HEHydroDamTileEntity extends GT_MetaTileEntity_MultiblockBase_EM im
     @Override
     public void saveNBTData(NBTTagCompound compound) {
         super.saveNBTData(compound);
-        compound.setInteger(Tags.waterId, waterId);
-        compound.setLong(Tags.waterStored, waterStored);
-        compound.setLong(Tags.waterCapacity, waterCapacity);
+        compound.setInteger(HETags.waterId, waterId);
+        compound.setLong(HETags.waterStored, waterStored);
+        compound.setLong(HETags.waterCapacity, waterCapacity);
     }
 
     @Override
     public void loadNBTData(NBTTagCompound compound) {
         super.loadNBTData(compound);
-        waterId = compound.getInteger(Tags.waterId);
-        waterStored = compound.getLong(Tags.waterStored);
-        waterCapacity = compound.getLong(Tags.waterCapacity);
+        waterId = compound.getInteger(HETags.waterId);
+        waterStored = compound.getLong(HETags.waterStored);
+        waterCapacity = compound.getLong(HETags.waterCapacity);
     }
 
     private final static String[] mouseOverDescription = new String[] {

@@ -1,6 +1,7 @@
 package com.sinthoras.hydroenergy.hooks;
 
 import com.sinthoras.hydroenergy.HE;
+import com.sinthoras.hydroenergy.HETags;
 import com.sinthoras.hydroenergy.blocks.*;
 import com.sinthoras.hydroenergy.config.HEConfig;
 import com.sinthoras.hydroenergy.network.packet.*;
@@ -63,7 +64,7 @@ public class HEHooksShared {
 	
 	// postInit "Handle interaction with other mods, complete your setup based on this."
 	public void fmlLifeCycleEvent(FMLPostInitializationEvent event) {
-		NetworkRegistry.INSTANCE.registerGuiHandler(HE.MODID, HE.guiHandler);
+		NetworkRegistry.INSTANCE.registerGuiHandler(HETags.MODID, HE.guiHandler);
 	}
 	
 	public void fmlLifeCycleEvent(FMLServerAboutToStartEvent event) {

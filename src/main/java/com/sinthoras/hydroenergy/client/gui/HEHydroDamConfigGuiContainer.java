@@ -1,6 +1,7 @@
 package com.sinthoras.hydroenergy.client.gui;
 
 import com.sinthoras.hydroenergy.HE;
+import com.sinthoras.hydroenergy.HETags;
 import com.sinthoras.hydroenergy.client.HEClient;
 import com.sinthoras.hydroenergy.client.HEDam;
 import com.sinthoras.hydroenergy.client.gui.widgets.HEWidgetModes;
@@ -20,7 +21,7 @@ import java.awt.*;
 @SideOnly(Side.CLIENT)
 public class HEHydroDamConfigGuiContainer extends GuiContainer {
 
-    public static final ResourceLocation backgroundTextureLocation = new ResourceLocation(HE.MODID, HE.damBackgroundLocation);
+    public static final ResourceLocation backgroundTextureLocation = new ResourceLocation(HETags.MODID, HE.damBackgroundLocation);
 
     private HEDam dam;
 

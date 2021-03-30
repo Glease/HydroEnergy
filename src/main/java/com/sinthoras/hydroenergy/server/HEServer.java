@@ -1,6 +1,7 @@
 package com.sinthoras.hydroenergy.server;
 
 import com.sinthoras.hydroenergy.HE;
+import com.sinthoras.hydroenergy.HETags;
 import com.sinthoras.hydroenergy.config.HEConfig;
 import com.sinthoras.hydroenergy.network.packet.HEPacketSynchronize;
 
@@ -15,15 +16,10 @@ import java.util.List;
 
 public class HEServer extends WorldSavedData {
 
-	private class Tags {
-		public static final String hydroenergy = "hydroenergy";
-		public static final String dam = "dam";
-	}
-	
 	private HEDam[] dams;
 
 	public HEServer() {
-		super(Tags.hydroenergy);
+		super(HETags.MODID);
 	}
 
 	public HEServer(String name) {
@@ -37,10 +33,10 @@ public class HEServer extends WorldSavedData {
 	public static HEServer instance;
 	
 	public static HEServer load(World world) {
-		HEServer instance = (HEServer) world.mapStorage.loadData(HEServer.class, Tags.hydroenergy);
+		HEServer instance = (HEServer) world.mapStorage.loadData(HEServer.class, HETags.MODID);
 		if (instance == null) {
-			instance = new HEServer(Tags.hydroenergy);
-			 world.mapStorage.setData(Tags.hydroenergy, instance);
+			instance = new HEServer(HETags.MODID);
+			 world.mapStorage.setData(HETags.MODID, instance);
 			HE.info("Initializing dam data");
 		}
 		else {
@@ -54,7 +50,7 @@ public class HEServer extends WorldSavedData {
 		dams = new HEDam[HEConfig.maxDams];
 		for(int waterId = 0; waterId<HEConfig.maxDams; waterId++) {
 			dams[waterId] = new HEDam(waterId);
-			dams[waterId].readFromNBTFull(compound.getCompoundTag(Tags.dam + waterId));
+			dams[waterId].readFromNBTFull(compound.getCompoundTag(HETags.dam + waterId));
 		}
 	}
 
@@ -63,7 +59,7 @@ public class HEServer extends WorldSavedData {
 		for(int waterId = 0; waterId< HEConfig.maxDams; waterId++) {
 			NBTTagCompound damCompound = new NBTTagCompound();
 			dams[waterId].writeToNBTFull(damCompound);
-			compound.setTag(Tags.dam + waterId, damCompound);
+			compound.setTag(HETags.dam + waterId, damCompound);
 		}
 	}
 

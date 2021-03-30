@@ -1,6 +1,7 @@
 package com.sinthoras.hydroenergy.server;
 
 import com.sinthoras.hydroenergy.HE;
+import com.sinthoras.hydroenergy.HETags;
 import com.sinthoras.hydroenergy.HEUtil;
 import com.sinthoras.hydroenergy.config.HEConfig;
 import com.sinthoras.hydroenergy.network.packet.HEPacketConfigUpdate;
@@ -10,26 +11,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
 
 public class HEDam {
-	
-	private class Tags {
-		public static final String waterLevel = "walv";
-		public static final String drainState = "drai";
-		public static final String isPlaced = "isPl";
-		public static final String limitUp = "limU";
-		public static final String limitDown = "limD";
-		public static final String limitEast = "limE";
-		public static final String limitWest = "limW";
-		public static final String limitSouth = "limS";
-		public static final String limitNorth = "limN";
-		public static final String blocksPerY = "BlPY";
-		public static final String blockX = "bloX";
-		public static final String blockY = "bloY";
-		public static final String blockZ = "bloZ";
-		public static final String dimensionId = "dimI";
-		public static final String waterBlockX = "watX";
-		public static final String waterBlockY = "watY";
-		public static final String waterBlockZ = "watZ";
-	}
 
 	// NBT variables
 	private float waterLevel;
@@ -59,23 +40,23 @@ public class HEDam {
 	}
 
 	public void readFromNBTFull(NBTTagCompound compound) {
-		waterLevel = compound.getFloat(Tags.waterLevel);
-		boolean drainState = compound.getBoolean(Tags.drainState);
-		isPlaced = compound.getBoolean(Tags.isPlaced);
-		limitUp = compound.getInteger(Tags.limitUp);
-		limitDown = compound.getInteger(Tags.limitDown);
-		limitEast = compound.getInteger(Tags.limitEast);
-		limitWest = compound.getInteger(Tags.limitWest);
-		limitSouth = compound.getInteger(Tags.limitSouth);
-		limitNorth = compound.getInteger(Tags.limitNorth);
-		blocksPerY = compound.getIntArray(Tags.blocksPerY);
-		blockX = compound.getInteger(Tags.blockX);
-		blockY = compound.getInteger(Tags.blockY);
-		blockZ = compound.getInteger(Tags.blockZ);
-		dimensionId = compound.getInteger(Tags.dimensionId);
-		waterBlockX = compound.getInteger(Tags.waterBlockX);
-		waterBlockY = compound.getInteger(Tags.waterBlockY);
-		waterBlockZ = compound.getInteger(Tags.waterBlockZ);
+		waterLevel = compound.getFloat(HETags.waterLevel);
+		boolean drainState = compound.getBoolean(HETags.drainState);
+		isPlaced = compound.getBoolean(HETags.isPlaced);
+		limitUp = compound.getInteger(HETags.limitUp);
+		limitDown = compound.getInteger(HETags.limitDown);
+		limitEast = compound.getInteger(HETags.limitEast);
+		limitWest = compound.getInteger(HETags.limitWest);
+		limitSouth = compound.getInteger(HETags.limitSouth);
+		limitNorth = compound.getInteger(HETags.limitNorth);
+		blocksPerY = compound.getIntArray(HETags.blocksPerY);
+		blockX = compound.getInteger(HETags.blockX);
+		blockY = compound.getInteger(HETags.blockY);
+		blockZ = compound.getInteger(HETags.blockZ);
+		dimensionId = compound.getInteger(HETags.dimensionId);
+		waterBlockX = compound.getInteger(HETags.waterBlockX);
+		waterBlockY = compound.getInteger(HETags.waterBlockY);
+		waterBlockZ = compound.getInteger(HETags.waterBlockZ);
 
 		if(!isPlaced || drainState) {
 			mode = HE.DamMode.DRAIN;
@@ -86,23 +67,23 @@ public class HEDam {
 	}
 	
 	public void writeToNBTFull(NBTTagCompound compound)	{
-		compound.setFloat(Tags.waterLevel, waterLevel);
-		compound.setBoolean(Tags.drainState, mode == HE.DamMode.DRAIN);
-		compound.setBoolean(Tags.isPlaced, isPlaced);
-		compound.setInteger(Tags.limitUp, limitUp);
-		compound.setInteger(Tags.limitDown, limitDown);
-		compound.setInteger(Tags.limitEast, limitEast);
-		compound.setInteger(Tags.limitWest, limitWest);
-		compound.setInteger(Tags.limitSouth, limitSouth);
-		compound.setInteger(Tags.limitNorth, limitNorth);
-		compound.setIntArray(Tags.blocksPerY, blocksPerY);
-		compound.setInteger(Tags.blockX, blockX);
-		compound.setInteger(Tags.blockY, blockY);
-		compound.setInteger(Tags.blockZ, blockZ);
-		compound.setInteger(Tags.dimensionId, dimensionId);
-		compound.setInteger(Tags.waterBlockX, waterBlockX);
-		compound.setInteger(Tags.waterBlockY, waterBlockY);
-		compound.setInteger(Tags.waterBlockZ, waterBlockZ);
+		compound.setFloat(HETags.waterLevel, waterLevel);
+		compound.setBoolean(HETags.drainState, mode == HE.DamMode.DRAIN);
+		compound.setBoolean(HETags.isPlaced, isPlaced);
+		compound.setInteger(HETags.limitUp, limitUp);
+		compound.setInteger(HETags.limitDown, limitDown);
+		compound.setInteger(HETags.limitEast, limitEast);
+		compound.setInteger(HETags.limitWest, limitWest);
+		compound.setInteger(HETags.limitSouth, limitSouth);
+		compound.setInteger(HETags.limitNorth, limitNorth);
+		compound.setIntArray(HETags.blocksPerY, blocksPerY);
+		compound.setInteger(HETags.blockX, blockX);
+		compound.setInteger(HETags.blockY, blockY);
+		compound.setInteger(HETags.blockZ, blockZ);
+		compound.setInteger(HETags.dimensionId, dimensionId);
+		compound.setInteger(HETags.waterBlockX, waterBlockX);
+		compound.setInteger(HETags.waterBlockY, waterBlockY);
+		compound.setInteger(HETags.waterBlockZ, waterBlockZ);
 	}
 
 	public void setMode(HE.DamMode mode) {

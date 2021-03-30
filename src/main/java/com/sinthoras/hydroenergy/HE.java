@@ -13,12 +13,9 @@ import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import static net.minecraft.util.EnumChatFormatting.*;
 
 public class HE {
-	public static final String MODID = "hydroenergy";
-    public static final String VERSION = "0.1.0";
-    public static final String HYDROENERGY = "HydroEnergy";
-    public static final String COM_SINTHORAS_HYDROENERGY = "com.sinthoras.hydroenergy";
+
     public static SimpleNetworkWrapper network;
-    private static Logger LOG = LogManager.getLogger(MODID);
+    private static Logger LOG = LogManager.getLogger(HETags.MODID);
     public static final int maxRenderDist = 16;
     public static final int numChunksY = 16;
     public static final int waterOpacity = 3;
@@ -28,7 +25,6 @@ public class HE {
     public static final int blockPerSubChunk = chunkWidth * chunkHeight * chunkDepth;
     public static final int underWaterSkylightDepth = (int)Math.ceil(16f / waterOpacity);
     public static final int controllerGuiUpdateDelay = 200;
-    public static final int damCapacityRecalculationDelay = 2000;  // in milliseconds
 
     public static boolean logicalClientLoaded = false;
     public static final String ERROR_serverIdsOutOfBounds = "Server uses invalid waterIds! Server message ignored. " +
@@ -45,9 +41,8 @@ public class HE {
 	// Texture locations
     public static String damBackgroundLocation = "textures/gui/he_water_config.png";
     public static String damLimitBackgroundLocation = "textures/gui/he_water_config_limits_popup.png";
-    public static String damTextureName = "he_dam";
     // To silence the water missing texture error. Points to a random but valid texture
-    public static String dummyTexture = damTextureName;
+    public static String dummyTexture = damBackgroundLocation;
 
     public static void debug(String message) {
         HE.LOG.debug(formatMessage(message));
@@ -66,7 +61,7 @@ public class HE {
     }
 
     private static String formatMessage(String message) {
-        return "[" + HYDROENERGY + "]" + message;
+        return "[" + HETags.HYDROENERGY + "] " + message;
     }
 
     public enum DamMode {

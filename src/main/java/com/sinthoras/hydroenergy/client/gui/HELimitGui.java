@@ -1,6 +1,7 @@
 package com.sinthoras.hydroenergy.client.gui;
 
 import com.sinthoras.hydroenergy.HE;
+import com.sinthoras.hydroenergy.HETags;
 import com.sinthoras.hydroenergy.client.gui.widgets.HENumberInput;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -14,7 +15,7 @@ import java.util.List;
 @SideOnly(Side.CLIENT)
 public class HELimitGui extends Gui {
 
-    private static ResourceLocation limitBackgroundTextureLocation = new ResourceLocation(HE.MODID, HE.damLimitBackgroundLocation);
+    private static ResourceLocation limitBackgroundTextureLocation = new ResourceLocation(HETags.MODID, HE.damLimitBackgroundLocation);
 
     private GuiButton minus1000;
     private GuiButton minus100;
