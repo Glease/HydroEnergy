@@ -11,7 +11,6 @@ import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
@@ -34,7 +33,7 @@ public class HEHydroDamConfigGuiContainer extends GuiContainer {
     private GuiButton changeNorth;
     private GuiButton changeSouth;
 
-    private HELimitGui[] limitGuis = new HELimitGui[6];
+    private HEPopupLimitGui[] limitGuis = new HEPopupLimitGui[6];
 
     private int centerX = 0;
     private int centerY = 0;
@@ -59,8 +58,8 @@ public class HEHydroDamConfigGuiContainer extends GuiContainer {
 
         centerX = guiLeft + xSize / 2;
         centerY = guiTop + ySize / 2;
-        int popupLeft = centerX - HELimitGui.xSize / 2;
-        int popupTop = centerY - HELimitGui.ySize / 2;
+        int popupLeft = centerX - HEPopupLimitGui.xSize / 2;
+        int popupTop = centerY - HEPopupLimitGui.ySize / 2;
 
         int id = 0;
         int pixelX = guiLeft + 10;
@@ -69,38 +68,38 @@ public class HEHydroDamConfigGuiContainer extends GuiContainer {
         int height = 20;
         changeWest = new GuiButton(id, pixelX, pixelY, width, height, "Change");
         buttonList.add(changeWest);
-        limitGuis[0] = new HELimitGui("Western limit (-X)", popupLeft, popupTop, dam.getLimitWest());
+        limitGuis[0] = new HEPopupLimitGui("Western limit (-X)", popupLeft, popupTop, dam.getLimitWest());
 
         pixelY += 30;
         changeDown = new GuiButton(id, pixelX, pixelY, width, height, "Change");
         buttonList.add(changeDown);
-        limitGuis[1] = new HELimitGui("Lower limit (-Y)", popupLeft, popupTop, dam.getLimitDown());
+        limitGuis[1] = new HEPopupLimitGui("Lower limit (-Y)", popupLeft, popupTop, dam.getLimitDown());
 
         pixelY += 30;
         changeNorth = new GuiButton(id, pixelX, pixelY, width, height, "Change");
         buttonList.add(changeNorth);
-        limitGuis[2] = new HELimitGui("Northern limit (-Z)", popupLeft, popupTop, dam.getLimitNorth());
+        limitGuis[2] = new HEPopupLimitGui("Northern limit (-Z)", popupLeft, popupTop, dam.getLimitNorth());
 
         pixelX = guiLeft + xSize - width - 10;
         pixelY = guiTop + 32;
         changeEast = new GuiButton(id, pixelX, pixelY, width, height, "Change");
         buttonList.add(changeEast);
-        limitGuis[3] = new HELimitGui("Eastern limit (+X)", popupLeft, popupTop, dam.getLimitEast());
+        limitGuis[3] = new HEPopupLimitGui("Eastern limit (+X)", popupLeft, popupTop, dam.getLimitEast());
 
         pixelY += 30;
         changeUp = new GuiButton(id, pixelX, pixelY, width, height, "Change");
         buttonList.add(changeUp);
-        limitGuis[4] = new HELimitGui("Upper limit (+Y)", popupLeft, popupTop, dam.getLimitUp());
+        limitGuis[4] = new HEPopupLimitGui("Upper limit (+Y)", popupLeft, popupTop, dam.getLimitUp());
 
         pixelY += 30;
         changeSouth = new GuiButton(id, pixelX, pixelY, width, height, "Change");
         buttonList.add(changeSouth);
-        limitGuis[5] = new HELimitGui("Southern limit (+Z)", popupLeft, popupTop, dam.getLimitSouth());
+        limitGuis[5] = new HEPopupLimitGui("Southern limit (+Z)", popupLeft, popupTop, dam.getLimitSouth());
 
         widgetModes = new HEWidgetModes(dam, guiLeft + xSize - 75, guiTop + 5);
         widgetModes.init(buttonList);
 
-        for(HELimitGui limitGui : limitGuis) {
+        for(HEPopupLimitGui limitGui : limitGuis) {
             limitGui.init(0, buttonList);
         }
     }
@@ -132,7 +131,7 @@ public class HEHydroDamConfigGuiContainer extends GuiContainer {
             widgetModes.setEnabled(false);
             limitGuis[5].show();
         }
-        for(HELimitGui limitGui : limitGuis) {
+        for(HEPopupLimitGui limitGui : limitGuis) {
             limitGui.actionPerformed(button);
         }
         widgetModes.actionPerformed(button);
@@ -271,7 +270,7 @@ public class HEHydroDamConfigGuiContainer extends GuiContainer {
             GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
         }
 
-        for(HELimitGui limitGui : limitGuis) {
+        for(HEPopupLimitGui limitGui : limitGuis) {
             limitGui.draw(mouseX, mouseY);
         }
     }
@@ -287,7 +286,7 @@ public class HEHydroDamConfigGuiContainer extends GuiContainer {
     @Override
     protected void mouseClicked(int pixelX, int pixelY, int mouseButtonId) {
         super.mouseClicked(pixelX, pixelY, mouseButtonId);
-        for(HELimitGui limitGui : limitGuis) {
+        for(HEPopupLimitGui limitGui : limitGuis) {
             limitGui.mouseClicked(pixelX, pixelY, mouseButtonId);
         }
     }
@@ -300,7 +299,7 @@ public class HEHydroDamConfigGuiContainer extends GuiContainer {
     }
 
     private boolean passKeyTypesToLimitGuis(char c, int keyCode) {
-        for(HELimitGui limitGui : limitGuis) {
+        for(HEPopupLimitGui limitGui : limitGuis) {
             if(limitGui.keyTyped(c, keyCode)) {
                 return true;
             }
@@ -309,7 +308,7 @@ public class HEHydroDamConfigGuiContainer extends GuiContainer {
     }
 
     private boolean isAnyLimitGuiOpen() {
-        for(HELimitGui limitGui : limitGuis) {
+        for(HEPopupLimitGui limitGui : limitGuis) {
             if(limitGui.visible) {
                 return true;
             }

@@ -15,6 +15,7 @@ import java.awt.*;
 public class HEHydroDamWaterGuiContainer extends GT_GUIContainer_MultiMachineEM {
 
     private static final Color textColor = new Color(250, 250, 255);
+    private static final Color textHintColor = new Color(110, 110, 120);
 
     private HEHydroDamWaterContainer hydroDamContainer;
 
@@ -27,6 +28,7 @@ public class HEHydroDamWaterGuiContainer extends GT_GUIContainer_MultiMachineEM 
     protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
         fontRendererObj.drawString("Hydro Dam", 7, 8, textColor.getRGB());
         fontRendererObj.drawString("Running perfectly.", 7, 16, textColor.getRGB());
+        fontRendererObj.drawString("Click me with a screwdriver.", 7, 84, textHintColor.getRGB());
 
         long waterCapacity = hydroDamContainer.getWaterCapacity();
         long waterStored = hydroDamContainer.getWaterStored();
