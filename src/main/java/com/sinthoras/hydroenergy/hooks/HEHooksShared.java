@@ -47,9 +47,6 @@ public class HEHooksShared {
 			GameRegistry.registerBlock(HE.waterBlocks[waterId], HE.waterBlocks[waterId].getUnlocalizedName());
 			HE.waterBlockIds[waterId] = Block.blockRegistry.getIDForObject(HE.waterBlocks[waterId]);
 		}
-    	HE.controller = new HEControllerBlock();
-		GameRegistry.registerBlock(HE.controller, HE.controller.getUnlocalizedName());
-		GameRegistry.registerTileEntity(HEControllerTileEntity.class, "he_controller_tile_entity");
 
 		FluidRegistry.registerFluid(HE.pressurizedWater);
 	}

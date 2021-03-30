@@ -102,15 +102,6 @@ public class HEDam {
                 pendingLimitWest, pendingLimitDown, pendingLimitNorth, pendingLimitEast, pendingLimitUp, pendingLimitSouth));
     }
 
-    public boolean belongsToController(int blockX, int blockY, int blockZ) {
-        if(this.blockX == blockX && this.blockY == blockY && this.blockZ == blockZ) {
-            return true;
-        }
-        else {
-            return false;
-        }
-    }
-
     public void setMode(HE.DamMode mode) {
         this.pendingMode = mode;
     }

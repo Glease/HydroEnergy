@@ -20,7 +20,7 @@ public class HEHydroDamContainer extends GT_Container_MultiMachineEM {
     private int waterPerTickOut;
     private long timestamp = 0;
 
-    private ByteBuffer buffer = ByteBuffer.allocate(2 * Long.BYTES + 2 * Integer.BYTES);
+    private ByteBuffer buffer;
 
     private class Buffer {
 
@@ -29,6 +29,8 @@ public class HEHydroDamContainer extends GT_Container_MultiMachineEM {
         public static final int waterPerTickInOffset = 2 * Long.BYTES;
         public static final int waterPerTickOutOffset = 2 * Long.BYTES + Integer.BYTES;
     }
+
+    private static final int parameterIdOffset = 21;
 
     public HEHydroDamContainer(InventoryPlayer inventoryPlayer, IGregTechTileEntity hydroDamMetaTileEntity) {
         super(inventoryPlayer, hydroDamMetaTileEntity, false, false, false);
@@ -56,6 +58,9 @@ public class HEHydroDamContainer extends GT_Container_MultiMachineEM {
     public void detectAndSendChanges() {
         super.detectAndSendChanges();
 
+        if(buffer == null) {
+            buffer = ByteBuffer.allocate(2 * Long.BYTES + 2 * Integer.BYTES);
+        }
         HEHydroDamTileEntity hydroDamTileEntity = (HEHydroDamTileEntity)mTileEntity.getMetaTileEntity();
         long currentTime = System.currentTimeMillis();
         if(!mTileEntity.getWorld().isRemote && currentTime > HE.controllerGuiUpdateDelay + timestamp) {
@@ -126,14 +131,18 @@ public class HEHydroDamContainer extends GT_Container_MultiMachineEM {
         }
         for (int i = 0; i < bytes; i++) {
             int index = bufferOffset + i;
-            clientHandle.sendProgressBarUpdate(this, index, buffer.get(index));
+            clientHandle.sendProgressBarUpdate(this, index + parameterIdOffset, buffer.get(index));
         }
     }
 
     @SideOnly(Side.CLIENT)
     public void updateProgressBar(int index, int value)
     {
-        buffer.put(index, (byte)value);
+        super.updateProgressBar(index, value);
+        index = index - parameterIdOffset;
+        if(index >= 0 && index < buffer.capacity()) {
+            buffer.put(index, (byte) value);
+        }
     }
 
     @SideOnly(Side.CLIENT)

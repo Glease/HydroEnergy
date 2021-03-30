@@ -82,10 +82,10 @@ public class HEServer extends WorldSavedData {
 		markDirty();
 	}
 	
-	public int onPlacecontroller(int blockX, int blockY, int blockZ) {
+	public int onPlacecontroller(int dimensionId, int blockX, int blockY, int blockZ) {
 		for(int waterId = 0; waterId< HEConfig.maxDams; waterId++) {
 			if (!dams[waterId].isPlaced()) {
-				dams[waterId].placeController(blockX, blockY, blockZ);
+				dams[waterId].placeController(dimensionId, blockX, blockY, blockZ);
 				markDirty();
 				return waterId;
 			}

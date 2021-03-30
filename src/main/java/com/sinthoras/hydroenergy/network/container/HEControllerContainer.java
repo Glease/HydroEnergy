@@ -1,7 +1,7 @@
 package com.sinthoras.hydroenergy.network.container;
 
 import com.sinthoras.hydroenergy.HE;
-import com.sinthoras.hydroenergy.blocks.HEControllerTileEntity;
+import com.sinthoras.hydroenergy.blocks.HEHydroDamTileEntity;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.entity.player.EntityPlayer;
@@ -13,29 +13,19 @@ import java.util.List;
 
 public class HEControllerContainer extends Container {
 
-    private long energyStored;
-    private long energyCapacity;
-    private long energyPerTickIn;
-    private long energyPerTickOut;
-    private HEControllerTileEntity controllerTileEntity;
+    private int waterId;
+    private HEHydroDamTileEntity hydroDamTileEntity;
 
     private long timestamp = 0;
-    private ByteBuffer buffer = ByteBuffer.allocate(4 * Long.BYTES);
+    private ByteBuffer buffer = ByteBuffer.allocate(1 * Integer.BYTES);
 
     private class Buffer {
-
-        public static final int energyStoredOffset = 0 * Long.BYTES;
-        public static final int energyCapacityOffset = 1 * Long.BYTES;
-        public static final int energyPerTickInOffset = 2 * Long.BYTES;
-        public static final int getEnergyPerTickOutOffset = 3 * Long.BYTES;
+        public static final int waterIdOffset = 0 * Integer.BYTES;
     }
 
-    public HEControllerContainer(HEControllerTileEntity controllerTileEntity) {
-        this.controllerTileEntity = controllerTileEntity;
-        energyStored = controllerTileEntity.getEnergyStored();
-        energyCapacity = controllerTileEntity.getEnergyCapacity();
-        energyPerTickIn = controllerTileEntity.getEnergyPerTickIn();
-        energyPerTickOut = controllerTileEntity.getEnergyPerTickOut();
+    public HEControllerContainer(HEHydroDamTileEntity hydroDamTileEntity) {
+        this.hydroDamTileEntity = hydroDamTileEntity;
+        waterId = hydroDamTileEntity.getWaterId();
     }
 
     @Override
@@ -46,17 +36,8 @@ public class HEControllerContainer extends Container {
     @Override
     public void addCraftingToCrafters(ICrafting clientHandle)
     {
-        buffer.putLong(Buffer.energyStoredOffset, energyStored);
-        sendStateUpdate(clientHandle, Buffer.energyStoredOffset);
-
-        buffer.putLong(Buffer.energyCapacityOffset, energyCapacity);
-        sendStateUpdate(clientHandle, Buffer.energyCapacityOffset);
-
-        buffer.putLong(Buffer.energyPerTickInOffset, energyPerTickIn);
-        sendStateUpdate(clientHandle, Buffer.energyPerTickInOffset);
-
-        buffer.putLong(Buffer.getEnergyPerTickOutOffset, energyPerTickOut);
-        sendStateUpdate(clientHandle, Buffer.getEnergyPerTickOutOffset);
+        buffer.putInt(Buffer.waterIdOffset, waterId);
+        sendStateUpdate(clientHandle, Buffer.waterIdOffset);
 
         super.addCraftingToCrafters(clientHandle);
     }
@@ -64,65 +45,29 @@ public class HEControllerContainer extends Container {
     @Override
     public void detectAndSendChanges() {
         long currentTime = System.currentTimeMillis();
-        if(!controllerTileEntity.getWorldObj().isRemote && currentTime > HE.controllerGuiUpdateDelay + timestamp) {
-            boolean updateEnergyCapacity = false;
-            long currentEnergyCapacity = controllerTileEntity.getEnergyCapacity();
-            if (energyCapacity != currentEnergyCapacity) {
-                energyCapacity = currentEnergyCapacity;
-                buffer.putLong(Buffer.energyCapacityOffset, energyCapacity);
-                updateEnergyCapacity = true;
+        if(hydroDamTileEntity.getBaseMetaTileEntity().isServerSide() && currentTime > HE.controllerGuiUpdateDelay + timestamp) {
+            boolean updateWaterId = false;
+            int currentWaterId = hydroDamTileEntity.getWaterId();
+            if (waterId != currentWaterId) {
+                waterId = currentWaterId;
+                buffer.putInt(Buffer.waterIdOffset, waterId);
+                updateWaterId = true;
             }
 
-            boolean updateEnergyStored = false;
-            long currentEnergyStored = controllerTileEntity.getEnergyStored();
-            if (energyStored != currentEnergyStored) {
-                energyStored = currentEnergyStored;
-                buffer.putLong(Buffer.energyStoredOffset, energyStored);
-                updateEnergyStored = true;
-            }
-
-            boolean updateEnergyPerTickIn = false;
-            long currentEnergyPerTickIn = controllerTileEntity.getEnergyPerTickIn();
-            if (energyPerTickIn != currentEnergyPerTickIn) {
-                energyPerTickIn = currentEnergyPerTickIn;
-                buffer.putLong(Buffer.energyPerTickInOffset, energyPerTickIn);
-                updateEnergyPerTickIn = true;
-            }
-
-            boolean updateEnergyPerTickOut = false;
-            long currentEnergyPerTickOut = controllerTileEntity.getEnergyPerTickOut();
-            if (energyPerTickOut != currentEnergyPerTickOut) {
-                energyPerTickOut = currentEnergyPerTickOut;
-                buffer.putLong(Buffer.getEnergyPerTickOutOffset, energyPerTickOut);
-                updateEnergyPerTickOut = true;
-            }
-
-            for (ICrafting clientHandle : (List<ICrafting>) crafters) {
-                if (updateEnergyCapacity) {
-                    sendStateUpdate(clientHandle, Buffer.energyCapacityOffset);
-                }
-
-                if (updateEnergyStored) {
-                    sendStateUpdate(clientHandle, Buffer.energyStoredOffset);
-                }
-
-                if (updateEnergyPerTickIn) {
-                    sendStateUpdate(clientHandle, Buffer.energyStoredOffset);
-                }
-
-                if (updateEnergyPerTickOut) {
-                    sendStateUpdate(clientHandle, Buffer.energyStoredOffset);
+            if (updateWaterId) {
+                for (ICrafting clientHandle : (List<ICrafting>) crafters) {
+                    sendStateUpdate(clientHandle, Buffer.waterIdOffset);
                 }
             }
 
-            if(updateEnergyCapacity || updateEnergyStored || updateEnergyPerTickIn ||updateEnergyPerTickOut) {
+            if(updateWaterId) {
                 timestamp = currentTime;
             }
         }
     }
 
     private void sendStateUpdate(ICrafting clientHandle, int bufferOffset) {
-        for(int i=0;i<Long.BYTES;i++) {
+        for(int i=0;i<Integer.BYTES;i++) {
             int index = bufferOffset + i;
             clientHandle.sendProgressBarUpdate(this, index, buffer.get(index));
         }
@@ -134,28 +79,9 @@ public class HEControllerContainer extends Container {
         buffer.put(index, (byte)value);
     }
 
-    @SideOnly(Side.CLIENT)
-    public long getEnergyStored() {
-        return buffer.getLong(Buffer.energyStoredOffset);
-    }
-
-    @SideOnly(Side.CLIENT)
-    public long getEnergyCapacity() {
-        return buffer.getLong(Buffer.energyCapacityOffset);
-    }
-
-    @SideOnly(Side.CLIENT)
-    public long getEnergyPerTickIn() {
-        return buffer.getLong(Buffer.energyPerTickInOffset);
-    }
-
-    @SideOnly(Side.CLIENT)
-    public long getEnergyPerTickOut() {
-        return buffer.getLong(Buffer.getEnergyPerTickOutOffset);
-    }
 
     @SideOnly(Side.CLIENT)
     public int getWaterId() {
-        return controllerTileEntity.getWaterId();
+        return buffer.getInt(Buffer.waterIdOffset);
     }
 }

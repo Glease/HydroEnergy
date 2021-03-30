@@ -4,7 +4,6 @@ import com.sinthoras.hydroenergy.HE;
 import com.sinthoras.hydroenergy.client.HEClient;
 import com.sinthoras.hydroenergy.client.HEDam;
 import com.sinthoras.hydroenergy.client.gui.widgets.HEWidgetModes;
-import com.sinthoras.hydroenergy.client.gui.widgets.HEWidgetPowerInfo;
 import com.sinthoras.hydroenergy.network.container.HEControllerContainer;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -26,7 +25,6 @@ public class HEControllerGui extends GuiContainer {
     private HEDam dam;
 
     private HEWidgetModes widgetModes;
-    private HEWidgetPowerInfo widgetPowerInfo;
 
     private GuiTextField textField;
     private GuiButton changeWest;
@@ -113,8 +111,6 @@ public class HEControllerGui extends GuiContainer {
 
         widgetModes = new HEWidgetModes(dam, guiLeft + xSize - 75, guiTop + 5);
         widgetModes.init(buttonList);
-
-        widgetPowerInfo = new HEWidgetPowerInfo(controllerContainer, guiLeft + 20, guiTop + 30, xSize - 40);
 
         for(HELimitGui limitGui : limitGuis) {
             limitGui.init(0, buttonList);
@@ -208,8 +204,6 @@ public class HEControllerGui extends GuiContainer {
 
             // Draw title bar buttons if popup is open
             widgetModes.draw(minecraft, mouseX, mouseY);
-
-            widgetPowerInfo.draw(minecraft);
         }
 
         {

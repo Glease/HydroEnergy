@@ -6,11 +6,13 @@ import com.github.technus.tectech.mechanics.structure.StructureDefinition;
 import com.github.technus.tectech.thing.metaTileEntity.multi.base.GT_MetaTileEntity_MultiblockBase_EM;
 import com.github.technus.tectech.thing.metaTileEntity.multi.base.render.TT_RenderedExtendedFacingTexture;
 import com.sinthoras.hydroenergy.HE;
+import com.sinthoras.hydroenergy.client.gui.HEGuiHandler;
 import com.sinthoras.hydroenergy.client.gui.HEHydroDamGuiContainer;
 import com.sinthoras.hydroenergy.config.HEConfig;
 import com.sinthoras.hydroenergy.network.container.HEHydroDamContainer;
 import com.sinthoras.hydroenergy.server.HEReflection;
 import com.sinthoras.hydroenergy.server.HEServer;
+import cpw.mods.fml.common.network.internal.FMLNetworkHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import gregtech.api.GregTech_API;
@@ -23,6 +25,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.FluidStack;
 
 import static com.github.technus.tectech.mechanics.structure.StructureUtility.*;
@@ -32,7 +35,8 @@ public class HEHydroDamTileEntity extends GT_MetaTileEntity_MultiblockBase_EM im
     /*
     TODO:
         - Clean up empty fluid stacks on input (probably automatic: test it)
-        - Add GUI for spreading limits (Screwdriver)
+        - Not ticking
+        - Screwdriver GUI has inventory overlap
      */
 
     private static class Tags {
@@ -178,7 +182,12 @@ public class HEHydroDamTileEntity extends GT_MetaTileEntity_MultiblockBase_EM im
 
     @Override
     public void onScrewdriverRightClick(byte side, EntityPlayer player, float blockX, float blockY, float blockZ) {
-        // TODO
+        if(!player.isSneaking()) {
+            if (getBaseMetaTileEntity().isServerSide()) {
+                FMLNetworkHandler.openGui(player, HE.MODID, HEGuiHandler.HydroDamConfigurationGuiId, getBaseMetaTileEntity().getWorld(),
+                        getBaseMetaTileEntity().getXCoord(), getBaseMetaTileEntity().getYCoord(), getBaseMetaTileEntity().getZCoord());
+            }
+        }
     }
 
     @SideOnly(Side.CLIENT)
@@ -206,11 +215,42 @@ public class HEHydroDamTileEntity extends GT_MetaTileEntity_MultiblockBase_EM im
 
     @Override
     public void onFirstTick_EM(IGregTechTileEntity baseMetaTileEntity) {
-        if(waterId == -1) {
-            waterId = HEServer.instance.onPlacecontroller(getBaseMetaTileEntity().getXCoord(), getBaseMetaTileEntity().getYCoord(), getBaseMetaTileEntity().getZCoord());
+        if(waterId == -1 && getBaseMetaTileEntity().isServerSide()) {
+            ForgeDirection direction = getExtendedFacing().getDirection();
+            final int offsetX;
+            final int offsetY = 1;
+            final int offsetZ;
+            if(direction == ForgeDirection.WEST) {
+                offsetX = 2;
+                offsetZ = 0;
+            }
+            else if(direction == ForgeDirection.NORTH) {
+                offsetX = 0;
+                offsetZ = 2;
+            }
+            else if(direction == ForgeDirection.EAST) {
+                offsetX = -2;
+                offsetZ = 0;
+            }
+            else {
+                offsetX = 0;
+                offsetZ = -2;
+            }
+            waterId = HEServer.instance.onPlacecontroller(getBaseMetaTileEntity().getWorld().provider.dimensionId,
+                    getBaseMetaTileEntity().getXCoord() + offsetX,
+                    getBaseMetaTileEntity().getYCoord() + offsetY,
+                    getBaseMetaTileEntity().getZCoord() + offsetZ);
             markDirty();
         }
         super.onFirstTick_EM(baseMetaTileEntity);
+    }
+
+    @Override
+    public void onRemoval() {
+        if(getBaseMetaTileEntity().isServerSide()) {
+            HEServer.instance.onBreakController(waterId);
+        }
+        super.onRemoval();
     }
 
     @Override
@@ -268,5 +308,9 @@ public class HEHydroDamTileEntity extends GT_MetaTileEntity_MultiblockBase_EM im
 
     public int getWaterPerTickOut() {
         return waterPerTickOut;
+    }
+
+    public int getWaterId() {
+        return waterId;
     }
 }

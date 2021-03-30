@@ -7,6 +7,7 @@ import com.sinthoras.hydroenergy.network.packet.HEPacketConfigUpdate;
 import com.sinthoras.hydroenergy.network.packet.HEPacketWaterUpdate;
 
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.server.MinecraftServer;
 
 public class HEDam {
 	
@@ -24,6 +25,7 @@ public class HEDam {
 		public static final String blockX = "bloX";
 		public static final String blockY = "bloY";
 		public static final String blockZ = "bloZ";
+		public static final String dimensionId = "dimI";
 	}
 
 	// NBT variables
@@ -40,6 +42,7 @@ public class HEDam {
 	private int blockX;
 	private int blockY;
 	private int blockZ;
+	private int dimensionId;
 
 	private int waterId;
 	private long timestampLastUpdate = 0;
@@ -63,6 +66,7 @@ public class HEDam {
 		blockX = compound.getInteger(Tags.blockX);
 		blockY = compound.getInteger(Tags.blockY);
 		blockZ = compound.getInteger(Tags.blockZ);
+		dimensionId = compound.getInteger(Tags.dimensionId);
 
 		if(!isPlaced || drainState) {
 			mode = HE.DamMode.DRAIN;
@@ -86,6 +90,7 @@ public class HEDam {
 		compound.setInteger(Tags.blockX, blockX);
 		compound.setInteger(Tags.blockY, blockY);
 		compound.setInteger(Tags.blockZ, blockZ);
+		compound.setInteger(Tags.dimensionId, dimensionId);
 	}
 
 	public void setMode(HE.DamMode mode) {
@@ -205,7 +210,7 @@ public class HEDam {
 		sendConfigUpdate();
 	}
 	
-	public void placeController(int blockX, int blockY, int blockZ) {
+	public void placeController(int dimensionId, int blockX, int blockY, int blockZ) {
 		isPlaced = true;
 		mode = HE.DamMode.DRAIN;
 		limitEast = blockX + 20;
@@ -219,6 +224,7 @@ public class HEDam {
 		this.blockX = blockX;
 		this.blockY = blockY;
 		this.blockZ = blockZ;
+		this.dimensionId = dimensionId;
 
 		sendConfigUpdate();
 	}
@@ -278,6 +284,7 @@ public class HEDam {
 			this.limitUp = limitUp;
 			this.limitSouth = limitSouth;
 			sendConfigUpdate();
+			HEBlockQueue.enqueueBlock(MinecraftServer.getServer().worldServerForDimension(dimensionId).provider.worldObj, blockX, blockY, blockZ, waterId);
 			return true;
 		}
 		return false;

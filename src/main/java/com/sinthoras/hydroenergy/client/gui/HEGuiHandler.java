@@ -1,37 +1,47 @@
 package com.sinthoras.hydroenergy.client.gui;
 
-import com.sinthoras.hydroenergy.blocks.HEControllerTileEntity;
+import com.sinthoras.hydroenergy.blocks.HEHydroDamTileEntity;
 import com.sinthoras.hydroenergy.network.container.HEControllerContainer;
 import cpw.mods.fml.common.network.IGuiHandler;
+import gregtech.api.interfaces.metatileentity.IMetaTileEntity;
+import gregtech.api.interfaces.tileentity.IGregTechTileEntity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 
 public class HEGuiHandler implements IGuiHandler {
 
+    public final static int HydroDamConfigurationGuiId = 0;
+
     @Override
-    public Object getServerGuiElement(int id, EntityPlayer entityPlayer, World world, int blockX, int blockY, int blockZ) {
-        if(id == 0) {
+    public Object getServerGuiElement(int id, EntityPlayer player, World world, int blockX, int blockY, int blockZ) {
+        if(id == HydroDamConfigurationGuiId) {
             TileEntity tileEntity = world.getTileEntity(blockX, blockY, blockZ);
-            if (tileEntity instanceof HEControllerTileEntity) {
-                return new HEControllerContainer((HEControllerTileEntity)tileEntity);
+            if (tileEntity instanceof IGregTechTileEntity) {
+                IMetaTileEntity metaTileEntity = ((IGregTechTileEntity) tileEntity).getMetaTileEntity();
+                if(metaTileEntity instanceof HEHydroDamTileEntity) {
+                    return new HEControllerContainer((HEHydroDamTileEntity)metaTileEntity);
+                }
             }
         }
         return null;
     }
 
     @Override
-    public Object getClientGuiElement(int id, EntityPlayer entityPlayer, World world, int blockX, int blockY, int blockZ) {
+    public Object getClientGuiElement(int id, EntityPlayer player, World world, int blockX, int blockY, int blockZ) {
         if(world.isRemote) {
-            if(id == 0) {
+            if(id == HydroDamConfigurationGuiId) {
                 TileEntity tileEntity = world.getTileEntity(blockX, blockY, blockZ);
-                if (tileEntity instanceof HEControllerTileEntity) {
-                    return new HEControllerGui(new HEControllerContainer((HEControllerTileEntity)tileEntity));
+                if (tileEntity instanceof IGregTechTileEntity) {
+                    IMetaTileEntity metaTileEntity = ((IGregTechTileEntity) tileEntity).getMetaTileEntity();
+                    if(metaTileEntity instanceof HEHydroDamTileEntity) {
+                        return new HEControllerGui(new HEControllerContainer((HEHydroDamTileEntity)metaTileEntity));
+                    }
                 }
             }
         }
         else {
-            return getServerGuiElement(id, entityPlayer, world, blockX, blockY, blockZ);
+            return getServerGuiElement(id, player, world, blockX, blockY, blockZ);
         }
         return null;
     }

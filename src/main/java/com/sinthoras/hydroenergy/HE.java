@@ -1,6 +1,5 @@
 package com.sinthoras.hydroenergy;
 
-import com.sinthoras.hydroenergy.blocks.HEControllerBlock;
 import com.sinthoras.hydroenergy.blocks.HEWaterStill;
 import com.sinthoras.hydroenergy.client.gui.HEGuiHandler;
 import com.sinthoras.hydroenergy.config.HEConfig;
@@ -36,7 +35,6 @@ public class HE {
             "Please make sure your config \"maxControllers\" is at least as big as the server you are connecting to!";
     public static final String blueprintHintTecTech = "To see the structure, use a "+ BLUE + "Tec" + DARK_BLUE + "Tech" + GRAY + " Blueprint on the Controller!";
 
-    public static HEControllerBlock controller;
     public static HEPressurizedWater pressurizedWater = new HEPressurizedWater();;
 	public static final HEWaterStill[] waterBlocks = new HEWaterStill[HEConfig.maxDams];
 	public static final int[] waterBlockIds = new int[HEConfig.maxDams];
