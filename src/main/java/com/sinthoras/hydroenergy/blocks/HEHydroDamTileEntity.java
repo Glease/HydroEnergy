@@ -19,6 +19,7 @@ import gregtech.api.interfaces.ITexture;
 import gregtech.api.interfaces.metatileentity.IMetaTileEntity;
 import gregtech.api.interfaces.tileentity.IGregTechTileEntity;
 import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -30,11 +31,8 @@ public class HEHydroDamTileEntity extends GT_MetaTileEntity_MultiblockBase_EM im
 
     /*
     TODO:
-        - Sync GUI elements
-        - Clean up empty fluid stacks on input
+        - Clean up empty fluid stacks on input (probably automatic: test it)
         - Add GUI for spreading limits (Screwdriver)
-        - If structure broken again -> GUI and stop processing   AKA how can i reuse the check from TecTech?
-        - Get tick method to be called
      */
 
     private static class Tags {
@@ -49,6 +47,8 @@ public class HEHydroDamTileEntity extends GT_MetaTileEntity_MultiblockBase_EM im
     private int waterId = -1;
     private long waterStored = 0;
     private long waterCapacity = 0;
+    private int waterPerTickIn = 0;
+    private int waterPerTickOut = 0;
 
     private static final IStructureDefinition<HEHydroDamTileEntity> multiblockDefinition = StructureDefinition
         .<HEHydroDamTileEntity>builder()
@@ -116,11 +116,24 @@ public class HEHydroDamTileEntity extends GT_MetaTileEntity_MultiblockBase_EM im
 
     @Override
     public boolean checkRecipe_EM(ItemStack stack) {
+        mMaxProgresstime = 1;
         return true;
     }
 
     @Override
+    public void onPostTick(IGregTechTileEntity baseMetaTileEntity, long tick) {
+        if(getBaseMetaTileEntity().isServerSide()) {
+            mMaxProgresstime = 1;
+        }
+        super.onPostTick(baseMetaTileEntity, tick);
+    }
+
+    @Override
     public boolean onRunningTick(ItemStack stack) {
+        mProgresstime = 0;
+        waterPerTickIn = 0;
+        waterPerTickOut = 0;
+
         waterCapacity = HEServer.instance.getWaterCapacity(waterId);
         waterStored = Math.min(waterStored, waterCapacity);
 
@@ -131,6 +144,7 @@ public class HEHydroDamTileEntity extends GT_MetaTileEntity_MultiblockBase_EM im
                 long canStore = Math.min(waterCapacity - waterStored, fluidStack.amount);
                 fluidStack.amount -= canStore;
                 waterStored += canStore;
+                waterPerTickIn += canStore;
                 if(fluidStack.amount == 0) {
                     // TODO: delete fluid stack from hatch? Or is this done automatically?
                 }
@@ -141,6 +155,7 @@ public class HEHydroDamTileEntity extends GT_MetaTileEntity_MultiblockBase_EM im
         if(mBPerTickOut > 0) {
             if(HEReflection.invokeDumpFluid(this, new FluidStack(HE.pressurizedWater, mBPerTickOut))) {
                 waterStored -= mBPerTickOut;
+                waterPerTickOut += mBPerTickOut;
             }
         }
 
@@ -159,6 +174,11 @@ public class HEHydroDamTileEntity extends GT_MetaTileEntity_MultiblockBase_EM im
     @Override
     public Object getClientGUI(int id, InventoryPlayer playerInventory, IGregTechTileEntity baseMetaTileEntity) {
         return new HEHydroDamGuiContainer(playerInventory, baseMetaTileEntity, getLocalName(), "EMDisplay.png");
+    }
+
+    @Override
+    public void onScrewdriverRightClick(byte side, EntityPlayer player, float blockX, float blockY, float blockZ) {
+        // TODO
     }
 
     @SideOnly(Side.CLIENT)
@@ -232,5 +252,21 @@ public class HEHydroDamTileEntity extends GT_MetaTileEntity_MultiblockBase_EM im
     @Override
     public String[] getStructureDescription(ItemStack itemStack) {
         return chatDescription;
+    }
+
+    public long getWaterStored() {
+        return waterStored;
+    }
+
+    public long getWaterCapacity() {
+        return waterCapacity;
+    }
+
+    public int getWaterPerTickIn() {
+        return waterPerTickIn;
+    }
+
+    public int getWaterPerTickOut() {
+        return waterPerTickOut;
     }
 }

@@ -61,6 +61,7 @@ public class HEHooksShared {
 
 		new HEHydroDamTileEntity(HEConfig.blockIdOffset, "he_dam", "Hydro Dam");
 		new HEHydroPumpTileEntity(HEConfig.blockIdOffset + 1, "he_pump", "Hydro Pump");
+		new HEHydroTurbineTileEntity(HEConfig.blockIdOffset + 2, "he_turbine", "Hydro Turbine");
 	}
 	
 	// postInit "Handle interaction with other mods, complete your setup based on this."

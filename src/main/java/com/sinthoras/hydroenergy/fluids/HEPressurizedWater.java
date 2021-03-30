@@ -1,5 +1,6 @@
 package com.sinthoras.hydroenergy.fluids;
 
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.IIcon;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
@@ -32,10 +33,18 @@ public class HEPressurizedWater extends Fluid {
     }
 
     public void setPressure(FluidStack fluidStack, int pressure) {
+        if(fluidStack.tag == null) {
+            fluidStack.tag = new NBTTagCompound();
+        }
         fluidStack.tag.setInteger(Tags.pressure, pressure);
     }
 
     public int getPressure(FluidStack fluidStack) {
-        return fluidStack.tag.hasKey(Tags.pressure) ? fluidStack.tag.getInteger(Tags.pressure) : -1;
+        if(fluidStack.tag != null && fluidStack.tag.hasKey(Tags.pressure)) {
+            return fluidStack.tag.getInteger(Tags.pressure);
+        }
+        else {
+            return -1;
+        }
     }
 }

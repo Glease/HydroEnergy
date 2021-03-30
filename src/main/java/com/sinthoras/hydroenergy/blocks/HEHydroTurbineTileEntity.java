@@ -8,7 +8,6 @@ import com.github.technus.tectech.thing.metaTileEntity.multi.base.GT_GUIContaine
 import com.github.technus.tectech.thing.metaTileEntity.multi.base.GT_MetaTileEntity_MultiblockBase_EM;
 import com.github.technus.tectech.thing.metaTileEntity.multi.base.render.TT_RenderedExtendedFacingTexture;
 import com.sinthoras.hydroenergy.HE;
-import com.sinthoras.hydroenergy.server.HEReflection;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import gregtech.api.GregTech_API;
@@ -25,66 +24,65 @@ import net.minecraftforge.fluids.FluidStack;
 import static com.github.technus.tectech.mechanics.structure.StructureUtility.*;
 import static com.github.technus.tectech.mechanics.structure.StructureUtility.ofBlock;
 
-public class HEHydroPumpTileEntity extends GT_MetaTileEntity_MultiblockBase_EM implements IConstructable {
+public class HEHydroTurbineTileEntity extends GT_MetaTileEntity_MultiblockBase_EM implements IConstructable {
 
     /*
     TODO:
-        - Handle Tiers?
+        - Handle Tiers
      */
 
-    private static Textures.BlockIcons.CustomIcon textureScreenPumpON;
-    private static Textures.BlockIcons.CustomIcon textureScreenPumpOFF;
-    private static Textures.BlockIcons.CustomIcon textureScreenArrowUpAnimated;
+    private static Textures.BlockIcons.CustomIcon textureScreenTurbineON;
+    private static Textures.BlockIcons.CustomIcon textureScreenTurbineOFF;
+    private static Textures.BlockIcons.CustomIcon textureScreenArrowDownAnimated;
     private final static int steelTextureIndex = 16;
     private final static int solidSteelCasingMeta = 0;
 
     private int countOfHatches = 0;
 
-    private static final IStructureDefinition<HEHydroPumpTileEntity> multiblockDefinition = StructureDefinition
-        .<HEHydroPumpTileEntity>builder()
-        .addShape("main",
-            transpose(new String[][]{
-                {"CCC", "CCC", "CCC"},
-                {"C~C", "H H", "HHH"},
-                {"CCC", "CCC", "CCC"}
-            })
-        ).addElement(
-            'H',
-            ofChain(
-                onElementPass(x -> x.countOfHatches++,
-                        ofHatchAdder(
-                            HEHydroPumpTileEntity::addClassicToMachineList, steelTextureIndex,
+    private static final IStructureDefinition<HEHydroTurbineTileEntity> multiblockDefinition = StructureDefinition
+            .<HEHydroTurbineTileEntity>builder()
+            .addShape("main",
+                    transpose(new String[][]{
+                            {"CCC", "CCC", "CCC"},
+                            {"C~C", "H H", "HHH"},
+                            {"CCC", "CCC", "CCC"}
+                    })
+            ).addElement(
+                    'H',
+                    ofChain(
+                            onElementPass(x -> x.countOfHatches++,
+                                    ofHatchAdder(
+                                            HEHydroTurbineTileEntity::addClassicToMachineList, steelTextureIndex,
+                                            GregTech_API.sBlockCasings2, solidSteelCasingMeta
+                                    )
+                            ),
+                            ofBlock(
+                                    GregTech_API.sBlockCasings2, solidSteelCasingMeta
+                            )
+                    )
+            ).addElement(
+                    'C',
+                    ofBlock(
                             GregTech_API.sBlockCasings2, solidSteelCasingMeta
-                        )
-                ),
-                ofBlock(
-                        GregTech_API.sBlockCasings2, solidSteelCasingMeta
-                )
-            )
-        ).addElement(
-            'C',
-            ofBlock(
-                GregTech_API.sBlockCasings2, solidSteelCasingMeta
-            )
-        ).build();
+                    )
+            ).build();
 
-    public HEHydroPumpTileEntity(String name) {
+    public HEHydroTurbineTileEntity(String name) {
         super(name);
     }
 
-    public HEHydroPumpTileEntity(int id, String name, String nameRegional) {
+    public HEHydroTurbineTileEntity(int id, String name, String nameRegional) {
         super(id, name, nameRegional);
     }
 
     @Override
     public IMetaTileEntity newMetaEntity(IGregTechTileEntity tileEntity) {
-        return new HEHydroPumpTileEntity(mName);
+        return new HEHydroTurbineTileEntity(mName);
     }
 
     @Override
     protected boolean checkMachine_EM(IGregTechTileEntity gregTechTileEntity, ItemStack itemStack) {
         countOfHatches = 0;
-        mEUt = -30;
         return structureCheck_EM("main", 1, 1, 0) && countOfHatches == 3;
     }
 
@@ -94,7 +92,7 @@ public class HEHydroPumpTileEntity extends GT_MetaTileEntity_MultiblockBase_EM i
     }
 
     @Override
-    public IStructureDefinition<HEHydroPumpTileEntity> getStructure_EM() {
+    public IStructureDefinition<HEHydroTurbineTileEntity> getStructure_EM() {
         return multiblockDefinition;
     }
 
@@ -117,13 +115,7 @@ public class HEHydroPumpTileEntity extends GT_MetaTileEntity_MultiblockBase_EM i
         mProgresstime = 0;
         if(getBaseMetaTileEntity().isAllowedToWork()) {
             // TODO: move to config
-            int waterPressureLV = 8;
-            int mbPerTickOutLV = 100 * getCurrentEfficiency(null);
-            FluidStack fluidStack = new FluidStack(HE.pressurizedWater, mbPerTickOutLV);
-            HE.pressurizedWater.setPressure(fluidStack, waterPressureLV);
 
-           //addOutput(fluidStack);
-            HEReflection.invokeDumpFluid(this, fluidStack);
         }
         return true;
     }
@@ -140,9 +132,9 @@ public class HEHydroPumpTileEntity extends GT_MetaTileEntity_MultiblockBase_EM i
 
     @SideOnly(Side.CLIENT)
     public void registerIcons(IIconRegister blockIconRegister) {
-        textureScreenPumpOFF = new Textures.BlockIcons.CustomIcon("iconsets/he_pump");
-        textureScreenPumpON = new Textures.BlockIcons.CustomIcon("iconsets/he_pump_active");
-        textureScreenArrowUpAnimated = new Textures.BlockIcons.CustomIcon("iconsets/he_arrow_up_animated");
+        textureScreenTurbineOFF = new Textures.BlockIcons.CustomIcon("iconsets/he_turbine");
+        textureScreenTurbineON = new Textures.BlockIcons.CustomIcon("iconsets/he_turbine_active");
+        textureScreenArrowDownAnimated = new Textures.BlockIcons.CustomIcon("iconsets/he_arrow_down_animated");
         super.registerIcons(blockIconRegister);
     }
 
@@ -151,12 +143,12 @@ public class HEHydroPumpTileEntity extends GT_MetaTileEntity_MultiblockBase_EM i
         if(side == facing) {
             if(isActive) {
                 return new ITexture[]{Textures.BlockIcons.getCasingTextureForId(steelTextureIndex),
-                        new TT_RenderedExtendedFacingTexture(textureScreenPumpON),
-                        new TT_RenderedExtendedFacingTexture(textureScreenArrowUpAnimated)};
+                        new TT_RenderedExtendedFacingTexture(textureScreenTurbineON),
+                        new TT_RenderedExtendedFacingTexture(textureScreenArrowDownAnimated)};
             }
             else {
                 return new ITexture[]{Textures.BlockIcons.getCasingTextureForId(steelTextureIndex),
-                        new TT_RenderedExtendedFacingTexture(textureScreenPumpOFF)};
+                        new TT_RenderedExtendedFacingTexture(textureScreenTurbineOFF)};
             }
         }
         else {
@@ -165,11 +157,11 @@ public class HEHydroPumpTileEntity extends GT_MetaTileEntity_MultiblockBase_EM i
     }
 
     private final static String[] mouseOverDescription = new String[] {
-            "Hydro Pump Controller",
-            "Controller Block for the Hydro Pump",
-            "Consumes EU to pressurize water",
-            "Output is pressurized water for Hydro Dams",
-            "Requires an Energy and Output Hatch in the center row!",
+            "Hydro Turbine Controller",
+            "Controller Block for the Hydro Turbine",
+            "Consumes pressurize water to produce EU",
+            "Input is pressurized water from Hydro Dams",
+            "Requires a Dynamo and Input Hatch in the center row!",
             HE.blueprintHintTecTech,
             "Use Redstone to automate!"
     };
@@ -179,8 +171,8 @@ public class HEHydroPumpTileEntity extends GT_MetaTileEntity_MultiblockBase_EM i
     }
 
     private static final String[] chatDescription = new String[] {
-            "1 Energy Hatch",
-            "1 Fluid Output Hatch",
+            "1 Dynamo Hatch",
+            "1 Fluid Input Hatch",
             "1 Maintenance Hatch",
             "Fill the rest with Solid Steel Casings",
     };

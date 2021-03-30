@@ -10,7 +10,7 @@ public class HEReflection {
     private static Method dumpFluid;
     static {
         try {
-            dumpFluid = GT_MetaTileEntity_MultiBlockBase.class.getDeclaredMethod("dumpFluid");
+            dumpFluid = GT_MetaTileEntity_MultiBlockBase.class.getDeclaredMethod("dumpFluid", FluidStack.class, boolean.class);
             dumpFluid.setAccessible(true);
         }
         catch(Exception e) {

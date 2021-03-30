@@ -1,6 +1,8 @@
 package com.sinthoras.hydroenergy.client.gui;
 
 import com.github.technus.tectech.thing.metaTileEntity.multi.base.GT_GUIContainer_MultiMachineEM;
+import com.sinthoras.hydroenergy.blocks.HEHydroDamTileEntity;
+import com.sinthoras.hydroenergy.network.container.HEHydroDamContainer;
 import gregtech.api.interfaces.tileentity.IGregTechTileEntity;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.TextureMap;
@@ -14,8 +16,12 @@ import java.awt.*;
 public class HEHydroDamGuiContainer extends GT_GUIContainer_MultiMachineEM {
 
     private static final Color textColor = new Color(250, 250, 255);
-    public HEHydroDamGuiContainer(InventoryPlayer aInventoryPlayer, IGregTechTileEntity aTileEntity, String aName, String aTextureFile) {
-        super(aInventoryPlayer, aTileEntity, aName, aTextureFile, false, false, false);
+
+    private HEHydroDamContainer hydroDamContainer;
+
+    public HEHydroDamGuiContainer(InventoryPlayer inventoryPlayer, IGregTechTileEntity hydroDamMetaTileEntity, String aName, String textureFile) {
+        super(inventoryPlayer, hydroDamMetaTileEntity, aName, textureFile, false, false, false);
+        hydroDamContainer = new HEHydroDamContainer(inventoryPlayer, hydroDamMetaTileEntity);
     }
 
     @Override
@@ -23,11 +29,11 @@ public class HEHydroDamGuiContainer extends GT_GUIContainer_MultiMachineEM {
         fontRendererObj.drawString("Hydro Dam", 7, 8, textColor.getRGB());
         fontRendererObj.drawString("Running perfectly.", 7, 16, textColor.getRGB());
 
-        long waterCapacity = 10000000;
-        long waterStored = 7842121;
-        long mBPerTickIn = 1232;
-        long mBPerTickOut = 1000;
-        float fillMultiplier = ((float)waterStored) / ((float)waterCapacity);
+        long waterCapacity = hydroDamContainer.getWaterCapacity();
+        long waterStored = hydroDamContainer.getWaterStored();
+        long mBPerTickIn = hydroDamContainer.getWaterPerTickIn();
+        long mBPerTickOut = hydroDamContainer.getWaterPerTickOut();
+        float fillMultiplier = waterCapacity == 0.0f ? 0.0f : ((float)waterStored) / ((float)waterCapacity);
 
         int slashWidth = fontRendererObj.getStringWidth("/");
         int storedWidth = fontRendererObj.getStringWidth("" + (waterStored / 1000) + " kB ");
