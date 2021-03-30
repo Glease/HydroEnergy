@@ -26,7 +26,6 @@ public class HEHydroDamConfigGuiContainer extends GuiContainer {
 
     private HEWidgetModes widgetModes;
 
-    private GuiTextField textField;
     private GuiButton changeWest;
     private GuiButton changeEast;
     private GuiButton changeDown;
@@ -62,23 +61,11 @@ public class HEHydroDamConfigGuiContainer extends GuiContainer {
         int popupLeft = centerX - HELimitGui.xSize / 2;
         int popupTop = centerY - HELimitGui.ySize / 2;
 
-        int pixelX = guiLeft + 20;
-        int pixelY = guiTop + 50;
-        int width = 100;
-        int height = 30;
-        textField = new GuiTextField(Minecraft.getMinecraft().fontRenderer, pixelX, pixelY, width, height);
-        textField.setEnableBackgroundDrawing(true);
-        textField.setMaxStringLength(10);
-        textField.setTextColor(Color.BLACK.getRGB());
-        textField.setVisible(true);
-        textField.setFocused(true);
-        textField.setEnabled(true);
-
         int id = 0;
-        pixelX = guiLeft + 10;
-        pixelY = guiTop + 86;
-        width = 42;
-        height = 20;
+        int pixelX = guiLeft + 10;
+        int pixelY = guiTop + 32;
+        int width = 42;
+        int height = 20;
         changeWest = new GuiButton(id, pixelX, pixelY, width, height, "Change");
         buttonList.add(changeWest);
         limitGuis[0] = new HELimitGui("Western limit (-X)", popupLeft, popupTop, dam.getLimitWest());
@@ -94,7 +81,7 @@ public class HEHydroDamConfigGuiContainer extends GuiContainer {
         limitGuis[2] = new HELimitGui("Northern limit (-Z)", popupLeft, popupTop, dam.getLimitNorth());
 
         pixelX = guiLeft + xSize - width - 10;
-        pixelY = guiTop + 86;
+        pixelY = guiTop + 32;
         changeEast = new GuiButton(id, pixelX, pixelY, width, height, "Change");
         buttonList.add(changeEast);
         limitGuis[3] = new HELimitGui("Eastern limit (+X)", popupLeft, popupTop, dam.getLimitEast());
@@ -197,7 +184,8 @@ public class HEHydroDamConfigGuiContainer extends GuiContainer {
 
         {
             // Title
-            fontRenderer.drawString("Hydroelectric Power Station", guiLeft + 15, guiTop + 6, Color.BLACK.getRGB());
+            fontRenderer.drawString("Hydro Dam", guiLeft + 15, guiTop + 6, Color.BLACK.getRGB());
+            fontRenderer.drawString("Water Spread Limits", guiLeft + 15, guiTop + 18, textGrey.getRGB());
 
             // Reset color
             GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
@@ -242,9 +230,6 @@ public class HEHydroDamConfigGuiContainer extends GuiContainer {
         }
 
         {
-            // Spread Limits
-            fontRenderer.drawString("Spread Limits", guiLeft + 20, guiTop + 75, textGrey.getRGB());
-
             String limitWest = "" + dam.getLimitWest();
             String limitDown = "" + dam.getLimitDown();
             String limitNorth = "" + dam.getLimitNorth();
@@ -253,33 +238,33 @@ public class HEHydroDamConfigGuiContainer extends GuiContainer {
             String limitSouth = "" + dam.getLimitSouth();
 
             int constStringWidthHalf = fontRenderer.getStringWidth(" < X < ") / 2;
-            fontRenderer.drawString(" < X < ", centerX - constStringWidthHalf, guiTop + 92, Color.BLACK.getRGB());
-            fontRenderer.drawString(" < Y < ", centerX - constStringWidthHalf, guiTop + 122, Color.BLACK.getRGB());
-            fontRenderer.drawString(" < Z < ", centerX - constStringWidthHalf, guiTop + 152, Color.BLACK.getRGB());
+            fontRenderer.drawString(" < X < ", centerX - constStringWidthHalf, guiTop + 38, Color.BLACK.getRGB());
+            fontRenderer.drawString(" < Y < ", centerX - constStringWidthHalf, guiTop + 68, Color.BLACK.getRGB());
+            fontRenderer.drawString(" < Z < ", centerX - constStringWidthHalf, guiTop + 98, Color.BLACK.getRGB());
 
             int stringWidth = fontRenderer.getStringWidth(limitWest);
-            drawHorizontalLine(guiLeft + 57, centerX - constStringWidthHalf - stringWidth - 5, guiTop + 95, lineGrey.getRGB());
-            fontRenderer.drawString(limitWest, centerX - constStringWidthHalf - stringWidth, guiTop + 92, Color.BLACK.getRGB());
+            drawHorizontalLine(guiLeft + 57, centerX - constStringWidthHalf - stringWidth - 5, guiTop + 41, lineGrey.getRGB());
+            fontRenderer.drawString(limitWest, centerX - constStringWidthHalf - stringWidth, guiTop + 38, Color.BLACK.getRGB());
 
             stringWidth = fontRenderer.getStringWidth(limitDown);
-            drawHorizontalLine(guiLeft + 57, centerX - constStringWidthHalf - stringWidth - 5, guiTop + 125, lineGrey.getRGB());
-            fontRenderer.drawString(limitDown, centerX - constStringWidthHalf - stringWidth, guiTop + 122, Color.BLACK.getRGB());
+            drawHorizontalLine(guiLeft + 57, centerX - constStringWidthHalf - stringWidth - 5, guiTop + 71, lineGrey.getRGB());
+            fontRenderer.drawString(limitDown, centerX - constStringWidthHalf - stringWidth, guiTop + 68, Color.BLACK.getRGB());
 
             stringWidth = fontRenderer.getStringWidth(limitNorth);
-            drawHorizontalLine(guiLeft + 57, centerX - constStringWidthHalf - stringWidth - 5, guiTop + 155, lineGrey.getRGB());
-            fontRenderer.drawString(limitNorth, centerX - constStringWidthHalf - stringWidth, guiTop + 152, Color.BLACK.getRGB());
+            drawHorizontalLine(guiLeft + 57, centerX - constStringWidthHalf - stringWidth - 5, guiTop + 101, lineGrey.getRGB());
+            fontRenderer.drawString(limitNorth, centerX - constStringWidthHalf - stringWidth, guiTop + 98, Color.BLACK.getRGB());
 
             stringWidth = fontRenderer.getStringWidth(limitEast);
-            drawHorizontalLine(centerX + constStringWidthHalf + stringWidth + 5, guiLeft + xSize - 57, guiTop + 95, lineGrey.getRGB());
-            fontRenderer.drawString(limitEast, centerX + constStringWidthHalf, guiTop + 92, Color.BLACK.getRGB());
+            drawHorizontalLine(centerX + constStringWidthHalf + stringWidth + 5, guiLeft + xSize - 57, guiTop + 41, lineGrey.getRGB());
+            fontRenderer.drawString(limitEast, centerX + constStringWidthHalf, guiTop + 38, Color.BLACK.getRGB());
 
             stringWidth = fontRenderer.getStringWidth(limitUp);
-            drawHorizontalLine(centerX + constStringWidthHalf + stringWidth + 5, guiLeft + xSize - 57, guiTop + 125, lineGrey.getRGB());
-            fontRenderer.drawString(limitUp, centerX + constStringWidthHalf, guiTop + 122, Color.BLACK.getRGB());
+            drawHorizontalLine(centerX + constStringWidthHalf + stringWidth + 5, guiLeft + xSize - 57, guiTop + 71, lineGrey.getRGB());
+            fontRenderer.drawString(limitUp, centerX + constStringWidthHalf, guiTop + 68, Color.BLACK.getRGB());
 
             stringWidth = fontRenderer.getStringWidth(limitSouth);
-            drawHorizontalLine(centerX + constStringWidthHalf + stringWidth + 5, guiLeft + xSize - 57, guiTop + 155, lineGrey.getRGB());
-            fontRenderer.drawString(limitSouth, centerX + constStringWidthHalf, guiTop + 152, Color.BLACK.getRGB());
+            drawHorizontalLine(centerX + constStringWidthHalf + stringWidth + 5, guiLeft + xSize - 57, guiTop + 101, lineGrey.getRGB());
+            fontRenderer.drawString(limitSouth, centerX + constStringWidthHalf, guiTop + 98, Color.BLACK.getRGB());
 
             // Reset color
             GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
