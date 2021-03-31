@@ -18,6 +18,7 @@ import gregtech.api.interfaces.tileentity.IGregTechTileEntity;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.fluids.FluidStack;
 
 import static com.github.technus.tectech.mechanics.structure.StructureUtility.*;
 import static com.github.technus.tectech.mechanics.structure.StructureUtility.ofBlock;
@@ -97,23 +98,29 @@ public class HEHydroTurbineTileEntity extends GT_MetaTileEntity_MultiblockBase_E
     @Override
     public boolean checkRecipe_EM(ItemStack stack) {
         mMaxProgresstime = 1;
+        mEUt = 32;
+        mEfficiencyIncrease = 100_00;
         return true;
-    }
-
-    @Override
-    public void onPostTick(IGregTechTileEntity baseMetaTileEntity, long tick) {
-        if(getBaseMetaTileEntity().isServerSide()) {
-            mMaxProgresstime = 1;
-        }
-        super.onPostTick(baseMetaTileEntity, tick);
     }
 
     @Override
     public boolean onRunningTick(ItemStack stack) {
         mProgresstime = 0;
-        if(getBaseMetaTileEntity().isAllowedToWork()) {
+        if(getBaseMetaTileEntity().isAllowedToWork() && energyFlowOnRunningTick(stack, false)) {
             // TODO: move to config
-
+            float euPermB = 32.0f / 100.0f;
+            int consumedWaterPerTick = 100;
+            int consumedWater = 0;
+            for(FluidStack fluidStack : getStoredFluids()) {
+                if(fluidStack.getFluidID() == HE.pressurizedWater.getID()) {
+                    int consumableWater = Math.max(0, consumedWaterPerTick - consumedWater);
+                    int processedWater = Math.min(fluidStack.amount, consumableWater);
+                    fluidStack.amount -= processedWater;
+                    consumedWater += processedWater;
+                }
+            }
+            int producedEU = (int)(consumedWater * euPermB) * getCurrentEfficiency(null) / 100_00;
+            addEnergyOutput_EM(producedEU, 1);
         }
         return true;
     }

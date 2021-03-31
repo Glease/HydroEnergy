@@ -11,7 +11,6 @@ import com.sinthoras.hydroenergy.client.gui.HEGuiHandler;
 import com.sinthoras.hydroenergy.client.gui.HEHydroDamWaterGuiContainer;
 import com.sinthoras.hydroenergy.config.HEConfig;
 import com.sinthoras.hydroenergy.network.container.HEHydroDamWaterContainer;
-import com.sinthoras.hydroenergy.server.HEReflection;
 import com.sinthoras.hydroenergy.server.HEServer;
 import cpw.mods.fml.common.network.internal.FMLNetworkHandler;
 import cpw.mods.fml.relauncher.Side;
@@ -120,14 +119,6 @@ public class HEHydroDamTileEntity extends GT_MetaTileEntity_MultiblockBase_EM im
     }
 
     @Override
-    public void onPostTick(IGregTechTileEntity baseMetaTileEntity, long tick) {
-        if(getBaseMetaTileEntity().isServerSide()) {
-            mMaxProgresstime = 1;
-        }
-        super.onPostTick(baseMetaTileEntity, tick);
-    }
-
-    @Override
     public boolean onRunningTick(ItemStack stack) {
         mProgresstime = 0;
         waterPerTickIn = 0;
@@ -152,7 +143,7 @@ public class HEHydroDamTileEntity extends GT_MetaTileEntity_MultiblockBase_EM im
 
         int mBPerTickOut = (int)Math.min(HEConfig.damDrainPerSecond, waterStored) * getCurrentEfficiency(null);
         if(mBPerTickOut > 0) {
-            if(HEReflection.invokeDumpFluid(this, new FluidStack(HE.pressurizedWater, mBPerTickOut))) {
+            if(addOutput(new FluidStack(HE.pressurizedWater, mBPerTickOut))) {
                 waterStored -= mBPerTickOut;
                 waterPerTickOut += mBPerTickOut;
             }
@@ -205,7 +196,7 @@ public class HEHydroDamTileEntity extends GT_MetaTileEntity_MultiblockBase_EM im
     @Override
     public boolean doRandomMaintenanceDamage() {
         // Disable maintenance events
-        return false;
+        return true;
     }
 
     @Override

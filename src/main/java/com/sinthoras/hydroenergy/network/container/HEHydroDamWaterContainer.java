@@ -6,6 +6,7 @@ import com.sinthoras.hydroenergy.blocks.HEHydroDamTileEntity;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import gregtech.api.interfaces.tileentity.IGregTechTileEntity;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.ICrafting;
 
@@ -58,64 +59,69 @@ public class HEHydroDamWaterContainer extends GT_Container_MultiMachineEM {
     public void detectAndSendChanges() {
         super.detectAndSendChanges();
 
-        if(buffer == null) {
+        // Initize buffer here because this method is called from the super constructor and therefore, is run before
+        // this class' contructor is run
+        if (buffer == null) {
             buffer = ByteBuffer.allocate(2 * Long.BYTES + 2 * Integer.BYTES);
         }
-        HEHydroDamTileEntity hydroDamTileEntity = (HEHydroDamTileEntity)mTileEntity.getMetaTileEntity();
-        long currentTime = System.currentTimeMillis();
-        if(!mTileEntity.getWorld().isRemote && currentTime > HE.controllerGuiUpdateDelay + timestamp) {
-            boolean updateWaterCapacity = false;
-            long currentWaterCapacity = hydroDamTileEntity.getWaterCapacity();
-            if (waterCapacity != currentWaterCapacity) {
-                waterCapacity = currentWaterCapacity;
-                buffer.putLong(Buffer.waterCapacityOffset, waterCapacity);
-                updateWaterCapacity = true;
-            }
 
-            boolean updateWaterStored = false;
-            long currentEnergyStored = hydroDamTileEntity.getWaterStored();
-            if (waterStored != currentEnergyStored) {
-                waterStored = currentEnergyStored;
-                buffer.putLong(Buffer.waterStoredOffset, waterStored);
-                updateWaterStored = true;
-            }
-
-            boolean updateWaterPerTickIn = false;
-            int currentEnergyPerTickIn = hydroDamTileEntity.getWaterPerTickIn();
-            if (waterPerTickIn != currentEnergyPerTickIn) {
-                waterPerTickIn = currentEnergyPerTickIn;
-                buffer.putInt(Buffer.waterPerTickInOffset, waterPerTickIn);
-                updateWaterPerTickIn = true;
-            }
-
-            boolean updateWaterPerTickOut = false;
-            int currentEnergyPerTickOut = hydroDamTileEntity.getWaterPerTickOut();
-            if (waterPerTickOut != currentEnergyPerTickOut) {
-                waterPerTickOut = currentEnergyPerTickOut;
-                buffer.putInt(Buffer.waterPerTickOutOffset, waterPerTickOut);
-                updateWaterPerTickOut = true;
-            }
-
-            for (ICrafting clientHandle : (List<ICrafting>) crafters) {
-                if (updateWaterCapacity) {
-                    sendStateUpdate(clientHandle, Buffer.waterCapacityOffset);
+        if(mTileEntity.isServerSide()) {
+            HEHydroDamTileEntity hydroDamTileEntity = (HEHydroDamTileEntity) mTileEntity.getMetaTileEntity();
+            long currentTime = System.currentTimeMillis();
+            if (!mTileEntity.getWorld().isRemote && currentTime > HE.controllerGuiUpdateDelay + timestamp) {
+                boolean updateWaterCapacity = false;
+                long currentWaterCapacity = hydroDamTileEntity.getWaterCapacity();
+                if (waterCapacity != currentWaterCapacity) {
+                    waterCapacity = currentWaterCapacity;
+                    buffer.putLong(Buffer.waterCapacityOffset, waterCapacity);
+                    updateWaterCapacity = true;
                 }
 
-                if (updateWaterStored) {
-                    sendStateUpdate(clientHandle, Buffer.waterStoredOffset);
+                boolean updateWaterStored = false;
+                long currentEnergyStored = hydroDamTileEntity.getWaterStored();
+                if (waterStored != currentEnergyStored) {
+                    waterStored = currentEnergyStored;
+                    buffer.putLong(Buffer.waterStoredOffset, waterStored);
+                    updateWaterStored = true;
                 }
 
-                if (updateWaterPerTickIn) {
-                    sendStateUpdate(clientHandle, Buffer.waterPerTickInOffset);
+                boolean updateWaterPerTickIn = false;
+                int currentEnergyPerTickIn = hydroDamTileEntity.getWaterPerTickIn();
+                if (waterPerTickIn != currentEnergyPerTickIn) {
+                    waterPerTickIn = currentEnergyPerTickIn;
+                    buffer.putInt(Buffer.waterPerTickInOffset, waterPerTickIn);
+                    updateWaterPerTickIn = true;
                 }
 
-                if (updateWaterPerTickOut) {
-                    sendStateUpdate(clientHandle, Buffer.waterPerTickOutOffset);
+                boolean updateWaterPerTickOut = false;
+                int currentEnergyPerTickOut = hydroDamTileEntity.getWaterPerTickOut();
+                if (waterPerTickOut != currentEnergyPerTickOut) {
+                    waterPerTickOut = currentEnergyPerTickOut;
+                    buffer.putInt(Buffer.waterPerTickOutOffset, waterPerTickOut);
+                    updateWaterPerTickOut = true;
                 }
-            }
 
-            if(updateWaterCapacity || updateWaterStored || updateWaterPerTickIn ||updateWaterPerTickOut) {
-                timestamp = currentTime;
+                for (ICrafting clientHandle : (List<ICrafting>) crafters) {
+                    if (updateWaterCapacity) {
+                        sendStateUpdate(clientHandle, Buffer.waterCapacityOffset);
+                    }
+
+                    if (updateWaterStored) {
+                        sendStateUpdate(clientHandle, Buffer.waterStoredOffset);
+                    }
+
+                    if (updateWaterPerTickIn) {
+                        sendStateUpdate(clientHandle, Buffer.waterPerTickInOffset);
+                    }
+
+                    if (updateWaterPerTickOut) {
+                        sendStateUpdate(clientHandle, Buffer.waterPerTickOutOffset);
+                    }
+                }
+
+                if (updateWaterCapacity || updateWaterStored || updateWaterPerTickIn || updateWaterPerTickOut) {
+                    timestamp = currentTime;
+                }
             }
         }
     }
@@ -133,6 +139,11 @@ public class HEHydroDamWaterContainer extends GT_Container_MultiMachineEM {
             int index = bufferOffset + i;
             clientHandle.sendProgressBarUpdate(this, index + parameterIdOffset, buffer.get(index));
         }
+    }
+
+    @Override
+    public boolean canInteractWith(EntityPlayer player) {
+        return true;
     }
 
     @SideOnly(Side.CLIENT)

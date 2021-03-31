@@ -8,7 +8,6 @@ import com.github.technus.tectech.thing.metaTileEntity.multi.base.GT_GUIContaine
 import com.github.technus.tectech.thing.metaTileEntity.multi.base.GT_MetaTileEntity_MultiblockBase_EM;
 import com.github.technus.tectech.thing.metaTileEntity.multi.base.render.TT_RenderedExtendedFacingTexture;
 import com.sinthoras.hydroenergy.HE;
-import com.sinthoras.hydroenergy.server.HEReflection;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import gregtech.api.GregTech_API;
@@ -83,7 +82,6 @@ public class HEHydroPumpTileEntity extends GT_MetaTileEntity_MultiblockBase_EM i
     @Override
     protected boolean checkMachine_EM(IGregTechTileEntity gregTechTileEntity, ItemStack itemStack) {
         countOfHatches = 0;
-        mEUt = -30;
         return structureCheck_EM("main", 1, 1, 0) && countOfHatches == 3;
     }
 
@@ -100,29 +98,22 @@ public class HEHydroPumpTileEntity extends GT_MetaTileEntity_MultiblockBase_EM i
     @Override
     public boolean checkRecipe_EM(ItemStack stack) {
         mMaxProgresstime = 1;
+        mEUt = -30;
+        mEfficiencyIncrease = 100_00;
         return true;
-    }
-
-    @Override
-    public void onPostTick(IGregTechTileEntity baseMetaTileEntity, long tick) {
-        if(getBaseMetaTileEntity().isServerSide()) {
-            mMaxProgresstime = 1;
-        }
-        super.onPostTick(baseMetaTileEntity, tick);
     }
 
     @Override
     public boolean onRunningTick(ItemStack stack) {
         mProgresstime = 0;
-        if(getBaseMetaTileEntity().isAllowedToWork()) {
+        if(getBaseMetaTileEntity().isAllowedToWork() && energyFlowOnRunningTick(stack, false)) {
             // TODO: move to config
             int waterPressureLV = 8;
-            int mbPerTickOutLV = 100 * getCurrentEfficiency(null);
+            int mbPerTickOutLV = 100 * getCurrentEfficiency(null) / 100_00;
             FluidStack fluidStack = new FluidStack(HE.pressurizedWater, mbPerTickOutLV);
             HE.pressurizedWater.setPressure(fluidStack, waterPressureLV);
 
-           //addOutput(fluidStack);
-            HEReflection.invokeDumpFluid(this, fluidStack);
+           addOutput(fluidStack);
         }
         return true;
     }
