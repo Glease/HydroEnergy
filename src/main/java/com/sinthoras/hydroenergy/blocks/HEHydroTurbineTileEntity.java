@@ -8,6 +8,7 @@ import com.github.technus.tectech.thing.metaTileEntity.multi.base.GT_GUIContaine
 import com.github.technus.tectech.thing.metaTileEntity.multi.base.GT_MetaTileEntity_MultiblockBase_EM;
 import com.github.technus.tectech.thing.metaTileEntity.multi.base.render.TT_RenderedExtendedFacingTexture;
 import com.sinthoras.hydroenergy.HE;
+import com.sinthoras.hydroenergy.config.HEConfig;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import gregtech.api.GregTech_API;
@@ -23,12 +24,85 @@ import net.minecraftforge.fluids.FluidStack;
 import static com.github.technus.tectech.mechanics.structure.StructureUtility.*;
 import static com.github.technus.tectech.mechanics.structure.StructureUtility.ofBlock;
 
-public class HEHydroTurbineTileEntity extends GT_MetaTileEntity_MultiblockBase_EM implements IConstructable {
+public abstract class HEHydroTurbineTileEntity extends GT_MetaTileEntity_MultiblockBase_EM implements IConstructable {
 
-    /*
-    TODO:
-        - Handle Tiers
-     */
+    public static class HEHydroTurbineTileEntityLV extends HEHydroTurbineTileEntity {
+
+        public HEHydroTurbineTileEntityLV(String name) {
+            super(name);
+        }
+
+        public HEHydroTurbineTileEntityLV(int id, String name, String nameRegional) {
+            super(id, name, nameRegional);
+        }
+
+        @Override
+        public IMetaTileEntity newMetaEntity(IGregTechTileEntity tileEntity) {
+            return new HEHydroTurbineTileEntityLV(mName);
+        }
+
+        @Override
+        protected float getTierEfficiency() {
+            return HEConfig.efficiencyLV;
+        }
+
+        @Override
+        protected int getTierVoltage() {
+            return 32;
+        }
+    }
+
+    public static class HEHydroTurbineTileEntityMV extends HEHydroTurbineTileEntity {
+
+        public HEHydroTurbineTileEntityMV(String name) {
+            super(name);
+        }
+
+        public HEHydroTurbineTileEntityMV(int id, String name, String nameRegional) {
+            super(id, name, nameRegional);
+        }
+
+        @Override
+        public IMetaTileEntity newMetaEntity(IGregTechTileEntity tileEntity) {
+            return new HEHydroTurbineTileEntityMV(mName);
+        }
+
+        @Override
+        protected float getTierEfficiency() {
+            return HEConfig.efficiencyMV;
+        }
+
+        @Override
+        protected int getTierVoltage() {
+            return 128;
+        }
+    }
+
+    public static class HEHydroTurbineTileEntityHV extends HEHydroTurbineTileEntity {
+
+        public HEHydroTurbineTileEntityHV(String name) {
+            super(name);
+        }
+
+        public HEHydroTurbineTileEntityHV(int id, String name, String nameRegional) {
+            super(id, name, nameRegional);
+        }
+
+        @Override
+        public IMetaTileEntity newMetaEntity(IGregTechTileEntity tileEntity) {
+            return new HEHydroTurbineTileEntityHV(mName);
+        }
+
+        @Override
+        protected float getTierEfficiency() {
+            return HEConfig.efficiencyHV;
+        }
+
+        @Override
+        protected int getTierVoltage() {
+            return 512;
+        }
+    }
 
     private static Textures.BlockIcons.CustomIcon textureScreenTurbineON;
     private static Textures.BlockIcons.CustomIcon textureScreenTurbineOFF;
@@ -75,11 +149,6 @@ public class HEHydroTurbineTileEntity extends GT_MetaTileEntity_MultiblockBase_E
     }
 
     @Override
-    public IMetaTileEntity newMetaEntity(IGregTechTileEntity tileEntity) {
-        return new HEHydroTurbineTileEntity(mName);
-    }
-
-    @Override
     protected boolean checkMachine_EM(IGregTechTileEntity gregTechTileEntity, ItemStack itemStack) {
         countOfHatches = 0;
         return structureCheck_EM("main", 1, 1, 0) && countOfHatches == 3;
@@ -98,18 +167,20 @@ public class HEHydroTurbineTileEntity extends GT_MetaTileEntity_MultiblockBase_E
     @Override
     public boolean checkRecipe_EM(ItemStack stack) {
         mMaxProgresstime = 1;
-        mEUt = 32;
+        mEUt = getTierVoltage();
         mEfficiencyIncrease = 100_00;
         return true;
     }
+
+    protected abstract float getTierEfficiency();
+
+    protected abstract int getTierVoltage();
 
     @Override
     public boolean onRunningTick(ItemStack stack) {
         mProgresstime = 0;
         if(getBaseMetaTileEntity().isAllowedToWork() && energyFlowOnRunningTick(stack, false)) {
-            // TODO: move to config
-            float euPermB = 32.0f / 100.0f;
-            int consumedWaterPerTick = 100;
+            int consumedWaterPerTick = (int)(getTierVoltage() * HEConfig.milliBucketPerEU);
             int consumedWater = 0;
             for(FluidStack fluidStack : getStoredFluids()) {
                 if(fluidStack.getFluidID() == HE.pressurizedWater.getID()) {
@@ -119,8 +190,10 @@ public class HEHydroTurbineTileEntity extends GT_MetaTileEntity_MultiblockBase_E
                     consumedWater += processedWater;
                 }
             }
-            int producedEU = (int)(consumedWater * euPermB) * getCurrentEfficiency(null) / 100_00;
-            addEnergyOutput_EM(producedEU, 1);
+            float producedEU = consumedWater * HEConfig.euPerMilliBucket;
+            producedEU *= getTierEfficiency();
+            producedEU *= (float)getCurrentEfficiency(null) / 100_00.0f;
+            addEnergyOutput_EM((int)producedEU, 1);
         }
         return true;
     }

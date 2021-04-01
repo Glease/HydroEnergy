@@ -19,11 +19,17 @@ public class HEConfig {
         public static final int maxWaterSpreadEast = 1000; // in blocks
         public static final int maxWaterSpreadUp = 1000; // in blocks
         public static final int maxWaterSpreadSouth = 10000; // in blocks
-        public static final int energyPerWaterBlock = 10000; // in GregTech EU
         public static final int overworldId = 0;
-        public static final int damDrainPerSecond = 1000; // in mB
-        public static final float waterBonusPerSurfaceBlockPerRainTick = 1.0f; // in mB
+        public static final int damDrainPerSecond = 2048; // in EU
+        public static final float waterBonusPerSurfaceBlockPerRainTick = 1.0f; // in EU/block
         public static final int blockIdOffset = 17000;
+        public static final float efficiencyLV = 0.95f;
+        public static final float efficiencyMV = 0.90f;
+        public static final float efficiencyHV = 0.85f;
+        public static final float pressureLV = 8.0f;
+        public static final float pressureMV = 16.0f;
+        public static final float pressureHV = 24.0f;
+        public static final float milliBucketPerEU = 1.0f;
     }
 
     private class Categories {
@@ -38,7 +44,6 @@ public class HEConfig {
     public static int minLightUpdateTimePerSubChunk = Defaults.minLightUpdateTimePerSubChunk;
     public static float clippingOffset = Defaults.clippingOffset;
     public static List<Integer> dimensionIdWhitelist = new ArrayList<Integer>();
-    public static float energyPerWaterBlock = Defaults.energyPerWaterBlock;
     public static int maxWaterSpreadWest = Defaults.maxWaterSpreadWest;
     public static int maxWaterSpreadDown = Defaults.maxWaterSpreadDown;
     public static int maxWaterSpreadNorth = Defaults.maxWaterSpreadNorth;
@@ -48,6 +53,14 @@ public class HEConfig {
     public static int damDrainPerSecond = Defaults.damDrainPerSecond;
     public static float waterBonusPerSurfaceBlockPerRainTick = Defaults.waterBonusPerSurfaceBlockPerRainTick;
     public static int blockIdOffset = Defaults.blockIdOffset;
+    public static float efficiencyLV = Defaults.efficiencyLV;
+    public static float efficiencyMV = Defaults.efficiencyMV;
+    public static float efficiencyHV = Defaults.efficiencyHV;
+    public static float pressureLV = Defaults.pressureLV;
+    public static float pressureMV = Defaults.pressureMV;
+    public static float pressureHV = Defaults.pressureHV;
+    public static float milliBucketPerEU = Defaults.milliBucketPerEU;
+    public static float euPerMilliBucket = 1.0f / Defaults.milliBucketPerEU;
 
     private static Configuration configuration;
 
@@ -119,17 +132,50 @@ public class HEConfig {
         maxWaterSpreadSouth = maxWaterSpreadSouthProperty.getInt();
 
         Property damDrainPerSecondProperty = configuration.get(Categories.energyBalance, "damDrainPerSecond",
-                Defaults.damDrainPerSecond, "[SERVER] How many mB a dam will provide for turbines per tick.");
+                Defaults.damDrainPerSecond, "[SERVER] How many EU a dam will provide as Pressurized Water for " +
+                        "turbines per tick.");
         damDrainPerSecond = damDrainPerSecondProperty.getInt();
 
         Property waterBonusPerSurfaceBlockPerRainTickProperty = configuration.get(Categories.energyBalance,
                 "waterBonusPerSurfaceBlockPerRainTick", Defaults.waterBonusPerSurfaceBlockPerRainTick,
-                "[SERVER] How many mb of water are added to a dam during rain for each water block on the" +
-                        " highest Y coordinate");
+                "[SERVER] How many EU are added to a dam during rain for each water block on the" +
+                        " highest Y coordinate aka water surface when full.");
+        waterBonusPerSurfaceBlockPerRainTick = (float)waterBonusPerSurfaceBlockPerRainTickProperty.getDouble();
 
         Property blockIdOffsetProperty = configuration.get(Categories.general, "blockIdOffset", Defaults.blockIdOffset,
                 "[SERVER + CLIENT] Offset of blockIds for GregTech block registration");
         blockIdOffset = blockIdOffsetProperty.getInt();
+
+        Property efficiencyLVProperty = configuration.get(Categories.energyBalance, "efficiencyLV", Defaults.efficiencyLV,
+                "[SERVER] Efficiency for Hydro Pump and Hydro Turbine in LV variant in %.");
+        efficiencyLV = (float)efficiencyLVProperty.getDouble();
+
+        Property efficiencyMVProperty = configuration.get(Categories.energyBalance, "efficiencyMV", Defaults.efficiencyMV,
+                "[SERVER] Efficiency for Hydro Pump and Hydro Turbine in MV variant in %.");
+        efficiencyMV = (float)efficiencyMVProperty.getDouble();
+
+        Property efficiencyHVProperty = configuration.get(Categories.energyBalance, "efficiencyHV", Defaults.efficiencyHV,
+                "[SERVER] Efficiency for Hydro Pump and Hydro Turbine in HV variant in %.");
+        efficiencyHV = (float)efficiencyHVProperty.getDouble();
+
+        Property pressureLVProperty = configuration.get(Categories.energyBalance, "pressureLV", Defaults.pressureLV,
+                "[SERVER] Hydro Pump height limit for LV variant in blocks.");
+        pressureLV = (float)pressureLVProperty.getDouble();
+
+        Property pressureMVProperty = configuration.get(Categories.energyBalance, "pressureMV", Defaults.pressureMV,
+                "[SERVER] Hydro Pump height limit for MV variant in blocks.");
+        pressureMV = (float)pressureMVProperty.getDouble();
+
+        Property pressureHVProperty = configuration.get(Categories.energyBalance, "pressureHV", Defaults.pressureHV,
+                "[SERVER] Hydro Pump height limit for HV variant in blocks.");
+        pressureHV = (float)pressureHVProperty.getDouble();
+
+        Property milliBucketPerEUProperty = configuration.get(Categories.energyBalance, "milliBucketPerEU",
+                Defaults.milliBucketPerEU, "[SERVER] Conversion ratio between Pressurized Water and EU on " +
+                        "pressure 1. Affects the throughput on pipes between multi blocks and how much energy is " +
+                        "stored in each Hydro Dam.");
+        milliBucketPerEU = (float)milliBucketPerEUProperty.getDouble();
+        euPerMilliBucket = 1.0f / milliBucketPerEU;
 
         if(configuration.hasChanged()) {
             configuration.save();

@@ -1,8 +1,7 @@
 package com.sinthoras.hydroenergy.client.gui;
 
 import com.github.technus.tectech.thing.metaTileEntity.multi.base.GT_GUIContainer_MultiMachineEM;
-import com.sinthoras.hydroenergy.HE;
-import com.sinthoras.hydroenergy.network.container.HEHydroDamWaterContainer;
+import com.sinthoras.hydroenergy.network.container.HEHydroDamEuContainer;
 import gregtech.api.interfaces.tileentity.IGregTechTileEntity;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.TextureMap;
@@ -13,16 +12,16 @@ import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
 
-public class HEHydroDamWaterGuiContainer extends GT_GUIContainer_MultiMachineEM {
+public class HEHydroDamEuGuiContainer extends GT_GUIContainer_MultiMachineEM {
 
     private static final Color textColor = new Color(250, 250, 255);
     private static final Color textHintColor = new Color(110, 110, 120);
 
-    private HEHydroDamWaterContainer hydroDamContainer;
+    private HEHydroDamEuContainer hydroDamContainer;
 
-    public HEHydroDamWaterGuiContainer(InventoryPlayer inventoryPlayer, IGregTechTileEntity hydroDamMetaTileEntity, String aName, String textureFile) {
-        super(new HEHydroDamWaterContainer(inventoryPlayer, hydroDamMetaTileEntity), aName, textureFile, false, false, false);
-        hydroDamContainer = (HEHydroDamWaterContainer)mContainer;
+    public HEHydroDamEuGuiContainer(InventoryPlayer inventoryPlayer, IGregTechTileEntity hydroDamMetaTileEntity, String aName, String textureFile) {
+        super(new HEHydroDamEuContainer(inventoryPlayer, hydroDamMetaTileEntity), aName, textureFile, false, false, false);
+        hydroDamContainer = (HEHydroDamEuContainer)mContainer;
     }
 
     @Override
@@ -31,15 +30,15 @@ public class HEHydroDamWaterGuiContainer extends GT_GUIContainer_MultiMachineEM 
         fontRendererObj.drawString("Running perfectly.", 7, 16, textColor.getRGB());
         fontRendererObj.drawString("Click me with a screwdriver.", 7, 84, textHintColor.getRGB());
 
-        long waterCapacity = hydroDamContainer.getWaterCapacity();
-        long waterStored = hydroDamContainer.getWaterStored();
-        long mBPerTickIn = hydroDamContainer.getWaterPerTickIn();
-        long mBPerTickOut = hydroDamContainer.getWaterPerTickOut();
-        float fillMultiplier = waterCapacity == 0.0f ? 0.0f : ((float)waterStored) / ((float)waterCapacity);
+        long euCapacity = hydroDamContainer.getEuCapacity();
+        long euStored = hydroDamContainer.getEuStored();
+        long euPerTickIn = hydroDamContainer.getEuPerTickIn();
+        long euPerTickOut = hydroDamContainer.getEuPerTickOut();
+        float fillMultiplier = euCapacity == 0.0f ? 0.0f : ((float)euStored) / ((float)euCapacity);
 
         int slashWidth = fontRendererObj.getStringWidth("/");
-        int storedWidth = fontRendererObj.getStringWidth("" + (waterStored / HE.kiloBucketToMilliBucket) + " kB ");
-        fontRendererObj.drawString("" + (waterStored / HE.kiloBucketToMilliBucket) + " kB / " + (waterCapacity / HE.kiloBucketToMilliBucket) + " kB", 99 - slashWidth / 2 - storedWidth, 35, textColor.getRGB());
+        int storedWidth = fontRendererObj.getStringWidth("" + euStored + " EU ");
+        fontRendererObj.drawString("" + euStored + " EU / " + euCapacity + " EU", 99 - slashWidth / 2 - storedWidth, 35, textColor.getRGB());
 
         Minecraft.getMinecraft().getTextureManager().bindTexture(TextureMap.locationBlocksTexture);
         IIcon iconStill = FluidRegistry.WATER.getStillIcon();
@@ -50,8 +49,8 @@ public class HEHydroDamWaterGuiContainer extends GT_GUIContainer_MultiMachineEM 
         int relativeInfoWidth = fontRendererObj.getStringWidth(relativeInfo);
         fontRendererObj.drawString(relativeInfo, 99 - relativeInfoWidth / 2, 45 + 5, textColor.getRGB());
 
-        String in = "IN: " + mBPerTickIn + " mB/t";
-        String out = "OUT: " + mBPerTickOut + " mB/t";
+        String in = "IN: " + euPerTickIn + " EU/t";
+        String out = "OUT: " + euPerTickOut + " EU/t";
         fontRendererObj.drawString(in, 7, 45 + 20, textColor.getRGB());
         int constStringWidth = fontRendererObj.getStringWidth(out);
         fontRendererObj.drawString(out, 7 + 184 - constStringWidth, 45 + 20, textColor.getRGB());

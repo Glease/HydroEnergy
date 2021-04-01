@@ -8,6 +8,7 @@ import com.github.technus.tectech.thing.metaTileEntity.multi.base.GT_GUIContaine
 import com.github.technus.tectech.thing.metaTileEntity.multi.base.GT_MetaTileEntity_MultiblockBase_EM;
 import com.github.technus.tectech.thing.metaTileEntity.multi.base.render.TT_RenderedExtendedFacingTexture;
 import com.sinthoras.hydroenergy.HE;
+import com.sinthoras.hydroenergy.config.HEConfig;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import gregtech.api.GregTech_API;
@@ -23,12 +24,100 @@ import net.minecraftforge.fluids.FluidStack;
 import static com.github.technus.tectech.mechanics.structure.StructureUtility.*;
 import static com.github.technus.tectech.mechanics.structure.StructureUtility.ofBlock;
 
-public class HEHydroPumpTileEntity extends GT_MetaTileEntity_MultiblockBase_EM implements IConstructable {
+public abstract class HEHydroPumpTileEntity extends GT_MetaTileEntity_MultiblockBase_EM implements IConstructable {
 
-    /*
-    TODO:
-        - Handle Tiers?
-     */
+    public static class HEHydroPumpTileEntityLV extends HEHydroPumpTileEntity {
+
+        public HEHydroPumpTileEntityLV(String name) {
+            super(name);
+        }
+
+        public HEHydroPumpTileEntityLV(int id, String name, String nameRegional) {
+            super(id, name, nameRegional);
+        }
+
+        @Override
+        public IMetaTileEntity newMetaEntity(IGregTechTileEntity tileEntity) {
+            return new HEHydroPumpTileEntityLV(mName);
+        }
+
+        @Override
+        protected float getTierEfficiency() {
+            return HEConfig.efficiencyLV;
+        }
+
+        @Override
+        protected float getTierPressure() {
+            return HEConfig.pressureLV;
+        }
+
+        @Override
+        protected int getTierVoltage() {
+            return 32;
+        }
+    }
+
+    public static class HEHydroPumpTileEntityMV extends HEHydroPumpTileEntity {
+
+        public HEHydroPumpTileEntityMV(String name) {
+            super(name);
+        }
+
+        public HEHydroPumpTileEntityMV(int id, String name, String nameRegional) {
+            super(id, name, nameRegional);
+        }
+
+        @Override
+        public IMetaTileEntity newMetaEntity(IGregTechTileEntity tileEntity) {
+            return new HEHydroPumpTileEntityMV(mName);
+        }
+
+        @Override
+        protected float getTierEfficiency() {
+            return HEConfig.efficiencyMV;
+        }
+
+        @Override
+        protected float getTierPressure() {
+            return HEConfig.pressureMV;
+        }
+
+        @Override
+        protected int getTierVoltage() {
+            return 128;
+        }
+    }
+
+    public static class HEHydroPumpTileEntityHV extends HEHydroPumpTileEntity {
+
+        public HEHydroPumpTileEntityHV(String name) {
+            super(name);
+        }
+
+        public HEHydroPumpTileEntityHV(int id, String name, String nameRegional) {
+            super(id, name, nameRegional);
+        }
+
+        @Override
+        public IMetaTileEntity newMetaEntity(IGregTechTileEntity tileEntity) {
+            return new HEHydroPumpTileEntityHV(mName);
+        }
+
+        @Override
+        protected float getTierEfficiency() {
+            return HEConfig.efficiencyHV;
+        }
+
+        @Override
+        protected float getTierPressure() {
+            return HEConfig.pressureHV;
+        }
+
+        @Override
+        protected int getTierVoltage() {
+            return 512;
+        }
+    }
 
     private static Textures.BlockIcons.CustomIcon textureScreenPumpON;
     private static Textures.BlockIcons.CustomIcon textureScreenPumpOFF;
@@ -75,11 +164,6 @@ public class HEHydroPumpTileEntity extends GT_MetaTileEntity_MultiblockBase_EM i
     }
 
     @Override
-    public IMetaTileEntity newMetaEntity(IGregTechTileEntity tileEntity) {
-        return new HEHydroPumpTileEntity(mName);
-    }
-
-    @Override
     protected boolean checkMachine_EM(IGregTechTileEntity gregTechTileEntity, ItemStack itemStack) {
         countOfHatches = 0;
         return structureCheck_EM("main", 1, 1, 0) && countOfHatches == 3;
@@ -98,22 +182,27 @@ public class HEHydroPumpTileEntity extends GT_MetaTileEntity_MultiblockBase_EM i
     @Override
     public boolean checkRecipe_EM(ItemStack stack) {
         mMaxProgresstime = 1;
-        mEUt = -30;
+        mEUt = -getTierVoltage(); // TODO: check voltage for limits and good practices
         mEfficiencyIncrease = 100_00;
         return true;
     }
+
+    protected abstract float getTierEfficiency();
+
+    protected abstract float getTierPressure();
+
+    protected abstract int getTierVoltage();
 
     @Override
     public boolean onRunningTick(ItemStack stack) {
         mProgresstime = 0;
         if(getBaseMetaTileEntity().isAllowedToWork() && energyFlowOnRunningTick(stack, false)) {
-            // TODO: move to config
-            int waterPressureLV = 8;
-            int mbPerTickOutLV = 100 * getCurrentEfficiency(null) / 100_00;
-            FluidStack fluidStack = new FluidStack(HE.pressurizedWater, mbPerTickOutLV);
-            HE.pressurizedWater.setPressure(fluidStack, waterPressureLV);
-
-           addOutput(fluidStack);
+            float pumpedWater = getTierVoltage() * HEConfig.milliBucketPerEU;
+            pumpedWater *= getTierEfficiency();
+            pumpedWater *= ((float)getCurrentEfficiency(null)) / 100_00.0f;
+            FluidStack fluidStack = new FluidStack(HE.pressurizedWater, (int)pumpedWater);
+            HE.pressurizedWater.setPressure(fluidStack, getTierPressure());
+            addOutput(fluidStack);
         }
         return true;
     }

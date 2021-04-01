@@ -33,7 +33,7 @@ public class HEDam {
 
 	private int waterId;
 	private long timestampLastUpdate = 0;
-	private long[] blocksUpToY = new long[256];
+	private long[] euCapacityUpToY = new long[256];
 
 
 	public HEDam(int waterId) {
@@ -297,28 +297,21 @@ public class HEDam {
 		return "HEController @(" + blockX + ", " + blockY + ", " + blockZ + ")";
 	}
 
-	public long getEnergyCapacity() {
-		long energyCapacity = 0;
+	public long getEuCapacity() {
+		long euCapacity = 0;
 		for(int blockY=this.blockY;blockY<HE.numChunksY*HE.chunkHeight;blockY++) {
-			long heightCoefficient = blockY - this.blockY + 1;
-			energyCapacity += heightCoefficient * blocksPerY[blockY] * HEConfig.energyPerWaterBlock;
+			euCapacity += blocksPerY[blockY] * HE.bucketToMilliBucket * HEConfig.euPerMilliBucket * (blockY - this.blockY + 1);
+			euCapacityUpToY[blockY] = euCapacity;
 		}
-		return energyCapacity;
+		return euCapacity;
 	}
 
-	public long getWaterCapacity() {
-		long waterCapacity = 0;
+	// This method must be called after getEuCapacity (cause euCapacityUpToY[])
+	public void setWaterLevel(long euStored) {
 		for(int blockY=this.blockY;blockY<HE.numChunksY*HE.chunkHeight;blockY++) {
-			waterCapacity += blocksPerY[blockY] * HE.bucketToMilliBucket;
-			blocksUpToY[blockY] = waterCapacity;
-		}
-		return waterCapacity;
-	}
-
-	public void setWaterStored(long waterStored) {
-		for(int blockY=this.blockY;blockY<HE.numChunksY*HE.chunkHeight;blockY++) {
-			if(waterStored < blocksUpToY[blockY]) {
-				float decimals = 1.0f + ((float)waterStored - (float)blocksUpToY[blockY]) / (float)blocksPerY[blockY] / HE.bucketToMilliBucket;
+			if(euStored < euCapacityUpToY[blockY]) {
+				float energyCapacityAtY = blocksPerY[blockY] * HE.bucketToMilliBucket * HEConfig.euPerMilliBucket * (blockY - this.blockY + 1);
+				float decimals = 1.0f + ((float)euStored - (float) euCapacityUpToY[blockY]) / energyCapacityAtY;
 				setWaterLevel(blockY + decimals);
 				return;
 			}

@@ -234,16 +234,13 @@ public class HEServer extends WorldSavedData {
 		return list;
 	}
 
-	public long getEnergyCapacity(int waterId) {
-		return dams[waterId].getEnergyCapacity();
+	public long getEuCapacity(int waterId) {
+		return dams[waterId].getEuCapacity();
 	}
 
-	public long getWaterCapacity(int waterId) {
-		return dams[waterId].getWaterCapacity();
-	}
-
-	public void setWaterStored(int waterId, long waterStored) {
-		dams[waterId].setWaterStored(waterStored);
+	// This method must be called after getEuCapacity
+	public void setWaterLevel(int waterId, long euStored) {
+		dams[waterId].setWaterLevel(euStored);
 	}
 
 	public int getRainedOnBlocks(int waterId) {

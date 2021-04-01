@@ -29,16 +29,16 @@ public class HEPressurizedWater extends Fluid {
         return FluidRegistry.WATER.getFlowingIcon();
     }
 
-    public void setPressure(FluidStack fluidStack, int pressure) {
+    public void setPressure(FluidStack fluidStack, float pressure) {
         if(fluidStack.tag == null) {
             fluidStack.tag = new NBTTagCompound();
         }
-        fluidStack.tag.setInteger(HETags.pressure, pressure);
+        fluidStack.tag.setFloat(HETags.pressure, pressure);
     }
 
-    public int getPressure(FluidStack fluidStack) {
+    public float getPressure(FluidStack fluidStack) {
         if(fluidStack.tag != null && fluidStack.tag.hasKey(HETags.pressure)) {
-            return fluidStack.tag.getInteger(HETags.pressure);
+            return fluidStack.tag.getFloat(HETags.pressure);
         }
         else {
             return -1;
