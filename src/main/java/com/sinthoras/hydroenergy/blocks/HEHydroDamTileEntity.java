@@ -117,7 +117,7 @@ public class HEHydroDamTileEntity extends GT_MetaTileEntity_MultiblockBase_EM im
         waterPerTickIn = 0;
         waterPerTickOut = 0;
 
-        waterCapacity = HEServer.instance.getWaterCapacity(waterId) * HE.bucketToMilliBucket;
+        waterCapacity = HEServer.instance.getWaterCapacity(waterId);
         waterStored = Math.min(waterStored, waterCapacity);
 
         int waterLevelOverController = (int) (HEServer.instance.getWaterLevel(waterId) - getBaseMetaTileEntity().getYCoord());
@@ -143,6 +143,8 @@ public class HEHydroDamTileEntity extends GT_MetaTileEntity_MultiblockBase_EM im
             waterStored += (long)(HEServer.instance.getRainedOnBlocks(waterId) * HEConfig.waterBonusPerSurfaceBlockPerRainTick);
             waterStored = Math.min(waterStored, waterCapacity);
         }
+
+        HEServer.instance.setWaterStored(waterId, waterStored);
         return true;
     }
 

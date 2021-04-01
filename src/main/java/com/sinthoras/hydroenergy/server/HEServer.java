@@ -242,6 +242,10 @@ public class HEServer extends WorldSavedData {
 		return dams[waterId].getWaterCapacity();
 	}
 
+	public void setWaterStored(int waterId, long waterStored) {
+		dams[waterId].setWaterStored(waterStored);
+	}
+
 	public int getRainedOnBlocks(int waterId) {
 		return dams[waterId].getRainedOnBlocks();
 	}

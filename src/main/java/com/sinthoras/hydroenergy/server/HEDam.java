@@ -33,6 +33,7 @@ public class HEDam {
 
 	private int waterId;
 	private long timestampLastUpdate = 0;
+	private long[] blocksUpToY = new long[256];
 
 
 	public HEDam(int waterId) {
@@ -308,9 +309,20 @@ public class HEDam {
 	public long getWaterCapacity() {
 		long waterCapacity = 0;
 		for(int blockY=this.blockY;blockY<HE.numChunksY*HE.chunkHeight;blockY++) {
-			waterCapacity += blocksPerY[blockY];
+			waterCapacity += blocksPerY[blockY] * HE.bucketToMilliBucket;
+			blocksUpToY[blockY] = waterCapacity;
 		}
 		return waterCapacity;
+	}
+
+	public void setWaterStored(long waterStored) {
+		for(int blockY=this.blockY;blockY<HE.numChunksY*HE.chunkHeight;blockY++) {
+			if(waterStored < blocksUpToY[blockY]) {
+				float decimals = 1.0f + ((float)waterStored - (float)blocksUpToY[blockY]) / (float)blocksPerY[blockY] / HE.bucketToMilliBucket;
+				setWaterLevel(blockY + decimals);
+				return;
+			}
+		}
 	}
 
 	public int getRainedOnBlocks() {
