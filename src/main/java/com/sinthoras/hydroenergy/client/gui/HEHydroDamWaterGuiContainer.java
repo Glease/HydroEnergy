@@ -20,8 +20,8 @@ public class HEHydroDamWaterGuiContainer extends GT_GUIContainer_MultiMachineEM 
     private HEHydroDamWaterContainer hydroDamContainer;
 
     public HEHydroDamWaterGuiContainer(InventoryPlayer inventoryPlayer, IGregTechTileEntity hydroDamMetaTileEntity, String aName, String textureFile) {
-        super(inventoryPlayer, hydroDamMetaTileEntity, aName, textureFile, false, false, false);
-        hydroDamContainer = new HEHydroDamWaterContainer(inventoryPlayer, hydroDamMetaTileEntity);
+        super(new HEHydroDamWaterContainer(inventoryPlayer, hydroDamMetaTileEntity), aName, textureFile, false, false, false);
+        hydroDamContainer = (HEHydroDamWaterContainer)mContainer;
     }
 
     @Override
