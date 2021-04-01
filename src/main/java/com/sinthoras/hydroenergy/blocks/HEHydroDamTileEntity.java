@@ -7,6 +7,7 @@ import com.github.technus.tectech.thing.metaTileEntity.multi.base.GT_MetaTileEnt
 import com.github.technus.tectech.thing.metaTileEntity.multi.base.render.TT_RenderedExtendedFacingTexture;
 import com.sinthoras.hydroenergy.HE;
 import com.sinthoras.hydroenergy.HETags;
+import com.sinthoras.hydroenergy.HEUtil;
 import com.sinthoras.hydroenergy.client.gui.HEGuiHandler;
 import com.sinthoras.hydroenergy.client.gui.HEHydroDamEuGuiContainer;
 import com.sinthoras.hydroenergy.config.HEConfig;
@@ -40,6 +41,8 @@ public class HEHydroDamTileEntity extends GT_MetaTileEntity_MultiblockBase_EM im
     private long euCapacity = 0;
     private int euPerTickIn = 0;
     private int euPerTickOut = 0;
+    private HEUtil.AveragedRingBuffer euPerTickOutAverage = new HEUtil.AveragedRingBuffer(64);
+    private HEUtil.AveragedRingBuffer euPerTickInAverage = new HEUtil.AveragedRingBuffer(64);
 
     private static final IStructureDefinition<HEHydroDamTileEntity> multiblockDefinition = StructureDefinition
         .<HEHydroDamTileEntity>builder()
@@ -56,7 +59,7 @@ public class HEHydroDamTileEntity extends GT_MetaTileEntity_MultiblockBase_EM im
             ofChain(
                 ofHatchAdder(
                     HEHydroDamTileEntity::addClassicToMachineList, steelTextureIndex,
-                    GregTech_API.sBlockCasings2, solidSteelCasingMeta
+                    GregTech_API.sBlockCasings2, solidSteelCasingMeta  // TODO: get casing from Tier instance
                 ),
                 ofBlock(
                     GregTech_API.sBlockCasings2, solidSteelCasingMeta
@@ -148,6 +151,9 @@ public class HEHydroDamTileEntity extends GT_MetaTileEntity_MultiblockBase_EM im
             euStored += addedEu;
             euPerTickIn += addedEu;
         }
+
+        euPerTickInAverage.addValue(euPerTickIn);
+        euPerTickOutAverage.addValue(euPerTickOut);
 
         HEServer.instance.setWaterLevel(waterId, euStored);
         return true;
@@ -289,11 +295,11 @@ public class HEHydroDamTileEntity extends GT_MetaTileEntity_MultiblockBase_EM im
     }
 
     public int getEuPerTickIn() {
-        return euPerTickIn;
+        return (int)euPerTickInAverage.getAverage();
     }
 
     public int getEuPerTickOut() {
-        return euPerTickOut;
+        return (int)euPerTickOutAverage.getAverage();
     }
 
     public int getWaterId() {

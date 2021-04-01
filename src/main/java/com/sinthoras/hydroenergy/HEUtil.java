@@ -25,4 +25,26 @@ public class HEUtil {
 	public static short chunkYToFlag(int chunkY) {
 		return (short)(1 << chunkY);
 	}
+
+	public static class AveragedRingBuffer {
+		private float[] values;
+		private int pointer = 0;
+		private float average = 0.0f;
+
+		public AveragedRingBuffer(int averagedDurationInTicks) {
+			values = new float[averagedDurationInTicks];
+		}
+
+		public void addValue(float newValue) {
+			float oldValue = values[pointer];
+			values[pointer] = newValue;
+			average += newValue / values.length - oldValue / values.length;
+			pointer++;
+			pointer = pointer % values.length;
+		}
+
+		public float getAverage() {
+			return average;
+		}
+	}
 }

@@ -180,11 +180,11 @@ public abstract class HEHydroTurbineTileEntity extends GT_MetaTileEntity_Multibl
     public boolean onRunningTick(ItemStack stack) {
         mProgresstime = 0;
         if(getBaseMetaTileEntity().isAllowedToWork() && energyFlowOnRunningTick(stack, false)) {
-            int consumedWaterPerTick = (int)(getTierVoltage() * HEConfig.milliBucketPerEU);
+            int consumableWaterPerTick = (int)(getTierVoltage() * HEConfig.milliBucketPerEU);
             int consumedWater = 0;
             for(FluidStack fluidStack : getStoredFluids()) {
                 if(fluidStack.getFluidID() == HE.pressurizedWater.getID()) {
-                    int consumableWater = Math.max(0, consumedWaterPerTick - consumedWater);
+                    int consumableWater = Math.max(0, consumableWaterPerTick - consumedWater);
                     int processedWater = Math.min(fluidStack.amount, consumableWater);
                     fluidStack.amount -= processedWater;
                     consumedWater += processedWater;
