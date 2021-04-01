@@ -32,13 +32,6 @@ import static com.github.technus.tectech.mechanics.structure.StructureUtility.*;
 
 public class HEHydroDamTileEntity extends GT_MetaTileEntity_MultiblockBase_EM implements IConstructable {
 
-    /*
-    TODO:
-        - Clean up empty fluid stacks on input (probably automatic: test it)
-        - Not ticking
-        - Screwdriver GUI has inventory overlap
-     */
-
     private static Textures.BlockIcons.CustomIcon Screen;
     private final static int steelTextureIndex = 16;
     private final static int solidSteelCasingMeta = 0;
@@ -135,13 +128,10 @@ public class HEHydroDamTileEntity extends GT_MetaTileEntity_MultiblockBase_EM im
                 fluidStack.amount -= canStore;
                 waterStored += canStore;
                 waterPerTickIn += canStore;
-                if(fluidStack.amount == 0) {
-                    // TODO: delete fluid stack from hatch? Or is this done automatically?
-                }
             }
         });
 
-        int mBPerTickOut = (int)Math.min(HEConfig.damDrainPerSecond, waterStored) * getCurrentEfficiency(null);
+        int mBPerTickOut = (int)Math.min(HEConfig.damDrainPerSecond, waterStored);
         if(mBPerTickOut > 0) {
             if(addOutput(new FluidStack(HE.pressurizedWater, mBPerTickOut))) {
                 waterStored -= mBPerTickOut;
