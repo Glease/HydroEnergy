@@ -1,6 +1,7 @@
 package com.sinthoras.hydroenergy.client.gui;
 
 import com.github.technus.tectech.thing.metaTileEntity.multi.base.GT_GUIContainer_MultiMachineEM;
+import com.sinthoras.hydroenergy.HE;
 import com.sinthoras.hydroenergy.network.container.HEHydroDamWaterContainer;
 import gregtech.api.interfaces.tileentity.IGregTechTileEntity;
 import net.minecraft.client.Minecraft;
@@ -37,8 +38,8 @@ public class HEHydroDamWaterGuiContainer extends GT_GUIContainer_MultiMachineEM 
         float fillMultiplier = waterCapacity == 0.0f ? 0.0f : ((float)waterStored) / ((float)waterCapacity);
 
         int slashWidth = fontRendererObj.getStringWidth("/");
-        int storedWidth = fontRendererObj.getStringWidth("" + (waterStored / 1000) + " kB ");
-        fontRendererObj.drawString("" + (waterStored / 1000) + " kB / " + (waterCapacity / 1000) + " kB", 99 - slashWidth / 2 - storedWidth, 35, textColor.getRGB());
+        int storedWidth = fontRendererObj.getStringWidth("" + (waterStored / HE.kiloBucketToMilliBucket) + " kB ");
+        fontRendererObj.drawString("" + (waterStored / HE.kiloBucketToMilliBucket) + " kB / " + (waterCapacity / HE.kiloBucketToMilliBucket) + " kB", 99 - slashWidth / 2 - storedWidth, 35, textColor.getRGB());
 
         Minecraft.getMinecraft().getTextureManager().bindTexture(TextureMap.locationBlocksTexture);
         IIcon iconStill = FluidRegistry.WATER.getStillIcon();

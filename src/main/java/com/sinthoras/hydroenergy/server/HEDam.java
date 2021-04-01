@@ -306,11 +306,11 @@ public class HEDam {
 	}
 
 	public long getWaterCapacity() {
-		long energyCapacity = 0;
+		long waterCapacity = 0;
 		for(int blockY=this.blockY;blockY<HE.numChunksY*HE.chunkHeight;blockY++) {
-			energyCapacity += blocksPerY[blockY];
+			waterCapacity += blocksPerY[blockY];
 		}
-		return energyCapacity;
+		return waterCapacity;
 	}
 
 	public int getRainedOnBlocks() {

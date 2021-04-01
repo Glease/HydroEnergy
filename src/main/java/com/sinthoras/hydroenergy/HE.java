@@ -25,6 +25,8 @@ public class HE {
     public static final int blockPerSubChunk = chunkWidth * chunkHeight * chunkDepth;
     public static final int underWaterSkylightDepth = (int)Math.ceil(16f / waterOpacity);
     public static final int controllerGuiUpdateDelay = 200;
+    public static final int bucketToMilliBucket = 1_000;
+    public static final int kiloBucketToMilliBucket = 1_000_000;
 
     public static boolean logicalClientLoaded = false;
     public static final String ERROR_serverIdsOutOfBounds = "Server uses invalid waterIds! Server message ignored. " +
