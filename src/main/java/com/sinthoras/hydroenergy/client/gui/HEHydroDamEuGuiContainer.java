@@ -1,11 +1,16 @@
 package com.sinthoras.hydroenergy.client.gui;
 
 import com.github.technus.tectech.thing.metaTileEntity.multi.base.GT_GUIContainer_MultiMachineEM;
+import com.sinthoras.hydroenergy.HEUtil;
+import com.sinthoras.hydroenergy.blocks.HEHydroDamTileEntity;
 import com.sinthoras.hydroenergy.network.container.HEHydroDamEuContainer;
+import gregtech.api.enums.GT_Values;
 import gregtech.api.interfaces.tileentity.IGregTechTileEntity;
+import gregtech.api.util.GT_Utility;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.IIcon;
 import net.minecraftforge.fluids.FluidRegistry;
 import org.lwjgl.opengl.GL11;
@@ -26,7 +31,11 @@ public class HEHydroDamEuGuiContainer extends GT_GUIContainer_MultiMachineEM {
 
     @Override
     protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
-        fontRendererObj.drawString("Hydro Dam", 7, 8, textColor.getRGB());
+        ItemStack[] inventory = ((HEHydroDamTileEntity)hydroDamContainer.mTileEntity.getMetaTileEntity()).mInventory;
+        boolean configCircuitIsPresent = inventory != null && inventory[1] != null && inventory[1].getItem() == GT_Utility.getIntegratedCircuit(0).getItem();
+        int voltageTier = configCircuitIsPresent ? HEUtil.clamp(inventory[1].getItemDamage(), 1, 3) : 1;
+
+        fontRendererObj.drawString("Hydro Dam (" + GT_Values.VN[voltageTier] + ")", 7, 8, textColor.getRGB());
         fontRendererObj.drawString("Running perfectly.", 7, 16, textColor.getRGB());
         fontRendererObj.drawString("Click me with a screwdriver.", 7, 84, textHintColor.getRGB());
 
