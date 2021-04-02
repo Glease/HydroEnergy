@@ -12,6 +12,7 @@ import com.sinthoras.hydroenergy.config.HEConfig;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import gregtech.api.GregTech_API;
+import gregtech.api.enums.GT_Values;
 import gregtech.api.enums.Textures;
 import gregtech.api.interfaces.ITexture;
 import gregtech.api.interfaces.metatileentity.IMetaTileEntity;
@@ -42,18 +43,8 @@ public abstract class HEHydroPumpTileEntity extends GT_MetaTileEntity_Multiblock
         }
 
         @Override
-        protected float getTierEfficiency() {
-            return HEConfig.efficiencyLV;
-        }
-
-        @Override
-        protected float getTierPressure() {
-            return HEConfig.pressureLV;
-        }
-
-        @Override
-        protected int getTierVoltage() {
-            return 32;
+        protected int getTier() {
+            return 1;
         }
     }
 
@@ -73,18 +64,8 @@ public abstract class HEHydroPumpTileEntity extends GT_MetaTileEntity_Multiblock
         }
 
         @Override
-        protected float getTierEfficiency() {
-            return HEConfig.efficiencyMV;
-        }
-
-        @Override
-        protected float getTierPressure() {
-            return HEConfig.pressureMV;
-        }
-
-        @Override
-        protected int getTierVoltage() {
-            return 128;
+        protected int getTier() {
+            return 2;
         }
     }
 
@@ -104,18 +85,8 @@ public abstract class HEHydroPumpTileEntity extends GT_MetaTileEntity_Multiblock
         }
 
         @Override
-        protected float getTierEfficiency() {
-            return HEConfig.efficiencyHV;
-        }
-
-        @Override
-        protected float getTierPressure() {
-            return HEConfig.pressureHV;
-        }
-
-        @Override
-        protected int getTierVoltage() {
-            return 512;
+        protected int getTier() {
+            return 3;
         }
     }
 
@@ -187,11 +158,19 @@ public abstract class HEHydroPumpTileEntity extends GT_MetaTileEntity_Multiblock
         return true;
     }
 
-    protected abstract float getTierEfficiency();
+    protected abstract int getTier();
 
-    protected abstract float getTierPressure();
+    protected float getTierEfficiency() {
+        return (float)HEConfig.efficiency[getTier()];
+    }
 
-    protected abstract int getTierVoltage();
+    protected float getTierPressure() {
+        return (float)HEConfig.pressure[getTier()];
+    }
+
+    protected int getTierVoltage() {
+        return (int)GT_Values.V[getTier()];
+    }
 
     @Override
     public boolean onRunningTick(ItemStack stack) {

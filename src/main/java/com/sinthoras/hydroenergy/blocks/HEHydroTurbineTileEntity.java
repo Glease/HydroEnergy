@@ -12,6 +12,7 @@ import com.sinthoras.hydroenergy.config.HEConfig;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import gregtech.api.GregTech_API;
+import gregtech.api.enums.GT_Values;
 import gregtech.api.enums.Textures;
 import gregtech.api.interfaces.ITexture;
 import gregtech.api.interfaces.metatileentity.IMetaTileEntity;
@@ -42,13 +43,8 @@ public abstract class HEHydroTurbineTileEntity extends GT_MetaTileEntity_Multibl
         }
 
         @Override
-        protected float getTierEfficiency() {
-            return HEConfig.efficiencyLV;
-        }
-
-        @Override
-        protected int getTierVoltage() {
-            return 32;
+        public int getTier() {
+            return 1;
         }
     }
 
@@ -68,13 +64,8 @@ public abstract class HEHydroTurbineTileEntity extends GT_MetaTileEntity_Multibl
         }
 
         @Override
-        protected float getTierEfficiency() {
-            return HEConfig.efficiencyMV;
-        }
-
-        @Override
-        protected int getTierVoltage() {
-            return 128;
+        public int getTier() {
+            return 2;
         }
     }
 
@@ -94,13 +85,8 @@ public abstract class HEHydroTurbineTileEntity extends GT_MetaTileEntity_Multibl
         }
 
         @Override
-        protected float getTierEfficiency() {
-            return HEConfig.efficiencyHV;
-        }
-
-        @Override
-        protected int getTierVoltage() {
-            return 512;
+        public int getTier() {
+            return 3;
         }
     }
 
@@ -172,9 +158,15 @@ public abstract class HEHydroTurbineTileEntity extends GT_MetaTileEntity_Multibl
         return true;
     }
 
-    protected abstract float getTierEfficiency();
+    protected float getTierEfficiency() {
+        return (float)HEConfig.efficiency[getTier()];
+    }
 
-    protected abstract int getTierVoltage();
+    protected int getTierVoltage() {
+        return (int)GT_Values.V[getTier()];
+    }
+
+    protected abstract int getTier();
 
     @Override
     public boolean onRunningTick(ItemStack stack) {
