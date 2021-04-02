@@ -21,6 +21,8 @@ import gregtech.api.enums.Textures;
 import gregtech.api.interfaces.ITexture;
 import gregtech.api.interfaces.metatileentity.IMetaTileEntity;
 import gregtech.api.interfaces.tileentity.IGregTechTileEntity;
+import gregtech.api.metatileentity.implementations.GT_MetaTileEntity_Hatch_Output;
+import gregtech.api.util.GT_ModHandler;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -136,13 +138,13 @@ public class HEHydroDamTileEntity extends GT_MetaTileEntity_MultiblockBase_EM im
             }
         });
 
-        int availableOutput = (int)Math.min(HEConfig.damDrainPerSecond, euStored);
-        int availableOutputAsWater = (int)(availableOutput * HEConfig.milliBucketPerEU);
+        final int availableOutput = (int)Math.min(HEConfig.damDrainPerSecond, euStored);
+        final int availableOutputAsWater = (int)(availableOutput * HEConfig.milliBucketPerEU);
         if(availableOutput > 0) {
-            if(addOutput(new FluidStack(HE.pressurizedWater, availableOutputAsWater))) {
-                euStored -= availableOutput;
-                euPerTickOut += availableOutput;
-            }
+            final int distributedFluid = distributeFluid(new FluidStack(HE.pressurizedWater, availableOutputAsWater));
+            final long distributedEu = (long)(distributedFluid * HEConfig.euPerMilliBucket);
+            euStored -= distributedEu;
+            euPerTickOut += distributedEu;
         }
 
         if(getBaseMetaTileEntity().getWorld().isRaining()) {
@@ -157,6 +159,34 @@ public class HEHydroDamTileEntity extends GT_MetaTileEntity_MultiblockBase_EM im
 
         HEServer.instance.setWaterLevel(waterId, euStored);
         return true;
+    }
+
+    private int distributeFluid(FluidStack fluidStack) {
+        final int availableFluid = fluidStack.amount;
+        for (GT_MetaTileEntity_Hatch_Output hatch : mOutputHatches) {
+            if (!isValidMetaTileEntity(hatch)) {
+                continue;
+            }
+            if (!hatch.outputsLiquids()) {
+                continue;
+            }
+            if (hatch.isFluidLocked() && hatch.getLockedFluidName() != null && !hatch.getLockedFluidName().equals(fluidStack.getUnlocalizedName())) {
+                continue;
+            }
+
+            FluidStack currentFluid = hatch.getFillableStack();
+            if (currentFluid == null || currentFluid.getFluid().getID() <= 0) {
+                currentFluid = new FluidStack(HE.pressurizedWater, 0);
+            }
+            if(currentFluid.getFluid().getID() == HE.pressurizedWater.getID()) {
+                final int availableSpace = hatch.getCapacity() - currentFluid.amount;
+                final int placedFluid = Math.min(availableSpace, fluidStack.amount);
+                fluidStack.amount -= placedFluid;
+                currentFluid.amount += placedFluid;
+                hatch.setFillableStack(currentFluid);
+            }
+        }
+        return availableFluid - fluidStack.amount;
     }
 
     @Override
