@@ -17,6 +17,7 @@ import gregtech.api.enums.Textures;
 import gregtech.api.interfaces.ITexture;
 import gregtech.api.interfaces.metatileentity.IMetaTileEntity;
 import gregtech.api.interfaces.tileentity.IGregTechTileEntity;
+import net.minecraft.block.Block;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
@@ -31,10 +32,12 @@ public abstract class HEHydroTurbineTileEntity extends GT_MetaTileEntity_Multibl
 
         public HEHydroTurbineTileEntityLV(String name) {
             super(name);
+            blockTextureIndex = steelCasingTextureIndex;
         }
 
         public HEHydroTurbineTileEntityLV(int id, String name, String nameRegional) {
             super(id, name, nameRegional);
+            blockTextureIndex = steelCasingTextureIndex;
         }
 
         @Override
@@ -46,16 +49,27 @@ public abstract class HEHydroTurbineTileEntity extends GT_MetaTileEntity_Multibl
         public int getTier() {
             return 1;
         }
+
+        private static final int solidSteelCasingMeta = 0;
+        private static final int steelCasingTextureIndex = 16;
+        private static final IStructureDefinition<HEHydroTurbineTileEntity> multiblockDefinition = getStructureDefinition(GregTech_API.sBlockCasings2, solidSteelCasingMeta, steelCasingTextureIndex);
+
+        @Override
+        public IStructureDefinition<HEHydroTurbineTileEntity> getStructure_EM() {
+            return multiblockDefinition;
+        }
     }
 
     public static class HEHydroTurbineTileEntityMV extends HEHydroTurbineTileEntity {
 
         public HEHydroTurbineTileEntityMV(String name) {
             super(name);
+            blockTextureIndex = aluminiumCasingTextureIndex;
         }
 
         public HEHydroTurbineTileEntityMV(int id, String name, String nameRegional) {
             super(id, name, nameRegional);
+            blockTextureIndex = aluminiumCasingTextureIndex;
         }
 
         @Override
@@ -67,16 +81,27 @@ public abstract class HEHydroTurbineTileEntity extends GT_MetaTileEntity_Multibl
         public int getTier() {
             return 2;
         }
+
+        private static final int aluminiumCasingMeta = 1;
+        private static final int aluminiumCasingTextureIndex = 17;
+        private static final IStructureDefinition<HEHydroTurbineTileEntity> multiblockDefinition = getStructureDefinition(GregTech_API.sBlockCasings2, aluminiumCasingMeta, aluminiumCasingTextureIndex);
+
+        @Override
+        public IStructureDefinition<HEHydroTurbineTileEntity> getStructure_EM() {
+            return multiblockDefinition;
+        }
     }
 
     public static class HEHydroTurbineTileEntityHV extends HEHydroTurbineTileEntity {
 
         public HEHydroTurbineTileEntityHV(String name) {
             super(name);
+            blockTextureIndex = stainlessSteelCasingTextureIndex;
         }
 
         public HEHydroTurbineTileEntityHV(int id, String name, String nameRegional) {
             super(id, name, nameRegional);
+            blockTextureIndex = stainlessSteelCasingTextureIndex;
         }
 
         @Override
@@ -88,43 +113,53 @@ public abstract class HEHydroTurbineTileEntity extends GT_MetaTileEntity_Multibl
         public int getTier() {
             return 3;
         }
+
+        private static final int stainlessSteelCasingMeta = 1;
+        private static final int stainlessSteelCasingTextureIndex = 58;
+        private static final IStructureDefinition<HEHydroTurbineTileEntity> multiblockDefinition = getStructureDefinition(GregTech_API.sBlockCasings4, stainlessSteelCasingMeta, stainlessSteelCasingTextureIndex);
+
+        @Override
+        public IStructureDefinition<HEHydroTurbineTileEntity> getStructure_EM() {
+            return multiblockDefinition;
+        }
     }
 
     private static Textures.BlockIcons.CustomIcon textureScreenTurbineON;
     private static Textures.BlockIcons.CustomIcon textureScreenTurbineOFF;
     private static Textures.BlockIcons.CustomIcon textureScreenArrowDownAnimated;
-    private final static int steelTextureIndex = 16;
-    private final static int solidSteelCasingMeta = 0;
+    protected int blockTextureIndex = 16;
 
     private int countOfHatches = 0;
 
-    private static final IStructureDefinition<HEHydroTurbineTileEntity> multiblockDefinition = StructureDefinition
-            .<HEHydroTurbineTileEntity>builder()
-            .addShape("main",
-                    transpose(new String[][]{
-                            {"CCC", "CCC", "CCC"},
-                            {"C~C", "H H", "HHH"},
-                            {"CCC", "CCC", "CCC"}
-                    })
-            ).addElement(
-                    'H',
-                    ofChain(
-                            onElementPass(x -> x.countOfHatches++,
-                                    ofHatchAdder(
-                                            HEHydroTurbineTileEntity::addClassicToMachineList, steelTextureIndex,
-                                            GregTech_API.sBlockCasings2, solidSteelCasingMeta
-                                    )
-                            ),
-                            ofBlock(
-                                    GregTech_API.sBlockCasings2, solidSteelCasingMeta
-                            )
-                    )
-            ).addElement(
-                    'C',
-                    ofBlock(
-                            GregTech_API.sBlockCasings2, solidSteelCasingMeta
-                    )
-            ).build();
+    protected static IStructureDefinition<HEHydroTurbineTileEntity> getStructureDefinition(Block casingBlock, int casingMeta, int blockTextureIndex) {
+        return StructureDefinition
+                .<HEHydroTurbineTileEntity>builder()
+                .addShape("main",
+                        transpose(new String[][]{
+                                {"CCC", "CCC", "CCC"},
+                                {"C~C", "H H", "HHH"},
+                                {"CCC", "CCC", "CCC"}
+                        })
+                ).addElement(
+                        'H',
+                        ofChain(
+                                onElementPass(x -> x.countOfHatches++,
+                                        ofHatchAdder(
+                                                HEHydroTurbineTileEntity::addClassicToMachineList, blockTextureIndex,
+                                                casingBlock, casingMeta
+                                        )
+                                ),
+                                ofBlock(
+                                        casingBlock, casingMeta
+                                )
+                        )
+                ).addElement(
+                        'C',
+                        ofBlock(
+                                casingBlock, casingMeta
+                        )
+                ).build();
+    }
 
     public HEHydroTurbineTileEntity(String name) {
         super(name);
@@ -143,11 +178,6 @@ public abstract class HEHydroTurbineTileEntity extends GT_MetaTileEntity_Multibl
     @Override
     public void construct(ItemStack itemStack, boolean hintsOnly) {
         structureBuild_EM("main", 1,1,0, hintsOnly, itemStack);
-    }
-
-    @Override
-    public IStructureDefinition<HEHydroTurbineTileEntity> getStructure_EM() {
-        return multiblockDefinition;
     }
 
     @Override
@@ -212,17 +242,17 @@ public abstract class HEHydroTurbineTileEntity extends GT_MetaTileEntity_Multibl
     public ITexture[] getTexture(IGregTechTileEntity baseMetaTileEntity, byte side, byte facing, byte colorIndex, boolean isActive, boolean hasRedstoneSignal) {
         if(side == facing) {
             if(isActive) {
-                return new ITexture[]{Textures.BlockIcons.getCasingTextureForId(steelTextureIndex),
+                return new ITexture[]{Textures.BlockIcons.getCasingTextureForId(blockTextureIndex),
                         new TT_RenderedExtendedFacingTexture(textureScreenTurbineON),
                         new TT_RenderedExtendedFacingTexture(textureScreenArrowDownAnimated)};
             }
             else {
-                return new ITexture[]{Textures.BlockIcons.getCasingTextureForId(steelTextureIndex),
+                return new ITexture[]{Textures.BlockIcons.getCasingTextureForId(blockTextureIndex),
                         new TT_RenderedExtendedFacingTexture(textureScreenTurbineOFF)};
             }
         }
         else {
-            return new ITexture[]{Textures.BlockIcons.getCasingTextureForId(steelTextureIndex)};
+            return new ITexture[]{Textures.BlockIcons.getCasingTextureForId(blockTextureIndex)};
         }
     }
 
