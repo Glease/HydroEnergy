@@ -17,14 +17,14 @@ public class HEConfig {
         public static final int maxWaterSpreadDown = 1000; // in blocks
         public static final int maxWaterSpreadNorth = 1000; // in blocks
         public static final int maxWaterSpreadEast = 1000; // in blocks
-        public static final int maxWaterSpreadUp = 1000; // in blocks
+        public static final int maxWaterSpreadUp = 24; // in blocks
         public static final int maxWaterSpreadSouth = 10000; // in blocks
         public static final int overworldId = 0;
         public static final int damDrainPerSecond = 2048; // in EU
         public static final float waterBonusPerSurfaceBlockPerRainTick = 1.0f; // in EU/block
         public static final int blockIdOffset = 17000;
         public static final double[] efficiency = new double[] { 0.95, 0.90, 0.85 };
-        public static final double[] pressure = new double[] { 8.0, 16.0, 24.0 };
+        public static final double[] pressure = new double[] { 8.0, 16.0, maxWaterSpreadUp };
         public static final float milliBucketPerEU = 1.0f;
     }
 
