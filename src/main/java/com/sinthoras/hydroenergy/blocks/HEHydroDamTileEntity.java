@@ -23,6 +23,7 @@ import gregtech.api.interfaces.metatileentity.IMetaTileEntity;
 import gregtech.api.interfaces.tileentity.IGregTechTileEntity;
 import gregtech.api.metatileentity.implementations.GT_MetaTileEntity_Hatch_Output;
 import gregtech.api.util.GT_ModHandler;
+import gregtech.api.util.GT_Utility;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -41,6 +42,7 @@ public class HEHydroDamTileEntity extends GT_MetaTileEntity_MultiblockBase_EM im
     private int waterId = -1;
     private long euStored = 0;
     private long euCapacity = 0;
+    private long euCapacityGui = 0;
     private int euPerTickIn = 0;
     private int euPerTickOut = 0;
     private HEUtil.AveragedRingBuffer euPerTickOutAverage = new HEUtil.AveragedRingBuffer(64);
@@ -116,15 +118,21 @@ public class HEHydroDamTileEntity extends GT_MetaTileEntity_MultiblockBase_EM im
         return true;
     }
 
+    private float getMaxGuiPressure() {
+        boolean configCircuitIsPresent = mInventory != null && mInventory[1] != null && mInventory[1].getItem() == GT_Utility.getIntegratedCircuit(0).getItem();
+        int voltageTier = configCircuitIsPresent ? HEUtil.clamp(mInventory[1].getItemDamage(), 1, HEConfig.pressure.length) : 1;
+        return (float)HEConfig.pressure[voltageTier - 1];
+    }
+
     @Override
     public boolean onRunningTick(ItemStack stack) {
         mProgresstime = 0;
         euPerTickIn = 0;
         euPerTickOut = 0;
 
-        // TODO: use circuits to configure GUI between LV/MV/HV
         euCapacity = HEServer.instance.getEuCapacity(waterId);
         euStored = Math.min(euStored, euCapacity);
+        euCapacityGui = HEServer.instance.getEuCapacityAt(waterId, (int)(getBaseMetaTileEntity().getYCoord() + getMaxGuiPressure()));
 
         final int waterLevelOverController = (int) (HEServer.instance.getWaterLevel(waterId) - getBaseMetaTileEntity().getYCoord());
         getStoredFluids().stream().forEach(fluidStack -> {
@@ -321,7 +329,7 @@ public class HEHydroDamTileEntity extends GT_MetaTileEntity_MultiblockBase_EM im
     }
 
     public long getEuCapacity() {
-        return euCapacity;
+        return euCapacityGui;
     }
 
     public int getEuPerTickIn() {

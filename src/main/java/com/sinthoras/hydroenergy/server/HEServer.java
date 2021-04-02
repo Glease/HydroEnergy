@@ -239,6 +239,11 @@ public class HEServer extends WorldSavedData {
 	}
 
 	// This method must be called after getEuCapacity
+	public long getEuCapacityAt(int waterId, int blockY) {
+		return dams[waterId].getEuCapacityAt(blockY);
+	}
+
+	// This method must be called after getEuCapacity
 	public void setWaterLevel(int waterId, long euStored) {
 		dams[waterId].setWaterLevel(euStored);
 	}

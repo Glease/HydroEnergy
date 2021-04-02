@@ -307,6 +307,11 @@ public class HEDam {
 	}
 
 	// This method must be called after getEuCapacity (cause euCapacityUpToY[])
+	public long getEuCapacityAt(int blockY) {
+		return euCapacityUpToY[blockY];
+	}
+
+	// This method must be called after getEuCapacity (cause euCapacityUpToY[])
 	public void setWaterLevel(long euStored) {
 		for(int blockY=this.blockY;blockY<HE.numChunksY*HE.chunkHeight;blockY++) {
 			if(euStored < euCapacityUpToY[blockY]) {
