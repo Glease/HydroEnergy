@@ -70,15 +70,6 @@ public class HEClient {
 		HE.debug("Received synchronize packet from server");
 	}
 
-	public static int getWaterId(int blockX, int blockY, int blockZ) {
-		for(int waterId = 0; waterId<HEConfig.maxDams; waterId++) {
-			if(dams[waterId].belongsToController(blockX, blockY, blockZ)) {
-				return waterId;
-			}
-		}
-		return -1;
-	}
-
 	public static HEDam getDam(int waterId) {
 		return dams[waterId];
 	}

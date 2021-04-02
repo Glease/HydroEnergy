@@ -1,15 +1,14 @@
 package com.sinthoras.hydroenergy.hooks;
 
 import com.sinthoras.hydroenergy.HE;
+import com.sinthoras.hydroenergy.HETags;
+import com.sinthoras.hydroenergy.blocks.*;
 import com.sinthoras.hydroenergy.config.HEConfig;
 import com.sinthoras.hydroenergy.network.packet.*;
 import com.sinthoras.hydroenergy.server.commands.HECommandDebug;
 import com.sinthoras.hydroenergy.server.commands.HECommandListControllers;
 import com.sinthoras.hydroenergy.server.commands.HECommandSetWater;
-import com.sinthoras.hydroenergy.blocks.HEControllerBlock;
-import com.sinthoras.hydroenergy.blocks.HEControllerTileEntity;
 import com.sinthoras.hydroenergy.server.HEServer;
-import com.sinthoras.hydroenergy.blocks.HEWaterStill;
 
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
@@ -25,6 +24,7 @@ import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import net.minecraft.block.Block;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fluids.FluidRegistry;
 
 public class HEHooksShared {
 	
@@ -48,20 +48,27 @@ public class HEHooksShared {
 			GameRegistry.registerBlock(HE.waterBlocks[waterId], HE.waterBlocks[waterId].getUnlocalizedName());
 			HE.waterBlockIds[waterId] = Block.blockRegistry.getIDForObject(HE.waterBlocks[waterId]);
 		}
-    	HE.controller = new HEControllerBlock();
-		GameRegistry.registerBlock(HE.controller, HE.controller.getUnlocalizedName());
-		GameRegistry.registerTileEntity(HEControllerTileEntity.class, "he_controller_tile_entity");
+
+		FluidRegistry.registerFluid(HE.pressurizedWater);
 	}
 	
 	// load "Do your mod setup. Build whatever data structures you care about. Register recipes."
 	public void fmlLifeCycleEvent(FMLInitializationEvent event) {
 		FMLCommonHandler.instance().bus().register(new HEHooksFML());
 		MinecraftForge.EVENT_BUS.register(new HEHooksEVENT_BUS());
+
+		new HEHydroDamTileEntity(HEConfig.blockIdOffset, "he_dam", "Hydro Dam");
+		new HEHydroPumpTileEntity.HEHydroPumpTileEntityLV(HEConfig.blockIdOffset + 1, "he_pump_lv", "Hydro Pump (LV)");
+		new HEHydroPumpTileEntity.HEHydroPumpTileEntityMV(HEConfig.blockIdOffset + 2, "he_pump_mv", "Hydro Pump (MV)");
+		new HEHydroPumpTileEntity.HEHydroPumpTileEntityHV(HEConfig.blockIdOffset + 3, "he_pump_hv", "Hydro Pump (HV)");
+		new HEHydroTurbineTileEntity.HEHydroTurbineTileEntityLV(HEConfig.blockIdOffset + 4, "he_turbine_lv", "Hydro Turbine (LV)");
+		new HEHydroTurbineTileEntity.HEHydroTurbineTileEntityMV(HEConfig.blockIdOffset + 5, "he_turbine_mv", "Hydro Turbine (MV)");
+		new HEHydroTurbineTileEntity.HEHydroTurbineTileEntityHV(HEConfig.blockIdOffset + 6, "he_turbine_hv", "Hydro Turbine (HV)");
 	}
 	
 	// postInit "Handle interaction with other mods, complete your setup based on this."
 	public void fmlLifeCycleEvent(FMLPostInitializationEvent event) {
-		NetworkRegistry.INSTANCE.registerGuiHandler(HE.MODID, HE.guiHandler);
+		NetworkRegistry.INSTANCE.registerGuiHandler(HETags.MODID, HE.guiHandler);
 	}
 	
 	public void fmlLifeCycleEvent(FMLServerAboutToStartEvent event) {

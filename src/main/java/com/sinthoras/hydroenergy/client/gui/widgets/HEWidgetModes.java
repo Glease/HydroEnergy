@@ -22,9 +22,9 @@ public class HEWidgetModes extends Gui {
     private static final Color lightPurple = new Color(80, 0, 255, 80);
     private static final Color darkPurple = new Color(40, 0, 127, 80);
 
-    private HEDam dam;
-    private int pixelX;
-    private int pixelY;
+    private final HEDam dam;
+    private final int pixelX;
+    private final int pixelY;
 
     private HEButtonTextured.Drain buttonDrain;
     private HEButtonTextured.Debug buttonDebug;

@@ -3,6 +3,7 @@ package com.sinthoras.hydroenergy.client.renderer;
 import com.google.common.base.Charsets;
 import com.sinthoras.hydroenergy.HE;
 
+import com.sinthoras.hydroenergy.HETags;
 import com.sinthoras.hydroenergy.client.HEReflection;
 import com.sinthoras.hydroenergy.client.HEClient;
 import com.sinthoras.hydroenergy.config.HEConfig;
@@ -25,9 +26,9 @@ import java.nio.FloatBuffer;
 
 public class HEProgram {
 
-    private static final ResourceLocation vertexShaderLocation = new ResourceLocation(HE.MODID, "shader/hewater/shader.vsh");
-    private static final ResourceLocation geometryShaderLocation = new ResourceLocation(HE.MODID, "shader/hewater/shader.gsh");
-    private static final ResourceLocation fragmentShaderLocation = new ResourceLocation(HE.MODID, "shader/hewater/shader.fsh");
+    private static final ResourceLocation vertexShaderLocation = new ResourceLocation(HETags.MODID, "shader/hewater/shader.vsh");
+    private static final ResourceLocation geometryShaderLocation = new ResourceLocation(HETags.MODID, "shader/hewater/shader.gsh");
+    private static final ResourceLocation fragmentShaderLocation = new ResourceLocation(HETags.MODID, "shader/hewater/shader.fsh");
 
     private static int programId;
     private static int viewProjectionId;

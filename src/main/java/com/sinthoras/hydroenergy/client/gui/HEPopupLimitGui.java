@@ -1,6 +1,8 @@
 package com.sinthoras.hydroenergy.client.gui;
 
 import com.sinthoras.hydroenergy.HE;
+import com.sinthoras.hydroenergy.HETags;
+import com.sinthoras.hydroenergy.client.gui.widgets.HENumberInput;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;
@@ -11,9 +13,9 @@ import net.minecraft.util.ResourceLocation;
 import java.util.List;
 
 @SideOnly(Side.CLIENT)
-public class HELimitGui extends Gui {
+public class HEPopupLimitGui extends Gui {
 
-    private static ResourceLocation limitBackgroundTextureLocation = new ResourceLocation(HE.MODID, HE.damLimitBackgroundLocation);
+    private static ResourceLocation limitBackgroundTextureLocation = new ResourceLocation(HETags.MODID, HE.damLimitBackgroundLocation);
 
     private GuiButton minus1000;
     private GuiButton minus100;
@@ -41,7 +43,7 @@ public class HELimitGui extends Gui {
     private int upperLimit = Integer.MAX_VALUE;
     private String title = "";
 
-    public HELimitGui(String title, int guiLeft, int guiTop, int originalValue) {
+    public HEPopupLimitGui(String title, int guiLeft, int guiTop, int originalValue) {
         this.title = title;
         this.guiLeft = guiLeft;
         this.guiTop = guiTop;
