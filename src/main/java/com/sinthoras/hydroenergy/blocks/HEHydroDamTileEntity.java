@@ -22,7 +22,6 @@ import gregtech.api.interfaces.ITexture;
 import gregtech.api.interfaces.metatileentity.IMetaTileEntity;
 import gregtech.api.interfaces.tileentity.IGregTechTileEntity;
 import gregtech.api.metatileentity.implementations.GT_MetaTileEntity_Hatch_Output;
-import gregtech.api.util.GT_ModHandler;
 import gregtech.api.util.GT_Utility;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
@@ -38,7 +37,7 @@ public class HEHydroDamTileEntity extends GT_MetaTileEntity_MultiblockBase_EM im
 
     private static Textures.BlockIcons.CustomIcon Screen;
     private final static int steelTextureIndex = 16;
-    private final static int solidSteelCasingMeta = 0;
+    private final static int concreteBlockMeta = 8;
     private int waterId = -1;
     private long euStored = 0;
     private long euCapacity = 0;
@@ -63,16 +62,16 @@ public class HEHydroDamTileEntity extends GT_MetaTileEntity_MultiblockBase_EM im
             ofChain(
                 ofHatchAdder(
                     HEHydroDamTileEntity::addClassicToMachineList, steelTextureIndex,
-                    GregTech_API.sBlockCasings2, solidSteelCasingMeta  // TODO: get casing from Tier instance
+                    GregTech_API.sBlockConcretes, concreteBlockMeta
                 ),
                 ofBlock(
-                    GregTech_API.sBlockCasings2, solidSteelCasingMeta
+                    GregTech_API.sBlockConcretes, concreteBlockMeta
                 )
             )
         ).addElement(
             'C',
             ofBlock(
-                GregTech_API.sBlockCasings2, solidSteelCasingMeta
+                GregTech_API.sBlockConcretes, concreteBlockMeta
             )
         ).build();
 
