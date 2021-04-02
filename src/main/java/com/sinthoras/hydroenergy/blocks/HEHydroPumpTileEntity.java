@@ -21,6 +21,7 @@ import net.minecraft.block.Block;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 
 import static com.github.technus.tectech.mechanics.structure.StructureUtility.*;
@@ -61,6 +62,7 @@ public abstract class HEHydroPumpTileEntity extends GT_MetaTileEntity_Multiblock
 
         private static final String[] chatDescription = new String[] {
                 "1 Energy Hatch",
+                "1 Fluid Input Hatch",
                 "1 Fluid Output Hatch",
                 "1 Maintenance Hatch",
                 "Fill the rest with Solid Steel Casings",
@@ -69,6 +71,22 @@ public abstract class HEHydroPumpTileEntity extends GT_MetaTileEntity_Multiblock
         @Override
         public String[] getStructureDescription(ItemStack itemStack) {
             return chatDescription;
+        }
+
+        private final static String[] mouseOverDescription = new String[] {
+                "Hydro Pump Controller",
+                "Controller Block for the Hydro Pump",
+                "Consumes EU to pressurize water",
+                "Output is pressurized water for Hydro Dams",
+                "Requires an Energy and Output Hatch in the center row!",
+                "Requires " + ((int)(32 * HEConfig.milliBucketPerEU)) + "mB per Tick",
+                HE.blueprintHintTecTech,
+                "Use Redstone to automate!"
+        };
+
+        @Override
+        public String[] getDescription() {
+            return mouseOverDescription;
         }
     }
 
@@ -105,6 +123,7 @@ public abstract class HEHydroPumpTileEntity extends GT_MetaTileEntity_Multiblock
 
         private static final String[] chatDescription = new String[] {
                 "1 Energy Hatch",
+                "1 Fluid Input Hatch",
                 "1 Fluid Output Hatch",
                 "1 Maintenance Hatch",
                 "Fill the rest with Frost Proof Casings",
@@ -113,6 +132,22 @@ public abstract class HEHydroPumpTileEntity extends GT_MetaTileEntity_Multiblock
         @Override
         public String[] getStructureDescription(ItemStack itemStack) {
             return chatDescription;
+        }
+
+        private final static String[] mouseOverDescription = new String[] {
+                "Hydro Pump Controller",
+                "Controller Block for the Hydro Pump",
+                "Consumes EU to pressurize water",
+                "Output is pressurized water for Hydro Dams",
+                "Requires an Energy and Output Hatch in the center row!",
+                "Requires " + ((int)(128 * HEConfig.milliBucketPerEU)) + "mB per Tick",
+                HE.blueprintHintTecTech,
+                "Use Redstone to automate!"
+        };
+
+        @Override
+        public String[] getDescription() {
+            return mouseOverDescription;
         }
     }
 
@@ -149,6 +184,7 @@ public abstract class HEHydroPumpTileEntity extends GT_MetaTileEntity_Multiblock
 
         private static final String[] chatDescription = new String[] {
                 "1 Energy Hatch",
+                "1 Fluid Input Hatch",
                 "1 Fluid Output Hatch",
                 "1 Maintenance Hatch",
                 "Fill the rest with Clean Stainless Steel Casings",
@@ -157,6 +193,22 @@ public abstract class HEHydroPumpTileEntity extends GT_MetaTileEntity_Multiblock
         @Override
         public String[] getStructureDescription(ItemStack itemStack) {
             return chatDescription;
+        }
+
+        private final static String[] mouseOverDescription = new String[] {
+                "Hydro Pump Controller",
+                "Controller Block for the Hydro Pump",
+                "Consumes EU to pressurize water",
+                "Output is pressurized water for Hydro Dams",
+                "Requires an Energy and Output Hatch in the center row!",
+                "Requires " + ((int)(512 * HEConfig.milliBucketPerEU)) + "mB per Tick",
+                HE.blueprintHintTecTech,
+                "Use Redstone to automate!"
+        };
+
+        @Override
+        public String[] getDescription() {
+            return mouseOverDescription;
         }
     }
 
@@ -208,7 +260,7 @@ public abstract class HEHydroPumpTileEntity extends GT_MetaTileEntity_Multiblock
     @Override
     protected boolean checkMachine_EM(IGregTechTileEntity gregTechTileEntity, ItemStack itemStack) {
         countOfHatches = 0;
-        return structureCheck_EM("main", 1, 1, 0) && countOfHatches == 3;
+        return structureCheck_EM("main", 1, 1, 0) && countOfHatches == 4;
     }
 
     @Override
@@ -242,6 +294,19 @@ public abstract class HEHydroPumpTileEntity extends GT_MetaTileEntity_Multiblock
     public boolean onRunningTick(ItemStack stack) {
         mProgresstime = 0;
         if(getBaseMetaTileEntity().isAllowedToWork() && energyFlowOnRunningTick(stack, false)) {
+            int requiredWater = (int)(GT_Values.V[getTier()] * HEConfig.milliBucketPerEU);
+            for(FluidStack fluidStack : getStoredFluids()) {
+                if(fluidStack.getFluid().getID() == FluidRegistry.WATER.getID()) {
+                    final int consumedWater = Math.min(fluidStack.amount, requiredWater);
+                    requiredWater -= consumedWater;
+                    fluidStack.amount -= consumedWater;
+                }
+            }
+            if(requiredWater > 0) {
+                stopMachine();
+                return false;
+            }
+
             float pumpedWater = getTierVoltage() * HEConfig.milliBucketPerEU;
             pumpedWater *= getTierEfficiency();
             pumpedWater *= ((float)getCurrentEfficiency(null)) / 100_00.0f;
@@ -286,21 +351,6 @@ public abstract class HEHydroPumpTileEntity extends GT_MetaTileEntity_Multiblock
         else {
             return new ITexture[]{Textures.BlockIcons.getCasingTextureForId(blockTextureIndex)};
         }
-    }
-
-    private final static String[] mouseOverDescription = new String[] {
-            "Hydro Pump Controller",
-            "Controller Block for the Hydro Pump",
-            "Consumes EU to pressurize water",
-            "Output is pressurized water for Hydro Dams",
-            "Requires an Energy and Output Hatch in the center row!",
-            HE.blueprintHintTecTech,
-            "Use Redstone to automate!"
-    };
-
-    @Override
-    public String[] getDescription() {
-        return mouseOverDescription;
     }
 }
 
