@@ -200,7 +200,7 @@ public abstract class HEHydroPumpTileEntity extends GT_MetaTileEntity_Multiblock
             float pumpedWater = getTierVoltage() * HEConfig.milliBucketPerEU;
             pumpedWater *= getTierEfficiency();
             pumpedWater *= ((float)getCurrentEfficiency(null)) / 100_00.0f;
-            FluidStack fluidStack = new FluidStack(HE.pressurizedWater, (int)pumpedWater);
+            final FluidStack fluidStack = new FluidStack(HE.pressurizedWater, (int)pumpedWater);
             HE.pressurizedWater.setPressure(fluidStack, getTierPressure());
             addOutput(fluidStack);
         }
