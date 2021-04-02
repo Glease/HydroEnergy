@@ -21,6 +21,7 @@ import net.minecraft.block.Block;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 
 import static com.github.technus.tectech.mechanics.structure.StructureUtility.*;
@@ -62,6 +63,7 @@ public abstract class HEHydroTurbineTileEntity extends GT_MetaTileEntity_Multibl
         private static final String[] chatDescription = new String[] {
                 "1 Dynamo Hatch",
                 "1 Fluid Input Hatch",
+                "1 Fluid Output Hatch",
                 "1 Maintenance Hatch",
                 "Fill the rest with Solid Steel Casings",
         };
@@ -69,6 +71,22 @@ public abstract class HEHydroTurbineTileEntity extends GT_MetaTileEntity_Multibl
         @Override
         public String[] getStructureDescription(ItemStack itemStack) {
             return chatDescription;
+        }
+
+        private final static String[] mouseOverDescription = new String[] {
+                "Hydro Turbine Controller",
+                "Controller Block for the Hydro Turbine",
+                "Consumes pressurize water to produce EU",
+                "Input is pressurized water from Hydro Dams",
+                "Requires a Dynamo and Input Hatch in the center row!",
+                "Produces up to " + ((int)(32 * HEConfig.milliBucketPerEU)) + "mB per Tick",
+                HE.blueprintHintTecTech,
+                "Use Redstone to automate!"
+        };
+
+        @Override
+        public String[] getDescription() {
+            return mouseOverDescription;
         }
     }
 
@@ -106,6 +124,7 @@ public abstract class HEHydroTurbineTileEntity extends GT_MetaTileEntity_Multibl
         private static final String[] chatDescription = new String[] {
                 "1 Dynamo Hatch",
                 "1 Fluid Input Hatch",
+                "1 Fluid Output Hatch",
                 "1 Maintenance Hatch",
                 "Fill the rest with Frost Proof Casings",
         };
@@ -113,6 +132,22 @@ public abstract class HEHydroTurbineTileEntity extends GT_MetaTileEntity_Multibl
         @Override
         public String[] getStructureDescription(ItemStack itemStack) {
             return chatDescription;
+        }
+
+        private final static String[] mouseOverDescription = new String[] {
+                "Hydro Turbine Controller",
+                "Controller Block for the Hydro Turbine",
+                "Consumes pressurize water to produce EU",
+                "Input is pressurized water from Hydro Dams",
+                "Requires a Dynamo and Input Hatch in the center row!",
+                "Produces up to " + ((int)(128 * HEConfig.milliBucketPerEU)) + "mB per Tick",
+                HE.blueprintHintTecTech,
+                "Use Redstone to automate!"
+        };
+
+        @Override
+        public String[] getDescription() {
+            return mouseOverDescription;
         }
     }
 
@@ -150,6 +185,7 @@ public abstract class HEHydroTurbineTileEntity extends GT_MetaTileEntity_Multibl
         private static final String[] chatDescription = new String[] {
                 "1 Dynamo Hatch",
                 "1 Fluid Input Hatch",
+                "1 Fluid Output Hatch",
                 "1 Maintenance Hatch",
                 "Fill the rest with Clean Stainless Steel Casings",
         };
@@ -157,6 +193,22 @@ public abstract class HEHydroTurbineTileEntity extends GT_MetaTileEntity_Multibl
         @Override
         public String[] getStructureDescription(ItemStack itemStack) {
             return chatDescription;
+        }
+
+        private final static String[] mouseOverDescription = new String[] {
+                "Hydro Turbine Controller",
+                "Controller Block for the Hydro Turbine",
+                "Consumes pressurize water to produce EU",
+                "Input is pressurized water from Hydro Dams",
+                "Requires a Dynamo and Input Hatch in the center row!",
+                "Produces up to " + ((int)(512 * HEConfig.milliBucketPerEU)) + "mB per Tick",
+                HE.blueprintHintTecTech,
+                "Use Redstone to automate!"
+        };
+
+        @Override
+        public String[] getDescription() {
+            return mouseOverDescription;
         }
     }
 
@@ -208,7 +260,7 @@ public abstract class HEHydroTurbineTileEntity extends GT_MetaTileEntity_Multibl
     @Override
     protected boolean checkMachine_EM(IGregTechTileEntity gregTechTileEntity, ItemStack itemStack) {
         countOfHatches = 0;
-        return structureCheck_EM("main", 1, 1, 0) && countOfHatches == 3;
+        return structureCheck_EM("main", 1, 1, 0) && countOfHatches == 4;
     }
 
     @Override
@@ -252,6 +304,8 @@ public abstract class HEHydroTurbineTileEntity extends GT_MetaTileEntity_Multibl
             producedEU *= getTierEfficiency();
             producedEU *= (float)getCurrentEfficiency(null) / 100_00.0f;
             addEnergyOutput_EM((int)producedEU, 1);
+
+            addOutput(new FluidStack(FluidRegistry.WATER, consumedWater));
         }
         return true;
     }
@@ -290,21 +344,6 @@ public abstract class HEHydroTurbineTileEntity extends GT_MetaTileEntity_Multibl
         else {
             return new ITexture[]{Textures.BlockIcons.getCasingTextureForId(blockTextureIndex)};
         }
-    }
-
-    private final static String[] mouseOverDescription = new String[] {
-            "Hydro Turbine Controller",
-            "Controller Block for the Hydro Turbine",
-            "Consumes pressurize water to produce EU",
-            "Input is pressurized water from Hydro Dams",
-            "Requires a Dynamo and Input Hatch in the center row!",
-            HE.blueprintHintTecTech,
-            "Use Redstone to automate!"
-    };
-
-    @Override
-    public String[] getDescription() {
-        return mouseOverDescription;
     }
 }
 
