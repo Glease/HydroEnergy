@@ -130,7 +130,6 @@ public class HEProgram {
         }
     }
 
-    // TODO: glGetFloat is quite slow. If possible just recalculate those matricies
     public static void setViewProjection(float cameraX, float cameraY, float cameraZ) {
         projection.clear();
         modelview.clear();
