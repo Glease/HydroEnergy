@@ -58,6 +58,18 @@ public abstract class HEHydroPumpTileEntity extends GT_MetaTileEntity_Multiblock
         public IStructureDefinition<HEHydroPumpTileEntity> getStructure_EM() {
             return multiblockDefinition;
         }
+
+        private static final String[] chatDescription = new String[] {
+                "1 Energy Hatch",
+                "1 Fluid Output Hatch",
+                "1 Maintenance Hatch",
+                "Fill the rest with Solid Steel Casings",
+        };
+
+        @Override
+        public String[] getStructureDescription(ItemStack itemStack) {
+            return chatDescription;
+        }
     }
 
     public static class HEHydroPumpTileEntityMV extends HEHydroPumpTileEntity {
@@ -90,6 +102,18 @@ public abstract class HEHydroPumpTileEntity extends GT_MetaTileEntity_Multiblock
         public IStructureDefinition<HEHydroPumpTileEntity> getStructure_EM() {
             return multiblockDefinition;
         }
+
+        private static final String[] chatDescription = new String[] {
+                "1 Energy Hatch",
+                "1 Fluid Output Hatch",
+                "1 Maintenance Hatch",
+                "Fill the rest with Frost Proof Casings",
+        };
+
+        @Override
+        public String[] getStructureDescription(ItemStack itemStack) {
+            return chatDescription;
+        }
     }
 
     public static class HEHydroPumpTileEntityHV extends HEHydroPumpTileEntity {
@@ -121,6 +145,18 @@ public abstract class HEHydroPumpTileEntity extends GT_MetaTileEntity_Multiblock
         @Override
         public IStructureDefinition<HEHydroPumpTileEntity> getStructure_EM() {
             return multiblockDefinition;
+        }
+
+        private static final String[] chatDescription = new String[] {
+                "1 Energy Hatch",
+                "1 Fluid Output Hatch",
+                "1 Maintenance Hatch",
+                "Fill the rest with Clean Stainless Steel Casings",
+        };
+
+        @Override
+        public String[] getStructureDescription(ItemStack itemStack) {
+            return chatDescription;
         }
     }
 
@@ -262,20 +298,9 @@ public abstract class HEHydroPumpTileEntity extends GT_MetaTileEntity_Multiblock
             "Use Redstone to automate!"
     };
 
+    @Override
     public String[] getDescription() {
         return mouseOverDescription;
-    }
-
-    private static final String[] chatDescription = new String[] {
-            "1 Energy Hatch",
-            "1 Fluid Output Hatch",
-            "1 Maintenance Hatch",
-            "Fill the rest with Solid Steel Casings",
-    };
-
-    @Override
-    public String[] getStructureDescription(ItemStack itemStack) {
-        return chatDescription;
     }
 }
 

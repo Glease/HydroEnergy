@@ -58,6 +58,18 @@ public abstract class HEHydroTurbineTileEntity extends GT_MetaTileEntity_Multibl
         public IStructureDefinition<HEHydroTurbineTileEntity> getStructure_EM() {
             return multiblockDefinition;
         }
+
+        private static final String[] chatDescription = new String[] {
+                "1 Dynamo Hatch",
+                "1 Fluid Input Hatch",
+                "1 Maintenance Hatch",
+                "Fill the rest with Solid Steel Casings",
+        };
+
+        @Override
+        public String[] getStructureDescription(ItemStack itemStack) {
+            return chatDescription;
+        }
     }
 
     public static class HEHydroTurbineTileEntityMV extends HEHydroTurbineTileEntity {
@@ -90,6 +102,18 @@ public abstract class HEHydroTurbineTileEntity extends GT_MetaTileEntity_Multibl
         public IStructureDefinition<HEHydroTurbineTileEntity> getStructure_EM() {
             return multiblockDefinition;
         }
+
+        private static final String[] chatDescription = new String[] {
+                "1 Dynamo Hatch",
+                "1 Fluid Input Hatch",
+                "1 Maintenance Hatch",
+                "Fill the rest with Frost Proof Casings",
+        };
+
+        @Override
+        public String[] getStructureDescription(ItemStack itemStack) {
+            return chatDescription;
+        }
     }
 
     public static class HEHydroTurbineTileEntityHV extends HEHydroTurbineTileEntity {
@@ -121,6 +145,18 @@ public abstract class HEHydroTurbineTileEntity extends GT_MetaTileEntity_Multibl
         @Override
         public IStructureDefinition<HEHydroTurbineTileEntity> getStructure_EM() {
             return multiblockDefinition;
+        }
+
+        private static final String[] chatDescription = new String[] {
+                "1 Dynamo Hatch",
+                "1 Fluid Input Hatch",
+                "1 Maintenance Hatch",
+                "Fill the rest with Clean Stainless Steel Casings",
+        };
+
+        @Override
+        public String[] getStructureDescription(ItemStack itemStack) {
+            return chatDescription;
         }
     }
 
@@ -266,20 +302,9 @@ public abstract class HEHydroTurbineTileEntity extends GT_MetaTileEntity_Multibl
             "Use Redstone to automate!"
     };
 
+    @Override
     public String[] getDescription() {
         return mouseOverDescription;
-    }
-
-    private static final String[] chatDescription = new String[] {
-            "1 Dynamo Hatch",
-            "1 Fluid Input Hatch",
-            "1 Maintenance Hatch",
-            "Fill the rest with Solid Steel Casings",
-    };
-
-    @Override
-    public String[] getStructureDescription(ItemStack itemStack) {
-        return chatDescription;
     }
 }
 
