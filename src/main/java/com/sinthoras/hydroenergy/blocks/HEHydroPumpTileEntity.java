@@ -79,7 +79,7 @@ public abstract class HEHydroPumpTileEntity extends GT_MetaTileEntity_Multiblock
                 "Consumes EU to pressurize water",
                 "Output is pressurized water for Hydro Dams",
                 "Requires an Energy and Output Hatch in the center row!",
-                "Requires " + ((int)(32 * HEConfig.milliBucketPerEU)) + "mB per Tick",
+                "Requires " + ((int)(32 * HEConfig.milliBucketPerEU)) + "mB Water per Tick",
                 "Efficiency: " + HEConfig.efficiency[0],
                 HE.blueprintHintTecTech,
                 "Use Redstone to automate!"
@@ -141,7 +141,7 @@ public abstract class HEHydroPumpTileEntity extends GT_MetaTileEntity_Multiblock
                 "Consumes EU to pressurize water",
                 "Output is pressurized water for Hydro Dams",
                 "Requires an Energy and Output Hatch in the center row!",
-                "Requires " + ((int)(128 * HEConfig.milliBucketPerEU)) + "mB per Tick",
+                "Requires " + ((int)(128 * HEConfig.milliBucketPerEU)) + "mB Water per Tick",
                 "Efficiency: " + HEConfig.efficiency[1],
                 HE.blueprintHintTecTech,
                 "Use Redstone to automate!"
@@ -203,7 +203,7 @@ public abstract class HEHydroPumpTileEntity extends GT_MetaTileEntity_Multiblock
                 "Consumes EU to pressurize water",
                 "Output is pressurized water for Hydro Dams",
                 "Requires an Energy and Output Hatch in the center row!",
-                "Requires " + ((int)(512 * HEConfig.milliBucketPerEU)) + "mB per Tick",
+                "Requires " + ((int)(512 * HEConfig.milliBucketPerEU)) + "mB Water per Tick",
                 "Efficiency: " + HEConfig.efficiency[2],
                 HE.blueprintHintTecTech,
                 "Use Redstone to automate!"
