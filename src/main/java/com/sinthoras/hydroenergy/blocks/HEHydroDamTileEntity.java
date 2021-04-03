@@ -313,7 +313,7 @@ public class HEHydroDamTileEntity extends GT_MetaTileEntity_MultiblockBase_EM im
     }
 
     private static final String[] chatDescription = new String[] {
-            "1 Fluid Intput Hatch",
+            "1 Fluid Input Hatch",
             "1 Fluid Output Hatch",
             "Fill the rest with Light Concrete",
             "No Maintenance Hatch required!"
