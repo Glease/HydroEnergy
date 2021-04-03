@@ -64,13 +64,13 @@ public class HEHydroDamTileEntity extends GT_MetaTileEntity_MultiblockBase_EM im
                     HEHydroDamTileEntity::addClassicToMachineList, steelTextureIndex,
                     GregTech_API.sBlockConcretes, concreteBlockMeta
                 ),
-                ofBlock(
+                ofBlockAnyMeta(
                     GregTech_API.sBlockConcretes, concreteBlockMeta
                 )
             )
         ).addElement(
             'C',
-            ofBlock(
+                    ofBlockAnyMeta(
                 GregTech_API.sBlockConcretes, concreteBlockMeta
             )
         ).build();
