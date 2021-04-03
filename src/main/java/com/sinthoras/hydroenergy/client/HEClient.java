@@ -80,4 +80,15 @@ public class HEClient {
 			dams[waterId] = new HEDam(waterId);
 		}
 	}
+
+	public static int getWaterId(int blockX, int blockY, int blockZ) {
+		for(HEDam dam : dams) {
+			if(dam.getBlockX() == blockX
+					&& dam.getBlockY() == blockY
+					&& dam.getBlockZ() == blockZ) {
+				return dam.getWaterId();
+			}
+		}
+		return -1;
+	}
 }

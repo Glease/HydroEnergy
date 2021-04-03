@@ -163,4 +163,20 @@ public class HEDam {
     public int getLimitSouth() {
         return pendingLimitSouth;
     }
+
+    public int getBlockX() {
+        return blockX;
+    }
+
+    public int getBlockY() {
+        return blockY;
+    }
+
+    public int getWaterId() {
+        return waterId;
+    }
+
+    public int getBlockZ() {
+        return blockZ;
+    }
 }
