@@ -36,7 +36,7 @@ public class HEPacketChunkUpdate implements IMessage {
                 ExtendedBlockStorage subChunk = blockStorages[chunkY];
 
                 transmissionBuffer.writeInt(subChunk.blockRefCount);
-                transmissionBuffer.writeInt(subChunk.tickRefCount));
+                transmissionBuffer.writeInt(subChunk.tickRefCount);
 
                 byte[] lsb = subChunk.getBlockLSBArray();
                 transmissionBuffer.writeBytes(lsb);
