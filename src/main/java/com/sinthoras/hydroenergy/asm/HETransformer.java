@@ -1,5 +1,9 @@
 package com.sinthoras.hydroenergy.asm;
 
+import com.sinthoras.hydroenergy.asm.biomesoplenty.FogHandlerTransformer;
+import com.sinthoras.hydroenergy.asm.galaxyspace.GSPlanetFogHandlerTransformer;
+import com.sinthoras.hydroenergy.asm.gregtech.GT_PollutionRendererTransformer;
+import com.sinthoras.hydroenergy.asm.witchery.ClientEventsTransformer;
 import net.minecraft.launchwrapper.Launch;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
@@ -14,7 +18,7 @@ import java.util.List;
 
 public class HETransformer implements IClassTransformer {
 	
-	private static final List targetClasses = new ArrayList() {{
+	private static final List<String> targetClasses = new ArrayList<String>() {{
 		add("net.minecraft.world.World");
 		add("net.minecraft.client.renderer.EntityRenderer");
 		add("net.minecraft.entity.Entity");
@@ -22,6 +26,10 @@ public class HETransformer implements IClassTransformer {
 		add("net.minecraft.world.chunk.Chunk");
 		add("net.minecraft.client.multiplayer.ChunkProviderClient");
 		add("net.minecraft.client.renderer.ActiveRenderInfo");
+		add("biomesoplenty.client.fog.FogHandler");
+		add("gregtech.common.render.GT_PollutionRenderer");
+		add("galaxyspace.core.handler.GSPlanetFogHandler");
+		add("com.emoniph.witchery.client.ClientEvents");
 	}};
 
 	@Override
@@ -47,6 +55,14 @@ public class HETransformer implements IClassTransformer {
 				return transformChunkProviderClient(basicClass, isObfuscated);
 			case 6:
 				return transformActiveRenderInfo(basicClass, isObfuscated);
+			case 7:
+				return FogHandlerTransformer.transform(basicClass, isObfuscated);
+			case 8:
+				return GT_PollutionRendererTransformer.transform(basicClass, isObfuscated);
+			case 9:
+				return GSPlanetFogHandlerTransformer.transform(basicClass, isObfuscated);
+			case 10:
+				return ClientEventsTransformer.transform(basicClass, isObfuscated);
 			default:
 				return basicClass;
 		}

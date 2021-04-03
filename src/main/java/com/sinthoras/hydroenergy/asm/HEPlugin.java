@@ -1,12 +1,13 @@
 package com.sinthoras.hydroenergy.asm;
 
+import com.sinthoras.hydroenergy.asm.biomesoplenty.FogHandlerTransformer;
 import cpw.mods.fml.relauncher.IFMLLoadingPlugin;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.Map;
 
-//@IFMLLoadingPlugin.SortingIndex(1001)  // Run after remapper. Thanks @mitchej123
+@IFMLLoadingPlugin.SortingIndex(1001)  // Run after remapper. Thanks @mitchej123
 @IFMLLoadingPlugin.MCVersion(HEPlugin.MC_VERSION)
 @IFMLLoadingPlugin.TransformerExclusions("com.sinthoras.hydroenergy.asm")
 @IFMLLoadingPlugin.Name(HEPlugin.HYDROENERGYCORE)
@@ -19,7 +20,9 @@ public class HEPlugin  implements IFMLLoadingPlugin {
 
     @Override
     public String[] getASMTransformerClass() {
-        return null;
+        return new String[] {
+                HETransformer.class.getName()
+        };
     }
 
     @Override
@@ -39,7 +42,7 @@ public class HEPlugin  implements IFMLLoadingPlugin {
 
     @Override
     public String getAccessTransformerClass() {
-        return HETransformer.class.getName();
+        return null;
     }
 
     public static void debug(String message) {
