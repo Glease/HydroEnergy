@@ -1,12 +1,12 @@
 package com.sinthoras.hydroenergy.client.renderer;
 
 import com.sinthoras.hydroenergy.HE;
+import com.sinthoras.hydroenergy.client.HEReflection;
 import com.sinthoras.hydroenergy.HEUtil;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GLAllocation;
-import net.minecraft.client.renderer.culling.Frustrum;
 import net.minecraft.client.renderer.culling.ICamera;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.World;
@@ -117,12 +117,11 @@ public class HETessalator {
         numWaterBlocks++;
     }
 
-    public static void render(ICamera camera) {
+    public static void render(ICamera frustrum) {
         if(MinecraftForgeClient.getRenderPass() == HE.waterBlocks[0].getRenderBlockPass()) {
-            final Frustrum frustrum = (Frustrum)camera;
-            float cameraBlockX = (float)frustrum.xPosition;
-            float cameraBlockY = (float)frustrum.yPosition;
-            float cameraBlockZ = (float)frustrum.zPosition;
+            float cameraBlockX = HEReflection.getCameraBlockX(frustrum);
+            float cameraBlockY = HEReflection.getCameraBlockY(frustrum);
+            float cameraBlockZ = HEReflection.getCameraBlockZ(frustrum);
 
             GL11.glEnable(GL11.GL_BLEND);
 
