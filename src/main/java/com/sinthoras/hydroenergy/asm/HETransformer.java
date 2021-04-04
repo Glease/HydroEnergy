@@ -4,6 +4,7 @@ import com.sinthoras.hydroenergy.asm.biomesoplenty.FogHandlerTransformer;
 import com.sinthoras.hydroenergy.asm.galaxyspace.GSPlanetFogHandlerTransformer;
 import com.sinthoras.hydroenergy.asm.gregtech.GT_PollutionRendererTransformer;
 import com.sinthoras.hydroenergy.asm.minecraft.ActiveRenderInfoTransformer;
+import com.sinthoras.hydroenergy.asm.minecraft.ChunkProviderClientTransformer;
 import com.sinthoras.hydroenergy.asm.witchery.ClientEventsTransformer;
 import net.minecraft.launchwrapper.Launch;
 import org.objectweb.asm.ClassReader;
@@ -53,7 +54,7 @@ public class HETransformer implements IClassTransformer {
 			case 4:
 				return transformChunk(basicClass, isObfuscated);
 			case 5:
-				return transformChunkProviderClient(basicClass, isObfuscated);
+				return ChunkProviderClientTransformer.transform(basicClass, isObfuscated);
 			case 6:
 				return ActiveRenderInfoTransformer.transform(basicClass, isObfuscated);
 			case 7:
@@ -393,34 +394,6 @@ public class HETransformer implements IClassTransformer {
 				instructionToInsert, basicClass, 0);
 
 		HEPlugin.info("Injected net/minecraft/world/chunk/Chunk.setLightValue");
-
-		return basicClass;
-	}
-
-	private static byte [] transformChunkProviderClient(byte[] basicClass, boolean isObfuscated) {
-		final String CLASS_HELightManager = "com/sinthoras/hydroenergy/client/light/HELightManager";
-		final String CLASS_LongHashMap = "net/minecraft/util/LongHashMap";
-
-		final String METHOD_unloadChunk = isObfuscated ? "func_73234_b" : "unloadChunk";
-		final String METHOD_unloadChunk_DESC = "(II)V";
-		final String METHOD_remove = isObfuscated ? "func_76159_d" : "remove";
-		final String METHOD_remove_DESC = "(J)Ljava/lang/Object;";
-		final String METHOD_onChunkUnload = "onChunkUnload";
-		final String METHOD_onChunkUnload_DESC = "(II)V";
-
-		InsnList instructionToInsert = new InsnList();
-		instructionToInsert.add(new VarInsnNode(ILOAD, 1));
-		instructionToInsert.add(new VarInsnNode(ILOAD, 2));
-		instructionToInsert.add(new MethodInsnNode(INVOKESTATIC,
-				CLASS_HELightManager,
-				METHOD_onChunkUnload,
-				METHOD_onChunkUnload_DESC,
-				false));
-
-		basicClass = injectAfterInvokeVirtual(METHOD_unloadChunk, METHOD_unloadChunk_DESC,
-				CLASS_LongHashMap, METHOD_remove, METHOD_remove_DESC, instructionToInsert, basicClass, 0);
-
-		HEPlugin.info("Injected net/minecraft/client/multiplayer/ChunkProviderClient.unloadChunk");
 
 		return basicClass;
 	}

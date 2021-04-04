@@ -13,4 +13,7 @@ public class HEClasses {
     public static final String World = "net/minecraft/world/World";
     public static final String HEHooksUtil = "com/sinthoras/hydroenergy/hooks/HEHooksUtil";
     public static final String Vec3 = "net/minecraft/util/Vec3";
+    public static final String LongHashMap = "net/minecraft/util/LongHashMap";
+    public static final String Object = "java/lang/Object";
+    public static final String HELightManager = "com/sinthoras/hydroenergy/client/light/HELightManager";
 }
