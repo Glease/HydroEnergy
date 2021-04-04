@@ -150,7 +150,7 @@ public class HETransformer implements IClassTransformer {
 		final String CLASS_Vec3 = "net/minecraft/util/Vec3";
 		final String CLASS_HEHooksUtil = "com/sinthoras/hydroenergy/hooks/HEHooksUtil";
 
-		final String METHOD_getBlockAtEntityViewpoint = isObfuscated ? "" : "getBlockAtEntityViewpoint";
+		final String METHOD_getBlockAtEntityViewpoint = isObfuscated ? "func_151460_a" : "getBlockAtEntityViewpoint";
 		final String METHOD_getBlockAtEntityViewpoint_DESC = "(L" + CLASS_World + ";L" + CLASS_EntityLivingBase + ";F)L" + CLASS_Block + ";";
 
 		final String METHOD_getBlock = isObfuscated ? "func_147439_a" : "getBlock";

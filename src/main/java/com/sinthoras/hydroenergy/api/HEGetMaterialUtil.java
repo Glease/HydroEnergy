@@ -21,6 +21,7 @@ public class HEGetMaterialUtil {
 
     public static Material getMaterialWrapper(Block block, double blockY) {
         if(block instanceof IHEHasCustomMaterialCalculation) {
+            LOG.info("triggered");
             return ((IHEHasCustomMaterialCalculation)block).getMaterial(blockY);
         }
         else {
@@ -30,8 +31,7 @@ public class HEGetMaterialUtil {
 
     public static Material getMaterialWrapper(EntityViewRenderEvent.FogColors event) {
         if(event.block instanceof IHEHasCustomMaterialCalculation) {
-            LOG.info("triggered");
-            return Material.air;//((IHEHasCustomMaterialCalculation)event.block).getMaterial(event.entity.posY + event.entity.getEyeHeight());
+            return ((IHEHasCustomMaterialCalculation)event.block).getMaterial(event.entity.posY + event.entity.getEyeHeight());
         }
         else {
             return event.block.getMaterial();
