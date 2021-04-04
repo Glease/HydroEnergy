@@ -11,7 +11,7 @@ import static org.objectweb.asm.Opcodes.*;
 
 public class EntityRendererTransformer {
 
-    /* After (2x)
+    /* After both
      * renderglobal.renderEntities(entitylivingbase, frustrum, p_78471_1_);
      * insert
      * HETessalator.render(frustrum);

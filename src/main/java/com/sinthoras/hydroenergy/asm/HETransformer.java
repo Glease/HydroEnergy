@@ -43,7 +43,7 @@ public class HETransformer implements IClassTransformer {
 	private static byte[] transform(int index, byte[] basicClass, boolean isObfuscated) {
 		switch(index) {
 			case 0:
-				return transformWorld(basicClass, isObfuscated);
+				return WorldTransformer.transform(basicClass, isObfuscated);
 			case 1:
 				return EntityRendererTransformer.transform(basicClass, isObfuscated);
 			case 2:
@@ -67,81 +67,6 @@ public class HETransformer implements IClassTransformer {
 			default:
 				return basicClass;
 		}
-	}
-	
-	private static byte[] transformWorld(byte[] basicClass, boolean isObfuscated) {
-		final String CLASS_AxisAlignedBB = "net/minecraft/util/AxisAlignedBB";
-		final String CLASS_Material = "net/minecraft/block/material/Material";
-		final String CLASS_Entity = "net/minecraft/entity/Entity";
-		final String CLASS_Block = "net/minecraft/block/Block";
-		final String CLASS_HELightSMPHooks = "com/sinthoras/hydroenergy/client/light/HELightSMPHooks";
-		final String CLASS_Chunk = "net/minecraft/world/chunk/Chunk";
-		final String CLASS_World = "net/minecraft/world/World";
-		final String CLASS_HEHooksUtil = "com/sinthoras/hydroenergy/hooks/HEHooksUtil";
-
-		final String METHOD_handleMaterialAcceleration = isObfuscated ? "func_72918_a" : "handleMaterialAcceleration";
-		final String METHOD_handleMaterialAcceleration_DESC = "(L" + CLASS_AxisAlignedBB + ";L" + CLASS_Material + ";L" + CLASS_Entity + ";)Z";
-		final String METHOD_isAnyLiquid = isObfuscated ? "func_72953_d" : "isAnyLiquid";
-		final String METHOD_isAnyLiquid_DESC = "(L" + CLASS_AxisAlignedBB + ";)Z";
-		final String METHOD_setBlock = isObfuscated ? "func_147465_d" : "setBlock";
-		final String METHOD_setBlock_DESC = "(IIIL" + CLASS_Block + ";II)Z";
-
-		final String METHOD_getBlock = isObfuscated ? "func_147439_a" : "getBlock";
-		final String METHOD_getBlock_DESC = "(III)L" + CLASS_Block + ";";
-		final String METHOD_func_150807_a = "func_150807_a";
-		final String METHOD_func_150807_a_DESC = "(IIIL" + CLASS_Block + ";I)Z";
-		final String METHOD_onSetBlock = "onSetBlock";
-		final String METHOD_onSetBlock_DESC = "(L" + CLASS_World + ";IIIL" + CLASS_Block + ";L" + CLASS_Block + ";)V";
-		final String METHOD_getBlockForWorldAndEntity = "getBlockForWorldAndEntity";
-		final String METHOD_getBlockForWorldAndEntity_DESC = "(L" + CLASS_Block + ";I)L" + CLASS_Block + ";";
-
-		InsnList instructionToInsert = new InsnList();
-		instructionToInsert.add(new VarInsnNode(ILOAD, 13));
-		instructionToInsert.add(new MethodInsnNode(INVOKESTATIC,
-				CLASS_HEHooksUtil,
-				METHOD_getBlockForWorldAndEntity,
-				METHOD_getBlockForWorldAndEntity_DESC,
-				false));
-
-		basicClass = injectAfterInvokeVirtual(METHOD_handleMaterialAcceleration, METHOD_handleMaterialAcceleration_DESC,
-				CLASS_World, METHOD_getBlock, METHOD_getBlock_DESC, instructionToInsert, basicClass, 0);
-
-		HEPlugin.info("Injected net/minecraft/world/World.handleMaterialAcceleration");
-
-
-		instructionToInsert = new InsnList();
-		instructionToInsert.add(new VarInsnNode(ILOAD, 9));
-		instructionToInsert.add(new MethodInsnNode(INVOKESTATIC,
-				CLASS_HEHooksUtil,
-				METHOD_getBlockForWorldAndEntity,
-				METHOD_getBlockForWorldAndEntity_DESC,
-				false));
-
-		basicClass = injectAfterInvokeVirtual(METHOD_isAnyLiquid, METHOD_isAnyLiquid_DESC,
-				CLASS_World, METHOD_getBlock, METHOD_getBlock_DESC, instructionToInsert, basicClass, 0);
-
-
-		HEPlugin.info("Injected net/minecraft/world/World.isAnyLiquid");
-
-		instructionToInsert = new InsnList();
-		instructionToInsert.add(new VarInsnNode(ALOAD, 0));
-		instructionToInsert.add(new VarInsnNode(ILOAD, 1));
-		instructionToInsert.add(new VarInsnNode(ILOAD, 2));
-		instructionToInsert.add(new VarInsnNode(ILOAD, 3));
-		instructionToInsert.add(new VarInsnNode(ALOAD, 4));
-		instructionToInsert.add(new VarInsnNode(ALOAD, 8));
-		instructionToInsert.add(new MethodInsnNode(INVOKESTATIC,
-				CLASS_HELightSMPHooks,
-				METHOD_onSetBlock,
-				METHOD_onSetBlock_DESC,
-				false));
-
-		basicClass = injectAfterInvokeVirtual(METHOD_setBlock, METHOD_setBlock_DESC,
-				CLASS_Chunk, METHOD_func_150807_a, METHOD_func_150807_a_DESC, instructionToInsert, basicClass, 0);
-
-		HEPlugin.info("Injected net/minecraft/world/World.setBlock");
-
-		return basicClass;
 	}
 
 	private static byte[] transformChunk(byte[] basicClass, boolean isObfuscated) {

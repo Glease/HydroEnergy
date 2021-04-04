@@ -20,4 +20,7 @@ public class HEClasses {
     public static final String HETessalator = "com/sinthoras/hydroenergy/client/renderer/HETessalator";
     public static final String RenderGlobal = "net/minecraft/client/renderer/RenderGlobal";
     public static final String ICamera = "net/minecraft/client/renderer/culling/ICamera";
+    public static final String AxisAlignedBB = "net/minecraft/util/AxisAlignedBB";
+    public static final String Chunk = "net/minecraft/world/chunk/Chunk";
+    public static final String HELightSMPHooks = "com/sinthoras/hydroenergy/client/light/HELightSMPHooks";
 }
