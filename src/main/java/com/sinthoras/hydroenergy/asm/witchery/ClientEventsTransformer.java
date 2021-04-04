@@ -20,7 +20,7 @@ public class ClientEventsTransformer {
         final ClassNode classNode = HEUtil.convertByteArrayToClassNode(basicClass);
 
         final String METHOD_getMaterialHEWrapper = "getMaterialHEWrapper";
-        final String METHOD_getMaterialHEWrapper_DESC = "(L" + HEClasses.CLASS_Block + ";L" + HEClasses.CLASS_EntityLivingBase + ";)L" + HEClasses.CLASS_Material + ";";
+        final String METHOD_getMaterialHEWrapper_DESC = "(L" + HEClasses.Block + ";L" + HEClasses.EntityLivingBase + ";)L" + HEClasses.Material + ";";
         final boolean isApiUsed = null != HEUtil.getMethod(classNode, METHOD_getMaterialHEWrapper, METHOD_getMaterialHEWrapper_DESC);
         if(isApiUsed) {
             HEPlugin.info("Witchery is using HydroEnergy API. No injection neccessary.");
@@ -28,7 +28,7 @@ public class ClientEventsTransformer {
         }
 
         final String MARKER_method = "getFOVModifier";
-        final String MARKER_method_DESC = "(FL" + HEClasses.CLASS_EntityRenderer + ";L" + HEClasses.CLASS_Minecraft + ";)F";
+        final String MARKER_method_DESC = "(FL" + HEClasses.EntityRenderer + ";L" + HEClasses.Minecraft + ";)F";
         final MethodNode targetMethod = HEUtil.getMethod(classNode, MARKER_method, MARKER_method_DESC);
         if(targetMethod == null) {
             HEPlugin.info("Could not find injection target method in Witchery. You will experience visual bugs.");
@@ -36,9 +36,9 @@ public class ClientEventsTransformer {
         }
 
         final boolean isStatic = false;
-        final String MARKER_instruction_OWNER = HEClasses.CLASS_Block;
+        final String MARKER_instruction_OWNER = HEClasses.Block;
         final String MARKER_instruction = isObfuscated ? "func_149688_o" : "getMaterial";
-        final String MARKER_instruction_DESC = "()L" + HEClasses.CLASS_Material + ";";
+        final String MARKER_instruction_DESC = "()L" + HEClasses.Material + ";";
         List<MethodInsnNode> instructions = HEUtil.getInstructions(targetMethod, isStatic, MARKER_instruction_OWNER, MARKER_instruction, MARKER_instruction_DESC);
         if(instructions.size() != 1) {
             HEPlugin.info("Could not find injection target instruction in Witchery. You will experience visual bugs.");
@@ -46,7 +46,7 @@ public class ClientEventsTransformer {
         }
 
         final String REPLACED_method = "getMaterialWrapper";
-        final String REPLACED_method_DESC = "(L" + HEClasses.CLASS_Block + ";D)L" + HEClasses.CLASS_Material + ";";
+        final String REPLACED_method_DESC = "(L" + HEClasses.Block + ";D)L" + HEClasses.Material + ";";
         final String FIELD_posY = isObfuscated ? "field_70163_u" : "posY";
         final String FIELD_posY_DESC = "D";
         final String METHOD_getEyeHeight = isObfuscated ? "func_70047_e" : "getEyeHeight";
@@ -54,17 +54,17 @@ public class ClientEventsTransformer {
         InsnList instructionToInsert = new InsnList();
         instructionToInsert.add(new VarInsnNode(ALOAD, 6));
         instructionToInsert.add(new VarInsnNode(ALOAD, 4));
-        instructionToInsert.add(new FieldInsnNode(GETFIELD, HEClasses.CLASS_Entity, FIELD_posY, FIELD_posY_DESC));
+        instructionToInsert.add(new FieldInsnNode(GETFIELD, HEClasses.Entity, FIELD_posY, FIELD_posY_DESC));
         instructionToInsert.add(new VarInsnNode(ALOAD, 4));
         instructionToInsert.add(new MethodInsnNode(INVOKEVIRTUAL,
-                HEClasses.CLASS_EntityLivingBase,
+                HEClasses.EntityLivingBase,
                 METHOD_getEyeHeight,
                 METHOD_getEyeHeight_DESC,
                 false));
         instructionToInsert.add(new InsnNode(F2D));
         instructionToInsert.add(new InsnNode(DADD));
         instructionToInsert.add(new MethodInsnNode(INVOKESTATIC,
-                HEClasses.CLASS_HEGetMaterialUtil,
+                HEClasses.HEGetMaterialUtil,
                 REPLACED_method,
                 REPLACED_method_DESC,
                 false));

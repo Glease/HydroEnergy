@@ -3,6 +3,7 @@ package com.sinthoras.hydroenergy.asm;
 import com.sinthoras.hydroenergy.asm.biomesoplenty.FogHandlerTransformer;
 import com.sinthoras.hydroenergy.asm.galaxyspace.GSPlanetFogHandlerTransformer;
 import com.sinthoras.hydroenergy.asm.gregtech.GT_PollutionRendererTransformer;
+import com.sinthoras.hydroenergy.asm.minecraft.ActiveRenderInfoTransformer;
 import com.sinthoras.hydroenergy.asm.witchery.ClientEventsTransformer;
 import net.minecraft.launchwrapper.Launch;
 import org.objectweb.asm.ClassReader;
@@ -54,7 +55,7 @@ public class HETransformer implements IClassTransformer {
 			case 5:
 				return transformChunkProviderClient(basicClass, isObfuscated);
 			case 6:
-				return transformActiveRenderInfo(basicClass, isObfuscated);
+				return ActiveRenderInfoTransformer.transform(basicClass, isObfuscated);
 			case 7:
 				return FogHandlerTransformer.transform(basicClass, isObfuscated);
 			case 8:
@@ -139,38 +140,6 @@ public class HETransformer implements IClassTransformer {
 				CLASS_Chunk, METHOD_func_150807_a, METHOD_func_150807_a_DESC, instructionToInsert, basicClass, 0);
 
 		HEPlugin.info("Injected net/minecraft/world/World.setBlock");
-
-		return basicClass;
-	}
-
-	private static byte[] transformActiveRenderInfo(byte[] basicClass, boolean isObfuscated) {
-		final String CLASS_Block = "net/minecraft/block/Block";
-		final String CLASS_World = "net/minecraft/world/World";
-		final String CLASS_EntityLivingBase = "net/minecraft/entity/EntityLivingBase";
-		final String CLASS_Vec3 = "net/minecraft/util/Vec3";
-		final String CLASS_HEHooksUtil = "com/sinthoras/hydroenergy/hooks/HEHooksUtil";
-
-		final String METHOD_getBlockAtEntityViewpoint = isObfuscated ? "func_151460_a" : "getBlockAtEntityViewpoint";
-		final String METHOD_getBlockAtEntityViewpoint_DESC = "(L" + CLASS_World + ";L" + CLASS_EntityLivingBase + ";F)L" + CLASS_Block + ";";
-
-		final String METHOD_getBlock = isObfuscated ? "func_147439_a" : "getBlock";
-		final String METHOD_getBlock_DESC = "(III)L" + CLASS_Block + ";";
-
-		final String METHOD_getBlockForActiveRenderInfo = "getBlockForActiveRenderInfo";
-		final String METHOD_getBlockForActiveRenderInfo_DESC = "(L" + CLASS_Block + ";L" + CLASS_Vec3 + ";)L" + CLASS_Block + ";";
-
-		InsnList instructionToInsert = new InsnList();
-		instructionToInsert.add(new VarInsnNode(ALOAD, 3));
-		instructionToInsert.add(new MethodInsnNode(INVOKESTATIC,
-				CLASS_HEHooksUtil,
-				METHOD_getBlockForActiveRenderInfo,
-				METHOD_getBlockForActiveRenderInfo_DESC,
-				false));
-
-		basicClass = injectAfterInvokeVirtual(METHOD_getBlockAtEntityViewpoint, METHOD_getBlockAtEntityViewpoint_DESC,
-				CLASS_World, METHOD_getBlock, METHOD_getBlock_DESC, instructionToInsert, basicClass, 0);
-
-		HEPlugin.info("Injected net/minecraft/client/renderer/ActiveRenderInfo.getBlockAtEntityViewpoint");
 
 		return basicClass;
 	}
