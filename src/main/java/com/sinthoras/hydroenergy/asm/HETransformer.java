@@ -5,6 +5,7 @@ import com.sinthoras.hydroenergy.asm.galaxyspace.GSPlanetFogHandlerTransformer;
 import com.sinthoras.hydroenergy.asm.gregtech.GT_PollutionRendererTransformer;
 import com.sinthoras.hydroenergy.asm.minecraft.ActiveRenderInfoTransformer;
 import com.sinthoras.hydroenergy.asm.minecraft.ChunkProviderClientTransformer;
+import com.sinthoras.hydroenergy.asm.minecraft.EntityTransformer;
 import com.sinthoras.hydroenergy.asm.minecraft.WorldRendererTransformer;
 import com.sinthoras.hydroenergy.asm.witchery.ClientEventsTransformer;
 import net.minecraft.launchwrapper.Launch;
@@ -49,7 +50,7 @@ public class HETransformer implements IClassTransformer {
 			case 1:
 				return transformEntityRenderer(basicClass, isObfuscated);
 			case 2:
-				return transformEntity(basicClass, isObfuscated);
+				return EntityTransformer.transform(basicClass, isObfuscated);
 			case 3:
 				return WorldRendererTransformer.transform(basicClass, isObfuscated);
 			case 4:
@@ -188,36 +189,6 @@ public class HETransformer implements IClassTransformer {
 				CLASS_RenderGlobal, METHOD_renderEntities, METHOD_renderEntities_DESC, instructionToInsert, basicClass, 1);
 
 		HEPlugin.info("Injected net/minecraft/client/renderer/EntityRenderer.renderWorld#2");
-
-		return basicClass;
-	}
-
-	private static byte[] transformEntity(byte[] basicClass, boolean isObfuscated) {
-		final String CLASS_Block = "net/minecraft/block/Block";
-		final String CLASS_Material = "net/minecraft/block/material/Material";
-		final String CLASS_HEHooksUtil = "com/sinthoras/hydroenergy/hooks/HEHooksUtil";
-		final String CLASS_World = "net/minecraft/world/World";
-
-		final String METHOD_isInsideOfMaterial = isObfuscated ? "func_70055_a" : "isInsideOfMaterial";
-		final String METHOD_isInsideOfMaterial_DESC = "(L" + CLASS_Material + ";)Z";
-
-		final String METHOD_getBlock = isObfuscated ? "func_147439_a" : "getBlock";
-		final String METHOD_getBlock_DESC = "(III)L" + CLASS_Block + ";";
-		final String METHOD_getBlockForWorldAndEntity = "getBlockForWorldAndEntity";
-		final String METHOD_getBlockForWorldAndEntity_DESC = "(L" + CLASS_Block + ";I)L" + CLASS_Block + ";";
-
-		InsnList instructionToInsert = new InsnList();
-		instructionToInsert.add(new VarInsnNode(ILOAD, 5));
-		instructionToInsert.add(new MethodInsnNode(INVOKESTATIC,
-				CLASS_HEHooksUtil,
-				METHOD_getBlockForWorldAndEntity,
-				METHOD_getBlockForWorldAndEntity_DESC,
-				false));
-
-		basicClass = injectAfterInvokeVirtual(METHOD_isInsideOfMaterial, METHOD_isInsideOfMaterial_DESC,
-				CLASS_World, METHOD_getBlock, METHOD_getBlock_DESC, instructionToInsert, basicClass, 0);
-
-		HEPlugin.info("Injected net/minecraft/entity/Entity.isInsideOfMaterial");
 
 		return basicClass;
 	}

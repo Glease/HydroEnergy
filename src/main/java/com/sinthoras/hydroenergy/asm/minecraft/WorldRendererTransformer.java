@@ -8,7 +8,6 @@ import org.objectweb.asm.tree.*;
 import java.util.List;
 
 import static org.objectweb.asm.Opcodes.*;
-import static org.objectweb.asm.Opcodes.GETFIELD;
 
 public class WorldRendererTransformer {
 
