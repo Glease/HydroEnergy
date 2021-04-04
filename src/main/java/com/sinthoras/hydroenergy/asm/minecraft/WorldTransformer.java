@@ -54,6 +54,7 @@ public class WorldTransformer {
                 false));
         // Add instruction after target instruction
         targetMethod.instructions.insert(instructions.get(0), instructionToInsert);
+        HEPlugin.info("Injected World.");
 
         return HEUtil.convertClassNodeToByteArray(classNode);
     }
@@ -95,6 +96,7 @@ public class WorldTransformer {
                 false));
         // Add instruction after target instruction
         targetMethod.instructions.insert(instructions.get(0), instructionToInsert);
+        HEPlugin.info("Injected World.");
 
         return HEUtil.convertClassNodeToByteArray(classNode);
     }
@@ -141,6 +143,7 @@ public class WorldTransformer {
                 false));
         // Add instruction after target instruction and subsequent ASTORE
         targetMethod.instructions.insert(instructions.get(0).getNext(), instructionToInsert);
+        HEPlugin.info("Injected World.");
 
         return HEUtil.convertClassNodeToByteArray(classNode);
     }

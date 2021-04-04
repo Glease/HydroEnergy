@@ -42,7 +42,7 @@ public class EntityRendererTransformer {
         InsnList instructionToInsert = new InsnList();
         instructionToInsert.add(new VarInsnNode(ALOAD, 14));
         instructionToInsert.add(new MethodInsnNode(INVOKESTATIC,
-                HEClasses.HEHooksUtil,
+                HEClasses.HETessalator,
                 ADDED_method,
                 ADDED_method_DESC,
                 false));
@@ -52,7 +52,7 @@ public class EntityRendererTransformer {
         instructionToInsert = new InsnList();
         instructionToInsert.add(new VarInsnNode(ALOAD, 14));
         instructionToInsert.add(new MethodInsnNode(INVOKESTATIC,
-                HEClasses.HEHooksUtil,
+                HEClasses.HETessalator,
                 ADDED_method,
                 ADDED_method_DESC,
                 false));
