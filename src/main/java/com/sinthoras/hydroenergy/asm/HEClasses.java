@@ -16,4 +16,6 @@ public class HEClasses {
     public static final String LongHashMap = "net/minecraft/util/LongHashMap";
     public static final String Object = "java/lang/Object";
     public static final String HELightManager = "com/sinthoras/hydroenergy/client/light/HELightManager";
+    public static final String WorldRenderer = "net/minecraft/client/renderer/WorldRenderer";
+    public static final String HETessalator = "com/sinthoras/hydroenergy/client/renderer/HETessalator";
 }

@@ -5,6 +5,7 @@ import com.sinthoras.hydroenergy.asm.galaxyspace.GSPlanetFogHandlerTransformer;
 import com.sinthoras.hydroenergy.asm.gregtech.GT_PollutionRendererTransformer;
 import com.sinthoras.hydroenergy.asm.minecraft.ActiveRenderInfoTransformer;
 import com.sinthoras.hydroenergy.asm.minecraft.ChunkProviderClientTransformer;
+import com.sinthoras.hydroenergy.asm.minecraft.WorldRendererTransformer;
 import com.sinthoras.hydroenergy.asm.witchery.ClientEventsTransformer;
 import net.minecraft.launchwrapper.Launch;
 import org.objectweb.asm.ClassReader;
@@ -50,7 +51,7 @@ public class HETransformer implements IClassTransformer {
 			case 2:
 				return transformEntity(basicClass, isObfuscated);
 			case 3:
-				return transformWorldRenderer(basicClass, isObfuscated);
+				return WorldRendererTransformer.transform(basicClass, isObfuscated);
 			case 4:
 				return transformChunk(basicClass, isObfuscated);
 			case 5:
@@ -217,51 +218,6 @@ public class HETransformer implements IClassTransformer {
 				CLASS_World, METHOD_getBlock, METHOD_getBlock_DESC, instructionToInsert, basicClass, 0);
 
 		HEPlugin.info("Injected net/minecraft/entity/Entity.isInsideOfMaterial");
-
-		return basicClass;
-	}
-
-	private static byte[] transformWorldRenderer(byte[] basicClass, boolean isObfuscated) {
-		final String CLASS_WorldRenderer = "net/minecraft/client/renderer/WorldRenderer";
-		final String CLASS_HETessalator = "com/sinthoras/hydroenergy/client/renderer/HETessalator";
-
-		final String METHOD_setPosition = isObfuscated ? "func_78913_a" : "setPosition";
-		final String METHOD_setPosition_DESC = "(III)V";
-
-		final String METHOD_setDontDraw = isObfuscated ? "func_78910_b" : "setDontDraw";
-		final String METHOD_setDontDraw_DESC = "()V";
-
-		final String METHOD_onRenderChunkUpdate = "onRenderChunkUpdate";
-		final String METHOD_onRenderChunkUpdate_DESC = "(IIIIII)V";
-
-		final String FIELD_posX = isObfuscated ? "field_78923_c" : "posX";
-		final String FIELD_posX_DESC = "I";
-		final String FIELD_posY = isObfuscated ? "field_78920_d" : "posY";
-		final String FIELD_posY_DESC = "I";
-		final String FIELD_posZ = isObfuscated ? "field_78921_e" : "posZ";
-		final String FIELD_posZ_DESC = "I";
-
-		InsnList instructionToInsert = new InsnList();
-		instructionToInsert.add(new VarInsnNode(ALOAD, 0));
-		instructionToInsert.add(new FieldInsnNode(GETFIELD, CLASS_WorldRenderer, FIELD_posX, FIELD_posX_DESC));
-		instructionToInsert.add(new VarInsnNode(ALOAD, 0));
-		instructionToInsert.add(new FieldInsnNode(GETFIELD, CLASS_WorldRenderer, FIELD_posY, FIELD_posY_DESC));
-		instructionToInsert.add(new VarInsnNode(ALOAD, 0));
-		instructionToInsert.add(new FieldInsnNode(GETFIELD, CLASS_WorldRenderer, FIELD_posZ, FIELD_posZ_DESC));
-		instructionToInsert.add(new VarInsnNode(ILOAD, 1));
-		instructionToInsert.add(new VarInsnNode(ILOAD, 2));
-		instructionToInsert.add(new VarInsnNode(ILOAD, 3));
-		instructionToInsert.add(new MethodInsnNode(INVOKESTATIC,
-				CLASS_HETessalator,
-				METHOD_onRenderChunkUpdate,
-				METHOD_onRenderChunkUpdate_DESC,
-				false));
-
-		basicClass = injectAfterInvokeVirtual(METHOD_setPosition, METHOD_setPosition_DESC,
-				CLASS_WorldRenderer, METHOD_setDontDraw, METHOD_setDontDraw_DESC,
-				instructionToInsert, basicClass, 0);
-
-		HEPlugin.info("Injected net/minecraft/client/renderer/WorldRenderer.setPosition");
 
 		return basicClass;
 	}
