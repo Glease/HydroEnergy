@@ -18,7 +18,7 @@ public class ChunkTransformer implements IClassTransformer {
     @Override
     public byte[] transform(String name, String transformedName, byte[] basicClass) {
         final boolean isDeobfuscated = (boolean) Launch.blackboard.get("fml.deobfuscatedEnvironment");
-        if(transformedName == fullClassName) {
+        if(transformedName.equals(fullClassName)) {
             return transform(basicClass, !isDeobfuscated);
         }
         else {
