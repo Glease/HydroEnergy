@@ -38,10 +38,10 @@ public class ChunkProviderClientTransformer implements IClassTransformer {
         final String MARKER_method_DESC = "(II)V";
         final MethodNode targetMethod = HEUtil.getMethod(classNode, MARKER_method, MARKER_method_DESC);
         if(targetMethod == null) {
-            HEPlugin.error("Could not find " + MARKER_method + ":" + MARKER_method_DESC + " in " + fullClassName + ". HydroEnergy will not work!");
+            HEPlugin.error("Could not find method " + MARKER_method + ":" + MARKER_method_DESC + " in " + fullClassName + ". HydroEnergy will not work!");
             return basicClass;
         }
-        HEPlugin.info("Found " + MARKER_method + ":" + MARKER_method_DESC + " in " + fullClassName);
+        HEPlugin.info("Found method " + MARKER_method + ":" + MARKER_method_DESC + " in " + fullClassName);
 
         final boolean isStatic = false;
         final String MARKER_instruction_OWNER = HEClasses.LongHashMap;
@@ -49,10 +49,10 @@ public class ChunkProviderClientTransformer implements IClassTransformer {
         final String MARKER_instruction_DESC = "(J)L" + HEClasses.Object + ";";
         List<MethodInsnNode> instructions = HEUtil.getInstructions(targetMethod, isStatic, MARKER_instruction_OWNER, MARKER_instruction, MARKER_instruction_DESC);
         if(instructions.size() != 1) {
-            HEPlugin.error("Could not find " + MARKER_instruction_OWNER + "." + MARKER_instruction + ":" + MARKER_instruction_DESC + " in " + fullClassName + ". HydroEnergy will not work!");
+            HEPlugin.error("Could not find instruction " + MARKER_instruction_OWNER + "." + MARKER_instruction + ":" + MARKER_instruction_DESC + " in said method. HydroEnergy will not work!");
             return basicClass;
         }
-        HEPlugin.info("Found " + MARKER_instruction_OWNER + "." + MARKER_instruction + ":" + MARKER_instruction_DESC + " in " + fullClassName);
+        HEPlugin.info("Found instruction " + MARKER_instruction_OWNER + "." + MARKER_instruction + ":" + MARKER_instruction_DESC + " in said method.");
 
         final String ADDED_method = "onChunkUnload";
         final String ADDED_method_DESC = "(II)V";
@@ -66,7 +66,7 @@ public class ChunkProviderClientTransformer implements IClassTransformer {
                 false));
         // Add instruction after target instruction and a subsequent POP instruction
         targetMethod.instructions.insert(instructions.get(0).getNext(), instructionToInsert);
-        HEPlugin.info("Injected " + MARKER_method + ":" + MARKER_method_DESC + " in " + fullClassName + ".");
+        HEPlugin.info("Injected into " + MARKER_method + ":" + MARKER_method_DESC + " in " + fullClassName + ".");
 
         return HEUtil.convertClassNodeToByteArray(classNode);
     }

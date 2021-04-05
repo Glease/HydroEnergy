@@ -47,10 +47,10 @@ public class GSPlanetFogHandlerTransformer implements IClassTransformer {
         final String MARKER_method_DESC = "(L" + HEClasses.FogColors + ";)V";
         final MethodNode targetMethod = HEUtil.getMethod(classNode, MARKER_method, MARKER_method_DESC);
         if(targetMethod == null) {
-            HEPlugin.warn("Could not find " + MARKER_method + ":" + MARKER_method_DESC + " in " + fullClassName + ". You will experience severe visual bugs.");
+            HEPlugin.warn("Could not find method " + MARKER_method + ":" + MARKER_method_DESC + " in " + fullClassName + ". You will experience severe visual bugs.");
             return basicClass;
         }
-        HEPlugin.info("Found " + MARKER_method + ":" + MARKER_method_DESC + " in " + fullClassName);
+        HEPlugin.info("Found method " + MARKER_method + ":" + MARKER_method_DESC + " in " + fullClassName);
 
         final boolean isStatic = false;
         final String MARKER_instruction_OWNER = HEClasses.Block;
@@ -58,10 +58,10 @@ public class GSPlanetFogHandlerTransformer implements IClassTransformer {
         final String MARKER_instruction_DESC = "()L" + HEClasses.Material + ";";
         List<MethodInsnNode> instructions = HEUtil.getInstructions(targetMethod, isStatic, MARKER_instruction_OWNER, MARKER_instruction, MARKER_instruction_DESC);
         if(instructions.size() != 2) {
-            HEPlugin.warn("Could not find " + MARKER_instruction_OWNER + "." + MARKER_instruction + ":" + MARKER_instruction_DESC + " twice in " + fullClassName + ". You will experience severe visual bugs.");
+            HEPlugin.warn("Could not find instruction " + MARKER_instruction_OWNER + "." + MARKER_instruction + ":" + MARKER_instruction_DESC + " twice in said method. You will experience severe visual bugs.");
             return basicClass;
         }
-        HEPlugin.info("Found " + MARKER_instruction_OWNER + "." + MARKER_instruction + ":" + MARKER_instruction_DESC + " twice in " + fullClassName);
+        HEPlugin.info("Found instruction " + MARKER_instruction_OWNER + "." + MARKER_instruction + ":" + MARKER_instruction_DESC + " twice in said method.");
 
         final String REPLACED_method = "getMaterialWrapper";
         final String REPLACED_method_DESC = "(L" + HEClasses.FogColors + ";)L" + HEClasses.Material + ";";

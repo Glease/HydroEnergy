@@ -38,10 +38,10 @@ public class EntityRendererTransformer implements IClassTransformer {
         final String MARKER_method_DESC = "(FJ)V";
         final MethodNode targetMethod = HEUtil.getMethod(classNode, MARKER_method, MARKER_method_DESC);
         if(targetMethod == null) {
-            HEPlugin.error("Could not find " + MARKER_method + ":" + MARKER_method_DESC + " in " + fullClassName + ". Water will not be rendered!");
+            HEPlugin.error("Could not find method " + MARKER_method + ":" + MARKER_method_DESC + " in " + fullClassName + ". Water will not be rendered!");
             return basicClass;
         }
-        HEPlugin.info("Found " + MARKER_method + ":" + MARKER_method_DESC + " in " + fullClassName);
+        HEPlugin.info("Found method " + MARKER_method + ":" + MARKER_method_DESC + " in " + fullClassName);
 
         final boolean isStatic = false;
         final String MARKER_instruction_OWNER = HEClasses.RenderGlobal;
@@ -49,10 +49,10 @@ public class EntityRendererTransformer implements IClassTransformer {
         final String MARKER_instruction_DESC = "(L" + HEClasses.EntityLivingBase + ";L" + HEClasses.ICamera + ";F)V";
         List<MethodInsnNode> instructions = HEUtil.getInstructions(targetMethod, isStatic, MARKER_instruction_OWNER, MARKER_instruction, MARKER_instruction_DESC);
         if(instructions.size() != 2) {
-            HEPlugin.error("Could not find " + MARKER_instruction_OWNER + "." + MARKER_instruction + ":" + MARKER_instruction_DESC + " twice in " + fullClassName + ". Water will not be rendered!");
+            HEPlugin.error("Could not find instruction " + MARKER_instruction_OWNER + "." + MARKER_instruction + ":" + MARKER_instruction_DESC + " twice in said method. Water will not be rendered!");
             return basicClass;
         }
-        HEPlugin.info("Found " + MARKER_instruction_OWNER + "." + MARKER_instruction + ":" + MARKER_instruction_DESC + " twice in " + fullClassName);
+        HEPlugin.info("Found instruction " + MARKER_instruction_OWNER + "." + MARKER_instruction + ":" + MARKER_instruction_DESC + " twice in said method.");
 
         final String ADDED_method = "render";
         final String ADDED_method_DESC = "(L" + HEClasses.ICamera + ";)V";
@@ -75,7 +75,7 @@ public class EntityRendererTransformer implements IClassTransformer {
                 false));
         // Add instruction after target instruction
         targetMethod.instructions.insert(instructions.get(1), instructionToInsert);
-        HEPlugin.info("Injected " + MARKER_method + ":" + MARKER_method_DESC + " in " + fullClassName + ".");
+        HEPlugin.info("Injected into " + MARKER_method + ":" + MARKER_method_DESC + " in " + fullClassName + ".");
 
         return HEUtil.convertClassNodeToByteArray(classNode);
     }
