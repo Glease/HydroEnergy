@@ -280,7 +280,7 @@ public abstract class HEHydroTurbineTileEntity extends GT_MetaTileEntity_Multibl
     }
 
     protected float getTierEfficiency() {
-        return (float)HEConfig.efficiency[getTier()];
+        return (float)HEConfig.efficiency[getTier() - 1];
     }
 
     protected int getTierVoltage() {

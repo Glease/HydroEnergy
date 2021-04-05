@@ -282,11 +282,11 @@ public abstract class HEHydroPumpTileEntity extends GT_MetaTileEntity_Multiblock
     protected abstract int getTier();
 
     protected float getTierEfficiency() {
-        return (float)HEConfig.efficiency[getTier()];
+        return (float)HEConfig.efficiency[getTier() - 1];
     }
 
     protected float getTierPressure() {
-        return (float)HEConfig.pressure[getTier()];
+        return (float)HEConfig.pressure[getTier() - 1];
     }
 
     protected int getTierVoltage() {
