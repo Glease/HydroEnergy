@@ -38,10 +38,10 @@ public class FogHandlerTransformer implements IClassTransformer {
         final String METHOD_getMaterialHEWrapper_DESC = "(L" + HEClasses.FogColors + ";)L" + HEClasses.Material + ";";
         final boolean isApiUsed = null != HEUtil.getMethod(classNode, METHOD_getMaterialHEWrapper, METHOD_getMaterialHEWrapper_DESC);
         if(isApiUsed) {
-            HEPlugin.info(fullClassName + " is using HydroEnergy API. No injection necessary.");
+            HEPlugin.info("Biomes 'o Plenty(" + fullClassName + ") is using HydroEnergy API. No injection necessary.");
             return basicClass;
         }
-        HEPlugin.info(fullClassName + " does not use HydroEnergy API. Fallback to injection.");
+        HEPlugin.info("Biomes 'o Plenty(" + fullClassName + ") does not use HydroEnergy API. Fallback to injection.");
 
         final String MARKER_method = "onGetFogColour";
         final String MARKER_method_DESC = "(L" + HEClasses.FogColors + ";)V";
@@ -78,7 +78,7 @@ public class FogHandlerTransformer implements IClassTransformer {
         targetMethod.instructions.remove(instructions.get(1).getPrevious());
         // Remove target instruction itself
         targetMethod.instructions.remove(instructions.get(1));
-        HEPlugin.info("Fixed mod-interop with " + fullClassName + ".");
+        HEPlugin.info("Fixed mod-interop with Biomes 'o Plenty.");
 
         return HEUtil.convertClassNodeToByteArray(classNode);
     }

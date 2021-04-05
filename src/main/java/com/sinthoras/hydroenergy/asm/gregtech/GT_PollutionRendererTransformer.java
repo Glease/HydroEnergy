@@ -38,10 +38,10 @@ public class GT_PollutionRendererTransformer implements IClassTransformer {
         final String METHOD_getMaterialHEWrapper_DESC = "(L" + HEClasses.FogColors + ";)L" + HEClasses.Material + ";";
         final boolean isApiUsed = null != HEUtil.getMethod(classNode, METHOD_getMaterialHEWrapper, METHOD_getMaterialHEWrapper_DESC);
         if(isApiUsed) {
-            HEPlugin.info(fullClassName + " is using HydroEnergy API. No injection necessary.");
+            HEPlugin.info("GregTech5U(" + fullClassName + ") is using HydroEnergy API. No injection necessary.");
             return basicClass;
         }
-        HEPlugin.info(fullClassName + " does not use HydroEnergy API. Fallback to injection.");
+        HEPlugin.info("GregTech5U(" + fullClassName + ") does not use HydroEnergy API. Fallback to injection.");
 
         final String MARKER_method = "manipulateColor";
         final String MARKER_method_DESC = "(L" + HEClasses.FogColors + ";)V";
@@ -77,7 +77,7 @@ public class GT_PollutionRendererTransformer implements IClassTransformer {
         targetMethod.instructions.remove(instructions.get(0).getPrevious());
         // Remove target instruction itself
         targetMethod.instructions.remove(instructions.get(0));
-        HEPlugin.info("Fixed mod-interop with " + fullClassName + ".");
+        HEPlugin.info("Fixed mod-interop with GregTech5U.");
 
         return HEUtil.convertClassNodeToByteArray(classNode);
     }

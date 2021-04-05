@@ -38,10 +38,10 @@ public class ClientEventsTransformer implements IClassTransformer {
         final String METHOD_getMaterialHEWrapper_DESC = "(L" + HEClasses.Block + ";L" + HEClasses.EntityLivingBase + ";)L" + HEClasses.Material + ";";
         final boolean isApiUsed = null != HEUtil.getMethod(classNode, METHOD_getMaterialHEWrapper, METHOD_getMaterialHEWrapper_DESC);
         if(isApiUsed) {
-            HEPlugin.info(fullClassName + " is using HydroEnergy API. No injection necessary.");
+            HEPlugin.info("Witchery(" + fullClassName + ") is using HydroEnergy API. No injection necessary.");
             return basicClass;
         }
-        HEPlugin.info(fullClassName + " does not use HydroEnergy API. Fallback to injection.");
+        HEPlugin.info("Witchery(" + fullClassName + ") does not use HydroEnergy API. Fallback to injection.");
 
         final String MARKER_method = "getFOVModifier";
         final String MARKER_method_DESC = "(FL" + HEClasses.EntityRenderer + ";L" + HEClasses.Minecraft + ";)F";
@@ -92,7 +92,7 @@ public class ClientEventsTransformer implements IClassTransformer {
         targetMethod.instructions.remove(instructions.get(0).getPrevious());
         // Remove target instruction itself
         targetMethod.instructions.remove(instructions.get(0));
-        HEPlugin.info("Fixed mod-interop with " + fullClassName + ".");
+        HEPlugin.info("Fixed mod-interop with Witchery.");
 
         return HEUtil.convertClassNodeToByteArray(classNode);
     }
