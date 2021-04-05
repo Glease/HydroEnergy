@@ -11,6 +11,8 @@ import static org.objectweb.asm.Opcodes.*;
 
 public class EntityTransformer {
 
+    public static final String fullClassName = "net.minecraft.entity.Entity";
+
     /* Wrap
      * Block block = this.worldObj.getBlock(i, j, k);
      * to
@@ -23,9 +25,10 @@ public class EntityTransformer {
         final String MARKER_method_DESC = "(L" + HEClasses.Material + ";)Z";
         final MethodNode targetMethod = HEUtil.getMethod(classNode, MARKER_method, MARKER_method_DESC);
         if(targetMethod == null) {
-            HEPlugin.error("Could not find injection target method in Entity. HydroEnergy will not work.");
+            HEPlugin.error("Could not find " + MARKER_method + ":" + MARKER_method_DESC + " in " + fullClassName + ". Entity interaction is broken!");
             return basicClass;
         }
+        HEPlugin.info("Found " + MARKER_method + ":" + MARKER_method_DESC + " in " + fullClassName);
 
         final boolean isStatic = false;
         final String MARKER_instruction_OWNER = HEClasses.World;
@@ -33,9 +36,10 @@ public class EntityTransformer {
         final String MARKER_instruction_DESC = "(III)L" + HEClasses.Block + ";";
         List<MethodInsnNode> instructions = HEUtil.getInstructions(targetMethod, isStatic, MARKER_instruction_OWNER, MARKER_instruction, MARKER_instruction_DESC);
         if(instructions.size() != 1) {
-            HEPlugin.error("Could not find injection target instruction in Entity. HydroEnergy will not work.");
+            HEPlugin.error("Could not find " + MARKER_instruction_OWNER + "." + MARKER_instruction + ":" + MARKER_instruction_DESC + " in " + fullClassName + ". Entity interaction is broken!");
             return basicClass;
         }
+        HEPlugin.info("Found " + MARKER_instruction_OWNER + "." + MARKER_instruction + ":" + MARKER_instruction_DESC + " in " + fullClassName);
 
         final String ADDED_method = "getBlockForWorldAndEntity";
         final String ADDED_method_DESC = "(L" + HEClasses.Block + ";I)L" + HEClasses.Block + ";";
@@ -48,7 +52,7 @@ public class EntityTransformer {
                 false));
         // Add instruction after target instruction
         targetMethod.instructions.insert(instructions.get(0), instructionToInsert);
-        HEPlugin.info("Injected Entity.");
+        HEPlugin.info("Injected " + MARKER_method + ":" + MARKER_method_DESC + " in " + fullClassName + ".");
 
         return HEUtil.convertClassNodeToByteArray(classNode);
     }

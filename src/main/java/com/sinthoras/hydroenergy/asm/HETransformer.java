@@ -15,17 +15,17 @@ import java.util.List;
 public class HETransformer implements IClassTransformer {
 	
 	private static final List<String> targetClasses = new ArrayList<String>() {{
-		add("net.minecraft.world.World");
-		add("net.minecraft.client.renderer.EntityRenderer");
-		add("net.minecraft.entity.Entity");
-		add("net.minecraft.client.renderer.WorldRenderer");
-		add("net.minecraft.world.chunk.Chunk");
-		add("net.minecraft.client.multiplayer.ChunkProviderClient");
-		add("net.minecraft.client.renderer.ActiveRenderInfo");
-		add("biomesoplenty.client.fog.FogHandler");
-		add("gregtech.common.render.GT_PollutionRenderer");
-		add("galaxyspace.core.handler.GSPlanetFogHandler");
-		add("com.emoniph.witchery.client.ClientEvents");
+		add(WorldTransformer.fullClassName);
+		add(EntityRendererTransformer.fullClassName);
+		add(EntityTransformer.fullClassName);
+		add(WorldRendererTransformer.fullClassName);
+		add(ChunkTransformer.fullClassName);
+		add(ChunkProviderClientTransformer.fullClassName);
+		add(ActiveRenderInfoTransformer.fullClassName);
+		add(FogHandlerTransformer.fullClassName);
+		add(GT_PollutionRendererTransformer.fullClassName);
+		add(GSPlanetFogHandlerTransformer.fullClassName);
+		add(ClientEventsTransformer.fullClassName);
 	}};
 
 	@Override

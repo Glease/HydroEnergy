@@ -11,6 +11,8 @@ import static org.objectweb.asm.Opcodes.*;
 
 public class ClientEventsTransformer {
 
+    public static final String fullClassName = "com.emoniph.witchery.client.ClientEvents";
+
     /* Replace
      * block1.getMaterial() == Material.water
      * with
@@ -23,17 +25,19 @@ public class ClientEventsTransformer {
         final String METHOD_getMaterialHEWrapper_DESC = "(L" + HEClasses.Block + ";L" + HEClasses.EntityLivingBase + ";)L" + HEClasses.Material + ";";
         final boolean isApiUsed = null != HEUtil.getMethod(classNode, METHOD_getMaterialHEWrapper, METHOD_getMaterialHEWrapper_DESC);
         if(isApiUsed) {
-            HEPlugin.info("Witchery is using HydroEnergy API. No injection neccessary.");
+            HEPlugin.info(fullClassName + " is using HydroEnergy API. No injection necessary.");
             return basicClass;
         }
+        HEPlugin.info(fullClassName + " does not use HydroEnergy API. Fallback to injection.");
 
         final String MARKER_method = "getFOVModifier";
         final String MARKER_method_DESC = "(FL" + HEClasses.EntityRenderer + ";L" + HEClasses.Minecraft + ";)F";
         final MethodNode targetMethod = HEUtil.getMethod(classNode, MARKER_method, MARKER_method_DESC);
         if(targetMethod == null) {
-            HEPlugin.info("Could not find injection target method in Witchery. You will experience visual bugs.");
+            HEPlugin.warn("Could not find " + MARKER_method + ":" + MARKER_method_DESC + " in " + fullClassName + ". You will experience severe visual bugs.");
             return basicClass;
         }
+        HEPlugin.info("Found " + MARKER_method + ":" + MARKER_method_DESC + " in " + fullClassName);
 
         final boolean isStatic = false;
         final String MARKER_instruction_OWNER = HEClasses.Block;
@@ -41,9 +45,10 @@ public class ClientEventsTransformer {
         final String MARKER_instruction_DESC = "()L" + HEClasses.Material + ";";
         List<MethodInsnNode> instructions = HEUtil.getInstructions(targetMethod, isStatic, MARKER_instruction_OWNER, MARKER_instruction, MARKER_instruction_DESC);
         if(instructions.size() != 1) {
-            HEPlugin.info("Could not find injection target instruction in Witchery. You will experience visual bugs.");
+            HEPlugin.warn("Could not find " + MARKER_instruction_OWNER + "." + MARKER_instruction + ":" + MARKER_instruction_DESC + " in " + fullClassName + ". You will experience visual bugs.");
             return basicClass;
         }
+        HEPlugin.info("Found " + MARKER_instruction_OWNER + "." + MARKER_instruction + ":" + MARKER_instruction_DESC + " in " + fullClassName);
 
         final String REPLACED_method = "getMaterialWrapper";
         final String REPLACED_method_DESC = "(L" + HEClasses.Block + ";D)L" + HEClasses.Material + ";";
@@ -74,7 +79,7 @@ public class ClientEventsTransformer {
         targetMethod.instructions.remove(instructions.get(0).getPrevious());
         // Remove target instruction itself
         targetMethod.instructions.remove(instructions.get(0));
-        HEPlugin.info("Fixed mod-interop with Witchery.");
+        HEPlugin.info("Fixed mod-interop with " + fullClassName + ".");
 
         return HEUtil.convertClassNodeToByteArray(classNode);
     }

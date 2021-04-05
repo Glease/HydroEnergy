@@ -11,6 +11,8 @@ import static org.objectweb.asm.Opcodes.*;
 
 public class ChunkTransformer {
 
+    public static final String fullClassName = "net.minecraft.world.chunk.Chunk";
+
     public static byte[] transform(byte[] basicClass, boolean isObfuscated) {
         basicClass = transformFillChunk(basicClass, isObfuscated);
         basicClass = transformGenerateSkylightMap(basicClass, isObfuscated);
@@ -30,9 +32,10 @@ public class ChunkTransformer {
         final String MARKER_method_DESC = "([BIIZ)V";
         final MethodNode targetMethod = HEUtil.getMethod(classNode, MARKER_method, MARKER_method_DESC);
         if(targetMethod == null) {
-            HEPlugin.error("Could not find injection target method in Chunk. HydroEnergy will not work.");
+            HEPlugin.error("Could not find " + MARKER_method + ":" + MARKER_method_DESC + " in " + fullClassName + ". HydroEnergy will not work!");
             return basicClass;
         }
+        HEPlugin.info("Found " + MARKER_method + ":" + MARKER_method_DESC + " in " + fullClassName);
 
         final boolean isStatic = false;
         final String MARKER_instruction_OWNER = HEClasses.Chunk;
@@ -40,9 +43,10 @@ public class ChunkTransformer {
         final String MARKER_instruction_DESC = "()V";
         List<MethodInsnNode> instructions = HEUtil.getInstructions(targetMethod, isStatic, MARKER_instruction_OWNER, MARKER_instruction, MARKER_instruction_DESC);
         if(instructions.size() != 1) {
-            HEPlugin.error("Could not find injection target instruction in Chunk. HydroEnergy will not work.");
+            HEPlugin.error("Could not find " + MARKER_instruction_OWNER + "." + MARKER_instruction + ":" + MARKER_instruction_DESC + " in " + fullClassName + ". HydroEnergy will not work!");
             return basicClass;
         }
+        HEPlugin.info("Found " + MARKER_instruction_OWNER + "." + MARKER_instruction + ":" + MARKER_instruction_DESC + " in " + fullClassName);
 
         final String ADDED_method = "onChunkDataLoad";
         final String ADDED_method_DESC = "(L" + HEClasses.Chunk + ";)V";
@@ -55,7 +59,7 @@ public class ChunkTransformer {
                 false));
         // Add instruction after target instruction
         targetMethod.instructions.insert(instructions.get(0), instructionToInsert);
-        HEPlugin.info("Injected Chunk.");
+        HEPlugin.info("Injected " + MARKER_method + ":" + MARKER_method_DESC + " in " + fullClassName + ".");
 
         return HEUtil.convertClassNodeToByteArray(classNode);
     }
@@ -72,9 +76,10 @@ public class ChunkTransformer {
         final String MARKER_method_DESC = "()V";
         final MethodNode targetMethod = HEUtil.getMethod(classNode, MARKER_method, MARKER_method_DESC);
         if(targetMethod == null) {
-            HEPlugin.error("Could not find injection target method in Chunk. HydroEnergy will not work.");
+            HEPlugin.warn("Could not find " + MARKER_method + ":" + MARKER_method_DESC + " in " + fullClassName + ". You will experience severe lighting bugs!");
             return basicClass;
         }
+        HEPlugin.info("Found " + MARKER_method + ":" + MARKER_method_DESC + " in " + fullClassName);
 
         final boolean isStatic = false;
         final String MARKER_instruction_OWNER = HEClasses.ExtendedBlockStorage;
@@ -82,9 +87,10 @@ public class ChunkTransformer {
         final String MARKER_instruction_DESC = "(IIII)V";
         List<MethodInsnNode> instructions = HEUtil.getInstructions(targetMethod, isStatic, MARKER_instruction_OWNER, MARKER_instruction, MARKER_instruction_DESC);
         if(instructions.size() != 1) {
-            HEPlugin.error("Could not find injection target instruction in Chunk. HydroEnergy will not work.");
+            HEPlugin.warn("Could not find " + MARKER_instruction_OWNER + "." + MARKER_instruction + ":" + MARKER_instruction_DESC + " in " + fullClassName + ". You will experience severe lighting bugs!");
             return basicClass;
         }
+        HEPlugin.info("Found " + MARKER_instruction_OWNER + "." + MARKER_instruction + ":" + MARKER_instruction_DESC + " in " + fullClassName);
 
         final String ADDED_method = "onLightUpdate";
         final String ADDED_method_DESC = "(L" + HEClasses.Chunk + ";III)V";
@@ -100,7 +106,7 @@ public class ChunkTransformer {
                 false));
         // Add instruction after target instruction
         targetMethod.instructions.insert(instructions.get(0), instructionToInsert);
-        HEPlugin.info("Injected Chunk.");
+        HEPlugin.info("Injected " + MARKER_method + ":" + MARKER_method_DESC + " in " + fullClassName + ".");
 
         return HEUtil.convertClassNodeToByteArray(classNode);
     }
@@ -122,9 +128,10 @@ public class ChunkTransformer {
         final String MARKER_method_DESC = "(III)V";
         final MethodNode targetMethod = HEUtil.getMethod(classNode, MARKER_method, MARKER_method_DESC);
         if(targetMethod == null) {
-            HEPlugin.error("Could not find injection target method in Chunk. HydroEnergy will not work.");
+            HEPlugin.warn("Could not find " + MARKER_method + ":" + MARKER_method_DESC + " in " + fullClassName + ". You will experience severe lighting bugs!");
             return basicClass;
         }
+        HEPlugin.info("Found " + MARKER_method + ":" + MARKER_method_DESC + " in " + fullClassName);
 
         final boolean isStatic = false;
         final String MARKER_instruction_OWNER = HEClasses.ExtendedBlockStorage;
@@ -132,9 +139,10 @@ public class ChunkTransformer {
         final String MARKER_instruction_DESC = "(IIII)V";
         List<MethodInsnNode> instructions = HEUtil.getInstructions(targetMethod, isStatic, MARKER_instruction_OWNER, MARKER_instruction, MARKER_instruction_DESC);
         if(instructions.size() != 3) {
-            HEPlugin.error("Could not find injection target instruction in Chunk. HydroEnergy will not work.");
+            HEPlugin.warn("Could not find " + MARKER_instruction_OWNER + "." + MARKER_instruction + ":" + MARKER_instruction_DESC + " thrice in " + fullClassName + ". You will experience severe lighting bugs!");
             return basicClass;
         }
+        HEPlugin.info("Found " + MARKER_instruction_OWNER + "." + MARKER_instruction + ":" + MARKER_instruction_DESC + " thrice in " + fullClassName);
 
         final String ADDED_method = "onLightUpdate";
         final String ADDED_method_DESC = "(L" + HEClasses.Chunk + ";III)V";
@@ -150,7 +158,6 @@ public class ChunkTransformer {
                 false));
         // Add instruction after target instruction
         targetMethod.instructions.insert(instructions.get(0), instructionToInsert);
-        HEPlugin.info("Injected Chunk.");
 
         instructionToInsert = new InsnList();
         instructionToInsert.add(new VarInsnNode(ALOAD, 0));
@@ -164,7 +171,6 @@ public class ChunkTransformer {
                 false));
         // Add instruction after target instruction
         targetMethod.instructions.insert(instructions.get(1), instructionToInsert);
-        HEPlugin.info("Injected Chunk.");
 
         instructionToInsert = new InsnList();
         instructionToInsert.add(new VarInsnNode(ALOAD, 0));
@@ -178,7 +184,7 @@ public class ChunkTransformer {
                 false));
         // Add instruction after target instruction
         targetMethod.instructions.insert(instructions.get(2), instructionToInsert);
-        HEPlugin.info("Injected Chunk.");
+        HEPlugin.info("Injected " + MARKER_method + ":" + MARKER_method_DESC + " in " + fullClassName + ".");
 
         return HEUtil.convertClassNodeToByteArray(classNode);
     }
@@ -195,9 +201,10 @@ public class ChunkTransformer {
         final String MARKER_method_DESC = "(L" + HEClasses.EnumSkyBlock + ";IIII)V";
         final MethodNode targetMethod = HEUtil.getMethod(classNode, MARKER_method, MARKER_method_DESC);
         if(targetMethod == null) {
-            HEPlugin.error("Could not find injection target method in Chunk. HydroEnergy will not work.");
+            HEPlugin.warn("Could not find " + MARKER_method + ":" + MARKER_method_DESC + " in " + fullClassName + ". You will experience severe lighting bugs!");
             return basicClass;
         }
+        HEPlugin.info("Found " + MARKER_method + ":" + MARKER_method_DESC + " in " + fullClassName);
 
         final boolean isStatic = false;
         final String MARKER_instruction_OWNER = HEClasses.ExtendedBlockStorage;
@@ -205,9 +212,10 @@ public class ChunkTransformer {
         final String MARKER_instruction_DESC = "(IIII)V";
         List<MethodInsnNode> instructions = HEUtil.getInstructions(targetMethod, isStatic, MARKER_instruction_OWNER, MARKER_instruction, MARKER_instruction_DESC);
         if(instructions.size() != 1) {
-            HEPlugin.error("Could not find injection target instruction in Chunk. HydroEnergy will not work.");
+            HEPlugin.warn("Could not find " + MARKER_instruction_OWNER + "." + MARKER_instruction + ":" + MARKER_instruction_DESC + " in " + fullClassName + ". You will experience severe lighting bugs!");
             return basicClass;
         }
+        HEPlugin.info("Found " + MARKER_instruction_OWNER + "." + MARKER_instruction + ":" + MARKER_instruction_DESC + " in " + fullClassName);
 
         final String ADDED_method = "onLightUpdate";
         final String ADDED_method_DESC = "(L" + HEClasses.Chunk + ";III)V";
@@ -223,7 +231,7 @@ public class ChunkTransformer {
                 false));
         // Add instruction after target instruction
         targetMethod.instructions.insert(instructions.get(0), instructionToInsert);
-        HEPlugin.info("Injected Chunk.");
+        HEPlugin.info("Injected " + MARKER_method + ":" + MARKER_method_DESC + " in " + fullClassName + ".");
 
         return HEUtil.convertClassNodeToByteArray(classNode);
     }

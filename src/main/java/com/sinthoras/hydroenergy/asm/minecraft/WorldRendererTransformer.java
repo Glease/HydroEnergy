@@ -11,6 +11,8 @@ import static org.objectweb.asm.Opcodes.*;
 
 public class WorldRendererTransformer {
 
+    public static final String fullClassName = "net.minecraft.client.renderer.WorldRenderer";
+
     /* After
      * this.setDontDraw();
      * insert
@@ -23,9 +25,10 @@ public class WorldRendererTransformer {
         final String MARKER_method_DESC = "(III)V";
         final MethodNode targetMethod = HEUtil.getMethod(classNode, MARKER_method, MARKER_method_DESC);
         if(targetMethod == null) {
-            HEPlugin.error("Could not find injection target method in WorldRenderer. HydroEnergy will not work.");
+            HEPlugin.error("Could not find " + MARKER_method + ":" + MARKER_method_DESC + " in " + fullClassName + ". Rendering is broken!");
             return basicClass;
         }
+        HEPlugin.info("Found " + MARKER_method + ":" + MARKER_method_DESC + " in " + fullClassName);
 
         final boolean isStatic = false;
         final String MARKER_instruction_OWNER = HEClasses.WorldRenderer;
@@ -33,9 +36,10 @@ public class WorldRendererTransformer {
         final String MARKER_instruction_DESC = "()V";
         List<MethodInsnNode> instructions = HEUtil.getInstructions(targetMethod, isStatic, MARKER_instruction_OWNER, MARKER_instruction, MARKER_instruction_DESC);
         if(instructions.size() != 1) {
-            HEPlugin.error("Could not find injection target instruction in WorldRenderer. HydroEnergy will not work.");
+            HEPlugin.error("Could not find " + MARKER_instruction_OWNER + "." + MARKER_instruction + ":" + MARKER_instruction_DESC + " in " + fullClassName + ". Rendering is broken!");
             return basicClass;
         }
+        HEPlugin.info("Found " + MARKER_instruction_OWNER + "." + MARKER_instruction + ":" + MARKER_instruction_DESC + " in " + fullClassName);
 
         final String ADDED_method = "onRenderChunkUpdate";
         final String ADDED_method_DESC = "(IIIIII)V";
@@ -62,7 +66,7 @@ public class WorldRendererTransformer {
                 false));
         // Add instruction after target instruction
         targetMethod.instructions.insert(instructions.get(0), instructionToInsert);
-        HEPlugin.info("Injected WorldRenderer.");
+        HEPlugin.info("Injected " + MARKER_method + ":" + MARKER_method_DESC + " in " + fullClassName + ".");
 
         return HEUtil.convertClassNodeToByteArray(classNode);
     }

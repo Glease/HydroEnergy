@@ -11,6 +11,8 @@ import static org.objectweb.asm.Opcodes.*;
 
 public class EntityRendererTransformer {
 
+    public static final String fullClassName = "net.minecraft.client.renderer.EntityRenderer";
+
     /* After both
      * renderglobal.renderEntities(entitylivingbase, frustrum, p_78471_1_);
      * insert
@@ -23,9 +25,10 @@ public class EntityRendererTransformer {
         final String MARKER_method_DESC = "(FJ)V";
         final MethodNode targetMethod = HEUtil.getMethod(classNode, MARKER_method, MARKER_method_DESC);
         if(targetMethod == null) {
-            HEPlugin.error("Could not find injection target method in EntityRenderer. HydroEnergy will not work.");
+            HEPlugin.error("Could not find " + MARKER_method + ":" + MARKER_method_DESC + " in " + fullClassName + ". Water will not be rendered!");
             return basicClass;
         }
+        HEPlugin.info("Found " + MARKER_method + ":" + MARKER_method_DESC + " in " + fullClassName);
 
         final boolean isStatic = false;
         final String MARKER_instruction_OWNER = HEClasses.RenderGlobal;
@@ -33,9 +36,10 @@ public class EntityRendererTransformer {
         final String MARKER_instruction_DESC = "(L" + HEClasses.EntityLivingBase + ";L" + HEClasses.ICamera + ";F)V";
         List<MethodInsnNode> instructions = HEUtil.getInstructions(targetMethod, isStatic, MARKER_instruction_OWNER, MARKER_instruction, MARKER_instruction_DESC);
         if(instructions.size() != 2) {
-            HEPlugin.error("Could not find injection target instruction in EntityRenderer. HydroEnergy will not work.");
+            HEPlugin.error("Could not find " + MARKER_instruction_OWNER + "." + MARKER_instruction + ":" + MARKER_instruction_DESC + " twice in " + fullClassName + ". Water will not be rendered!");
             return basicClass;
         }
+        HEPlugin.info("Found " + MARKER_instruction_OWNER + "." + MARKER_instruction + ":" + MARKER_instruction_DESC + " twice in " + fullClassName);
 
         final String ADDED_method = "render";
         final String ADDED_method_DESC = "(L" + HEClasses.ICamera + ";)V";
@@ -58,7 +62,7 @@ public class EntityRendererTransformer {
                 false));
         // Add instruction after target instruction
         targetMethod.instructions.insert(instructions.get(1), instructionToInsert);
-        HEPlugin.info("Injected EntityRenderer.");
+        HEPlugin.info("Injected " + MARKER_method + ":" + MARKER_method_DESC + " in " + fullClassName + ".");
 
         return HEUtil.convertClassNodeToByteArray(classNode);
     }

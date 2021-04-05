@@ -11,6 +11,8 @@ import static org.objectweb.asm.Opcodes.*;
 
 public class GT_PollutionRendererTransformer {
 
+    public static final String fullClassName = "gregtech.common.render.GT_PollutionRenderer";
+
     /* Replace
      * event.block.getMaterial() == Material.water
      * with
@@ -23,17 +25,19 @@ public class GT_PollutionRendererTransformer {
         final String METHOD_getMaterialHEWrapper_DESC = "(L" + HEClasses.FogColors + ";)L" + HEClasses.Material + ";";
         final boolean isApiUsed = null != HEUtil.getMethod(classNode, METHOD_getMaterialHEWrapper, METHOD_getMaterialHEWrapper_DESC);
         if(isApiUsed) {
-            HEPlugin.info("GregTech is using HydroEnergy API. No injection neccessary.");
+            HEPlugin.info(fullClassName + " is using HydroEnergy API. No injection necessary.");
             return basicClass;
         }
+        HEPlugin.info(fullClassName + " does not use HydroEnergy API. Fallback to injection.");
 
         final String MARKER_method = "manipulateColor";
         final String MARKER_method_DESC = "(L" + HEClasses.FogColors + ";)V";
         final MethodNode targetMethod = HEUtil.getMethod(classNode, MARKER_method, MARKER_method_DESC);
         if(targetMethod == null) {
-            HEPlugin.info("Could not find injection target method in GregTech. You will experience visual bugs.");
+            HEPlugin.warn("Could not find " + MARKER_method + ":" + MARKER_method_DESC + " in " + fullClassName + ". You might experience visual bugs.");
             return basicClass;
         }
+        HEPlugin.info("Found " + MARKER_method + ":" + MARKER_method_DESC + " in " + fullClassName);
 
         final boolean isStatic = false;
         final String MARKER_instruction_OWNER = HEClasses.Block;
@@ -41,9 +45,10 @@ public class GT_PollutionRendererTransformer {
         final String MARKER_instruction_DESC = "()L" + HEClasses.Material + ";";
         List<MethodInsnNode> instructions = HEUtil.getInstructions(targetMethod, isStatic, MARKER_instruction_OWNER, MARKER_instruction, MARKER_instruction_DESC);
         if(instructions.size() != 2) {
-            HEPlugin.info("Could not find injection target instruction in GregTech. You will experience visual bugs.");
+            HEPlugin.warn("Could not find " + MARKER_instruction_OWNER + "." + MARKER_instruction + ":" + MARKER_instruction_DESC + " twice in " + fullClassName + ". You might experience visual bugs.");
             return basicClass;
         }
+        HEPlugin.info("Found " + MARKER_instruction_OWNER + "." + MARKER_instruction + ":" + MARKER_instruction_DESC + " twice in " + fullClassName);
 
         final String REPLACED_method = "getMaterialWrapper";
         final String REPLACED_method_DESC = "(L" + HEClasses.FogColors + ";)L" + HEClasses.Material + ";";
@@ -59,7 +64,7 @@ public class GT_PollutionRendererTransformer {
         targetMethod.instructions.remove(instructions.get(0).getPrevious());
         // Remove target instruction itself
         targetMethod.instructions.remove(instructions.get(0));
-        HEPlugin.info("Fixed mod-interop with GregTech.");
+        HEPlugin.info("Fixed mod-interop with " + fullClassName + ".");
 
         return HEUtil.convertClassNodeToByteArray(classNode);
     }
