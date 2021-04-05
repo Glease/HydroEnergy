@@ -1,6 +1,10 @@
 package com.sinthoras.hydroenergy.asm;
 
 import com.sinthoras.hydroenergy.asm.biomesoplenty.FogHandlerTransformer;
+import com.sinthoras.hydroenergy.asm.galaxyspace.GSPlanetFogHandlerTransformer;
+import com.sinthoras.hydroenergy.asm.gregtech.GT_PollutionRendererTransformer;
+import com.sinthoras.hydroenergy.asm.minecraft.*;
+import com.sinthoras.hydroenergy.asm.witchery.ClientEventsTransformer;
 import cpw.mods.fml.relauncher.IFMLLoadingPlugin;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -21,7 +25,17 @@ public class HEPlugin  implements IFMLLoadingPlugin {
     @Override
     public String[] getASMTransformerClass() {
         return new String[] {
-                HETransformer.class.getName()
+                FogHandlerTransformer.class.getName(),
+                GSPlanetFogHandlerTransformer.class.getName(),
+                GT_PollutionRendererTransformer.class.getName(),
+                ClientEventsTransformer.class.getName(),
+                ActiveRenderInfoTransformer.class.getName(),
+                ChunkProviderClientTransformer.class.getName(),
+                ChunkTransformer.class.getName(),
+                EntityRendererTransformer.class.getName(),
+                EntityTransformer.class.getName(),
+                WorldRendererTransformer.class.getName(),
+                WorldTransformer.class.getName()
         };
     }
 

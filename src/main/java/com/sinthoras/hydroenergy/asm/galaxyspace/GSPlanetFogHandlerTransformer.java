@@ -3,15 +3,28 @@ package com.sinthoras.hydroenergy.asm.galaxyspace;
 import com.sinthoras.hydroenergy.asm.HEClasses;
 import com.sinthoras.hydroenergy.asm.HEPlugin;
 import com.sinthoras.hydroenergy.asm.HEUtil;
+import net.minecraft.launchwrapper.IClassTransformer;
+import net.minecraft.launchwrapper.Launch;
 import org.objectweb.asm.tree.*;
 
 import java.util.List;
 
 import static org.objectweb.asm.Opcodes.*;
 
-public class GSPlanetFogHandlerTransformer {
+public class GSPlanetFogHandlerTransformer implements IClassTransformer {
 
     public static final String fullClassName = "galaxyspace.core.handler.GSPlanetFogHandler";
+
+    @Override
+    public byte[] transform(String name, String transformedName, byte[] basicClass) {
+        final boolean isDeobfuscated = (boolean) Launch.blackboard.get("fml.deobfuscatedEnvironment");
+        if(transformedName == fullClassName) {
+            return transform(basicClass, !isDeobfuscated);
+        }
+        else {
+            return basicClass;
+        }
+    }
 
     /* Replace
      * blockAtEyes.getMaterial() == Material.water

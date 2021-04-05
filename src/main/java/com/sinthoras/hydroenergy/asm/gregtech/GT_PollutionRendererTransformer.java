@@ -3,15 +3,28 @@ package com.sinthoras.hydroenergy.asm.gregtech;
 import com.sinthoras.hydroenergy.asm.HEClasses;
 import com.sinthoras.hydroenergy.asm.HEPlugin;
 import com.sinthoras.hydroenergy.asm.HEUtil;
+import net.minecraft.launchwrapper.IClassTransformer;
+import net.minecraft.launchwrapper.Launch;
 import org.objectweb.asm.tree.*;
 
 import java.util.List;
 
 import static org.objectweb.asm.Opcodes.*;
 
-public class GT_PollutionRendererTransformer {
+public class GT_PollutionRendererTransformer implements IClassTransformer {
 
     public static final String fullClassName = "gregtech.common.render.GT_PollutionRenderer";
+
+    @Override
+    public byte[] transform(String name, String transformedName, byte[] basicClass) {
+        final boolean isDeobfuscated = (boolean) Launch.blackboard.get("fml.deobfuscatedEnvironment");
+        if(transformedName == fullClassName) {
+            return transform(basicClass, !isDeobfuscated);
+        }
+        else {
+            return basicClass;
+        }
+    }
 
     /* Replace
      * event.block.getMaterial() == Material.water

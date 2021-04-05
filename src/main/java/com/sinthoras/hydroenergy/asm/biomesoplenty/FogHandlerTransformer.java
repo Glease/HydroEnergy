@@ -3,15 +3,28 @@ package com.sinthoras.hydroenergy.asm.biomesoplenty;
 import com.sinthoras.hydroenergy.asm.HEClasses;
 import com.sinthoras.hydroenergy.asm.HEPlugin;
 import com.sinthoras.hydroenergy.asm.HEUtil;
+import net.minecraft.launchwrapper.IClassTransformer;
+import net.minecraft.launchwrapper.Launch;
 import org.objectweb.asm.tree.*;
 
 import static org.objectweb.asm.Opcodes.*;
 
 import java.util.List;
 
-public class FogHandlerTransformer {
+public class FogHandlerTransformer implements IClassTransformer {
 
     public static final String fullClassName = "biomesoplenty.client.fog.FogHandler";
+
+    @Override
+    public byte[] transform(String name, String transformedName, byte[] basicClass) {
+        final boolean isDeobfuscated = (boolean) Launch.blackboard.get("fml.deobfuscatedEnvironment");
+        if(transformedName == fullClassName) {
+            return transform(basicClass, !isDeobfuscated);
+        }
+        else {
+            return basicClass;
+        }
+    }
 
     /* Replace
      * blockAtEyes.getMaterial() == Material.water
