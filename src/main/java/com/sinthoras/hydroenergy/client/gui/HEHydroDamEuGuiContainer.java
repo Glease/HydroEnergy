@@ -57,7 +57,7 @@ public class HEHydroDamEuGuiContainer extends GT_GUIContainer_MultiMachineEM {
         Minecraft.getMinecraft().getTextureManager().bindTexture(TextureMap.locationBlocksTexture);
         IIcon iconStill = FluidRegistry.WATER.getStillIcon();
         GL11.glColor4f(0.7f, 0.7f, 0.7f, 1.0f);
-        drawTexturedBar(7, 45, 184, 16, iconStill, fillMultiplier > 1.0f ? 1.0f : fillMultiplier);
+        drawTexturedBar(7, 45, 184, 16, iconStill, Math.min(fillMultiplier, 1.0f));
 
         String relativeInfo;
         if(fillMultiplier > 1.0f) {
