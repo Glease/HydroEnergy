@@ -24,7 +24,7 @@ public class HEBlockQueue {
 	private static long timestampLastQueueTick = 0;
 	public static void onTick() {
 		long currentTime = System.currentTimeMillis();
-		if(currentTime - timestampLastQueueTick < HEConfig.spreadingDelayBetweenPerChunks) {
+		if(currentTime - timestampLastQueueTick < HEConfig.delayBetweenSpreadingChunks) {
 			return;
 		}
 		timestampLastQueueTick = currentTime;

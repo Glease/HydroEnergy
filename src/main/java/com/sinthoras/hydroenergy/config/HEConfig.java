@@ -10,7 +10,7 @@ public class HEConfig {
     private static class Defaults {
         public static final int maxDams = 16;
         public static final int minimalWaterUpdateInterval = 1000; // in milliseconds
-        public static final int spreadingDelayBetweenPerChunks = 2000; // in milliseconds
+        public static final int delayBetweenSpreadingChunks = 2000; // in milliseconds
         public static final int minLightUpdateTimePerSubChunk = 10; // in milliseconds
         public static final float clippingOffset = 0.05f; // in blocks
         public static final int maxWaterSpreadWest = 1000; // in blocks
@@ -36,7 +36,7 @@ public class HEConfig {
 
     public static int maxDams = Defaults.maxDams;
     public static int minimalWaterUpdateInterval = Defaults.minimalWaterUpdateInterval;
-    public static int spreadingDelayBetweenPerChunks = Defaults.spreadingDelayBetweenPerChunks;
+    public static int delayBetweenSpreadingChunks = Defaults.delayBetweenSpreadingChunks;
     public static int minLightUpdateTimePerSubChunk = Defaults.minLightUpdateTimePerSubChunk;
     public static float clippingOffset = Defaults.clippingOffset;
     public static List<Integer> dimensionIdWhitelist = new ArrayList<Integer>();
@@ -72,10 +72,10 @@ public class HEConfig {
         minimalWaterUpdateInterval = minimalWaterUpdateIntervalProperty.getInt();
 
         Property spreadingDelayBetweenPerChunksProperty = configuration.get(Categories.general,
-                "spreadingDelayBetweenPerChunks", Defaults.spreadingDelayBetweenPerChunks, "[SERVER] Delay" +
+                "delayBetweenSpreadingChunks", Defaults.delayBetweenSpreadingChunks, "[SERVER] Delay" +
                         " in milliseconds the game will wait between processing a chunk for water spreading. Keep in " +
                         "mind, that a single tick takes care of a whole chunk between y=0 and y=255 at once!");
-        spreadingDelayBetweenPerChunks = spreadingDelayBetweenPerChunksProperty.getInt();
+        delayBetweenSpreadingChunks = spreadingDelayBetweenPerChunksProperty.getInt();
 
         Property minLightUpdateTimePerSubChunkProperty = configuration.get(Categories.general,
                 "minLightUpdateTimePerSubChunk", Defaults.minLightUpdateTimePerSubChunk, "[CLIENT] Light " +
