@@ -35,15 +35,20 @@ public class HEHydroDamEuGuiContainer extends GT_GUIContainer_MultiMachineEM {
         boolean configCircuitIsPresent = inventory != null && inventory[1] != null && inventory[1].getItem() == GT_Utility.getIntegratedCircuit(0).getItem();
         int voltageTier = configCircuitIsPresent ? HEUtil.clamp(inventory[1].getItemDamage(), 1, 3) : 1;
 
-        fontRendererObj.drawString("Hydro Dam (" + GT_Values.VN[voltageTier] + ")", 7, 8, textColor.getRGB());
-        fontRendererObj.drawString("Running perfectly.", 7, 16, textColor.getRGB());
-        fontRendererObj.drawString("Click me with a screwdriver.", 7, 84, textHintColor.getRGB());
-
         long euCapacity = hydroDamContainer.getEuCapacity();
         long euStored = hydroDamContainer.getEuStored();
         long euPerTickIn = hydroDamContainer.getEuPerTickIn();
         long euPerTickOut = hydroDamContainer.getEuPerTickOut();
         float fillMultiplier = euCapacity == 0.0f ? 0.0f : ((float)euStored) / ((float)euCapacity);
+
+        fontRendererObj.drawString("Hydro Dam (" + GT_Values.VN[voltageTier] + ")", 7, 8, textColor.getRGB());
+        fontRendererObj.drawString("Running perfectly.", 7, 16, textColor.getRGB());
+        if(fillMultiplier > 1.0f) {
+            fontRendererObj.drawString("Please upgrade circuit config (>" + voltageTier + ").", 7, 84, textHintColor.getRGB());
+        }
+        else {
+            fontRendererObj.drawString("Click me with a screwdriver.", 7, 84, textHintColor.getRGB());
+        }
 
         int slashWidth = fontRendererObj.getStringWidth("/");
         int storedWidth = fontRendererObj.getStringWidth("" + euStored + " EU ");
@@ -52,9 +57,15 @@ public class HEHydroDamEuGuiContainer extends GT_GUIContainer_MultiMachineEM {
         Minecraft.getMinecraft().getTextureManager().bindTexture(TextureMap.locationBlocksTexture);
         IIcon iconStill = FluidRegistry.WATER.getStillIcon();
         GL11.glColor4f(0.7f, 0.7f, 0.7f, 1.0f);
-        drawTexturedBar(7, 45, 184, 16, iconStill, fillMultiplier);
+        drawTexturedBar(7, 45, 184, 16, iconStill, fillMultiplier > 1.0f ? 1.0f : fillMultiplier);
 
-        String relativeInfo = String.format("%.2f", fillMultiplier * 100.0f) + "%";
+        String relativeInfo;
+        if(fillMultiplier > 1.0f) {
+            relativeInfo = ">100.00%";
+        }
+        else {
+            relativeInfo = String.format("%.2f", fillMultiplier * 100.0f) + "%";
+        }
         int relativeInfoWidth = fontRendererObj.getStringWidth(relativeInfo);
         fontRendererObj.drawString(relativeInfo, 99 - relativeInfoWidth / 2, 45 + 5, textColor.getRGB());
 
