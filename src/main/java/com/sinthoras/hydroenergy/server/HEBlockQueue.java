@@ -2,8 +2,10 @@ package com.sinthoras.hydroenergy.server;
 
 import java.util.*;
 
+import com.mojang.authlib.GameProfile;
 import com.sinthoras.hydroenergy.HE;
 
+import com.sinthoras.hydroenergy.HEMod;
 import com.sinthoras.hydroenergy.HEUtil;
 import com.sinthoras.hydroenergy.blocks.HEWater;
 import com.sinthoras.hydroenergy.config.HEConfig;
@@ -12,22 +14,52 @@ import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
 import net.minecraft.world.chunk.Chunk;
+import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.chunk.NibbleArray;
 import net.minecraft.world.chunk.storage.ExtendedBlockStorage;
+import net.minecraftforge.common.ForgeChunkManager;
+import net.minecraftforge.common.util.FakePlayer;
+import net.minecraftforge.common.util.FakePlayerFactory;
 
 public class HEBlockQueue {
 	
-	private static HashMap<Long, HEQueueChunk> chunks = new HashMap<Long, HEQueueChunk>();
-
+	private static final HashMap<Long, HEQueueChunk> chunks = new HashMap<Long, HEQueueChunk>();
+	private static FakePlayer fakePlayer;
 	private static long timestampLastQueueTick = 0;
+
+	/*private static FakePlayer getFakePlayer(WorldServer world) {
+		if(fakePlayer == null) {
+			fakePlayer = FakePlayerFactory.get(world, new GameProfile(UUID.fromString("41C82C87-7AfB-4024-BA57-13D2C99C7567"), "HydroEnergyFakePlayer"));  // TODO: Move to config
+		}
+		if(fakePlayer.worldObj.provider.dimensionId != world.provider.dimensionId) {
+			fakePlayer.travelToDimension(world.provider.dimensionId);
+		}
+		return fakePlayer;
+	}*/
+
 	public static void onTick() {
 		long currentTime = System.currentTimeMillis();
 		if(currentTime - timestampLastQueueTick < HEConfig.delayBetweenSpreadingChunks) {
 			return;
 		}
 		timestampLastQueueTick = currentTime;
+
+		long totalElements = chunks.values().stream()
+                .mapToInt(chunk -> chunk.blockStack.size()
+                        + chunk.neighborChunkEast.size()
+                        + chunk.neighborChunkNorth.size()
+                        + chunk.neighborChunkWest.size()
+                        + chunk.neighborChunkSouth.size()).sum();
+		long totalTickets = chunks.values().stream()
+				.filter(chunk -> chunk.forceLoaded)
+				.count() * 5;
+		HE.info("Stack elements count: " + totalElements);
+		HE.info("Chunks count: " + chunks.size());
+		HE.info("Tickets count: " + totalTickets);
 
 		Iterator<Map.Entry<Long, HEQueueChunk>> it = chunks.entrySet().iterator();
 		while(it.hasNext()) {
@@ -89,6 +121,7 @@ class HEQueueChunk {
 	public Stack<QueueEntry> neighborChunkEast = new Stack<QueueEntry>();
 	public Stack<QueueEntry> neighborChunkSouth = new Stack<QueueEntry>();
 	public Chunk chunk;
+	public boolean forceLoaded = false;
 
 	HEQueueChunk(Chunk chunk, Stack<QueueEntry> blockStack) {
 		this.chunk = chunk;
@@ -204,6 +237,28 @@ class HEQueueChunk {
 				&& chunkProvider.chunkExists(chunk.xPosition, chunk.zPosition - 1)
 				&& chunkProvider.chunkExists(chunk.xPosition + 1, chunk.zPosition)
 				&& chunkProvider.chunkExists(chunk.xPosition, chunk.zPosition + 1);
+	}
+
+	public void requestChunkLoad() {
+		if(forceLoaded == false) {
+			HEChunkLoader.forceChunk(chunk, -1, 0);
+			HEChunkLoader.forceChunk(chunk, 0, -1);
+			HEChunkLoader.forceChunk(chunk, 0, 0);
+			HEChunkLoader.forceChunk(chunk, 1, 0);
+			HEChunkLoader.forceChunk(chunk, 0, 1);
+			forceLoaded = true;
+		}
+	}
+
+	public void cancelLoadRequest() {
+		if(forceLoaded) {
+			HEChunkLoader.unforceChunk(chunk, -1, 0);
+			HEChunkLoader.unforceChunk(chunk, 0, -1);
+			HEChunkLoader.unforceChunk(chunk, 0, 0);
+			HEChunkLoader.unforceChunk(chunk, 1, 0);
+			HEChunkLoader.unforceChunk(chunk, 0, 1);
+			forceLoaded = false;
+		}
 	}
 }
 

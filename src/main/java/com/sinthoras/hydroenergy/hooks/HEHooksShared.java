@@ -1,10 +1,12 @@
 package com.sinthoras.hydroenergy.hooks;
 
 import com.sinthoras.hydroenergy.HE;
+import com.sinthoras.hydroenergy.HEMod;
 import com.sinthoras.hydroenergy.HETags;
 import com.sinthoras.hydroenergy.blocks.*;
 import com.sinthoras.hydroenergy.config.HEConfig;
 import com.sinthoras.hydroenergy.network.packet.*;
+import com.sinthoras.hydroenergy.server.HEChunkLoader;
 import com.sinthoras.hydroenergy.server.commands.HECommandDebug;
 import com.sinthoras.hydroenergy.server.commands.HECommandListControllers;
 import com.sinthoras.hydroenergy.server.commands.HECommandSetWater;
@@ -23,8 +25,13 @@ import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import net.minecraft.block.Block;
+import net.minecraft.world.World;
+import net.minecraftforge.common.ForgeChunkManager;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fluids.FluidRegistry;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class HEHooksShared {
 	
@@ -69,6 +76,7 @@ public class HEHooksShared {
 	// postInit "Handle interaction with other mods, complete your setup based on this."
 	public void fmlLifeCycleEvent(FMLPostInitializationEvent event) {
 		NetworkRegistry.INSTANCE.registerGuiHandler(HETags.MODID, HE.guiHandler);
+		ForgeChunkManager.setForcedChunkLoadingCallback(HEMod.instance, new HEChunkLoader.HEChunkLoaderServerStartCallback());
 	}
 	
 	public void fmlLifeCycleEvent(FMLServerAboutToStartEvent event) {

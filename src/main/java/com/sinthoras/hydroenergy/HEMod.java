@@ -10,6 +10,9 @@ import cpw.mods.fml.common.event.*;
 @Mod(modid = HETags.MODID, version = HETags.VERSION, name = HETags.HYDROENERGY)
 public class HEMod {
 
+    @Mod.Instance(HETags.MODID)
+    public static HEMod instance;
+
     @SidedProxy(clientSide=HETags.COM_SINTHORAS_HYDROENERGY + ".hooks.HEHooksClient", serverSide=HETags.COM_SINTHORAS_HYDROENERGY + ".hooks.HEHooksShared")
     public static HEHooksShared proxy;
 
