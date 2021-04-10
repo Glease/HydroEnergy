@@ -33,17 +33,24 @@ public class HEBlockQueue {
 		while(it.hasNext()) {
 			Map.Entry<Long, HEQueueChunk> entry = it.next();
 			HEQueueChunk chunk = entry.getValue();
-			it.remove();
-			if(chunk.resolve()) {
-				long key = entry.getKey();
-				int chunkX = (int)(key >> 32);
-				int chunkZ = (int)key;
-				World world = chunk.chunk.worldObj;
-				addToChunk(world, chunkX - 1, chunkZ, chunk.neighborChunkWest);
-				addToChunk(world, chunkX, chunkZ - 1, chunk.neighborChunkNorth);
-				addToChunk(world, chunkX + 1, chunkZ, chunk.neighborChunkEast);
-				addToChunk(world, chunkX, chunkZ + 1, chunk.neighborChunkSouth);
-				return;
+			long key = entry.getKey();
+			int chunkX = (int)(key >> 32);
+			int chunkZ = (int)key;
+			if(chunk.isLoaded()) {
+				it.remove();
+				if (chunk.resolve()) {
+					World world = chunk.chunk.worldObj;
+					addToChunk(world, chunkX - 1, chunkZ, chunk.neighborChunkWest);
+					addToChunk(world, chunkX, chunkZ - 1, chunk.neighborChunkNorth);
+					addToChunk(world, chunkX + 1, chunkZ, chunk.neighborChunkEast);
+					addToChunk(world, chunkX, chunkZ + 1, chunk.neighborChunkSouth);
+					chunk.cancelLoadRequest();
+					return;
+				}
+				chunk.cancelLoadRequest();
+			}
+			else {
+				chunk.requestChunkLoad();
 			}
 		}
 	}
@@ -188,6 +195,15 @@ class HEQueueChunk {
 		} else if(block == waterBlock || waterBlock.canFlowInto(chunk.worldObj, blockX, blockY, blockZ)) {
 			this.blockStack.push(entry);
 		}
+	}
+
+	public boolean isLoaded() {
+		final IChunkProvider chunkProvider = chunk.worldObj.getChunkProvider();
+		return chunkProvider.chunkExists(chunk.xPosition, chunk.zPosition)
+				&& chunkProvider.chunkExists(chunk.xPosition - 1, chunk.zPosition)
+				&& chunkProvider.chunkExists(chunk.xPosition, chunk.zPosition - 1)
+				&& chunkProvider.chunkExists(chunk.xPosition + 1, chunk.zPosition)
+				&& chunkProvider.chunkExists(chunk.xPosition, chunk.zPosition + 1);
 	}
 }
 
