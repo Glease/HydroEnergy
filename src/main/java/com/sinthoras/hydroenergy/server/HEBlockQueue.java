@@ -133,6 +133,9 @@ class HEQueueChunk {
 					else {
 						int highestOpaqueBlockY = chunk.heightMap[(entry.blockZ & 15) << 4 | (entry.blockX & 15)];
 						int highestOpaqueChunkY = HEUtil.coordBlockToChunk(highestOpaqueBlockY);
+						if(chunkStorage[highestOpaqueChunkY] == null) {
+							chunkStorage[highestOpaqueChunkY] = new ExtendedBlockStorage(highestOpaqueChunkY << 4, !chunk.worldObj.provider.hasNoSky);
+						}
 						NibbleArray skylightArray = chunkStorage[highestOpaqueChunkY].getSkylightArray();
 						if(skylightArray == null) {
 							skylightArray = new NibbleArray(HE.blockPerSubChunk, 4);
