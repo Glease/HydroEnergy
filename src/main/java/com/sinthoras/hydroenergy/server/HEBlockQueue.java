@@ -14,6 +14,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
+import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.chunk.NibbleArray;
 import net.minecraft.world.chunk.storage.ExtendedBlockStorage;
 
@@ -23,7 +24,7 @@ public class HEBlockQueue {
 
 	private static long timestampLastQueueTick = 0;
 	public static void onTick() {
-		long currentTime = System.currentTimeMillis();
+		final long currentTime = System.currentTimeMillis();
 		if(currentTime - timestampLastQueueTick < HEConfig.delayBetweenSpreadingChunks) {
 			return;
 		}
@@ -31,26 +32,21 @@ public class HEBlockQueue {
 
 		Iterator<Map.Entry<Long, HEQueueChunk>> it = chunks.entrySet().iterator();
 		while(it.hasNext()) {
-			Map.Entry<Long, HEQueueChunk> entry = it.next();
-			HEQueueChunk chunk = entry.getValue();
-			long key = entry.getKey();
-			int chunkX = (int)(key >> 32);
-			int chunkZ = (int)key;
+			final Map.Entry<Long, HEQueueChunk> entry = it.next();
+			final HEQueueChunk chunk = entry.getValue();
 			if(chunk.isLoaded()) {
 				it.remove();
 				if (chunk.resolve()) {
-					World world = chunk.chunk.worldObj;
+					final World world = chunk.chunk.worldObj;
+					final long key = entry.getKey();
+					final int chunkX = (int)(key >> 32);
+					final int chunkZ = (int)key;
 					addToChunk(world, chunkX - 1, chunkZ, chunk.neighborChunkWest);
 					addToChunk(world, chunkX, chunkZ - 1, chunk.neighborChunkNorth);
 					addToChunk(world, chunkX + 1, chunkZ, chunk.neighborChunkEast);
 					addToChunk(world, chunkX, chunkZ + 1, chunk.neighborChunkSouth);
-					chunk.cancelLoadRequest();
 					return;
 				}
-				chunk.cancelLoadRequest();
-			}
-			else {
-				chunk.requestChunkLoad();
 			}
 		}
 	}
