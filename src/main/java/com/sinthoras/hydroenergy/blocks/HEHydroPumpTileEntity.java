@@ -1,323 +1,175 @@
 package com.sinthoras.hydroenergy.blocks;
 
-import com.github.technus.tectech.mechanics.constructable.IConstructable;
-import com.github.technus.tectech.mechanics.structure.IStructureDefinition;
-import com.github.technus.tectech.mechanics.structure.StructureDefinition;
 import com.github.technus.tectech.thing.metaTileEntity.multi.base.GT_Container_MultiMachineEM;
 import com.github.technus.tectech.thing.metaTileEntity.multi.base.GT_GUIContainer_MultiMachineEM;
-import com.github.technus.tectech.thing.metaTileEntity.multi.base.GT_MetaTileEntity_MultiblockBase_EM;
 import com.github.technus.tectech.thing.metaTileEntity.multi.base.render.TT_RenderedExtendedFacingTexture;
 import com.sinthoras.hydroenergy.HE;
 import com.sinthoras.hydroenergy.config.HEConfig;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import gregtech.api.GregTech_API;
 import gregtech.api.enums.GT_Values;
 import gregtech.api.enums.Textures;
 import gregtech.api.interfaces.ITexture;
 import gregtech.api.interfaces.metatileentity.IMetaTileEntity;
 import gregtech.api.interfaces.tileentity.IGregTechTileEntity;
-import net.minecraft.block.Block;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 
-import static com.github.technus.tectech.mechanics.structure.StructureUtility.*;
-import static com.github.technus.tectech.mechanics.structure.StructureUtility.ofBlock;
+public abstract class HEHydroPumpTileEntity extends HETieredTileEntity {
 
-public abstract class HEHydroPumpTileEntity extends GT_MetaTileEntity_MultiblockBase_EM implements IConstructable {
+    public static class LV extends HEHydroPumpTileEntity {
 
-    public static class HEHydroPumpTileEntityLV extends HEHydroPumpTileEntity {
+        private static final int tierId = 1;
 
-        public HEHydroPumpTileEntityLV(String name) {
-            super(name);
-            blockTextureIndex = steelCasingTextureIndex;
+        public LV() {
+            super(tierId);
         }
 
-        public HEHydroPumpTileEntityLV(int id, String name, String nameRegional) {
-            super(id, name, nameRegional);
-            blockTextureIndex = steelCasingTextureIndex;
-        }
-
-        @Override
-        public IMetaTileEntity newMetaEntity(IGregTechTileEntity tileEntity) {
-            return new HEHydroPumpTileEntityLV(mName);
+        public LV(int id) {
+            super(id, tierId);
         }
 
         @Override
         protected int getTier() {
-            return 1;
+            return tierId;
         }
 
-        private static final int solidSteelCasingMeta = 0;
-        private static final int steelCasingTextureIndex = 16;
-        private static final IStructureDefinition<HEHydroPumpTileEntity> multiblockDefinition = getStructureDefinition(GregTech_API.sBlockCasings2, solidSteelCasingMeta, steelCasingTextureIndex);
-
         @Override
-        public IStructureDefinition<HEHydroPumpTileEntity> getStructure_EM() {
-            return multiblockDefinition;
-        }
-
-        private static final String[] chatDescription = new String[] {
-                "1 Energy Hatch",
-                "1 Fluid Input Hatch",
-                "1 Fluid Output Hatch",
-                "1 Maintenance Hatch",
-                "Fill the rest with Solid Steel Casings",
-        };
-
-        @Override
-        public String[] getStructureDescription(ItemStack itemStack) {
-            return chatDescription;
-        }
-
-        private final static String[] mouseOverDescription = new String[] {
-                "Hydro Pump Controller",
-                "Controller Block for the Hydro Pump",
-                "Consumes EU to pressurize water",
-                "Output is pressurized water for Hydro Dams",
-                "Requires an Energy and Output Hatch in the center row!",
-                "Requires " + ((int)(32 * HEConfig.milliBucketPerEU)) + "mB Water per Tick",
-                "Efficiency: " + HEConfig.efficiency[0],
-                HE.blueprintHintTecTech,
-                "Use Redstone to automate!"
-        };
-
-        @Override
-        public String[] getDescription() {
-            return mouseOverDescription;
+        public IMetaTileEntity newMetaEntity(IGregTechTileEntity tileEntity) {
+            return new LV();
         }
     }
 
-    public static class HEHydroPumpTileEntityMV extends HEHydroPumpTileEntity {
+    public static class MV extends HEHydroPumpTileEntity {
 
-        public HEHydroPumpTileEntityMV(String name) {
-            super(name);
-            blockTextureIndex = aluminiumCasingTextureIndex;
+        private static final int tierId = 2;
+
+        public MV() {
+            super(tierId);
         }
 
-        public HEHydroPumpTileEntityMV(int id, String name, String nameRegional) {
-            super(id, name, nameRegional);
-            blockTextureIndex = aluminiumCasingTextureIndex;
-        }
-
-        @Override
-        public IMetaTileEntity newMetaEntity(IGregTechTileEntity tileEntity) {
-            return new HEHydroPumpTileEntityMV(mName);
+        public MV(int id) {
+            super(id, tierId);
         }
 
         @Override
         protected int getTier() {
-            return 2;
+            return tierId;
         }
 
-        private static final int aluminiumCasingMeta = 1;
-        private static final int aluminiumCasingTextureIndex = 17;
-        private static final IStructureDefinition<HEHydroPumpTileEntity> multiblockDefinition = getStructureDefinition(GregTech_API.sBlockCasings2, aluminiumCasingMeta, aluminiumCasingTextureIndex);
-
         @Override
-        public IStructureDefinition<HEHydroPumpTileEntity> getStructure_EM() {
-            return multiblockDefinition;
-        }
-
-        private static final String[] chatDescription = new String[] {
-                "1 Energy Hatch",
-                "1 Fluid Input Hatch",
-                "1 Fluid Output Hatch",
-                "1 Maintenance Hatch",
-                "Fill the rest with Frost Proof Casings",
-        };
-
-        @Override
-        public String[] getStructureDescription(ItemStack itemStack) {
-            return chatDescription;
-        }
-
-        private final static String[] mouseOverDescription = new String[] {
-                "Hydro Pump Controller",
-                "Controller Block for the Hydro Pump",
-                "Consumes EU to pressurize water",
-                "Output is pressurized water for Hydro Dams",
-                "Requires an Energy and Output Hatch in the center row!",
-                "Requires " + ((int)(128 * HEConfig.milliBucketPerEU)) + "mB Water per Tick",
-                "Efficiency: " + HEConfig.efficiency[1],
-                HE.blueprintHintTecTech,
-                "Use Redstone to automate!"
-        };
-
-        @Override
-        public String[] getDescription() {
-            return mouseOverDescription;
+        public IMetaTileEntity newMetaEntity(IGregTechTileEntity tileEntity) {
+            return new MV();
         }
     }
 
-    public static class HEHydroPumpTileEntityHV extends HEHydroPumpTileEntity {
+    public static class HV extends HEHydroPumpTileEntity {
 
-        public HEHydroPumpTileEntityHV(String name) {
-            super(name);
-            blockTextureIndex = stainlessSteelCasingTextureIndex;
+        private static final int tierId = 3;
+
+        public HV() {
+            super(tierId);
         }
 
-        public HEHydroPumpTileEntityHV(int id, String name, String nameRegional) {
-            super(id, name, nameRegional);
-            blockTextureIndex = stainlessSteelCasingTextureIndex;
-        }
-
-        @Override
-        public IMetaTileEntity newMetaEntity(IGregTechTileEntity tileEntity) {
-            return new HEHydroPumpTileEntityHV(mName);
+        public HV(int id) {
+            super(id, tierId);
         }
 
         @Override
         protected int getTier() {
-            return 3;
+            return tierId;
         }
 
-        private static final int stainlessSteelCasingMeta = 1;
-        private static final int stainlessSteelCasingTextureIndex = 58;
-        private static final IStructureDefinition<HEHydroPumpTileEntity> multiblockDefinition = getStructureDefinition(GregTech_API.sBlockCasings4, stainlessSteelCasingMeta, stainlessSteelCasingTextureIndex);
-
         @Override
-        public IStructureDefinition<HEHydroPumpTileEntity> getStructure_EM() {
-            return multiblockDefinition;
+        public IMetaTileEntity newMetaEntity(IGregTechTileEntity tileEntity) {
+            return new HV();
+        }
+    }
+
+    public static class EV extends HEHydroPumpTileEntity {
+
+        private static final int tierId = 4;
+
+        public EV() {
+            super(tierId);
         }
 
-        private static final String[] chatDescription = new String[] {
-                "1 Energy Hatch",
-                "1 Fluid Input Hatch",
-                "1 Fluid Output Hatch",
-                "1 Maintenance Hatch",
-                "Fill the rest with Clean Stainless Steel Casings",
-        };
-
-        @Override
-        public String[] getStructureDescription(ItemStack itemStack) {
-            return chatDescription;
+        public EV(int id) {
+            super(id, tierId);
         }
 
-        private final static String[] mouseOverDescription = new String[] {
-                "Hydro Pump Controller",
-                "Controller Block for the Hydro Pump",
-                "Consumes EU to pressurize water",
-                "Output is pressurized water for Hydro Dams",
-                "Requires an Energy and Output Hatch in the center row!",
-                "Requires " + ((int)(512 * HEConfig.milliBucketPerEU)) + "mB Water per Tick",
-                "Efficiency: " + HEConfig.efficiency[2],
-                HE.blueprintHintTecTech,
-                "Use Redstone to automate!"
-        };
+        @Override
+        protected int getTier() {
+            return tierId;
+        }
 
         @Override
-        public String[] getDescription() {
-            return mouseOverDescription;
+        public IMetaTileEntity newMetaEntity(IGregTechTileEntity tileEntity) {
+            return new EV();
+        }
+    }
+
+    public static class IV extends HEHydroPumpTileEntity {
+
+        private static final int tierId = 5;
+
+        public IV() {
+            super(tierId);
+        }
+
+        public IV(int id) {
+            super(id, tierId);
+        }
+
+        @Override
+        protected int getTier() {
+            return tierId;
+        }
+
+        @Override
+        public IMetaTileEntity newMetaEntity(IGregTechTileEntity tileEntity) {
+            return new IV();
         }
     }
 
     private static Textures.BlockIcons.CustomIcon textureScreenPumpON;
     private static Textures.BlockIcons.CustomIcon textureScreenPumpOFF;
     private static Textures.BlockIcons.CustomIcon textureScreenArrowUpAnimated;
-    protected int blockTextureIndex = 16;
 
-    private int countOfHatches = 0;
+    private final int blockTextureIndex = getCasingTextureId();
 
-    protected static IStructureDefinition<HEHydroPumpTileEntity> getStructureDefinition(Block casingBlock, int casingMeta, int blockTextureIndex) {
-        return StructureDefinition
-                .<HEHydroPumpTileEntity>builder()
-                .addShape("main",
-                        transpose(new String[][]{
-                                {"CCC", "CCC", "CCC"},
-                                {"C~C", "H H", "HHH"},
-                                {"CCC", "CCC", "CCC"}
-                        })
-                ).addElement(
-                        'H',
-                        ofChain(
-                                onElementPass(x -> x.countOfHatches++,
-                                        ofHatchAdder(
-                                                HEHydroPumpTileEntity::addClassicToMachineList, blockTextureIndex,
-                                                casingBlock, casingMeta
-                                        )
-                                ),
-                                ofBlock(
-                                        casingBlock, casingMeta
-                                )
-                        )
-                ).addElement(
-                        'C',
-                        ofBlock(
-                                casingBlock, casingMeta
-                        )
-                ).build();
+    public HEHydroPumpTileEntity(int tierId) {
+        super("he_pump_" + GT_Values.VN[tierId].toLowerCase());
     }
 
-    public HEHydroPumpTileEntity(String name) {
-        super(name);
-    }
-
-    public HEHydroPumpTileEntity(int id, String name, String nameRegional) {
-        super(id, name, nameRegional);
+    public HEHydroPumpTileEntity(int blockId, int tierId) {
+        super(blockId + tierId, "he_pump_" + GT_Values.VN[tierId].toLowerCase(), "Hydro Pump (" + GT_Values.VN[tierId] + ")");
     }
 
     @Override
-    protected boolean checkMachine_EM(IGregTechTileEntity gregTechTileEntity, ItemStack itemStack) {
-        countOfHatches = 0;
-        return structureCheck_EM("main", 1, 1, 0) && countOfHatches == 4;
-    }
-
-    @Override
-    public void construct(ItemStack itemStack, boolean hintsOnly) {
-        structureBuild_EM("main", 1,1,0, hintsOnly, itemStack);
-    }
-
-    @Override
-    public boolean checkRecipe_EM(ItemStack stack) {
-        mMaxProgresstime = 1;
-        mEUt = -getTierVoltage(); // TODO: check voltage for limits and good practices
-        mEfficiencyIncrease = 100_00;
-        return true;
-    }
-
-    protected abstract int getTier();
-
-    protected float getTierEfficiency() {
-        return (float)HEConfig.efficiency[getTier() - 1];
-    }
-
-    protected float getTierPressure() {
-        return (float)HEConfig.pressure[getTier() - 1];
-    }
-
-    protected int getTierVoltage() {
-        return (int)GT_Values.V[getTier()];
-    }
-
-    @Override
-    public boolean onRunningTick(ItemStack stack) {
-        mProgresstime = 0;
-        if(getBaseMetaTileEntity().isAllowedToWork() && energyFlowOnRunningTick(stack, false)) {
-            int requiredWater = (int)(GT_Values.V[getTier()] * HEConfig.milliBucketPerEU);
-            for(FluidStack fluidStack : getStoredFluids()) {
-                if(fluidStack.getFluid().getID() == FluidRegistry.WATER.getID()) {
-                    final int consumedWater = Math.min(fluidStack.amount, requiredWater);
-                    requiredWater -= consumedWater;
-                    fluidStack.amount -= consumedWater;
-                }
+    public void onTick() {
+        int requiredWater = (int)(GT_Values.V[getTier()] * HEConfig.milliBucketPerEU);
+        for(FluidStack fluidStack : getStoredFluids()) {
+            if(fluidStack.getFluid().getID() == FluidRegistry.WATER.getID()) {
+                final int consumedWater = Math.min(fluidStack.amount, requiredWater);
+                requiredWater -= consumedWater;
+                fluidStack.amount -= consumedWater;
             }
-            if(requiredWater > 0) {
-                stopMachine();
-                return false;
-            }
-
-            float pumpedWater = getTierVoltage() * HEConfig.milliBucketPerEU;
-            pumpedWater *= getTierEfficiency();
-            pumpedWater *= ((float)getCurrentEfficiency(null)) / 100_00.0f;
-            final FluidStack fluidStack = new FluidStack(HE.pressurizedWater, (int)pumpedWater);
-            HE.pressurizedWater.setPressure(fluidStack, getTierPressure());
-            addOutput(fluidStack);
         }
-        return true;
+        if(requiredWater > 0) {
+            stopMachine();
+            return;
+        }
+
+        float pumpedWater = getVoltage() * HEConfig.milliBucketPerEU;
+        pumpedWater *= getEfficiencyModifier();
+        pumpedWater *= ((float)getCurrentEfficiency(null)) / 100_00.0f;
+        final FluidStack fluidStack = new FluidStack(HE.pressurizedWater, (int)pumpedWater);
+        HE.pressurizedWater.setPressure(fluidStack, getPressure());
+        addOutput(fluidStack);
     }
 
     @Override
@@ -354,6 +206,37 @@ public abstract class HEHydroPumpTileEntity extends GT_MetaTileEntity_Multiblock
         else {
             return new ITexture[]{Textures.BlockIcons.getCasingTextureForId(blockTextureIndex)};
         }
+    }
+
+    @Override
+    public String[] getDescription() {
+        return new String[] {
+                "Hydro Pump Controller",
+                "Controller Block for the Hydro Pump",
+                "Consumes EU to pressurize water",
+                "Output is pressurized water for Hydro Dams",
+                "Requires a Energy, Input, Output and Maintenance Hatch anywhere!",
+                "Requires " + getMilliBucketsPerTick() + "mB Water per Tick",
+                "Efficiency: " + getEfficiencyModifierInPercent(),
+                HE.blueprintHintTecTech,
+                "Use Redstone to automate!"
+        };
+    }
+
+    @Override
+    public String[] getStructureDescription(ItemStack itemStack) {
+        return new String[] {
+                "1 Energy Hatch",
+                "1 Fluid Input Hatch",
+                "1 Fluid Output Hatch",
+                "1 Maintenance Hatch",
+                "Fill the rest with " + getCasingName(),
+        };
+    }
+
+    @Override
+    protected long getEnergyConsumption() {
+        return - getVoltage();
     }
 }
 

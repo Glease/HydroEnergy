@@ -26,6 +26,9 @@ import net.minecraft.block.Block;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fluids.FluidRegistry;
 
+import java.lang.reflect.InvocationTargetException;
+import java.util.Arrays;
+
 public class HEHooksShared {
 	
 	// preInit "Run before anything else. Read your config, create blocks, items, 
@@ -58,12 +61,30 @@ public class HEHooksShared {
 		MinecraftForge.EVENT_BUS.register(new HEHooksEVENT_BUS());
 
 		new HEHydroDamTileEntity(HEConfig.blockIdOffset, "he_dam", "Hydro Dam");
-		new HEHydroPumpTileEntity.HEHydroPumpTileEntityLV(HEConfig.blockIdOffset + 1, "he_pump_lv", "Hydro Pump (LV)");
-		new HEHydroPumpTileEntity.HEHydroPumpTileEntityMV(HEConfig.blockIdOffset + 2, "he_pump_mv", "Hydro Pump (MV)");
-		new HEHydroPumpTileEntity.HEHydroPumpTileEntityHV(HEConfig.blockIdOffset + 3, "he_pump_hv", "Hydro Pump (HV)");
-		new HEHydroTurbineTileEntity.HEHydroTurbineTileEntityLV(HEConfig.blockIdOffset + 4, "he_turbine_lv", "Hydro Turbine (LV)");
-		new HEHydroTurbineTileEntity.HEHydroTurbineTileEntityMV(HEConfig.blockIdOffset + 5, "he_turbine_mv", "Hydro Turbine (MV)");
-		new HEHydroTurbineTileEntity.HEHydroTurbineTileEntityHV(HEConfig.blockIdOffset + 6, "he_turbine_hv", "Hydro Turbine (HV)");
+		for(String tier : HEConfig.enabledTiers) {
+			switch(tier) {
+				case "lv":
+					new HEHydroPumpTileEntity.LV(HEConfig.blockIdOffset + 1);
+					new HEHydroTurbineTileEntity.LV(HEConfig.blockIdOffset + 17);
+					break;
+				case "mv":
+					new HEHydroPumpTileEntity.MV(HEConfig.blockIdOffset + 1);
+					new HEHydroTurbineTileEntity.MV(HEConfig.blockIdOffset + 17);
+					break;
+				case "hv":
+					new HEHydroPumpTileEntity.HV(HEConfig.blockIdOffset + 1);
+					new HEHydroTurbineTileEntity.HV(HEConfig.blockIdOffset + 17);
+					break;
+				case "ev":
+					new HEHydroPumpTileEntity.EV(HEConfig.blockIdOffset + 1);
+					new HEHydroTurbineTileEntity.EV(HEConfig.blockIdOffset + 17);
+					break;
+				case "iv":
+					new HEHydroPumpTileEntity.IV(HEConfig.blockIdOffset + 1);
+					new HEHydroTurbineTileEntity.IV(HEConfig.blockIdOffset + 17);
+					break;
+			}
+		}
 	}
 	
 	// postInit "Handle interaction with other mods, complete your setup based on this."

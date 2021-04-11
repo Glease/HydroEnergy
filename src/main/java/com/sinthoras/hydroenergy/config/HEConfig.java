@@ -23,12 +23,13 @@ public class HEConfig {
         public static final int damDrainPerSecond = 2048; // in EU
         public static final float waterBonusPerSurfaceBlockPerRainTick = 1.0f; // in EU/block
         public static final int blockIdOffset = 17000;
-        public static final double[] efficiency = new double[] { 0.95, 0.90, 0.85 };
-        public static final double[] pressure = new double[] { 8.0, 16.0, maxWaterSpreadUp };
+        public static final float efficiencyLossPerTier = 0.03f;
+        public static final float pressureIncreasePerTier = 2.0f;
         public static final float milliBucketPerEU = 1.0f;
+        public static final String[] enabledTiers = new String[] { "lv", "mv", "hv", "ev", "iv" };
     }
 
-    private class Categories {
+    private static class Categories {
         public static final String general = "General";
         public static final String spreading = "Spreading";
         public static final String energyBalance = "Energy Balance";
@@ -39,7 +40,7 @@ public class HEConfig {
     public static int delayBetweenSpreadingChunks = Defaults.delayBetweenSpreadingChunks;
     public static int minLightUpdateTimePerSubChunk = Defaults.minLightUpdateTimePerSubChunk;
     public static float clippingOffset = Defaults.clippingOffset;
-    public static List<Integer> dimensionIdWhitelist = new ArrayList<Integer>();
+    public static List<Integer> dimensionIdWhitelist = new ArrayList<>();
     public static int maxWaterSpreadWest = Defaults.maxWaterSpreadWest;
     public static int maxWaterSpreadDown = Defaults.maxWaterSpreadDown;
     public static int maxWaterSpreadNorth = Defaults.maxWaterSpreadNorth;
@@ -49,15 +50,14 @@ public class HEConfig {
     public static int damDrainPerSecond = Defaults.damDrainPerSecond;
     public static float waterBonusPerSurfaceBlockPerRainTick = Defaults.waterBonusPerSurfaceBlockPerRainTick;
     public static int blockIdOffset = Defaults.blockIdOffset;
-    public static double[] efficiency = Defaults.efficiency;
-    public static double[] pressure = Defaults.pressure;
+    public static float efficiencyLossPerTier = Defaults.efficiencyLossPerTier;
+    public static float pressureIncreasePerTier = Defaults.pressureIncreasePerTier;
     public static float milliBucketPerEU = Defaults.milliBucketPerEU;
     public static float euPerMilliBucket = 1.0f / Defaults.milliBucketPerEU;
-
-    private static Configuration configuration;
+    public static String[] enabledTiers = Defaults.enabledTiers;
 
     public static void syncronizeConfiguration(java.io.File configurationFile) {
-        configuration = new Configuration(configurationFile);
+        Configuration configuration = new Configuration(configurationFile);
         configuration.load();
 
         Property maxDamsProperty = configuration.get(Categories.general, "maxDams", Defaults.maxDams,
@@ -138,13 +138,15 @@ public class HEConfig {
                 "[SERVER + CLIENT] Offset of blockIds for GregTech block registration");
         blockIdOffset = blockIdOffsetProperty.getInt();
 
-        Property efficiencyProperty = configuration.get(Categories.energyBalance, "efficiency", Defaults.efficiency,
-                "[SERVER] Efficiency for Hydro Pump and Hydro Turbine in voltage variants in % and beginning from LV.");
-        efficiency = efficiencyProperty.getDoubleList();
+        Property efficiencyLossPerTierProperty = configuration.get(Categories.energyBalance, "efficiencyLossPerTier",
+                Defaults.efficiencyLossPerTier, "[SERVER] Efficiency for Hydro Pump and Hydro Turbine in " +
+                        "voltage variants and beginning from LV with '(1.0 - efficiencyLossPerTier)'.");
+        efficiencyLossPerTier = (float)efficiencyLossPerTierProperty.getDouble();
 
-        Property pressureProperty = configuration.get(Categories.energyBalance, "pressure", Defaults.pressure,
-                "[SERVER] Hydro Pump height limit for voltage variants in blocks and beginning from LV.");
-        pressure = pressureProperty.getDoubleList();
+        Property pressureIncreasePerTierProperty = configuration.get(Categories.energyBalance,
+                "pressureIncreasePerTier", Defaults.pressureIncreasePerTier, "[SERVER] Hydro Pump height " +
+                        "limit for voltage variants in blocks and beginning from LV with '1 * pressureIncreasePerTier'.");
+        pressureIncreasePerTier = (float)pressureIncreasePerTierProperty.getDouble();
 
         Property milliBucketPerEUProperty = configuration.get(Categories.energyBalance, "milliBucketPerEU",
                 Defaults.milliBucketPerEU, "[SERVER] Conversion ratio between Pressurized Water and EU on " +
@@ -152,6 +154,13 @@ public class HEConfig {
                         "stored in each Hydro Dam.");
         milliBucketPerEU = (float)milliBucketPerEUProperty.getDouble();
         euPerMilliBucket = 1.0f / milliBucketPerEU;
+
+        Property enabledTiersProperty = configuration.get(Categories.energyBalance, "enabledTiers", Defaults.enabledTiers,
+                "[SERVER] A list of all tiers that should have a Hydro Pump and Hydro Turbine generated.");
+        enabledTiers = enabledTiersProperty.getStringList();
+        for(int i=0;i<enabledTiers.length;i++) {
+            enabledTiers[i] = enabledTiers[i].toLowerCase();
+        }
 
         if(configuration.hasChanged()) {
             configuration.save();

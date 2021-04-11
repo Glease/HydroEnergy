@@ -17,6 +17,7 @@ import cpw.mods.fml.common.network.internal.FMLNetworkHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import gregtech.api.GregTech_API;
+import gregtech.api.enums.GT_Values;
 import gregtech.api.enums.Textures;
 import gregtech.api.interfaces.ITexture;
 import gregtech.api.interfaces.metatileentity.IMetaTileEntity;
@@ -119,8 +120,8 @@ public class HEHydroDamTileEntity extends GT_MetaTileEntity_MultiblockBase_EM im
 
     private float getMaxGuiPressure() {
         boolean configCircuitIsPresent = mInventory != null && mInventory[1] != null && mInventory[1].getItem() == GT_Utility.getIntegratedCircuit(0).getItem();
-        int voltageTier = configCircuitIsPresent ? HEUtil.clamp(mInventory[1].getItemDamage(), 1, HEConfig.pressure.length) : 1;
-        return (float)HEConfig.pressure[voltageTier - 1];
+        int voltageTier = configCircuitIsPresent ? HEUtil.clamp(mInventory[1].getItemDamage(), 1, GT_Values.V.length) : 1;
+        return HEConfig.pressureIncreasePerTier * voltageTier;
     }
 
     @Override
