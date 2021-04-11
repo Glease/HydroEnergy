@@ -1,5 +1,6 @@
 package com.sinthoras.hydroenergy.hooks;
 
+import codechicken.nei.api.API;
 import com.sinthoras.hydroenergy.HE;
 import com.sinthoras.hydroenergy.HETags;
 import com.sinthoras.hydroenergy.blocks.*;
@@ -23,6 +24,7 @@ import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import net.minecraft.block.Block;
+import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fluids.FluidRegistry;
 
@@ -50,6 +52,7 @@ public class HEHooksShared {
 			HE.waterBlocks[waterId] = new HEWaterStill(waterId);
 			GameRegistry.registerBlock(HE.waterBlocks[waterId], HE.waterBlocks[waterId].getUnlocalizedName());
 			HE.waterBlockIds[waterId] = Block.blockRegistry.getIDForObject(HE.waterBlocks[waterId]);
+			API.hideItem(new ItemStack(HE.waterBlocks[waterId]));
 		}
 
 		FluidRegistry.registerFluid(HE.pressurizedWater);
