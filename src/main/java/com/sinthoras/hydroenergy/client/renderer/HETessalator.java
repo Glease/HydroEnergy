@@ -28,6 +28,7 @@ public class HETessalator {
 
 
     public static void onPostRender(World world, int blockX, int blockY, int blockZ) {
+        HEProgram.checkError("pre onPostRender 0");
         int chunkX = HEUtil.coordBlockToChunk(blockX);
         int chunkY = HEUtil.coordBlockToChunk(blockY);
         int chunkZ = HEUtil.coordBlockToChunk(blockZ);
@@ -38,29 +39,45 @@ public class HETessalator {
             if (subChunk.vaoId == GL31.GL_INVALID_INDEX) {
                 if(availableBuffers.empty()) {
                     subChunk.vaoId = GL30.glGenVertexArrays();
+                    HEProgram.checkError("post onPostRender::glGenVertexArrays 1");
                     subChunk.vboId = GL15.glGenBuffers();
+                    HEProgram.checkError("post onPostRender::glGenBuffers 2");
 
                     GL30.glBindVertexArray(subChunk.vaoId);
+                    HEProgram.checkError("post onPostRender::glBindVertexArray 3");
 
                     GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, subChunk.vboId);
+                    HEProgram.checkError("post onPostRender::glBindBuffer 4");
                     GL15.glBufferData(GL15.GL_ARRAY_BUFFER, vboBuffer.capacity() * Float.BYTES, GL15.GL_STATIC_DRAW);
+                    HEProgram.checkError("post onPostRender::glBufferData 5");
 
                     GL20.glVertexAttribPointer(0, 3, GL11.GL_FLOAT, false, 7 * Float.BYTES, 0 * Float.BYTES);
+                    HEProgram.checkError("post onPostRender::glVertexAttribPointer 6");
                     GL20.glEnableVertexAttribArray(0);
+                    HEProgram.checkError("post onPostRender::glEnableVertexAttribArray 7");
 
                     GL20.glVertexAttribPointer(1, 1, GL11.GL_FLOAT, false, 7 * Float.BYTES, 3 * Float.BYTES);
+                    HEProgram.checkError("post onPostRender::glVertexAttribPointer 8");
                     GL20.glEnableVertexAttribArray(1);
+                    HEProgram.checkError("post onPostRender::glEnableVertexAttribArray 9");
 
                     GL20.glVertexAttribPointer(2, 1, GL11.GL_FLOAT, false, 7 * Float.BYTES, 4 * Float.BYTES);
+                    HEProgram.checkError("post onPostRender::glVertexAttribPointer 10");
                     GL20.glEnableVertexAttribArray(2);
+                    HEProgram.checkError("post onPostRender::glEnableVertexAttribArray 11");
 
                     GL20.glVertexAttribPointer(3, 1, GL11.GL_FLOAT, false, 7 * Float.BYTES, 5 * Float.BYTES);
+                    HEProgram.checkError("post onPostRender::glVertexAttribPointer 12");
                     GL20.glEnableVertexAttribArray(3);
+                    HEProgram.checkError("post onPostRender::glEnableVertexAttribArray 13");
 
                     GL20.glVertexAttribPointer(4, 1, GL11.GL_FLOAT, false, 7 * Float.BYTES, 6 * Float.BYTES);
+                    HEProgram.checkError("post onPostRender::glVertexAttribPointer 14");
                     GL20.glEnableVertexAttribArray(4);
+                    HEProgram.checkError("post onPostRender::glEnableVertexAttribArray 15");
 
                     GL30.glBindVertexArray(0);
+                    HEProgram.checkError("post onPostRender::glBindVertexArray 16");
                 }
                 else {
                     HEBufferIds ids = availableBuffers.pop();
@@ -71,8 +88,11 @@ public class HETessalator {
 
             vboBuffer.flip();
             GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, subChunk.vboId);
+            HEProgram.checkError("post onPostRender::glBindBuffer 17");
             GL15.glBufferSubData(GL15.GL_ARRAY_BUFFER, 0, vboBuffer);
+            HEProgram.checkError("post onPostRender::glBufferSubData 18");
             GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
+            HEProgram.checkError("post onPostRender::glBindBuffer 19");
 
             subChunk.numWaterBlocks = numWaterBlocks;
 
@@ -118,12 +138,14 @@ public class HETessalator {
     }
 
     public static void render(ICamera frustrum) {
+        HEProgram.checkError("pre HETessalator.render 0");
         if(MinecraftForgeClient.getRenderPass() == HE.waterBlocks[0].getRenderBlockPass()) {
             float cameraBlockX = HEReflection.getCameraBlockX(frustrum);
             float cameraBlockY = HEReflection.getCameraBlockY(frustrum);
             float cameraBlockZ = HEReflection.getCameraBlockZ(frustrum);
 
             GL11.glEnable(GL11.GL_BLEND);
+            HEProgram.checkError("post HETessalator.render::glEnable 1");
 
             HEProgram.bind();
 
@@ -161,6 +183,7 @@ public class HETessalator {
             HEProgram.unbind();
 
             GL11.glDisable(GL11.GL_BLEND);
+            HEProgram.checkError("post HETessalator.render::glDisable 2");
         }
     }
 

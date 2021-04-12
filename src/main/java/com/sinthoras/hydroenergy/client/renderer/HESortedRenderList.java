@@ -32,6 +32,7 @@ public class HESortedRenderList {
     }
 
     public static void render() {
+        HEProgram.checkError("pre render 0");
         for(int distance=bucketsIds.length-1;distance>=0;distance--) {
             final int numVaos = bucketsIds[distance];
             if(numVaos == 0) {
@@ -41,14 +42,18 @@ public class HESortedRenderList {
             int[] numWaterBlocks = bucketsNumWaterBlocks[distance];
             for(int n=0;n<numVaos;n++) {
                 GL30.glBindVertexArray(vaoIds[n]);
+                HEProgram.checkError("post render::glBindVertexArray 1");
 
                 HEProgram.setCullFronts();
                 GL11.glDrawArrays(GL11.GL_POINTS, 0, numWaterBlocks[n]);
+                HEProgram.checkError("post render::glDrawArrays 2");
 
                 HEProgram.setCullBacks();
                 GL11.glDrawArrays(GL11.GL_POINTS, 0, numWaterBlocks[n]);
+                HEProgram.checkError("post render::glDrawArrays 3");
 
                 GL30.glBindVertexArray(0);
+                HEProgram.checkError("post render::glBindVertexArray 4");
             }
         }
     }

@@ -5,6 +5,7 @@ import com.sinthoras.hydroenergy.HETags;
 import com.sinthoras.hydroenergy.client.HEClient;
 import com.sinthoras.hydroenergy.client.HEDam;
 import com.sinthoras.hydroenergy.client.gui.widgets.HEWidgetModes;
+import com.sinthoras.hydroenergy.client.renderer.HEProgram;
 import com.sinthoras.hydroenergy.network.container.HEHydroDamConfigContainer;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -173,12 +174,14 @@ public class HEHydroDamConfigGuiContainer extends GuiContainer {
 
     @Override
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
+        HEProgram.checkError("pre HEHydroDamConfigGuiContainer.drawGuiContainerBackgroundLayer 0");
         updateValues();
 
         Minecraft minecraft = Minecraft.getMinecraft();
         FontRenderer fontRenderer = minecraft.fontRenderer;
 
         GL11.glColor4f(1F, 1F, 1F, 1F);
+        HEProgram.checkError("post HEHydroDamConfigGuiContainer.drawGuiContainerBackgroundLayer::glColor4f 1");
         minecraft.getTextureManager().bindTexture(backgroundTextureLocation);
         this.drawTexturedModalRect(this.guiLeft, this.guiTop, 0, 0, xSize, ySize);
 
@@ -189,6 +192,7 @@ public class HEHydroDamConfigGuiContainer extends GuiContainer {
 
             // Reset color
             GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+            HEProgram.checkError("post HEHydroDamConfigGuiContainer.drawGuiContainerBackgroundLayer::glColor4f 2");
 
             // Draw title bar buttons if popup is open
             widgetModes.draw(minecraft, mouseX, mouseY);
@@ -268,6 +272,7 @@ public class HEHydroDamConfigGuiContainer extends GuiContainer {
 
             // Reset color
             GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+            HEProgram.checkError("post HEHydroDamConfigGuiContainer.drawGuiContainerBackgroundLayer::glColor4f 3");
         }
 
         for(HEPopupLimitGui limitGui : limitGuis) {
@@ -277,10 +282,13 @@ public class HEHydroDamConfigGuiContainer extends GuiContainer {
 
     @Override
     protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
+        HEProgram.checkError("pre HEHydroDamConfigGuiContainer.drawGuiContainerForegroundLayer 0");
         // There is a translation in GL before this call. Revert it for the duration of this method
         GL11.glTranslatef((float)-this.guiLeft, (float)-this.guiTop, 0.0f);
+        HEProgram.checkError("post HEHydroDamConfigGuiContainer.drawGuiContainerForegroundLayer::glTranslatef 1");
         widgetModes.drawTooltip(Minecraft.getMinecraft().fontRenderer, mouseX, mouseY, width);
         GL11.glTranslatef((float)this.guiLeft, (float)this.guiTop, 0.0f);
+        HEProgram.checkError("post HEHydroDamConfigGuiContainer.drawGuiContainerForegroundLayer::glTranslatef 2");
     }
 
     @Override

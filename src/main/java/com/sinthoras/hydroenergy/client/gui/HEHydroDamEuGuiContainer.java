@@ -3,6 +3,7 @@ package com.sinthoras.hydroenergy.client.gui;
 import com.github.technus.tectech.thing.metaTileEntity.multi.base.GT_GUIContainer_MultiMachineEM;
 import com.sinthoras.hydroenergy.HEUtil;
 import com.sinthoras.hydroenergy.blocks.HEHydroDamTileEntity;
+import com.sinthoras.hydroenergy.client.renderer.HEProgram;
 import com.sinthoras.hydroenergy.network.container.HEHydroDamEuContainer;
 import gregtech.api.enums.GT_Values;
 import gregtech.api.interfaces.tileentity.IGregTechTileEntity;
@@ -31,6 +32,7 @@ public class HEHydroDamEuGuiContainer extends GT_GUIContainer_MultiMachineEM {
 
     @Override
     protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
+        HEProgram.checkError("pre HEHydroDamEuGuiContainer.drawGuiContainerForegroundLayer 0");
         ItemStack[] inventory = ((HEHydroDamTileEntity)hydroDamContainer.mTileEntity.getMetaTileEntity()).mInventory;
         boolean configCircuitIsPresent = inventory != null && inventory[1] != null && inventory[1].getItem() == GT_Utility.getIntegratedCircuit(0).getItem();
         int voltageTier = configCircuitIsPresent ? HEUtil.clamp(inventory[1].getItemDamage(), 1, 3) : 1;
@@ -57,6 +59,7 @@ public class HEHydroDamEuGuiContainer extends GT_GUIContainer_MultiMachineEM {
         Minecraft.getMinecraft().getTextureManager().bindTexture(TextureMap.locationBlocksTexture);
         IIcon iconStill = FluidRegistry.WATER.getStillIcon();
         GL11.glColor4f(0.7f, 0.7f, 0.7f, 1.0f);
+        HEProgram.checkError("post HEHydroDamEuGuiContainer.drawGuiContainerForegroundLayer::glColor4f 1");
         drawTexturedBar(7, 45, 184, 16, iconStill, Math.min(fillMultiplier, 1.0f));
 
         String relativeInfo;

@@ -33,6 +33,7 @@ public class HEMod {
     // postInit "Handle interaction with other mods, complete your setup based on this."
     public void fmlLifeCycle(FMLPostInitializationEvent event) {
         HE.debug("postInit()");
+        HE.warn("This is a test warning! Am i logged?");
         proxy.fmlLifeCycleEvent(event);
     }
 
