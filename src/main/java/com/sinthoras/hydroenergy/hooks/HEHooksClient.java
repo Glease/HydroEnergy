@@ -15,7 +15,7 @@ import cpw.mods.fml.common.event.FMLServerStoppedEvent;
 import cpw.mods.fml.common.event.FMLServerStoppingEvent;
 
 public class HEHooksClient extends HEHooksShared {
-	
+
 	@Override
 	// load "Do your mod setup. Build whatever data structures you care about. Register recipes."
 	public void fmlLifeCycleEvent(FMLPreInitializationEvent event) {
@@ -38,7 +38,6 @@ public class HEHooksClient extends HEHooksShared {
 	public void fmlLifeCycleEvent(FMLPostInitializationEvent event) {
 		super.fmlLifeCycleEvent(event);
 	}
-	
 	@Override
 	public void fmlLifeCycleEvent(FMLServerAboutToStartEvent event) {
 		super.fmlLifeCycleEvent(event);
