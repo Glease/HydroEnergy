@@ -6,6 +6,9 @@ import com.sinthoras.hydroenergy.HETags;
 import com.sinthoras.hydroenergy.blocks.*;
 import com.sinthoras.hydroenergy.config.HEConfig;
 import com.sinthoras.hydroenergy.network.packet.*;
+import com.sinthoras.hydroenergy.recipes.CraftingRecipeLoader;
+import com.sinthoras.hydroenergy.recipes.Hydro_ItemList;
+import com.sinthoras.hydroenergy.recipes.MachineRecipeLoader;
 import com.sinthoras.hydroenergy.server.commands.HECommandDebug;
 import com.sinthoras.hydroenergy.server.commands.HECommandListControllers;
 import com.sinthoras.hydroenergy.server.commands.HECommandSetWater;
@@ -28,8 +31,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fluids.FluidRegistry;
 
-import java.lang.reflect.InvocationTargetException;
-import java.util.Arrays;
 
 public class HEHooksShared {
 	
@@ -63,28 +64,28 @@ public class HEHooksShared {
 		FMLCommonHandler.instance().bus().register(new HEHooksFML());
 		MinecraftForge.EVENT_BUS.register(new HEHooksEVENT_BUS());
 
-		new HEHydroDamTileEntity(HEConfig.blockIdOffset, "he_dam", "Hydro Dam");
+		Hydro_ItemList.HydroDam.set(new HEHydroDamTileEntity(HEConfig.blockIdOffset, "he_dam", "Hydro Dam").getStackForm(1L));
 		for(String tier : HEConfig.enabledTiers) {
 			switch(tier) {
 				case "lv":
-					new HEHydroPumpTileEntity.LV(HEConfig.blockIdOffset + 1);
-					new HEHydroTurbineTileEntity.LV(HEConfig.blockIdOffset + 17);
+					Hydro_ItemList.Hydro_Pump_LV.set(new HEHydroPumpTileEntity.LV(HEConfig.blockIdOffset + 1).getStackForm(1L));
+					Hydro_ItemList.Hydro_Dynamo_LV.set(new HEHydroTurbineTileEntity.LV(HEConfig.blockIdOffset + 17).getStackForm(1L));
 					break;
 				case "mv":
-					new HEHydroPumpTileEntity.MV(HEConfig.blockIdOffset + 1);
-					new HEHydroTurbineTileEntity.MV(HEConfig.blockIdOffset + 17);
+					Hydro_ItemList.Hydro_Pump_MV.set(new HEHydroPumpTileEntity.MV(HEConfig.blockIdOffset + 1).getStackForm(1L));
+					Hydro_ItemList.Hydro_Dynamo_MV.set(new HEHydroTurbineTileEntity.MV(HEConfig.blockIdOffset + 17).getStackForm(1L));
 					break;
 				case "hv":
-					new HEHydroPumpTileEntity.HV(HEConfig.blockIdOffset + 1);
-					new HEHydroTurbineTileEntity.HV(HEConfig.blockIdOffset + 17);
+					Hydro_ItemList.Hydro_Pump_HV.set(new HEHydroPumpTileEntity.HV(HEConfig.blockIdOffset + 1).getStackForm(1L));
+					Hydro_ItemList.Hydro_Dynamo_HV.set(new HEHydroTurbineTileEntity.HV(HEConfig.blockIdOffset + 17).getStackForm(1L));
 					break;
 				case "ev":
-					new HEHydroPumpTileEntity.EV(HEConfig.blockIdOffset + 1);
-					new HEHydroTurbineTileEntity.EV(HEConfig.blockIdOffset + 17);
+					Hydro_ItemList.Hydro_Pump_EV.set(new HEHydroPumpTileEntity.EV(HEConfig.blockIdOffset + 1).getStackForm(1L));
+					Hydro_ItemList.Hydro_Dynamo_EV.set(new HEHydroTurbineTileEntity.EV(HEConfig.blockIdOffset + 17).getStackForm(1L));
 					break;
 				case "iv":
-					new HEHydroPumpTileEntity.IV(HEConfig.blockIdOffset + 1);
-					new HEHydroTurbineTileEntity.IV(HEConfig.blockIdOffset + 17);
+					Hydro_ItemList.Hydro_Pump_IV.set(new HEHydroPumpTileEntity.IV(HEConfig.blockIdOffset + 1).getStackForm(1L));
+					Hydro_ItemList.Hydro_Dynamo_IV.set(new HEHydroTurbineTileEntity.IV(HEConfig.blockIdOffset + 17).getStackForm(1L));
 					break;
 			}
 		}
@@ -93,6 +94,8 @@ public class HEHooksShared {
 	// postInit "Handle interaction with other mods, complete your setup based on this."
 	public void fmlLifeCycleEvent(FMLPostInitializationEvent event) {
 		NetworkRegistry.INSTANCE.registerGuiHandler(HETags.MODID, HE.guiHandler);
+		new CraftingRecipeLoader().run();
+		new MachineRecipeLoader().run();
 	}
 	
 	public void fmlLifeCycleEvent(FMLServerAboutToStartEvent event) {
