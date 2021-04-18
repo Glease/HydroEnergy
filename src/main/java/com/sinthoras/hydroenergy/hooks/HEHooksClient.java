@@ -4,8 +4,6 @@ import com.sinthoras.hydroenergy.HE;
 import com.sinthoras.hydroenergy.client.renderer.HEWaterRenderer;
 
 import com.sinthoras.hydroenergy.client.renderer.HEProgram;
-import com.sinthoras.hydroenergy.recipes.CraftingRecipeLoader;
-import com.sinthoras.hydroenergy.recipes.MachineRecipeLoader;
 import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
@@ -43,8 +41,6 @@ public class HEHooksClient extends HEHooksShared {
 	@Override
 	public void fmlLifeCycleEvent(FMLServerAboutToStartEvent event) {
 		super.fmlLifeCycleEvent(event);
-		new CraftingRecipeLoader().run();
-		new MachineRecipeLoader().run();
 	}
 	
 	@Override

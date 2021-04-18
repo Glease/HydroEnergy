@@ -15,7 +15,7 @@ public enum Hydro_ItemList implements IItemContainer
     HydroDam,
     Hydro_Pump_LV,
     Hydro_Dynamo_LV,
-    /*Hydro_Pump_MV,
+    Hydro_Pump_MV,
     Hydro_Dynamo_MV,
     Hydro_Pump_HV,
     Hydro_Dynamo_HV,
@@ -23,7 +23,7 @@ public enum Hydro_ItemList implements IItemContainer
     Hydro_Dynamo_EV,
     Hydro_Pump_IV,
     Hydro_Dynamo_IV,
-    */;
+    ;
 
     private ItemStack mStack;
     private boolean mHasNotBeenSet = true;
