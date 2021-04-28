@@ -188,6 +188,7 @@ public class HEPopupLimitGui extends Gui {
                 cancel();
             } else {
                 textField.textboxKeyTyped(c, keyCode);
+                currentValue = textField.getValue();
             }
             return true;
         }
