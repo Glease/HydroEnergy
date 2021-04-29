@@ -1,5 +1,6 @@
 package com.sinthoras.hydroenergy.blocks;
 
+import com.github.technus.tectech.thing.CustomItemList;
 import com.sinthoras.hydroenergy.HE;
 import com.sinthoras.hydroenergy.config.HEConfig;
 import gregtech.api.GregTech_API;
@@ -15,7 +16,7 @@ public class HEBlockRecipes {
     public static void registerRecipes() {
         // ULV is disabled!
         IItemContainer[] hulls = {
-                null,  // ULV,
+                null,                       // ULV,
                 ItemList.Hull_LV,
                 ItemList.Hull_MV,
                 ItemList.Hull_HV,
@@ -24,17 +25,16 @@ public class HEBlockRecipes {
                 ItemList.Hull_LuV,
                 ItemList.Hull_ZPM,
                 ItemList.Hull_UV,
-                null,  // UHV
-                null,  // UEV
-                null,  // UHV
-                null,  // UIV
-                null,  // UMV
-                null,  // UXV
-                null,  // OpV
-                ItemList.Hull_MAX
+                ItemList.Hull_MAX,          // UHV
+                CustomItemList.Hull_UEV,
+                CustomItemList.Hull_UIV,
+                CustomItemList.Hull_UMV,
+                CustomItemList.Hull_UXV,
+                CustomItemList.Hull_OPV,
+                CustomItemList.Hull_MAXV
         };
         IItemContainer[] motors = {
-                null,  // ULV,
+                null,                       // ULV,
                 ItemList.Electric_Motor_LV,
                 ItemList.Electric_Motor_MV,
                 ItemList.Electric_Motor_HV,
@@ -45,15 +45,14 @@ public class HEBlockRecipes {
                 ItemList.Electric_Motor_UV,
                 ItemList.Electric_Motor_UHV,
                 ItemList.Electric_Motor_UEV,
-                ItemList.Electric_Motor_UHV,
-                null,  // UIV
-                null,  // UMV
-                null,  // UXV
-                null,  // OpV
-                null   // MAX
+                null,                       // UIV
+                null,                       // UMV
+                null,                       // UXV
+                null,                       // OpV
+                null                        // MAX
         };
         IItemContainer[] pumps = {
-                null,  // ULV,
+                null,                       // ULV,
                 ItemList.Electric_Pump_LV,
                 ItemList.Electric_Pump_MV,
                 ItemList.Electric_Pump_HV,
@@ -64,50 +63,47 @@ public class HEBlockRecipes {
                 ItemList.Electric_Pump_UV,
                 ItemList.Electric_Pump_UHV,
                 ItemList.Electric_Pump_UEV,
-                ItemList.Electric_Pump_UHV,
-                null,  // UIV
-                null,  // UMV
-                null,  // UXV
-                null,  // OpV
-                null   // MAX
+                null,                       // UIV
+                null,                       // UMV
+                null,                       // UXV
+                null,                       // OpV
+                null                        // MAX
         };
         Materials[] rotorMaterialsPerVoltage = {
-                null,  // ULV,
-                Materials.Steel,
-                Materials.Aluminium,
-                Materials.StainlessSteel,
-                Materials.Titanium,
-                Materials.TungstenSteel,
-                null,  // LuV
-                null,  // ZPM
-                null,  // UV
-                null,  // UHV
-                null,  // UEV
-                null,  // UHV
-                null,  // UIV
-                null,  // UMV
-                null,  // UXV
-                null,  // OpV
-                null   // MAX
+                null,                       // ULV,
+                Materials.Steel,            // LV
+                Materials.Aluminium,        // MV
+                Materials.StainlessSteel,   // HV
+                Materials.Titanium,         // EV
+                Materials.TungstenSteel,    // IV
+                Materials.Palladium,        // LuV
+                Materials.Iridium,          // ZPM
+                Materials.Osmium,           // UV
+                Materials.Neutronium,       // UHV
+                Materials.Bedrockium,       // UEV
+                Materials.BlackPlutonium,   // UIV
+                Materials.Draconium,        // UMV
+                null,                       // UXV
+                null,                       // OpV
+                null                        // MAX
         };
         Materials[] cableMaterialsPerVoltage = {
-                null,  // ULV,
-                Materials.Tin,
-                Materials.Copper,
-                Materials.Gold,
-                Materials.Aluminium,
-                Materials.Platinum,
-                null,  // LuV
-                null,  // ZPM
-                null,  // UV
-                null,  // UHV
-                null,  // UEV
-                null,  // UHV
-                null,  // UIV
-                null,  // UMV
-                null,  // UXV
-                null,  // OpV
-                null   // MAX
+                null,                       // ULV,
+                Materials.Tin,              // LV
+                Materials.Copper,           // MV
+                Materials.Gold,             // HV
+                Materials.Aluminium,        // EV
+                Materials.Platinum,         // IV
+                Materials.VanadiumGallium,  // LuV
+                Materials.Naquadah,         // ZPM
+                Materials.NaquadahAlloy,    // UV
+                Materials.SuperconductorUV, // UHV
+                Materials.Draconium,        // UEV
+                Materials.NetherStar,       // UIV
+                Materials.Quantium,         // UMV
+                null,                       // UXV
+                null,                       // OpV
+                null                        // MAX
         };
 
         for (Materials material : Materials.values()) {
@@ -130,7 +126,7 @@ public class HEBlockRecipes {
                         30);
 
                 for(int tierId=0;tierId<HE.hydroPumpBlocks.length;tierId++) {
-                    if(HEConfig.enabledTiers[tierId] == true) {
+                    if(HEConfig.enabledTiers[tierId]) {
                         GT_Values.RA.addAssemblerRecipe(new ItemStack[]{
                                         hulls[tierId].get(1L),
                                         GT_OreDictUnificator.get(OrePrefixes.rotor, rotorMaterialsPerVoltage[tierId], 2L),
