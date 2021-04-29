@@ -158,11 +158,13 @@ public class HEConfig {
         euPerMilliBucket = 1.0f / milliBucketPerEU;
 
         Property enabledTiersProperty = configuration.get(Categories.energyBalance, "enabledTiers", Defaults.enabledTiers,
-                "[SERVER] A list of all tiers that should have a Hydro Pump and Hydro Turbine generated.");
+                "[SERVER] A list of all tiers that should have a Hydro Pump and Hydro Turbine generated. " +
+                        "ULV is ignored since it is disabled.");
         String[] enableTierNames = enabledTiersProperty.getStringList();
         for(int i=0;i<enableTierNames.length;i++) {
             final int tierId = HEUtil.voltageNameToTierId(enableTierNames[i]);
-            if(tierId != -1) {
+            // Catch -1 and disable ULV permanently
+            if(tierId > 0) {
                 enabledTiers[tierId] = true;
             }
         }

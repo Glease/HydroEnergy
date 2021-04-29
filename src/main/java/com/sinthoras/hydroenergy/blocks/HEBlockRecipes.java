@@ -13,8 +13,9 @@ public class HEBlockRecipes {
 
     // TODO: Fill up recipe components as needed
     public static void registerRecipes() {
+        // ULV is disabled!
         IItemContainer[] hulls = {
-                ItemList.Hull_ULV,
+                null,  // ULV,
                 ItemList.Hull_LV,
                 ItemList.Hull_MV,
                 ItemList.Hull_HV,
