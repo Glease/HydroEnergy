@@ -40,7 +40,7 @@ public abstract class HEHydroTurbineTileEntity extends HETieredTileEntity implem
 
         @Override
         public IMetaTileEntity newMetaEntity(IGregTechTileEntity tileEntity) {
-            return new HEHydroTurbineTileEntity.LV();
+            return new LV();
         }
     }
 
@@ -63,7 +63,7 @@ public abstract class HEHydroTurbineTileEntity extends HETieredTileEntity implem
 
         @Override
         public IMetaTileEntity newMetaEntity(IGregTechTileEntity tileEntity) {
-            return new HEHydroTurbineTileEntity.MV();
+            return new MV();
         }
     }
 
@@ -86,7 +86,7 @@ public abstract class HEHydroTurbineTileEntity extends HETieredTileEntity implem
 
         @Override
         public IMetaTileEntity newMetaEntity(IGregTechTileEntity tileEntity) {
-            return new HEHydroTurbineTileEntity.HV();
+            return new HV();
         }
     }
 
@@ -109,7 +109,7 @@ public abstract class HEHydroTurbineTileEntity extends HETieredTileEntity implem
 
         @Override
         public IMetaTileEntity newMetaEntity(IGregTechTileEntity tileEntity) {
-            return new HEHydroTurbineTileEntity.EV();
+            return new EV();
         }
     }
 
@@ -132,7 +132,237 @@ public abstract class HEHydroTurbineTileEntity extends HETieredTileEntity implem
 
         @Override
         public IMetaTileEntity newMetaEntity(IGregTechTileEntity tileEntity) {
-            return new HEHydroTurbineTileEntity.IV();
+            return new IV();
+        }
+    }
+
+    public static class LuV extends HEHydroTurbineTileEntity {
+
+        private static final int tierId = 6;
+
+        public LuV() {
+            super(tierId);
+        }
+
+        public LuV(int id) {
+            super(id, tierId);
+        }
+
+        @Override
+        protected int getTier() {
+            return tierId;
+        }
+
+        @Override
+        public IMetaTileEntity newMetaEntity(IGregTechTileEntity tileEntity) {
+            return new LuV();
+        }
+    }
+
+    public static class ZPM extends HEHydroTurbineTileEntity {
+
+        private static final int tierId = 7;
+
+        public ZPM() {
+            super(tierId);
+        }
+
+        public ZPM(int id) {
+            super(id, tierId);
+        }
+
+        @Override
+        protected int getTier() {
+            return tierId;
+        }
+
+        @Override
+        public IMetaTileEntity newMetaEntity(IGregTechTileEntity tileEntity) {
+            return new ZPM();
+        }
+    }
+
+    public static class UV extends HEHydroTurbineTileEntity {
+
+        private static final int tierId = 8;
+
+        public UV() {
+            super(tierId);
+        }
+
+        public UV(int id) {
+            super(id, tierId);
+        }
+
+        @Override
+        protected int getTier() {
+            return tierId;
+        }
+
+        @Override
+        public IMetaTileEntity newMetaEntity(IGregTechTileEntity tileEntity) {
+            return new UV();
+        }
+    }
+
+    public static class UHV extends HEHydroTurbineTileEntity {
+
+        private static final int tierId = 9;
+
+        public UHV() {
+            super(tierId);
+        }
+
+        public UHV(int id) {
+            super(id, tierId);
+        }
+
+        @Override
+        protected int getTier() {
+            return tierId;
+        }
+
+        @Override
+        public IMetaTileEntity newMetaEntity(IGregTechTileEntity tileEntity) {
+            return new UHV();
+        }
+    }
+
+    public static class UEV extends HEHydroTurbineTileEntity {
+
+        private static final int tierId = 10;
+
+        public UEV() {
+            super(tierId);
+        }
+
+        public UEV(int id) {
+            super(id, tierId);
+        }
+
+        @Override
+        protected int getTier() {
+            return tierId;
+        }
+
+        @Override
+        public IMetaTileEntity newMetaEntity(IGregTechTileEntity tileEntity) {
+            return new UEV();
+        }
+    }
+
+    public static class UIV extends HEHydroTurbineTileEntity {
+
+        private static final int tierId = 11;
+
+        public UIV() {
+            super(tierId);
+        }
+
+        public UIV(int id) {
+            super(id, tierId);
+        }
+
+        @Override
+        protected int getTier() {
+            return tierId;
+        }
+
+        @Override
+        public IMetaTileEntity newMetaEntity(IGregTechTileEntity tileEntity) {
+            return new UIV();
+        }
+    }
+
+    public static class UMV extends HEHydroTurbineTileEntity {
+
+        private static final int tierId = 12;
+
+        public UMV() {
+            super(tierId);
+        }
+
+        public UMV(int id) {
+            super(id, tierId);
+        }
+
+        @Override
+        protected int getTier() {
+            return tierId;
+        }
+
+        @Override
+        public IMetaTileEntity newMetaEntity(IGregTechTileEntity tileEntity) {
+            return new UMV();
+        }
+    }
+
+    public static class UXV extends HEHydroTurbineTileEntity {
+
+        private static final int tierId = 13;
+
+        public UXV() {
+            super(tierId);
+        }
+
+        public UXV(int id) {
+            super(id, tierId);
+        }
+
+        @Override
+        protected int getTier() {
+            return tierId;
+        }
+
+        @Override
+        public IMetaTileEntity newMetaEntity(IGregTechTileEntity tileEntity) {
+            return new UXV();
+        }
+    }
+
+    public static class OpV extends HEHydroTurbineTileEntity {
+
+        private static final int tierId = 14;
+
+        public OpV() {
+            super(tierId);
+        }
+
+        public OpV(int id) {
+            super(id, tierId);
+        }
+
+        @Override
+        protected int getTier() {
+            return tierId;
+        }
+
+        @Override
+        public IMetaTileEntity newMetaEntity(IGregTechTileEntity tileEntity) {
+            return new OpV();
+        }
+    }
+
+    public static class MAX extends HEHydroTurbineTileEntity {
+
+        private static final int tierId = 15;
+
+        public MAX() {
+            super(tierId);
+        }
+
+        public MAX(int id) {
+            super(id, tierId);
+        }
+
+        @Override
+        protected int getTier() {
+            return tierId;
+        }
+
+        @Override
+        public IMetaTileEntity newMetaEntity(IGregTechTileEntity tileEntity) {
+            return new MAX();
         }
     }
 

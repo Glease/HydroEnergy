@@ -75,6 +75,26 @@ public class HEHooksShared {
 		HE.hydroTurbineBlocks[4] = new HEHydroTurbineTileEntity.EV(HEConfig.blockIdOffset + 17).getStackForm(1L);
 		HE.hydroPumpBlocks[5] = new HEHydroPumpTileEntity.IV(HEConfig.blockIdOffset + 1).getStackForm(1L);
 		HE.hydroTurbineBlocks[5] = new HEHydroTurbineTileEntity.IV(HEConfig.blockIdOffset + 17).getStackForm(1L);
+		HE.hydroPumpBlocks[6] = new HEHydroPumpTileEntity.LuV(HEConfig.blockIdOffset + 1).getStackForm(1L);
+		HE.hydroTurbineBlocks[6] = new HEHydroTurbineTileEntity.LuV(HEConfig.blockIdOffset + 17).getStackForm(1L);
+		HE.hydroPumpBlocks[7] = new HEHydroPumpTileEntity.ZPM(HEConfig.blockIdOffset + 1).getStackForm(1L);
+		HE.hydroTurbineBlocks[7] = new HEHydroTurbineTileEntity.ZPM(HEConfig.blockIdOffset + 17).getStackForm(1L);
+		HE.hydroPumpBlocks[8] = new HEHydroPumpTileEntity.UV(HEConfig.blockIdOffset + 1).getStackForm(1L);
+		HE.hydroTurbineBlocks[8] = new HEHydroTurbineTileEntity.UV(HEConfig.blockIdOffset + 17).getStackForm(1L);
+		HE.hydroPumpBlocks[9] = new HEHydroPumpTileEntity.UHV(HEConfig.blockIdOffset + 1).getStackForm(1L);
+		HE.hydroTurbineBlocks[9] = new HEHydroTurbineTileEntity.UHV(HEConfig.blockIdOffset + 17).getStackForm(1L);
+		HE.hydroPumpBlocks[10] = new HEHydroPumpTileEntity.UEV(HEConfig.blockIdOffset + 1).getStackForm(1L);
+		HE.hydroTurbineBlocks[10] = new HEHydroTurbineTileEntity.UEV(HEConfig.blockIdOffset + 17).getStackForm(1L);
+		HE.hydroPumpBlocks[11] = new HEHydroPumpTileEntity.UIV(HEConfig.blockIdOffset + 1).getStackForm(1L);
+		HE.hydroTurbineBlocks[11] = new HEHydroTurbineTileEntity.UIV(HEConfig.blockIdOffset + 17).getStackForm(1L);
+		HE.hydroPumpBlocks[12] = new HEHydroPumpTileEntity.UMV(HEConfig.blockIdOffset + 1).getStackForm(1L);
+		HE.hydroTurbineBlocks[12] = new HEHydroTurbineTileEntity.UMV(HEConfig.blockIdOffset + 17).getStackForm(1L);
+		HE.hydroPumpBlocks[13] = new HEHydroPumpTileEntity.UXV(HEConfig.blockIdOffset + 1).getStackForm(1L);
+		HE.hydroTurbineBlocks[13] = new HEHydroTurbineTileEntity.UXV(HEConfig.blockIdOffset + 17).getStackForm(1L);
+		HE.hydroPumpBlocks[14] = new HEHydroPumpTileEntity.OpV(HEConfig.blockIdOffset + 1).getStackForm(1L);
+		HE.hydroTurbineBlocks[14] = new HEHydroTurbineTileEntity.OpV(HEConfig.blockIdOffset + 17).getStackForm(1L);
+		HE.hydroPumpBlocks[15] = new HEHydroPumpTileEntity.MAX(HEConfig.blockIdOffset + 1).getStackForm(1L);
+		HE.hydroTurbineBlocks[15] = new HEHydroTurbineTileEntity.MAX(HEConfig.blockIdOffset + 17).getStackForm(1L);
 
 		// Hide blocks in NEI if not enabled
 		for(int tierId=0;tierId<HEConfig.enabledTiers.length;tierId++) {
