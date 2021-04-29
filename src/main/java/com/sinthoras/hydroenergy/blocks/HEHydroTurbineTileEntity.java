@@ -423,21 +423,21 @@ public abstract class HEHydroTurbineTileEntity extends HETieredTileEntity implem
         if(side == facing) {
             if(isActive) {
                 return new ITexture[] {
-                        Textures.BlockIcons.getCasingTextureForId(blockTextureIndex),
+                        Textures.BlockIcons.casingTexturePages[blockTextureIndex >> 6][blockTextureIndex & 0x3f],
                         new TT_RenderedExtendedFacingTexture(textureScreenTurbineON),
                         new TT_RenderedExtendedFacingTexture(textureScreenArrowDownAnimated)
                 };
             }
             else {
                 return new ITexture[] {
-                        Textures.BlockIcons.getCasingTextureForId(blockTextureIndex),
+                        Textures.BlockIcons.casingTexturePages[blockTextureIndex >> 6][blockTextureIndex & 0x3f],
                         new TT_RenderedExtendedFacingTexture(textureScreenTurbineOFF)
                 };
             }
         }
         else {
             return new ITexture[] {
-                    Textures.BlockIcons.getCasingTextureForId(blockTextureIndex)
+                    Textures.BlockIcons.casingTexturePages[blockTextureIndex >> 6][blockTextureIndex & 0x3f]
             };
         }
     }

@@ -425,21 +425,21 @@ public abstract class HEHydroPumpTileEntity extends HETieredTileEntity {
         if(side == facing) {
             if(isActive) {
                 return new ITexture[] {
-                        Textures.BlockIcons.getCasingTextureForId(blockTextureIndex),
+                        Textures.BlockIcons.casingTexturePages[blockTextureIndex >> 6][blockTextureIndex & 0x3f],
                         new TT_RenderedExtendedFacingTexture(textureScreenPumpON),
                         new TT_RenderedExtendedFacingTexture(textureScreenArrowUpAnimated)
                 };
             }
             else {
                 return new ITexture[] {
-                        Textures.BlockIcons.getCasingTextureForId(blockTextureIndex),
+                        Textures.BlockIcons.casingTexturePages[blockTextureIndex >> 6][blockTextureIndex & 0x3f],
                         new TT_RenderedExtendedFacingTexture(textureScreenPumpOFF)
                 };
             }
         }
         else {
             return new ITexture[] {
-                    Textures.BlockIcons.getCasingTextureForId(blockTextureIndex)
+                    Textures.BlockIcons.casingTexturePages[blockTextureIndex >> 6][blockTextureIndex & 0x3f]
             };
         }
     }
