@@ -194,17 +194,23 @@ public abstract class HEHydroPumpTileEntity extends HETieredTileEntity {
     public ITexture[] getTexture(IGregTechTileEntity baseMetaTileEntity, byte side, byte facing, byte colorIndex, boolean isActive, boolean hasRedstoneSignal) {
         if(side == facing) {
             if(isActive) {
-                return new ITexture[]{Textures.BlockIcons.getCasingTextureForId(blockTextureIndex),
+                return new ITexture[] {
+                        Textures.BlockIcons.getCasingTextureForId(blockTextureIndex),
                         new TT_RenderedExtendedFacingTexture(textureScreenPumpON),
-                        new TT_RenderedExtendedFacingTexture(textureScreenArrowUpAnimated)};
+                        new TT_RenderedExtendedFacingTexture(textureScreenArrowUpAnimated)
+                };
             }
             else {
-                return new ITexture[]{Textures.BlockIcons.getCasingTextureForId(blockTextureIndex),
-                        new TT_RenderedExtendedFacingTexture(textureScreenPumpOFF)};
+                return new ITexture[] {
+                        Textures.BlockIcons.getCasingTextureForId(blockTextureIndex),
+                        new TT_RenderedExtendedFacingTexture(textureScreenPumpOFF)
+                };
             }
         }
         else {
-            return new ITexture[]{Textures.BlockIcons.getCasingTextureForId(blockTextureIndex)};
+            return new ITexture[] {
+                    Textures.BlockIcons.getCasingTextureForId(blockTextureIndex)
+            };
         }
     }
 

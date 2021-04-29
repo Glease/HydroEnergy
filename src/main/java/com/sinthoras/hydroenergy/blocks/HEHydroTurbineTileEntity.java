@@ -192,17 +192,23 @@ public abstract class HEHydroTurbineTileEntity extends HETieredTileEntity implem
     public ITexture[] getTexture(IGregTechTileEntity baseMetaTileEntity, byte side, byte facing, byte colorIndex, boolean isActive, boolean hasRedstoneSignal) {
         if(side == facing) {
             if(isActive) {
-                return new ITexture[]{Textures.BlockIcons.getCasingTextureForId(blockTextureIndex),
+                return new ITexture[] {
+                        Textures.BlockIcons.getCasingTextureForId(blockTextureIndex),
                         new TT_RenderedExtendedFacingTexture(textureScreenTurbineON),
-                        new TT_RenderedExtendedFacingTexture(textureScreenArrowDownAnimated)};
+                        new TT_RenderedExtendedFacingTexture(textureScreenArrowDownAnimated)
+                };
             }
             else {
-                return new ITexture[]{Textures.BlockIcons.getCasingTextureForId(blockTextureIndex),
-                        new TT_RenderedExtendedFacingTexture(textureScreenTurbineOFF)};
+                return new ITexture[] {
+                        Textures.BlockIcons.getCasingTextureForId(blockTextureIndex),
+                        new TT_RenderedExtendedFacingTexture(textureScreenTurbineOFF)
+                };
             }
         }
         else {
-            return new ITexture[]{Textures.BlockIcons.getCasingTextureForId(blockTextureIndex)};
+            return new ITexture[] {
+                    Textures.BlockIcons.getCasingTextureForId(blockTextureIndex)
+            };
         }
     }
 
