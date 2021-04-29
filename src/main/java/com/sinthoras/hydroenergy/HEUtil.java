@@ -1,5 +1,7 @@
 package com.sinthoras.hydroenergy;
 
+import gregtech.api.enums.GT_Values;
+
 public class HEUtil {
 	
 	public static int coordBlockToChunk(int blockCoord) {
@@ -28,6 +30,16 @@ public class HEUtil {
 
 	public static short chunkYToFlag(int chunkY) {
 		return (short)(1 << chunkY);
+	}
+
+	public static int voltageNameToTierId(String voltageName) {
+		voltageName.toLowerCase();
+		for(int tierId=0;tierId<GT_Values.VN.length;tierId++){
+			if(GT_Values.VN[tierId].toLowerCase().equals(voltageName)) {
+				return tierId;
+			}
+		}
+		return -1;
 	}
 
 	public static class AveragedRingBuffer {

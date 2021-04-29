@@ -203,6 +203,7 @@ public class HEServer extends WorldSavedData {
 			message.limitsUp[waterId] = dams[waterId].limitUp;
 			message.limitsSouth[waterId] = dams[waterId].limitSouth;
 		}
+		message.enabledTiers = HEConfig.enabledTiers;
 		HE.network.sendTo(message, (EntityPlayerMP) event.player);
 		HE.debug("Sent synchronize packet to player " + event.player.getDisplayName());
 	}

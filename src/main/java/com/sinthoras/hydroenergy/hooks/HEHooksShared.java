@@ -6,9 +6,7 @@ import com.sinthoras.hydroenergy.HETags;
 import com.sinthoras.hydroenergy.blocks.*;
 import com.sinthoras.hydroenergy.config.HEConfig;
 import com.sinthoras.hydroenergy.network.packet.*;
-import com.sinthoras.hydroenergy.recipes.CraftingRecipeLoader;
-import com.sinthoras.hydroenergy.recipes.Hydro_ItemList;
-import com.sinthoras.hydroenergy.recipes.MachineRecipeLoader;
+import com.sinthoras.hydroenergy.blocks.HEBlockRecipes;
 import com.sinthoras.hydroenergy.server.commands.HECommandDebug;
 import com.sinthoras.hydroenergy.server.commands.HECommandListControllers;
 import com.sinthoras.hydroenergy.server.commands.HECommandSetWater;
@@ -64,29 +62,29 @@ public class HEHooksShared {
 		FMLCommonHandler.instance().bus().register(new HEHooksFML());
 		MinecraftForge.EVENT_BUS.register(new HEHooksEVENT_BUS());
 
-		Hydro_ItemList.HydroDam.set(new HEHydroDamTileEntity(HEConfig.blockIdOffset, "he_dam", "Hydro Dam").getStackForm(1L));
-		for(String tier : HEConfig.enabledTiers) {
-			switch(tier) {
-				case "lv":
-					Hydro_ItemList.Hydro_Pump_LV.set(new HEHydroPumpTileEntity.LV(HEConfig.blockIdOffset + 1).getStackForm(1L));
-					Hydro_ItemList.Hydro_Dynamo_LV.set(new HEHydroTurbineTileEntity.LV(HEConfig.blockIdOffset + 17).getStackForm(1L));
-					break;
-				case "mv":
-					Hydro_ItemList.Hydro_Pump_MV.set(new HEHydroPumpTileEntity.MV(HEConfig.blockIdOffset + 1).getStackForm(1L));
-					Hydro_ItemList.Hydro_Dynamo_MV.set(new HEHydroTurbineTileEntity.MV(HEConfig.blockIdOffset + 17).getStackForm(1L));
-					break;
-				case "hv":
-					Hydro_ItemList.Hydro_Pump_HV.set(new HEHydroPumpTileEntity.HV(HEConfig.blockIdOffset + 1).getStackForm(1L));
-					Hydro_ItemList.Hydro_Dynamo_HV.set(new HEHydroTurbineTileEntity.HV(HEConfig.blockIdOffset + 17).getStackForm(1L));
-					break;
-				case "ev":
-					Hydro_ItemList.Hydro_Pump_EV.set(new HEHydroPumpTileEntity.EV(HEConfig.blockIdOffset + 1).getStackForm(1L));
-					Hydro_ItemList.Hydro_Dynamo_EV.set(new HEHydroTurbineTileEntity.EV(HEConfig.blockIdOffset + 17).getStackForm(1L));
-					break;
-				case "iv":
-					Hydro_ItemList.Hydro_Pump_IV.set(new HEHydroPumpTileEntity.IV(HEConfig.blockIdOffset + 1).getStackForm(1L));
-					Hydro_ItemList.Hydro_Dynamo_IV.set(new HEHydroTurbineTileEntity.IV(HEConfig.blockIdOffset + 17).getStackForm(1L));
-					break;
+		HE.hydroDamControllerBlock = new HEHydroDamTileEntity(HEConfig.blockIdOffset, "he_dam", "Hydro Dam").getStackForm(1L);
+
+		// Instantiate all variants in case a server has a different configuration the block is still available
+		HE.hydroPumpBlocks[1] = new HEHydroPumpTileEntity.LV(HEConfig.blockIdOffset + 1).getStackForm(1L);
+		HE.hydroTurbineBlocks[1] = new HEHydroTurbineTileEntity.LV(HEConfig.blockIdOffset + 17).getStackForm(1L);
+		HE.hydroPumpBlocks[2] = new HEHydroPumpTileEntity.MV(HEConfig.blockIdOffset + 1).getStackForm(1L);
+		HE.hydroTurbineBlocks[2] = new HEHydroTurbineTileEntity.MV(HEConfig.blockIdOffset + 17).getStackForm(1L);
+		HE.hydroPumpBlocks[3] = new HEHydroPumpTileEntity.HV(HEConfig.blockIdOffset + 1).getStackForm(1L);
+		HE.hydroTurbineBlocks[3] = new HEHydroTurbineTileEntity.HV(HEConfig.blockIdOffset + 17).getStackForm(1L);
+		HE.hydroPumpBlocks[4] = new HEHydroPumpTileEntity.EV(HEConfig.blockIdOffset + 1).getStackForm(1L);
+		HE.hydroTurbineBlocks[4] = new HEHydroTurbineTileEntity.EV(HEConfig.blockIdOffset + 17).getStackForm(1L);
+		HE.hydroPumpBlocks[5] = new HEHydroPumpTileEntity.IV(HEConfig.blockIdOffset + 1).getStackForm(1L);
+		HE.hydroTurbineBlocks[5] = new HEHydroTurbineTileEntity.IV(HEConfig.blockIdOffset + 17).getStackForm(1L);
+
+		// Hide blocks in NEI if not enabled
+		for(int tierId=0;tierId<HEConfig.enabledTiers.length;tierId++) {
+			if(HEConfig.enabledTiers[tierId] == false) {
+				if (HE.hydroPumpBlocks[tierId] != null) {
+					API.hideItem(HE.hydroPumpBlocks[tierId]);
+				}
+				if (HE.hydroTurbineBlocks[tierId] != null) {
+					API.hideItem(HE.hydroTurbineBlocks[tierId]);
+				}
 			}
 		}
 	}
@@ -94,8 +92,7 @@ public class HEHooksShared {
 	// postInit "Handle interaction with other mods, complete your setup based on this."
 	public void fmlLifeCycleEvent(FMLPostInitializationEvent event) {
 		NetworkRegistry.INSTANCE.registerGuiHandler(HETags.MODID, HE.guiHandler);
-		new CraftingRecipeLoader().run();
-		new MachineRecipeLoader().run();
+		HEBlockRecipes.registerRecipes();
 	}
 	
 	public void fmlLifeCycleEvent(FMLServerAboutToStartEvent event) {

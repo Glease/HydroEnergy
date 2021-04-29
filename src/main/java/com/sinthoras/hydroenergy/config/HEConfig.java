@@ -1,5 +1,7 @@
 package com.sinthoras.hydroenergy.config;
 
+import com.sinthoras.hydroenergy.HEUtil;
+import gregtech.api.enums.GT_Values;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
 
@@ -54,7 +56,7 @@ public class HEConfig {
     public static float pressureIncreasePerTier = Defaults.pressureIncreasePerTier;
     public static float milliBucketPerEU = Defaults.milliBucketPerEU;
     public static float euPerMilliBucket = 1.0f / Defaults.milliBucketPerEU;
-    public static String[] enabledTiers = Defaults.enabledTiers;
+    public static boolean[] enabledTiers = new boolean[GT_Values.VN.length];
 
     public static void syncronizeConfiguration(java.io.File configurationFile) {
         Configuration configuration = new Configuration(configurationFile);
@@ -157,9 +159,12 @@ public class HEConfig {
 
         Property enabledTiersProperty = configuration.get(Categories.energyBalance, "enabledTiers", Defaults.enabledTiers,
                 "[SERVER] A list of all tiers that should have a Hydro Pump and Hydro Turbine generated.");
-        enabledTiers = enabledTiersProperty.getStringList();
-        for(int i=0;i<enabledTiers.length;i++) {
-            enabledTiers[i] = enabledTiers[i].toLowerCase();
+        String[] enableTierNames = enabledTiersProperty.getStringList();
+        for(int i=0;i<enableTierNames.length;i++) {
+            final int tierId = HEUtil.voltageNameToTierId(enableTierNames[i]);
+            if(tierId != -1) {
+                enabledTiers[tierId] = true;
+            }
         }
 
         if(configuration.hasChanged()) {
