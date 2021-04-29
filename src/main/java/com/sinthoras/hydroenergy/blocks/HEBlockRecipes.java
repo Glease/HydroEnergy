@@ -45,11 +45,11 @@ public class HEBlockRecipes {
                 ItemList.Electric_Motor_UV,
                 ItemList.Electric_Motor_UHV,
                 ItemList.Electric_Motor_UEV,
-                null,                       // UIV
-                null,                       // UMV
-                null,                       // UXV
-                null,                       // OpV
-                null                        // MAX
+                ItemList.Electric_Motor_UEV,// UIV
+                ItemList.Electric_Motor_UEV,// UMV
+                ItemList.Electric_Motor_UEV,// UXV
+                ItemList.Electric_Motor_UEV,// OpV
+                ItemList.Electric_Motor_UEV // MAX
         };
         IItemContainer[] pumps = {
                 null,                       // ULV,
@@ -63,11 +63,11 @@ public class HEBlockRecipes {
                 ItemList.Electric_Pump_UV,
                 ItemList.Electric_Pump_UHV,
                 ItemList.Electric_Pump_UEV,
-                null,                       // UIV
-                null,                       // UMV
-                null,                       // UXV
-                null,                       // OpV
-                null                        // MAX
+                ItemList.Electric_Pump_UEV, // UIV
+                ItemList.Electric_Pump_UEV, // UMV
+                ItemList.Electric_Pump_UEV, // UXV
+                ItemList.Electric_Pump_UEV, // OpV
+                ItemList.Electric_Pump_UEV, // MAX
         };
         Materials[] rotorMaterialsPerVoltage = {
                 null,                       // ULV,
@@ -76,16 +76,16 @@ public class HEBlockRecipes {
                 Materials.StainlessSteel,   // HV
                 Materials.Titanium,         // EV
                 Materials.TungstenSteel,    // IV
-                Materials.Palladium,        // LuV
+                Materials.TungstenSteel,    // LuV
                 Materials.Iridium,          // ZPM
                 Materials.Osmium,           // UV
                 Materials.Neutronium,       // UHV
-                Materials.Bedrockium,       // UEV
-                Materials.BlackPlutonium,   // UIV
-                Materials.Draconium,        // UMV
-                null,                       // UXV
-                null,                       // OpV
-                null                        // MAX
+                Materials.Neutronium,       // UEV
+                Materials.Neutronium,       // UIV
+                Materials.Neutronium,       // UMV
+                Materials.Neutronium,       // UXV
+                Materials.Neutronium,       // OpV
+                Materials.Neutronium,       // MAX
         };
         Materials[] cableMaterialsPerVoltage = {
                 null,                       // ULV,
@@ -97,13 +97,13 @@ public class HEBlockRecipes {
                 Materials.VanadiumGallium,  // LuV
                 Materials.Naquadah,         // ZPM
                 Materials.NaquadahAlloy,    // UV
-                Materials.SuperconductorUV, // UHV
-                Materials.Draconium,        // UEV
-                Materials.NetherStar,       // UIV
-                Materials.Quantium,         // UMV
-                null,                       // UXV
-                null,                       // OpV
-                null                        // MAX
+                Materials.NaquadahAlloy,    // UHV
+                Materials.NaquadahAlloy,    // UEV
+                Materials.NaquadahAlloy,    // UIV
+                Materials.NaquadahAlloy,    // UMV
+                Materials.NaquadahAlloy,    // UXV
+                Materials.NaquadahAlloy,    // OpV
+                Materials.NaquadahAlloy,    // MAX
         };
 
         for (Materials material : Materials.values()) {
