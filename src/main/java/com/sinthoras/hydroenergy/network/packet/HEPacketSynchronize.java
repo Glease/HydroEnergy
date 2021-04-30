@@ -22,6 +22,7 @@ public class HEPacketSynchronize implements IMessage {
 	public int[] limitsEast = new int[HEConfig.maxDams];
 	public int[] limitsUp = new int[HEConfig.maxDams];
 	public int[] limitsSouth = new int[HEConfig.maxDams];
+	public boolean[] enabledTiers;
 
 	@Override
 	public void fromBytes(ByteBuf buf) {
@@ -50,6 +51,11 @@ public class HEPacketSynchronize implements IMessage {
 			limitsUp[waterId] = buf.readInt();
 			limitsSouth[waterId] = buf.readInt();
 		}
+		final int enabledTiersLength = buf.readInt();
+		enabledTiers = new boolean[enabledTiersLength];
+		for(int tierId=0;tierId<enabledTiersLength;tierId++) {
+			enabledTiers[tierId] = buf.readBoolean();
+		}
 		HEConfig.clippingOffset = buf.readFloat();
 	}
 
@@ -69,6 +75,10 @@ public class HEPacketSynchronize implements IMessage {
 			buf.writeInt(limitsUp[waterId]);
 			buf.writeInt(limitsSouth[waterId]);
 		}
+		buf.writeInt(enabledTiers.length);
+		for(int tierId=0;tierId<enabledTiers.length;tierId++) {
+			buf.writeBoolean(enabledTiers[tierId]);
+		}
 		buf.writeFloat(HEConfig.clippingOffset);
 	}
 
@@ -86,7 +96,8 @@ public class HEPacketSynchronize implements IMessage {
 					message.limitsNorth,
 					message.limitsEast,
 					message.limitsUp,
-					message.limitsSouth);
+					message.limitsSouth,
+					message.enabledTiers);
 			return null;
 		}
 	}
