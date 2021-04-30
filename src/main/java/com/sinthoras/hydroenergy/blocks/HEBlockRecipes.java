@@ -138,7 +138,7 @@ public class HEBlockRecipes {
                                 material.getMolten(144L * multiplier / 2L),
                                 HE.hydroPumpBlocks[tierId],
                                 200,
-                                30);
+                                (int)(GT_Values.V[tierId] >> 2));
 
                         GT_Values.RA.addAssemblerRecipe(new ItemStack[]{
                                         hulls[tierId].get(1L),
@@ -151,7 +151,7 @@ public class HEBlockRecipes {
                                 material.getMolten(144L * multiplier / 2L),
                                 HE.hydroTurbineBlocks[tierId],
                                 200,
-                                30);
+                                (int)(GT_Values.V[tierId] >> 2));
                     }
                 }
             }
