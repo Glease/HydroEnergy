@@ -88,7 +88,10 @@ dependencies {
         setChanging(true)
     }
     compile files('libs/TecTech-1.7.10-4.10.4-d35bc08e.jar')
-    runtime("eu.usrv:YAMCore:${minecraftVersion}-${yamcoreVersion}:deobf");
+    compileOnly files('compile_only_libs/MyTown2-1.7.10-0.5.1GTNH.jar')
+    compileOnly files('compile_only_libs/MyPermissions-1.7.10-67GTNH.jar')
+    compileOnly files('compile_only_libs/MyEssentials-Core-1.7.10-1.19GTNH-universal.jar')
+    runtime("eu.usrv:YAMCore:${minecraftVersion}-${yamcoreVersion}:deobf")
 }
 
 jar {

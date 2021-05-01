@@ -135,6 +135,236 @@ public abstract class HEHydroPumpTileEntity extends HETieredTileEntity {
         }
     }
 
+    public static class LuV extends HEHydroPumpTileEntity {
+
+        private static final int tierId = 6;
+
+        public LuV() {
+            super(tierId);
+        }
+
+        public LuV(int id) {
+            super(id, tierId);
+        }
+
+        @Override
+        protected int getTier() {
+            return tierId;
+        }
+
+        @Override
+        public IMetaTileEntity newMetaEntity(IGregTechTileEntity tileEntity) {
+            return new LuV();
+        }
+    }
+
+    public static class ZPM extends HEHydroPumpTileEntity {
+
+        private static final int tierId = 7;
+
+        public ZPM() {
+            super(tierId);
+        }
+
+        public ZPM(int id) {
+            super(id, tierId);
+        }
+
+        @Override
+        protected int getTier() {
+            return tierId;
+        }
+
+        @Override
+        public IMetaTileEntity newMetaEntity(IGregTechTileEntity tileEntity) {
+            return new ZPM();
+        }
+    }
+
+    public static class UV extends HEHydroPumpTileEntity {
+
+        private static final int tierId = 8;
+
+        public UV() {
+            super(tierId);
+        }
+
+        public UV(int id) {
+            super(id, tierId);
+        }
+
+        @Override
+        protected int getTier() {
+            return tierId;
+        }
+
+        @Override
+        public IMetaTileEntity newMetaEntity(IGregTechTileEntity tileEntity) {
+            return new UV();
+        }
+    }
+
+    public static class UHV extends HEHydroPumpTileEntity {
+
+        private static final int tierId = 9;
+
+        public UHV() {
+            super(tierId);
+        }
+
+        public UHV(int id) {
+            super(id, tierId);
+        }
+
+        @Override
+        protected int getTier() {
+            return tierId;
+        }
+
+        @Override
+        public IMetaTileEntity newMetaEntity(IGregTechTileEntity tileEntity) {
+            return new UHV();
+        }
+    }
+
+    public static class UEV extends HEHydroPumpTileEntity {
+
+        private static final int tierId = 10;
+
+        public UEV() {
+            super(tierId);
+        }
+
+        public UEV(int id) {
+            super(id, tierId);
+        }
+
+        @Override
+        protected int getTier() {
+            return tierId;
+        }
+
+        @Override
+        public IMetaTileEntity newMetaEntity(IGregTechTileEntity tileEntity) {
+            return new UEV();
+        }
+    }
+
+    public static class UIV extends HEHydroPumpTileEntity {
+
+        private static final int tierId = 11;
+
+        public UIV() {
+            super(tierId);
+        }
+
+        public UIV(int id) {
+            super(id, tierId);
+        }
+
+        @Override
+        protected int getTier() {
+            return tierId;
+        }
+
+        @Override
+        public IMetaTileEntity newMetaEntity(IGregTechTileEntity tileEntity) {
+            return new UIV();
+        }
+    }
+
+    public static class UMV extends HEHydroPumpTileEntity {
+
+        private static final int tierId = 12;
+
+        public UMV() {
+            super(tierId);
+        }
+
+        public UMV(int id) {
+            super(id, tierId);
+        }
+
+        @Override
+        protected int getTier() {
+            return tierId;
+        }
+
+        @Override
+        public IMetaTileEntity newMetaEntity(IGregTechTileEntity tileEntity) {
+            return new UMV();
+        }
+    }
+
+    public static class UXV extends HEHydroPumpTileEntity {
+
+        private static final int tierId = 13;
+
+        public UXV() {
+            super(tierId);
+        }
+
+        public UXV(int id) {
+            super(id, tierId);
+        }
+
+        @Override
+        protected int getTier() {
+            return tierId;
+        }
+
+        @Override
+        public IMetaTileEntity newMetaEntity(IGregTechTileEntity tileEntity) {
+            return new UXV();
+        }
+    }
+
+    public static class OpV extends HEHydroPumpTileEntity {
+
+        private static final int tierId = 14;
+
+        public OpV() {
+            super(tierId);
+        }
+
+        public OpV(int id) {
+            super(id, tierId);
+        }
+
+        @Override
+        protected int getTier() {
+            return tierId;
+        }
+
+        @Override
+        public IMetaTileEntity newMetaEntity(IGregTechTileEntity tileEntity) {
+            return new OpV();
+        }
+    }
+
+    public static class MAX extends HEHydroPumpTileEntity {
+
+        private static final int tierId = 15;
+
+        public MAX() {
+            super(tierId);
+        }
+
+        public MAX(int id) {
+            super(id, tierId);
+        }
+
+        @Override
+        protected int getTier() {
+            return tierId;
+        }
+
+        @Override
+        public IMetaTileEntity newMetaEntity(IGregTechTileEntity tileEntity) {
+            return new MAX();
+        }
+    }
+
     private static Textures.BlockIcons.CustomIcon textureScreenPumpON;
     private static Textures.BlockIcons.CustomIcon textureScreenPumpOFF;
     private static Textures.BlockIcons.CustomIcon textureScreenArrowUpAnimated;
@@ -194,17 +424,23 @@ public abstract class HEHydroPumpTileEntity extends HETieredTileEntity {
     public ITexture[] getTexture(IGregTechTileEntity baseMetaTileEntity, byte side, byte facing, byte colorIndex, boolean isActive, boolean hasRedstoneSignal) {
         if(side == facing) {
             if(isActive) {
-                return new ITexture[]{Textures.BlockIcons.getCasingTextureForId(blockTextureIndex),
+                return new ITexture[] {
+                        Textures.BlockIcons.casingTexturePages[blockTextureIndex >> 6][blockTextureIndex & 0x3f],
                         new TT_RenderedExtendedFacingTexture(textureScreenPumpON),
-                        new TT_RenderedExtendedFacingTexture(textureScreenArrowUpAnimated)};
+                        new TT_RenderedExtendedFacingTexture(textureScreenArrowUpAnimated)
+                };
             }
             else {
-                return new ITexture[]{Textures.BlockIcons.getCasingTextureForId(blockTextureIndex),
-                        new TT_RenderedExtendedFacingTexture(textureScreenPumpOFF)};
+                return new ITexture[] {
+                        Textures.BlockIcons.casingTexturePages[blockTextureIndex >> 6][blockTextureIndex & 0x3f],
+                        new TT_RenderedExtendedFacingTexture(textureScreenPumpOFF)
+                };
             }
         }
         else {
-            return new ITexture[]{Textures.BlockIcons.getCasingTextureForId(blockTextureIndex)};
+            return new ITexture[] {
+                    Textures.BlockIcons.casingTexturePages[blockTextureIndex >> 6][blockTextureIndex & 0x3f]
+            };
         }
     }
 

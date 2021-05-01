@@ -30,10 +30,11 @@ public class HEDam {
 	private int waterBlockX;
 	private int waterBlockY;
 	private int waterBlockZ;
+	private String ownerName;
 
-	private int waterId;
+	private final int waterId;
+	private final long[] euCapacityUpToY = new long[256];
 	private long timestampLastUpdate = 0;
-	private long[] euCapacityUpToY = new long[256];
 
 
 	public HEDam(int waterId) {
@@ -58,6 +59,7 @@ public class HEDam {
 		waterBlockX = compound.getInteger(HETags.waterBlockX);
 		waterBlockY = compound.getInteger(HETags.waterBlockY);
 		waterBlockZ = compound.getInteger(HETags.waterBlockZ);
+		ownerName = compound.getString(HETags.ownerName);
 
 		if(!isPlaced || drainState) {
 			mode = HE.DamMode.DRAIN;
@@ -85,6 +87,7 @@ public class HEDam {
 		compound.setInteger(HETags.waterBlockX, waterBlockX);
 		compound.setInteger(HETags.waterBlockY, waterBlockY);
 		compound.setInteger(HETags.waterBlockZ, waterBlockZ);
+		compound.setString(HETags.ownerName, ownerName);
 	}
 
 	public void setMode(HE.DamMode mode) {
@@ -204,7 +207,7 @@ public class HEDam {
 		sendConfigUpdate();
 	}
 	
-	public void placeController(int dimensionId, int blockX, int blockY, int blockZ,
+	public void placeController(String ownerName, int dimensionId, int blockX, int blockY, int blockZ,
 								int waterBlockX, int waterBlockY, int waterBlockZ) {
 		isPlaced = true;
 		mode = HE.DamMode.DRAIN;
@@ -223,6 +226,7 @@ public class HEDam {
 		this.waterBlockX = waterBlockX;
 		this.waterBlockY = waterBlockY;
 		this.waterBlockZ = waterBlockZ;
+		this.ownerName = ownerName;
 
 		sendConfigUpdate();
 	}
@@ -261,6 +265,10 @@ public class HEDam {
 
 	public int getBlockZ() {
 		return blockZ;
+	}
+
+	public String getOwnerName() {
+		return ownerName;
 	}
 
 	public boolean onConfigRequest(HE.DamMode mode, int limitWest, int limitDown, int limitNorth, int limitEast, int limitUp, int limitSouth) {

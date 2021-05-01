@@ -226,11 +226,15 @@ public class HEHydroDamTileEntity extends GT_MetaTileEntity_MultiblockBase_EM im
     @Override
     public ITexture[] getTexture(IGregTechTileEntity baseMetaTileEntity, byte side, byte facing, byte colorIndex, boolean isActive, boolean hasRedstoneSignal) {
         if(side == facing) {
-            return new ITexture[]{Textures.BlockIcons.getCasingTextureForId(steelTextureIndex),
-                    new TT_RenderedExtendedFacingTexture(Screen)};
+            return new ITexture[] {
+                    Textures.BlockIcons.getCasingTextureForId(steelTextureIndex),
+                    new TT_RenderedExtendedFacingTexture(Screen)
+            };
         }
         else {
-            return new ITexture[]{Textures.BlockIcons.getCasingTextureForId(steelTextureIndex)};
+            return new ITexture[] {
+                    Textures.BlockIcons.getCasingTextureForId(steelTextureIndex)
+            };
         }
     }
 
@@ -263,7 +267,8 @@ public class HEHydroDamTileEntity extends GT_MetaTileEntity_MultiblockBase_EM im
                 offsetX = 0;
                 offsetZ = -2;
             }
-            waterId = HEServer.instance.onPlacecontroller(getBaseMetaTileEntity().getWorld().provider.dimensionId,
+            waterId = HEServer.instance.onPlacecontroller(getBaseMetaTileEntity().getOwnerName(),
+                    getBaseMetaTileEntity().getWorld().provider.dimensionId,
                     getBaseMetaTileEntity().getXCoord(),
                     getBaseMetaTileEntity().getYCoord(),
                     getBaseMetaTileEntity().getZCoord(),

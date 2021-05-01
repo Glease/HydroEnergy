@@ -31,6 +31,7 @@ public abstract class HETieredTileEntity extends GT_MetaTileEntity_MultiblockBas
 
     protected abstract int getTier();
 
+    // TODO: case 6, 7, 10, 12 - 15
     protected Block getCasingBlock() {
         switch(getTier()) {
             default:
@@ -40,10 +41,15 @@ public abstract class HETieredTileEntity extends GT_MetaTileEntity_MultiblockBas
             case 3:
             case 4:
             case 5:
+            case 8:
                 return GregTech_API.sBlockCasings4;
+            case 9:
+            case 11:
+                return GregTech_API.sBlockCasings8;
         }
     }
 
+    // TODO: case 6, 7, 10, 12 - 15
     protected int getCasingMeta() {
         switch(getTier()) {
             default:
@@ -54,7 +60,12 @@ public abstract class HETieredTileEntity extends GT_MetaTileEntity_MultiblockBas
             case 3:
                 return 1;
             case 4:
+            case 9:
                 return 2;
+            case 11:
+                return 3;
+            case 8:
+                return 14;
         }
     }
 

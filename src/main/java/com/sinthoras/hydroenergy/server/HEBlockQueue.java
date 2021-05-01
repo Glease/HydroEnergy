@@ -8,6 +8,7 @@ import com.sinthoras.hydroenergy.HEUtil;
 import com.sinthoras.hydroenergy.blocks.HEWater;
 import com.sinthoras.hydroenergy.config.HEConfig;
 import com.sinthoras.hydroenergy.network.packet.HEPacketChunkUpdate;
+import com.sinthoras.hydroenergy.server.mytown2.HEMyTown2Integration;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
@@ -21,8 +22,8 @@ import net.minecraft.world.chunk.storage.ExtendedBlockStorage;
 public class HEBlockQueue {
 	
 	private static HashMap<Long, HEQueueChunk> chunks = new HashMap<Long, HEQueueChunk>();
-
 	private static long timestampLastQueueTick = 0;
+
 	public static void onTick() {
 		final long currentTime = System.currentTimeMillis();
 		if(currentTime - timestampLastQueueTick < HEConfig.delayBetweenSpreadingChunks) {
@@ -36,11 +37,11 @@ public class HEBlockQueue {
 			final HEQueueChunk chunk = entry.getValue();
 			if(chunk.isLoaded()) {
 				it.remove();
+				final long key = entry.getKey();
+				final int chunkX = (int)(key >> 32);
+				final int chunkZ = (int)key;
 				if (chunk.resolve()) {
 					final World world = chunk.chunk.worldObj;
-					final long key = entry.getKey();
-					final int chunkX = (int)(key >> 32);
-					final int chunkZ = (int)key;
 					addToChunk(world, chunkX - 1, chunkZ, chunk.neighborChunkWest);
 					addToChunk(world, chunkX, chunkZ - 1, chunk.neighborChunkNorth);
 					addToChunk(world, chunkX + 1, chunkZ, chunk.neighborChunkEast);
@@ -98,14 +99,25 @@ class HEQueueChunk {
 	}
 
 	public boolean resolve() {
+		boolean[] permissionsChecked = new boolean[HEConfig.maxDams];
+		boolean[] hasPermissions = new boolean[HEConfig.maxDams];
 		ExtendedBlockStorage[] chunkStorage = chunk.getBlockStorageArray();
 		short subChunksHaveChanges = 0;
 		while(!blockStack.isEmpty()) {
 			QueueEntry entry = blockStack.pop();
 			int waterId = entry.waterBlock.getWaterId();
+			if(permissionsChecked[waterId] == false) {
+				hasPermissions[waterId] = HEMyTown2Integration.getInstance()
+						.hasPlayerModificationRightsForChunk(HEServer.instance.getOwnerName(waterId),
+								chunk.worldObj.provider.dimensionId,
+								chunk.xPosition,
+								chunk.zPosition);
+				permissionsChecked[waterId] = true;
+			}
 			Block block = chunk.getBlock(entry.blockX & 15, entry.blockY, entry.blockZ & 15);
 			boolean removeBlock = !HEServer.instance.canSpread(waterId)
-					|| HEServer.instance.isBlockOutOfBounds(waterId, entry.blockX, entry.blockY, entry.blockZ);
+					|| HEServer.instance.isBlockOutOfBounds(waterId, entry.blockX, entry.blockY, entry.blockZ)
+					|| !hasPermissions[waterId];
 			if(removeBlock) {
 				if(block == entry.waterBlock) {
 					int chunkY = entry.blockY >> 4;

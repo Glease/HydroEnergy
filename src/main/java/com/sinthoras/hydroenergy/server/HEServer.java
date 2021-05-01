@@ -78,11 +78,11 @@ public class HEServer extends WorldSavedData {
 		markDirty();
 	}
 	
-	public int onPlacecontroller(int dimensionId, int blockX, int blockY, int blockZ,
+	public int onPlacecontroller(String ownerName, int dimensionId, int blockX, int blockY, int blockZ,
 								 int waterBlockX, int waterBlockY, int waterBlockZ) {
 		for(int waterId = 0; waterId< HEConfig.maxDams; waterId++) {
 			if (!dams[waterId].isPlaced()) {
-				dams[waterId].placeController(dimensionId, blockX, blockY, blockZ, waterBlockX, waterBlockY, waterBlockZ);
+				dams[waterId].placeController(ownerName, dimensionId, blockX, blockY, blockZ, waterBlockX, waterBlockY, waterBlockZ);
 				markDirty();
 				return waterId;
 			}
@@ -253,5 +253,9 @@ public class HEServer extends WorldSavedData {
 
 	public int getRainedOnBlocks(int waterId) {
 		return dams[waterId].getRainedOnBlocks();
+	}
+
+	public String getOwnerName(int waterId) {
+		return dams[waterId].getOwnerName();
 	}
 }
