@@ -4,10 +4,12 @@ import java.util.*;
 
 import com.sinthoras.hydroenergy.HE;
 
+import com.sinthoras.hydroenergy.HETags;
 import com.sinthoras.hydroenergy.HEUtil;
 import com.sinthoras.hydroenergy.blocks.HEWater;
 import com.sinthoras.hydroenergy.config.HEConfig;
 import com.sinthoras.hydroenergy.network.packet.HEPacketChunkUpdate;
+import cpw.mods.fml.common.Loader;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
@@ -21,14 +23,33 @@ import net.minecraft.world.chunk.storage.ExtendedBlockStorage;
 public class HEBlockQueue {
 	
 	private static HashMap<Long, HEQueueChunk> chunks = new HashMap<Long, HEQueueChunk>();
-
+	private static IHEMyTown2 myTownIntegration;
 	private static long timestampLastQueueTick = 0;
+
+	public static void loadMyTown2Integration() {
+		if (Loader.isModLoaded(HETags.MyTown2_MODID))
+		{
+			try {
+				myTownIntegration = Class.forName("com.sinthoras.hydroenergy.server.HEMyTown2Implementation").asSubclass(IHEMyTown2.class).newInstance();
+			}
+			catch(Exception e) {
+				HE.warn("Could not initialize MyTown2 Integration!");
+				myTownIntegration = new HEMyTown2Dummy();
+			}
+		}
+		else {
+			myTownIntegration = new HEMyTown2Dummy();
+		}
+	}
+
 	public static void onTick() {
 		final long currentTime = System.currentTimeMillis();
 		if(currentTime - timestampLastQueueTick < HEConfig.delayBetweenSpreadingChunks) {
 			return;
 		}
 		timestampLastQueueTick = currentTime;
+
+		myTownIntegration.test();
 
 		Iterator<Map.Entry<Long, HEQueueChunk>> it = chunks.entrySet().iterator();
 		while(it.hasNext()) {
