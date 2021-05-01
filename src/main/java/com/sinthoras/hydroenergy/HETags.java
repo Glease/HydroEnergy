@@ -27,6 +27,7 @@ public class HETags {
     public static final String waterCapacity = "wCap";
     public static final String pressure = "pres";
     public static final String dam = "dam";
+    public static final String ownerName = "ownN";
     public static final String mainStructure = "main";
     public static final String MyTown2_MODID = "MyTown2";
 }

@@ -7,7 +7,6 @@ import com.sinthoras.hydroenergy.blocks.*;
 import com.sinthoras.hydroenergy.config.HEConfig;
 import com.sinthoras.hydroenergy.network.packet.*;
 import com.sinthoras.hydroenergy.blocks.HEBlockRecipes;
-import com.sinthoras.hydroenergy.server.HEBlockQueue;
 import com.sinthoras.hydroenergy.server.commands.HECommandDebug;
 import com.sinthoras.hydroenergy.server.commands.HECommandListControllers;
 import com.sinthoras.hydroenergy.server.commands.HECommandSetWater;
@@ -108,8 +107,6 @@ public class HEHooksShared {
 				}
 			}
 		}
-
-		HEBlockQueue.loadMyTown2Integration();
 	}
 	
 	// postInit "Handle interaction with other mods, complete your setup based on this."

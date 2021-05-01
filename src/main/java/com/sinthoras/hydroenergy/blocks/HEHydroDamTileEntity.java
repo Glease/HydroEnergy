@@ -267,7 +267,8 @@ public class HEHydroDamTileEntity extends GT_MetaTileEntity_MultiblockBase_EM im
                 offsetX = 0;
                 offsetZ = -2;
             }
-            waterId = HEServer.instance.onPlacecontroller(getBaseMetaTileEntity().getWorld().provider.dimensionId,
+            waterId = HEServer.instance.onPlacecontroller(getBaseMetaTileEntity().getOwnerName(),
+                    getBaseMetaTileEntity().getWorld().provider.dimensionId,
                     getBaseMetaTileEntity().getXCoord(),
                     getBaseMetaTileEntity().getYCoord(),
                     getBaseMetaTileEntity().getZCoord(),
