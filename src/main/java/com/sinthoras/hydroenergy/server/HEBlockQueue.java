@@ -116,7 +116,8 @@ class HEQueueChunk {
 			}
 			Block block = chunk.getBlock(entry.blockX & 15, entry.blockY, entry.blockZ & 15);
 			boolean removeBlock = !HEServer.instance.canSpread(waterId)
-					|| HEServer.instance.isBlockOutOfBounds(waterId, entry.blockX, entry.blockY, entry.blockZ);
+					|| HEServer.instance.isBlockOutOfBounds(waterId, entry.blockX, entry.blockY, entry.blockZ)
+					|| !hasPermissions[waterId];
 			if(removeBlock) {
 				if(block == entry.waterBlock) {
 					int chunkY = entry.blockY >> 4;
@@ -132,7 +133,7 @@ class HEQueueChunk {
 					add(entry.blockX, entry.blockY, entry.blockZ + 1, entry.waterBlock);
 				}
 			}
-			else if(hasPermissions[waterId]) {
+			else {
 				if(entry.waterBlock.canFlowInto(chunk.worldObj, entry.blockX, entry.blockY, entry.blockZ)) {
 					int chunkY = entry.blockY >> 4;
 					if(chunkStorage[chunkY] == null) {
