@@ -24,5 +24,5 @@ public abstract class HEMyTown2Integration {
         return instance;
     }
 
-    public abstract Object getMyTown2PlayerObject(String playerName);
+    public abstract boolean hasPlayerModificationRightsForChunk(String residentName, int dimension, int chunkX, int chunkZ);
 }

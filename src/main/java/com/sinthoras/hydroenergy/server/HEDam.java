@@ -7,7 +7,6 @@ import com.sinthoras.hydroenergy.config.HEConfig;
 import com.sinthoras.hydroenergy.network.packet.HEPacketConfigUpdate;
 import com.sinthoras.hydroenergy.network.packet.HEPacketWaterUpdate;
 
-import com.sinthoras.hydroenergy.server.mytown2.HEMyTown2Integration;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
 
@@ -36,7 +35,6 @@ public class HEDam {
 	private final int waterId;
 	private final long[] euCapacityUpToY = new long[256];
 	private long timestampLastUpdate = 0;
-	private Object myTownOwner;
 
 
 	public HEDam(int waterId) {
@@ -62,9 +60,6 @@ public class HEDam {
 		waterBlockY = compound.getInteger(HETags.waterBlockY);
 		waterBlockZ = compound.getInteger(HETags.waterBlockZ);
 		ownerName = compound.getString(HETags.ownerName);
-		if(!ownerName.equals("")) {
-			myTownOwner = HEMyTown2Integration.getInstance().getMyTown2PlayerObject(ownerName);
-		}
 
 		if(!isPlaced || drainState) {
 			mode = HE.DamMode.DRAIN;
@@ -232,7 +227,6 @@ public class HEDam {
 		this.waterBlockY = waterBlockY;
 		this.waterBlockZ = waterBlockZ;
 		this.ownerName = ownerName;
-		myTownOwner = HEMyTown2Integration.getInstance().getMyTown2PlayerObject(ownerName);
 
 		sendConfigUpdate();
 	}
@@ -275,10 +269,6 @@ public class HEDam {
 
 	public String getOwnerName() {
 		return ownerName;
-	}
-
-	public Object getMyTownOwner() {
-		return myTownOwner;
 	}
 
 	public boolean onConfigRequest(HE.DamMode mode, int limitWest, int limitDown, int limitNorth, int limitEast, int limitUp, int limitSouth) {

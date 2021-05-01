@@ -258,8 +258,4 @@ public class HEServer extends WorldSavedData {
 	public String getOwnerName(int waterId) {
 		return dams[waterId].getOwnerName();
 	}
-
-	public Object getMyTown2OwnerObject(int waterId) {
-		return dams[waterId].getMyTownOwner();
-	}
 }
