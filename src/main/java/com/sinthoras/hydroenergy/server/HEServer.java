@@ -90,13 +90,13 @@ public class HEServer extends WorldSavedData {
 		return -1;
 	}
 
-	public void onBlockRemoved(int waterId, int blockY) {
-		dams[waterId].onBlockRemoved(blockY);
+	public void onWaterRemoved(int waterId, int blockY) {
+		dams[waterId].onWaterRemoved(blockY);
 		markDirty();
 	}
 
-	public void onBlockPlaced(int waterId, int blockY) {
-		dams[waterId].onBlockPlaced(blockY);
+	public void onWaterPlaced(int waterId, int blockY) {
+		dams[waterId].onWaterPlaced(blockY);
 		markDirty();
 	}
 

@@ -122,7 +122,7 @@ class HEQueueChunk {
 				if(block == entry.waterBlock) {
 					int chunkY = entry.blockY >> 4;
 					chunkStorage[chunkY].func_150818_a(entry.blockX & 15, entry.blockY & 15, entry.blockZ & 15, Blocks.air);
-					HEServer.instance.onBlockRemoved(waterId, entry.blockY);
+					HEServer.instance.onWaterRemoved(waterId, entry.blockY);
 					subChunksHaveChanges |= HEUtil.chunkYToFlag(chunkY);
 
 					add(entry.blockX - 1, entry.blockY, entry.blockZ, entry.waterBlock);
@@ -159,7 +159,7 @@ class HEQueueChunk {
 						int lightValue = skylightArray.get(entry.blockZ & 15, highestOpaqueBlockY & 15, entry.blockX & 15);
 						skylightArray.set(entry.blockX & 15, entry.blockY & 15, entry.blockZ & 15, lightValue);
 					}
-					HEServer.instance.onBlockPlaced(waterId, entry.blockY);
+					HEServer.instance.onWaterPlaced(waterId, entry.blockY);
 					subChunksHaveChanges |= HEUtil.chunkYToFlag(chunkY);
 
 					add(entry.blockX - 1, entry.blockY, entry.blockZ, entry.waterBlock);
