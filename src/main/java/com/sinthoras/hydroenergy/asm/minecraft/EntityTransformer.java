@@ -5,6 +5,7 @@ import com.sinthoras.hydroenergy.asm.HEPlugin;
 import com.sinthoras.hydroenergy.asm.HEUtil;
 import net.minecraft.launchwrapper.IClassTransformer;
 import net.minecraft.launchwrapper.Launch;
+import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.tree.*;
 
 import java.util.List;
@@ -67,6 +68,10 @@ public class EntityTransformer implements IClassTransformer {
         targetMethod.instructions.insert(instructions.get(0), instructionToInsert);
         HEPlugin.info("Injected into " + MARKER_method + ":" + MARKER_method_DESC + " in " + fullClassName + ".");
 
-        return HEUtil.convertClassNodeToByteArray(classNode);
+        // Thermos is a magical creature. If i instruct the ClassWriter to COMPUTE_MAXS and COMPUTE_FRAMES it crashes.
+        // Otherwise: return HEUtil.convertClassNodeToByteArray(classNode);
+        ClassWriter classWriter = new ClassWriter(0);
+        classNode.accept(classWriter);
+        return classWriter.toByteArray();
     }
 }

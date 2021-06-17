@@ -30,7 +30,7 @@ public class HEDam {
 	private int waterBlockX;
 	private int waterBlockY;
 	private int waterBlockZ;
-	private String ownerName;
+	private String ownerName = "";
 
 	private final int waterId;
 	private final long[] euCapacityUpToY = new long[256];
@@ -231,11 +231,11 @@ public class HEDam {
 		sendConfigUpdate();
 	}
 
-	public void onBlockRemoved(int blockY) {
+	public void onWaterRemoved(int blockY) {
 		blocksPerY[blockY]--;
 	}
 
-	public void onBlockPlaced(int blockY) {
+	public void onWaterPlaced(int blockY) {
 		blocksPerY[blockY]++;
 	}
 	
@@ -249,10 +249,6 @@ public class HEDam {
 
 	public int getBlocksOnY(int blockY) {
 		return blocksPerY[blockY];
-	}
-
-	public void onWaterPlaced(int blockY) {
-		blocksPerY[blockY]++;
 	}
 
 	public int getBlockX() {
