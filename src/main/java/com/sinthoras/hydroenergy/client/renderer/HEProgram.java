@@ -60,7 +60,7 @@ public class HEProgram {
 
 
     public static void init() {
-        if(GLContext.getCapabilities().OpenGL32) {
+        if(GLContext.getCapabilities().OpenGL32 && !HEConfig.useLimitedRendering) {
             final String defines = "#version 330 core\n"
                     + "#define NUM_CONTROLLERS " + HEConfig.maxDams + "\n"
                     + "#define CLIPPING_OFFSET " + HEConfig.clippingOffset + "\n";

@@ -5,6 +5,7 @@ import com.sinthoras.hydroenergy.blocks.HEWater;
 import com.sinthoras.hydroenergy.blocks.HEWaterStill;
 
 import com.sinthoras.hydroenergy.client.HEClient;
+import com.sinthoras.hydroenergy.config.HEConfig;
 import cpw.mods.fml.client.registry.RenderingRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;
@@ -43,7 +44,7 @@ public class HEWaterRenderer extends RenderBlockFluid {
             return false;
         }
 
-        if(GLContext.getCapabilities().OpenGL32) {
+        if(GLContext.getCapabilities().OpenGL32 && !HEConfig.useLimitedRendering) {
             neighbors[0] = world.getBlock(blockX - 1, blockY, blockZ);
             neighbors[1] = world.getBlock(blockX + 1, blockY, blockZ);
             neighbors[2] = world.getBlock(blockX, blockY - 1, blockZ);

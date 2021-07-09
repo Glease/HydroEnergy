@@ -29,6 +29,7 @@ public class HEConfig {
         public static final float pressureIncreasePerTier = 2.0f;
         public static final float milliBucketPerEU = 1.0f;
         public static final String[] enabledTiers = new String[] { "lv", "mv", "hv", "ev", "iv" };
+        public static final boolean useLimitedRendering = false;
     }
 
     private static class Categories {
@@ -57,6 +58,7 @@ public class HEConfig {
     public static float milliBucketPerEU = Defaults.milliBucketPerEU;
     public static float euPerMilliBucket = 1.0f / Defaults.milliBucketPerEU;
     public static boolean[] enabledTiers = new boolean[GT_Values.VN.length];
+    public static boolean useLimitedRendering = Defaults.useLimitedRendering;
 
     public static void syncronizeConfiguration(java.io.File configurationFile) {
         Configuration configuration = new Configuration(configurationFile);
@@ -87,6 +89,11 @@ public class HEConfig {
                         " of this update event, the game will add the specified delay (in milliseconds) up for the actual delay. You " +
                         "should expect the number of rerendered subChunks to be in the low hundreds");
         minLightUpdateTimePerSubChunk = minLightUpdateTimePerSubChunkProperty.getInt();
+
+        Property useLimitedRenderingProperty = configuration.get(Categories.general, "useLimitedRendering",
+                Defaults.useLimitedRendering, "[CLIENT] Activate this if you have performance issues with the " +
+                        "mod. But be warned: you will have limited render capabilities!");
+        useLimitedRendering = useLimitedRenderingProperty.getBoolean();
 
         Property clippingOffsetProperty = configuration.get(Categories.general, "clippingOffset",
                 Defaults.clippingOffset, "[SERVER + CLIENT] If water is sitting too narrow over a block there" +
