@@ -60,46 +60,51 @@ public class HEProgram {
 
 
     public static void init() {
-        final String defines = "#version 330 core\n"
-                + "#define NUM_CONTROLLERS " + HEConfig.maxDams + "\n"
-                + "#define CLIPPING_OFFSET " + HEConfig.clippingOffset + "\n";
-        final int vertexShader = loadShader(vertexShaderLocation, GL20.GL_VERTEX_SHADER, defines);
-        final int geometryShader = loadShader(geometryShaderLocation, GL32.GL_GEOMETRY_SHADER, defines);
-        final int fragmentShader = loadShader(fragmentShaderLocation, GL20.GL_FRAGMENT_SHADER, defines);
+        if(GLContext.getCapabilities().OpenGL32 && !HEConfig.useLimitedRendering) {
+            final String defines = "#version 330 core\n"
+                    + "#define NUM_CONTROLLERS " + HEConfig.maxDams + "\n"
+                    + "#define CLIPPING_OFFSET " + HEConfig.clippingOffset + "\n";
+            final int vertexShader = loadShader(vertexShaderLocation, GL20.GL_VERTEX_SHADER, defines);
+            final int geometryShader = loadShader(geometryShaderLocation, GL32.GL_GEOMETRY_SHADER, defines);
+            final int fragmentShader = loadShader(fragmentShaderLocation, GL20.GL_FRAGMENT_SHADER, defines);
 
-        programId = GL20.glCreateProgram();
-        GL20.glAttachShader(programId, vertexShader);
-        GL20.glAttachShader(programId, geometryShader);
-        GL20.glAttachShader(programId, fragmentShader);
-        GL20.glLinkProgram(programId);
+            programId = GL20.glCreateProgram();
+            GL20.glAttachShader(programId, vertexShader);
+            GL20.glAttachShader(programId, geometryShader);
+            GL20.glAttachShader(programId, fragmentShader);
+            GL20.glLinkProgram(programId);
 
-        if(GL20.glGetProgrami(programId, GL20.GL_LINK_STATUS) == 0) {
-            String s = StringUtils.trim(GL20.glGetProgramInfoLog(programId, 32768));
-            HE.error("Shader program linking failed: " + s);
-            programId = GL31.GL_INVALID_INDEX;
-            return;
+            if (GL20.glGetProgrami(programId, GL20.GL_LINK_STATUS) == 0) {
+                String s = StringUtils.trim(GL20.glGetProgramInfoLog(programId, 32768));
+                HE.error("Shader program linking failed: " + s);
+                programId = GL31.GL_INVALID_INDEX;
+                return;
+            }
+
+            viewProjectionId = GL20.glGetUniformLocation(programId, "g_viewProjection");
+            waterLevelsId = GL20.glGetUniformLocation(programId, "g_waterLevels");
+            debugStatesId = GL20.glGetUniformLocation(programId, "g_debugModes");
+            lightLookupTableId = GL20.glGetUniformLocation(programId, "g_lightLUT");
+            atlasTextureId = GL20.glGetUniformLocation(programId, "g_atlasTexture");
+            texCoordStillMinId = GL20.glGetUniformLocation(programId, "g_texCoordStillMin");
+            texCoordStillDeltaId = GL20.glGetUniformLocation(programId, "g_texCoordStillDelta");
+            texCoordFlowingMinId = GL20.glGetUniformLocation(programId, "g_texCoordFlowingMin");
+            texCoordFlowingDeltaId = GL20.glGetUniformLocation(programId, "g_texCoordFlowingDelta");
+            fogDiffId = GL20.glGetUniformLocation(programId, "g_fogDiff");
+            fogEndId = GL20.glGetUniformLocation(programId, "g_fogEnd");
+            fogDensityId = GL20.glGetUniformLocation(programId, "g_fogDensity");
+            fogModeLinearId = GL20.glGetUniformLocation(programId, "g_fogModeLinear");
+            fogColorId = GL20.glGetUniformLocation(programId, "g_fogColor");
+            cameraPositionId = GL20.glGetUniformLocation(programId, "g_cameraPosition");
+            renderOffsetId = GL20.glGetUniformLocation(programId, "g_renderOffset");
+
+            GL20.glUseProgram(0);
+
+            HE.info("Render pipeline initialized.");
         }
-
-        viewProjectionId = GL20.glGetUniformLocation(programId, "g_viewProjection");
-        waterLevelsId = GL20.glGetUniformLocation(programId, "g_waterLevels");
-        debugStatesId = GL20.glGetUniformLocation(programId, "g_debugModes");
-        lightLookupTableId = GL20.glGetUniformLocation(programId, "g_lightLUT");
-        atlasTextureId = GL20.glGetUniformLocation(programId, "g_atlasTexture");
-        texCoordStillMinId = GL20.glGetUniformLocation(programId, "g_texCoordStillMin");
-        texCoordStillDeltaId = GL20.glGetUniformLocation(programId, "g_texCoordStillDelta");
-        texCoordFlowingMinId = GL20.glGetUniformLocation(programId, "g_texCoordFlowingMin");
-        texCoordFlowingDeltaId = GL20.glGetUniformLocation(programId, "g_texCoordFlowingDelta");
-        fogDiffId = GL20.glGetUniformLocation(programId, "g_fogDiff");
-        fogEndId = GL20.glGetUniformLocation(programId, "g_fogEnd");
-        fogDensityId = GL20.glGetUniformLocation(programId, "g_fogDensity");
-        fogModeLinearId = GL20.glGetUniformLocation(programId, "g_fogModeLinear");
-        fogColorId = GL20.glGetUniformLocation(programId, "g_fogColor");
-        cameraPositionId = GL20.glGetUniformLocation(programId, "g_cameraPosition");
-        renderOffsetId = GL20.glGetUniformLocation(programId, "g_renderOffset");
-
-        GL20.glUseProgram(0);
-
-        HE.info("Render pipeline initialized.");
+        else {
+            HE.info("Render pipeline NOT initialized. OpenGL 3.2 is not supported! Fallback to vanilla rendering. Expect visual \"anomalies\"...");
+        }
     }
 
     private static int loadShader(ResourceLocation shaderLocation, int type, String defines) {
