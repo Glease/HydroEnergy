@@ -68,7 +68,11 @@ public class HEConfig {
                 "[SERVER] How many dams should the game support. At least as many as the server you want to connect" +
                         " to. Each dam will receive it's own water block and it will also have a minuscule performance" +
                         " impact. Keep it only as long as you need. You can always just rise, but not shorten the value.");
-        maxDams = Math.max(1, maxDamsProperty.getInt());
+        maxDams = maxDamsProperty.getInt();
+        if(maxDams != Math.max(1, maxDams)) {
+            maxDams = Math.max(1, maxDams);
+            maxDamsProperty.set(1);
+        }
 
         Property minimalWaterUpdateIntervalProperty = configuration.get(Categories.general,
                 "minimalWaterUpdateInterval", Defaults.minimalWaterUpdateInterval, "[SERVER] Minimum delay" +
